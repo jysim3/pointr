@@ -1,4 +1,8 @@
 /* Global */
+* {
+    margin: 0;
+}
+
 :root {
   --primary-yellow: #fdef96;
   --secondary-yellow: #f6ef98;
