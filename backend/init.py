@@ -30,6 +30,7 @@ def createEvent():
     return generateID(5).upper()
 
 # For getting info on an event
+'''
 @app.route('/api/event', methods=['GET'])
 def getEvent():
     data = request.get_json()
@@ -53,6 +54,7 @@ def getEvent():
     }]
     
     return dumps(payload)
+'''
 
 # For adding a user to an event 
 @app.route('/api/attend', methods=['POST'])
@@ -112,6 +114,7 @@ def main():
                 eventID text not null,
                 name text not null,
                 society text,
+                eventdate date not null,
                 owner text not null references users(id),
                 primary key(eventID)
             );'''
