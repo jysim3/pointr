@@ -90,17 +90,17 @@ def getAttendance(eventID):
     eventName = eventInformation[1]
     eventQR = eventInformation[5]
 
-    curs.execute("select user from participation where eventid=?", (eventID,))
+    curs.execute("select user, points from participation where eventid=?", (eventID,))
     attendees = []
     rows = curs.fetchall()
     for row in rows:
-        attendees.append(row[0])
+        attendees.append([row[0], row[1]])
 
     participation = []
     for person in attendees:
-        curs.execute("select * from users where zid=?", (person,))
+        curs.execute("select * from users where zid=?", (person[0],))
         rows = curs.fetchall()
-        participation.append([rows, 1])
+        participation.append([rows, person[1]])
 
     return participation, eventName, eventQR
 
@@ -184,7 +184,7 @@ def main():
     register("z5444444", "1234", 'Oltan Sevinc')
     register("z5555555", "1234", 'Will de Dassel')
 
-    print(getAttendance("1239"))
+    print(getAttendance("1234"))
     # print(getUserAttendance("z5161616"))
 
 if __name__ == '__main__':
