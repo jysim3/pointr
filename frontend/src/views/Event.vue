@@ -50,14 +50,19 @@ export default {
     };
   },
   mounted() {
-    fetchAPI(`/api/event?events=${this.eid}`, "GET").then(j => {
+    fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
+    .then(j => {
       this.name = j.name;
       this.eventId = j.eventID;
       const names = [];
-      j.participants.forEach(user => {
-        names.push(user["name"]);
-      });
-      this.participants = names;
+      if (j.participants !== undefined) {
+        j.participants.forEach(user => {
+            names.push(user["name"]);
+        });
+        this.participants = names;
+        }
+    }).catch(e => {
+        console.log(e) // eslint-disable-line
     });
   },
   computed: {
