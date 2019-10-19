@@ -62,9 +62,12 @@ def createEvent(zID, eventID, eventName, eventDate):
     conn.commit()
     return "success"
 
-def register(zID, eventID):
-    if (checkUser(zID) == False or checkEvent(eventID) == False):
-        return "User or Event does not exist"
+def register(zID, eventID, userName):
+    if (checkUser(zID) == False):
+        createUser(zID, userName)
+
+    if checkEvent(eventID) == False:
+        return "Event does not exist"
 
     if (checkParticipation(zID, eventID) == True):
         return "Already registered"
@@ -124,7 +127,7 @@ def getUserAttendance(zid):
         events_info.append(event[1])
         events_output.append(events_info)
         
-    return events_output
+    return events_output, userName
 
 def changePoints(zID, eventID, newPoints):
     conn = createConnection()
@@ -173,6 +176,12 @@ def main():
     register("z5161616", "0000")
     #   for Coffee Night
     register("z5161616", "1234")
+    register("z5161798", "1234")
+    register("z5111111", "1234")
+    register("z5222222", "1234")
+    register("z5333333", "1234")
+    register("z5444444", "1234")
+    register("z5555555", "1234")
 
     print(getAttendance("1239"))
     print(getUserAttendance("z5161616"))

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="home-container">
     <div class="center">
       <h1 class="title">Room Pointer</h1>
     </div>
@@ -17,6 +17,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+@import "../assets/style.css";
+
+#home-container {
+  background-color: var(--primary-yellow);
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+}
 
 .center {
   display: flex;
