@@ -16,10 +16,15 @@ def checkUser(zID):
     curs.execute("select * from users where zid=?", (zID,))
     
     rows = curs.fetchall()
-    if (rows == []):
-        return False
+    return False if rows == [] else True
 
-    return True
+def checkParticipation(zID, eventID):
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("select * from participation where user=? and eventid=?", (zID, eventID,))
+    
+    rows = curs.fetchall()
+    return False if rows == [] else True
 
 # Check if an event exists in the table
 def checkEvent(eventID):
@@ -28,10 +33,7 @@ def checkEvent(eventID):
     curs.execute("select * from events where eventid=?", (eventID,))
 
     rows = curs.fetchall()
-    if (rows == []):
-        return False
-    
-    return True
+    return False if rows == [] else True
 
 # Creating a user 
 def createUser(zID, name):
@@ -68,15 +70,46 @@ def register(zID, eventID):
     if (checkUser(zID) == False or checkEvent(eventID) == False):
         return "User or Event does not exist"
 
+    if (checkParticipation(zID, eventID) == True):
+        return "Already registered"
+
     conn = createConnection()
     curs = conn.cursor()
     curs.execute("insert into participation(points, user, eventID) values (?, ?, ?)", (1, zID, eventID,))
     conn.commit()
 
+def getAttendance(eventID):
+    if (checkEvent(eventID) == False):
+        return "failed"
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("select * from events where eventid=?", (eventID,))
+    conn.commit()
+    eventInformation = curs.fetchone()
+    # Need to return eventName
+    eventName = eventInformation[1]
+
+    curs.execute("select user from participation where eventid=?", (eventID,))
+    attendees = []
+    rows = curs.fetchall()
+    for row in rows:
+        attendees.append(row[0])
+
+    participation = []
+    for person in attendees:
+        curs.execute("select * from users where zid=?", (person,))
+        rows = curs.fetchall()
+        participation.append([rows, 1])
+
+    return participation, eventName
+
 def main():
     createUser("z5161616", "Steven Shen")
+    createUser("z5161798", "Casey Neistat")
     createEvent("z5161616", "1239", "Test Event 0", "2019-11-19")
     register("z5161616", "1239")
+    register("z5161798", "1239")
+    print(getAttendance("1239"))
 
 if __name__ == '__main__':
     main()
