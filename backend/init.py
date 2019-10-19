@@ -33,6 +33,7 @@ def hello():
 # { status: "success", eventID: "1234F"}
 # or
 # { status: "ERROR MESSAGE"}
+
 @app.route('/api/event', methods=['POST'])
 def createEvent():
     data = request.get_json()
@@ -52,7 +53,7 @@ def getEventDummy():
     eventID = request.args.get('eventID')
     payload = {}
     payload["eventID"] = eventID
-    payload["name"] = "Coffe Night"
+    payload["name"] = "Coffee Night"
     payload["participants"] = [{
         "userID": "z5214808",
         "name": "Harrison",
@@ -72,26 +73,24 @@ def getEventDummy():
 # For getting info on an event
 # Usage:
 # GET /api/event?eventID=ID
+# Returns: 
+# {"eventID": "1239", "name": "Test Event 0", "participants": [{"zID": "z5161616", "name": "Steven Shen", "points": 1}, {"zID": "z5161798", "name": "Casey Neistat", "points": 1}]}
 @app.route('/api/event', methods=['GET'])
 def getEvent():
     eventID = request.args.get('eventID')
     payload = {}
-    payload["eventID"] = eventID
-    payload["name"] = "Coffe Night"
-    payload["participants"] = [{
-        "userID": "z5214808",
-        "name": "Harrison",
-        "points": "10000"
-    }, {
-        "userID": "z6273842",
-        "name": "John",
-        "points": "1"
-    }, {
-        "userID": "z1234567",
-        "name": "Peter",
-        "points": "1203"
-    }]
-    
+    attendance = utilFunctions.getAttendance(eventID)
+    payload['eventID'] = eventID
+    payload['name'] = attendance[1]
+    payload['participants'] = []
+    for person in attendance[0]:
+        personJSON = {}
+        print(person)
+        # Fix Stevens shit formatting
+        personJSON['zID'] = person[0][0][0]
+        personJSON['name'] = person[0][0][1]
+        personJSON['points'] = person[1]
+        payload['participants'].append(personJSON)
     return dumps(payload)
 
 # For adding a user to an event 
@@ -99,15 +98,22 @@ def getEvent():
 def attend():
     data = request.get_json()
     print(data)
-    return 10
+    payload = {}
+    
+    payload['status'] = "success"
+    return dumps(payload)
 
 # For getting the points of a user
+# Usage:
+# GET /api/user?zID=z5214808
+# Returns:
+# {TODO}
 @app.route('/api/user', methods=['GET'])
-def getPoints():
-    data = request.get_json()
-    print(data)
-    
-    return "Hello"
+def getUser():
+    zID = request.args.get('zID')
+    payload = {}
+    payload['status'] = "success"
+    return dumps(payload)
 
 # For creating a user
 # Usage: 
@@ -116,7 +122,6 @@ def getPoints():
 # {zID: "z1234567", name: "Harrison Steyn"}
 # Returns: 
 # {"status": "success"}
-
 @app.route('/api/user', methods=['POST'])
 def postUser():
     data = request.get_json()
