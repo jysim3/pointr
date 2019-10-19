@@ -17,6 +17,7 @@
 </template>
 <script>
 import { apiURL } from "@/App.vue";
+import { fetchAPI } from "@/util.js";
 export default {
     name: "hi",
     props: {
@@ -26,16 +27,7 @@ export default {
         const data = {
             "events" : this.eid
         }
-        fetch(apiURL + "/api/event", {
-            method: "POST", // or 'PUT'
-            body: JSON.stringify(data), // data can be `string` or {object}!
-            headers: {
-            "Content-Type": "application/json"
-            }
-        })
-            .then(r => r.json())
-            .then(j => console.log(j))// eslint-disable-line
-            .catch(e => alert("Backend has errors, please try again\nError: " + e));
+        
     },
     data() {
         return {

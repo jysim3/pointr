@@ -1,6 +1,12 @@
 <template>
 <div>
-    {{this.zid}}
+    <h1> Hi {{this.username}} </h1>
+    <table>
+        <tr v-for="(event,index) in events" :key="index">
+            <td>{{ event.name }}</td>
+            <td>{{ event.points }}</td>
+        </tr>
+    </table>
 </div>
 </template>
 <script>
@@ -12,7 +18,18 @@ export default {
     },
     data() {
         return {
-            username: ''
+            username: 'Steven',
+            events: [
+                {
+                    name: "Coffee Night #2",
+                    points: 5
+                },
+                {
+                    name: "Coffee Night #3",
+                    points: 5
+                },
+            ]
+
         }
     },
     mounted() {
@@ -28,7 +45,7 @@ export default {
             }
         })
             .then(r => r.json())
-            .then(j => console.log(j))// eslint-disable-line
+            .then(j => {this.events=j})// eslint-disable-line
             .catch(e => alert("Backend has errors, please try again\nError: " + e));
     }
 
