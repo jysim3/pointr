@@ -1,6 +1,13 @@
 from sqlite3 import Error
 import sqlite3
-from init import createConnection
+
+def createConnection():
+    conn = None
+    try:
+        conn = sqlite3.connect(r'./database.db')
+    except Error as e:
+        print(e)
+    return conn
 
 # Check if a user exists in the table
 def checkUser(userID):
@@ -28,6 +35,9 @@ def checkEvent(eventID):
 
 # Creating a user 
 def createUser(userID, name):
+    if (checkUser(userID) != False):
+        return None
+
     conn = createConnection()
     curs = conn.cursor()
     curs.execute("insert into users(zid, name) values(?, ?);", (userID, name,))
@@ -35,27 +45,28 @@ def createUser(userID, name):
 
 # Creting an event
 # Event could maybe have a weight
-def createEvent(userID, eventID, eventName, eventDate, eventPoints):
+def createEvent(userID, eventID, eventName, eventDate):
     # FIXME
     if (checkUser(userID) == False):
-        createuser(userID)
+        createUser(userID, "Junyang Sim")
     
     if (checkEvent(eventID) != False):
         return "Already created"
     
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("insert into events(eventID, name, society, owner, eventDate) values (?, ?, ?, ?, ?);", (eventID, eventName, "UNSW Hall", userID, eventDate,))
+    conn.commit()
+
 def fetchUserStatistics():
     # We fetch everything from the participation relationship
     return 1
 
 def register(userID, userName, eventID, eventName, points):
-    sqlUser = ''' 
-        insert into users(name, zid)
-        values(?, ?);'''
+    return 1
 
 def main():
-    checkUser("z5161616")
-    createUser("z5161616", "Steven Shen")
-    checkUser("z5161616")
+    createEvent("z5161616", "aslhfkjahsdf", "Test Event 0", "2019-11-19")
 
 if __name__ == '__main__':
     main()
