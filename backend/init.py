@@ -81,9 +81,9 @@ def getPoints():
 @app.route('/api/user', methods=['POST'])
 def postUser():
     data = request.get_json()
-    
+    returnVal = utilFunctions.createUser(data['zID'], data['name'])
     payload = {}
-    payload['status'] = "success"
+    payload['status'] = returnVal
     return dumps(payload)
 
 # SQL Shit
