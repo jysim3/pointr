@@ -42,4 +42,8 @@ export default {
 li {
     list-style-type: none;
 }
+
+.material-icons {
+    cursor: pointer;
+}
 </style>

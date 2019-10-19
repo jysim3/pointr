@@ -24,7 +24,7 @@
         </form>
       </div>
     </div>
-    <Attendees :attendees="this.participants" />
+    <Attendees id="attendees" :attendees="this.participants" />
   </div>
 </template>
 
@@ -129,5 +129,7 @@ export default {
 #qr-container {
   margin-right: 2rem;
 }
+
+
 
 </style>
