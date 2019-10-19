@@ -1,22 +1,22 @@
 <template>
   <div id="app">
-    <SignIn/>
-    <Home/>
+    <div id="nav">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </div>
+    <router-view/>
   </div>
 </template>
 
+
 <script>
-import Home from './components/Home.vue'
-import SignIn from './components/SignIn.vue'
+export const apiURL = 'http://localhost:5000'
 
 export default {
   name: 'app',
-  components: {
-    Home,
-    SignIn
-  }
 }
 </script>
+
 
 <style>
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,100,400i,700i,700');
@@ -30,11 +30,32 @@ h1, .alpha {
     line-height: 1;
     letter-spacing: -.05em;
 }
+.title{
+    color: #f35626;
+    background-image: linear-gradient(92deg, #f35626 0%,#feab3a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: hue 60s infinite linear;
+}
 #app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>
