@@ -73,11 +73,24 @@ def getEventDummy():
 # For getting info on an event
 # Usage:
 # GET /api/event?eventID=ID
+# Returns: 
+# {"eventID": "1239", "name": "Test Event 0", "participants": [{"zID": "z5161616", "name": "Steven Shen", "points": 1}, {"zID": "z5161798", "name": "Casey Neistat", "points": 1}]}
 @app.route('/api/event', methods=['GET'])
 def getEvent():
     eventID = request.args.get('eventID')
     payload = {}
-    
+    attendance = utilFunctions.getAttendance(eventID)
+    payload['eventID'] = eventID
+    payload['name'] = attendance[1]
+    payload['participants'] = []
+    for person in attendance[0]:
+        personJSON = {}
+        print(person)
+        # Fix Stevens shit formatting
+        personJSON['zID'] = person[0][0][0]
+        personJSON['name'] = person[0][0][1]
+        personJSON['points'] = person[1]
+        payload['participants'].append(personJSON)
     return dumps(payload)
 
 # For adding a user to an event 
