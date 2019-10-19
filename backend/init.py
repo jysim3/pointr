@@ -80,17 +80,21 @@ def getEvent():
     eventID = request.args.get('eventID')
     payload = {}
     attendance = utilFunctions.getAttendance(eventID)
-    payload['eventID'] = eventID
-    payload['name'] = attendance[1]
-    payload['participants'] = []
-    for person in attendance[0]:
-        personJSON = {}
-        print(person)
-        # Fix Stevens shit formatting
-        personJSON['zID'] = person[0][0][0]
-        personJSON['name'] = person[0][0][1]
-        personJSON['points'] = person[1]
-        payload['participants'].append(personJSON)
+    if attendance == "failed":
+        payload['status'] = 'failed'
+    else:
+        payload['eventID'] = eventID
+        payload['name'] = attendance[1]
+        payload['participants'] = []
+        for person in attendance[0]:
+            personJSON = {}
+            print(person)
+            # Fix Stevens shit formatting
+            personJSON['zID'] = person[0][0][0]
+            personJSON['name'] = person[0][0][1]
+            personJSON['points'] = person[1]
+            payload['participants'].append(personJSON)
+        payload['status'] = 'success'
     return dumps(payload)
 
 # For adding a user to an event 
