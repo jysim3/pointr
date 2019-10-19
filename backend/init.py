@@ -6,10 +6,13 @@ import random
 import string
 from json import dumps
 import utilFunctions
+import re
 
 app = Flask(__name__)
 CORS(app)
 
+def sanitizeInput(input):
+    pass
 
 def generateID(number):
     id = ""
@@ -107,7 +110,7 @@ def attend():
     data = request.get_json()
     payload = {}
     
-    payload['status'] = utilFunctions.register(data['zID'], data['eventID'])
+    payload['status'] = utilFunctions.register(data['zID'], data['eventID'], data['name'])
     return dumps(payload)
 
 # For getting the points of a user
