@@ -124,11 +124,12 @@ def getUser():
     payload = []
     for event in attendance:
         eventJSON = {}
+        # Dont ask what this does
         eventJSON['eventID'] = event[0][0]
         eventJSON['name'] = event[0][1]
         eventJSON['society'] = event[0][2]
         eventJSON['eventDate'] = event[0][3]
-        eventJSON['points'] = 1
+        eventJSON['points'] = event[1]
         payload.append(eventJSON)
     return dumps(payload)
 
@@ -144,7 +145,7 @@ def deletePoints():
     data = request.get_json()
     
     payload = {}
-    payload['status'] = deleteUserAttendance(data['zID'], data['eventID'])
+    payload['status'] = utilFunctions.deleteUserAttendance(data['zID'], data['eventID'])
     return dumps(payload)
     
 # Update user attendance
@@ -153,12 +154,13 @@ def deletePoints():
 # Takes: 
 # {zID: "z5214808", eventID: "13287", points: "10"}
 # Returns: 
-# {"status": "success"}
+# {"status": "success"}  "points": 1000
+
 @app.route('/api/points', methods=['POST'])
 def updatePoints():
     data = request.get_json()
     payload = {}
-    payload['status'] = changePoints(data['zID'], data['eventID'], data['points'])
+    payload['status'] = utilFunctions.changePoints(data['zID'], data['eventID'], data['points'])
     return dumps(payload)
 
 # For creating a user
