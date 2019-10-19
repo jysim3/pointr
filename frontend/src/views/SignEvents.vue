@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Welcome to our event!</h1>
+    <h1>Welcome to {{ this.eventName }}!</h1>
     <form @submit="submitForm">
       <label class="inp">
         <span class="label">zid</span>
@@ -16,7 +16,6 @@
   </div>
 </template>
 <script>
-import { apiURL } from "@/App.vue";
 import { fetchAPI } from "@/util.js";
 export default {
     name: "hi",
@@ -24,15 +23,16 @@ export default {
         eid: String
     },
     mounted() {
-        const data = {
-            "events" : this.eid
-        }
-        
+        fetchAPI(`/api/event?events=${this.eid}`, "GET")
+        .then(j => {
+            this.eventName = j.name
+        })
     },
     data() {
         return {
             zid: "",
-            name: ""
+            name: "",
+            eventName: ""
         };
     },
     methods: {
@@ -43,20 +43,12 @@ export default {
                 name: this.name,
                 eventID: this.eid
             }
-        console.log(apiURL + "/e/"); // eslint-disable-line
-        e.preventDefault();
-        fetch(apiURL + "/api/event", {
-            method: "POST", // or 'PUT'
-            body: JSON.stringify(data), // data can be `string` or {object}!
-            headers: {
-            "Content-Type": "application/json"
-            }
-        })
-            .then(r => r.json())
+            e.preventDefault();
+            fetchAPI("/api/event", "POST", data)
             .then(() => {
-            window.location.replace("/attended");
+                window.location.path = "/u/"+this.zid
             })
-            .catch(e => alert("Backend has errors, please try again\nError: " + e));
+            .catch(e => alert(e))
         }
     }
 };
