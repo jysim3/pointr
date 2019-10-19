@@ -29,7 +29,7 @@ export default {
         .then(j => {
             console.log(j)// eslint-disable-line
             this.events=j.events
-            this.username=j.user
+            this.username=j.name
         })
     }
 
