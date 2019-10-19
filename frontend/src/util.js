@@ -21,6 +21,10 @@ export function fetchAPI(url, method, data) {
                     'Content-Type': 'application/json'
                 }
             })
+            .then(r => {
+                console.log(r)//eslint-disable-line
+                return r
+            })
             .then(response => response.json())
         )
     }

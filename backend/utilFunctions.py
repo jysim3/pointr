@@ -111,16 +111,17 @@ def getUserAttendance(zid):
     # Need to return userName
     userName = userInformation[1]
 
-    curs.execute("select eventID from participation where user=?", (zid,))
+    curs.execute("select eventID, points from participation where user=?", (zid,))
     conn.commit()
     events = curs.fetchall()
     events_output = []
     for event in events:
-        #events_output.append(event[0])
         eventNum = event[0]
         curs.execute("select * from events where eventID=?", (eventNum,))
         conn.commit()
         events_info = curs.fetchall()
+        #add points
+        events_info.append(event[1])
         events_output.append(events_info)
         
     return events_output
