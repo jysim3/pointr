@@ -40,10 +40,19 @@ def hello():
 @app.route('/api/event', methods=['POST'])
 def createEvent():
     data = request.get_json()
-    print(data)
+
     eventID = generateID(5).upper()
+    if not data['hasQR']:
+        data['hasQR'] = False
+    elif data['hasQR'].lower() == "true":
+        data['hasQR'] = True
+    elif data['hasQR'].lower() == "false":
+        data['hasQR'] = False
+    else:
+        data['hasQR'] = False
+            
     payload = {}
-    payload['status'] = utilFunctions.createEvent(sanitize(lower(data['zID'])), sanitize(eventID), sanitize(data['name']), sanitize(data['eventDate']))
+    payload['status'] = utilFunctions.createEvent(sanitize(str(data['zID']).lower()), sanitize(str(eventID)), sanitize(str(data['name'])), sanitize(str(data['eventDate'])), data['hasQR'])
     if payload['status'] == 'success':
         payload['eventID'] = eventID
     return dumps(payload)
@@ -88,12 +97,13 @@ def getEvent():
     else:
         payload['eventID'] = eventID
         payload['name'] = attendance[1]
+        payload['hasQR'] = True if attendance[2] == 1 else False
         payload['participants'] = []
         for person in attendance[0]:
             personJSON = {}
             print(person)
             # Fix Stevens shit formatting
-            personJSON['zID'] = lower(person[0][0][0])
+            personJSON['zID'] = person[0][0][0].lower()
             personJSON['name'] = person[0][0][1]
             personJSON['points'] = person[1]
             payload['participants'].append(personJSON)
@@ -110,7 +120,7 @@ def attend():
     data = request.get_json()
     payload = {}
     
-    payload['status'] = utilFunctions.register(sanitize(lower(data['zID'])), sanitize(data['eventID']), sanitize(data['name']))
+    payload['status'] = utilFunctions.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(data['name']))
     return dumps(payload)
 
 # For getting the points of a user
@@ -121,12 +131,12 @@ def attend():
 @app.route('/api/user', methods=['GET'])
 def getUser():
     zID = request.args.get('zID')
-    attendance = utilFunctions.getUserAttendance(sanitize(lower(zID))
+    attendance = utilFunctions.getUserAttendance(sanitize(zID.lower()))
     if attendance == 'invalid user': 
         return dumps({"status": "failed"})
     payload = {}
     payload['events'] = []
-    payload['zID'] = lower(zID)
+    payload['zID'] = zID.lower()
     payload['name'] = attendance[1]
     print(attendance[0])
     for event in attendance[0]:
@@ -152,7 +162,7 @@ def deletePoints():
     data = request.get_json()
     
     payload = {}
-    payload['status'] = utilFunctions.deleteUserAttendance(sanitize(lower(data['zID'])), sanitize(data['eventID']))
+    payload['status'] = utilFunctions.deleteUserAttendance(sanitize(data['zID'].lower()), sanitize(data['eventID']))
     return dumps(payload)
     
 # Update user attendance
@@ -167,7 +177,7 @@ def deletePoints():
 def updatePoints():
     data = request.get_json()
     payload = {}
-    payload['status'] = utilFunctions.changePoints(sanitize(lower(data['zID'])), sanitize(data['eventID']), sanitize(data['points']))
+    payload['status'] = utilFunctions.changePoints(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(str(data['points'])))
     return dumps(payload)
 
 # For creating a user
@@ -180,7 +190,7 @@ def updatePoints():
 @app.route('/api/user', methods=['POST'])
 def postUser():
     data = request.get_json()
-    returnVal = utilFunctions.createUser(sanitize(lower(data['zID'])), sanitize(data['name']))
+    returnVal = utilFunctions.createUser(sanitize(data['zID'].lower()), sanitize(data['name']))
     payload = {}
     payload['status'] = returnVal
     return dumps(payload)

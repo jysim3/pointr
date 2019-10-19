@@ -3,11 +3,11 @@
     <h2>Attendance</h2>
     <ul>
       <li v-for="(attendee, index) in attendees" :key="index">
-        {{ attendee }}
+        {{ attendee.name }}
         <!-- EDIT ICON -->
-        <i class="material-icons">edit</i>
+        <i @click="edit" class="material-icons">edit</i>
         <!-- DELETE ICON -->
-        <i class="material-icons">close</i>
+        <i @click="del" class="material-icons">close</i>
       </li>
     </ul>
   </div>
@@ -20,7 +20,16 @@
 export default {
   name: "Attendees",
   props: ["eid", "attendees"],
-  mounted() {}
+  mounted() {},
+  methods: {
+    edit() {
+
+    },
+    del() {
+
+    },
+  }
+
 };
 </script>
 
