@@ -5,12 +5,14 @@
 </template>
 
 <script>
-import { fetchAPI } from '@/util.js'
+import fetchAPI from '@/util.js'
+import { apiURL } from "@/util.js"
 
 export default {
     name: 'Attendees',
+    props: ['eid'],
     mounted() {
-        fetchAPI()
+        const attendees = await fetchAPI('/dummy/event?eventID=' + this.eid)
     }
 }
 </script>
