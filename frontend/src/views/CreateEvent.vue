@@ -29,7 +29,7 @@
 
 <script>
 import { fetchAPI } from '@/util.js';
-import router from '@/router/index.js'
+import router from '@/router/index.js';
 
 export default {
     name: 'CreateEvent',
@@ -58,8 +58,7 @@ export default {
 
         }
     }
-  }
-};
+}
 </script>
 
 <style>
