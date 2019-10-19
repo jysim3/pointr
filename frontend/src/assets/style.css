@@ -72,18 +72,19 @@ button {
     background-color: white;
     outline: none;
     border: none;
-    background-color: var(--primary-yellow);
+    background-color: white;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, border 0.2s;
     font-weight: 500;
     font-size: 1rem;
     text-transform: uppercase;
     margin-top: 1rem;
-    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--primary-yellow);
 }
 
 button:hover {
-    background-color: var(--secondary-yellow);
+    /* background-color: var(--secondary-yellow); */
+    border: 2px solid black;
 }
 
 /* Inputs and labels */
