@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../components/Home.vue'
 import CreateEvent from '../views/CreateEvent.vue'
 import Event from '../views/Event.vue'
+import SignEvents from '../views/SignEvents.vue'
 
 Vue.use(VueRouter)
 
@@ -11,6 +12,12 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home
+  },
+  {
+    path: '/e/:eid',
+    name: 'signEvents',
+    component: SignEvents,
+    props: true
   },
   {
     path: '/about',

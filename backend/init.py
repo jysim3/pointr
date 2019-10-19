@@ -1,5 +1,76 @@
 import sqlite3 
 from sqlite3 import Error
+from flask import Flask, request
+from flask_cors import CORS
+import random
+import string
+from json import dumps
+
+app = Flask(__name__)
+CORS(app)
+
+
+def generateID(number):
+    id = ""
+    for x in range(0, number):
+        id += random.choice(string.hexdigits)
+    return id
+
+# Routes
+
+@app.route('/')
+def hello():
+    return "Hello World!"
+
+# For creating an event
+@app.route('/api/event', methods=['POST'])
+def createEvent():
+    data = request.get_json()
+    print(data)
+    return generateID(5).upper()
+
+# For getting info on an event
+@app.route('/api/event', methods=['GET'])
+def getEvent():
+    data = request.get_json()
+    eventID = data.eventID
+    payload = {}
+    payload["eventID"] = eventID
+    payload["name"] = "Coffe Night"
+    payload["participants"] = 
+    [{
+        "userID": "z5214808",
+        "name": "Harrison",
+        "points": "10000"
+    }, {
+        "userID": "z6273842",
+        "name": "John",
+        "points": "1"
+    }, {
+        "userID": "z1234567",
+        "name": "Peter",
+        "points": "1203"
+    }]
+    
+    return dumps(payload)
+
+# For adding a user to an event 
+@app.route('/api/attend', methods=['POST'])
+def attend():
+    data = request.get_json()
+    print(data)
+    return dumps({
+        "status": "success"
+    })
+
+# For getting the points of a user
+@app.route('/api/user', methods=['GET'])
+def getPoints():
+    data = request.get_json()
+    print(data)
+    return 10
+
+# SQL Shit
 
 def createConnection():
     conn = None
@@ -56,6 +127,8 @@ def main():
     except Error as e:
         print(e)
         exit(1)
+    
+    app.run()
 
 
 if __name__ == '__main__':
