@@ -75,7 +75,7 @@ export default {
       e.preventDefault();
       const data = {
         zID: this.zid,
-        uname: this.uname,
+        name: this.uname,
         eventID: this.eid
       };
       fetchAPI("/api/attend", "POST", data)

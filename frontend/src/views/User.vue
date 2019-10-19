@@ -34,11 +34,11 @@ export default {
     },
     mounted() {
         
-        const data = {
-            "zID": this.zid
-        }
-        fetchAPI("/api/user", "POST", data)
-        .then(j => {this.events=j})// eslint-disable-line
+        fetchAPI(`/api/user?zID=${this.zid}`, "GET")
+        .then(j => {
+            console.log(j)// eslint-disable-line
+            this.events=j
+        })
     }
 
     
