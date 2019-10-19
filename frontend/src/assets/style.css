@@ -1,7 +1,9 @@
 /* Global */
 :root {
-    --primary-yellow: #f6ef98;
-    --secondary-yellow: #FFFABF;
+    --primary-yellow: #fdef96;
+    --secondary-yellow: #f6ef98;
+    --primary-grey: #c8dad3;
+    --dark-grey: #3F3F3F;
 }
 
 body {
@@ -62,8 +64,23 @@ button {
     background-color: var(--primary-yellow);
     cursor: pointer;
     transition: background-color 0.2s;
+    font-weight: 500;
+    font-size: 1rem;
+    text-transform: uppercase;
+    margin-top: 1rem;
 }
 
 button:hover {
     background-color: var(--secondary-yellow);
+}
+
+/* Inputs */
+input {
+    border: 1px solid var(--primary-grey);
+    padding: 0.2rem;
+    transition: border 0.1s;
+}
+
+input:focus {
+    border: 1px solid var(--dark-grey);
 }
