@@ -52,7 +52,7 @@ def createEvent():
         data['hasQR'] = False
             
     payload = {}
-    payload['status'] = utilFunctions.createEvent(sanitize(data['zID'].lower()), sanitize(eventID), sanitize(data['name']), sanitize(data['eventDate']), data['hasQR'])
+    payload['status'] = utilFunctions.createEvent(sanitize(str(data['zID']).lower()), sanitize(str(eventID)), sanitize(str(data['name'])), sanitize(str(data['eventDate'])), data['hasQR'])
     if payload['status'] == 'success':
         payload['eventID'] = eventID
     return dumps(payload)
@@ -177,7 +177,7 @@ def deletePoints():
 def updatePoints():
     data = request.get_json()
     payload = {}
-    payload['status'] = utilFunctions.changePoints(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(data['points']))
+    payload['status'] = utilFunctions.changePoints(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(str(data['points'])))
     return dumps(payload)
 
 # For creating a user
