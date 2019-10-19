@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../components/Home.vue'
+import CreateEvent from '../views/CreateEvent.vue'
+import Event from '../views/Event.vue'
 import SignEvents from '../views/SignEvents.vue'
 import User from '../views/User.vue'
 
@@ -31,6 +33,17 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+  },
+  {
+    path: '/create',
+    name: 'create',
+    component: CreateEvent
+  },
+  {
+    path: '/event/:eid',
+    name: 'event',
+    component: Event,
+    props: true
   }
 ]
 
