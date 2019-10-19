@@ -18,7 +18,7 @@
         </div>
         <div>
             <label for>Show QR Code/Event link</label>
-            <input type="checkbox" />
+            <input type="checkbox" checked/>
         </div>
         <button @click="submitForm" class="btn-primary">Create Event</button>
       </form>
