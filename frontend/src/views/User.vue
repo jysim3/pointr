@@ -22,19 +22,18 @@
 <script>
 import { fetchAPI } from "@/util.js";
 export default {
-  name: '',
+  name: "User",
   props: {
     zid: String
   },
   data() {
     return {
-      username: "Steven",
+      username: "",
       events: []
     };
   },
   mounted() {
-    fetchAPI(`/api/user?zID=${this.zid}`, "GET")
-    .then(j => {
+    fetchAPI(`/api/user?zID=${this.zid}`, "GET").then(j => {
       console.log(j); // eslint-disable-line
       this.events = j.events;
       this.username = j.name;
