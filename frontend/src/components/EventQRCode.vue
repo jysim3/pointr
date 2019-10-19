@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="qr-container">
     <canvas id="qr-canvas"></canvas>
   </div>
 </template>
@@ -23,4 +23,7 @@ export default {
 </script>
 
 <style>
+#qr-container {
+  display: inline-block;
+}
 </style>
