@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div id="attendance-container">
+    <h2>Attendance</h2>
     <ul>
       <li v-for="(attendee, index) in attendees" :key="index">
         {{ attendee }}
@@ -24,4 +25,7 @@ export default {
 </script>
 
 <style>
+li {
+    list-style-type: none;
+}
 </style>
