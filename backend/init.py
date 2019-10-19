@@ -1,5 +1,48 @@
 import sqlite3 
 from sqlite3 import Error
+from flask import Flask, request
+import random
+import string
+from json import dumps
+
+app = Flask(__name__)
+
+
+def generateID(number):
+    id = ""
+    for x in range(0, number):
+        id += random.choice(string.hexdigits)
+    return id
+
+# Routes
+
+@app.route('/')
+def hello():
+    return "Hello World!"
+
+# For creating an event
+@app.route('/api/event', methods=['POST'])
+def createEvent():
+    data = request.get_json()
+    print(data)
+    return generateID(5).upper()
+
+# For getting info on an event
+@app.route('/api/event', methods=['GET'])
+def getEvent():
+    data = request.get_json()
+    eventID = data.eventID
+    return generateID(5).upper()
+    
+@app.route('/api/attend', methods=['POST'])
+def attend():
+    data = request.get_json()
+    print(data)
+    return dumps({
+        "status": "success"
+    })
+
+# SQL Shit
 
 def createConnection():
     conn = None
@@ -56,6 +99,8 @@ def main():
     except Error as e:
         print(e)
         exit(1)
+    
+    app.run()
 
 
 if __name__ == '__main__':
