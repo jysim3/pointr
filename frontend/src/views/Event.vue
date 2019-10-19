@@ -24,7 +24,7 @@
         </form>
       </div>
     </div>
-    <Attendees :attendees="this.participants" />
+    <Attendees :eid="this.eid" :attendees="this.participants" />
   </div>
 </template>
 
