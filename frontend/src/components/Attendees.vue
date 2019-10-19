@@ -6,7 +6,7 @@
         <!-- EDIT ICON -->
         <i @click="edit" class="material-icons">edit</i>
         <!-- DELETE ICON -->
-        <i @click="del" class="material-icons">edit</i>
+        <i @click="del" class="material-icons">close</i>
       </li>
     </ul>
   </div>

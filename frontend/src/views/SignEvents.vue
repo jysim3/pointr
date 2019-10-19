@@ -1,5 +1,11 @@
 <template>
   <div>
+    <div id="eid-container">
+      <div id="event-code-title">
+        <h2 id="eid-header">Event code</h2>
+        <h2 id="eid-code">{{ this.eid }}</h2>
+      </div>
+    </div>
     <h1>Welcome to {{ this.eventName }}!</h1>
     <div class="form-container">
       <form @submit="submitForm">

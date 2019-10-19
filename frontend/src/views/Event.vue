@@ -14,11 +14,11 @@
         <form @submit="submitForm" class="form" id="create-event-form" action>
           <div class="label-input-div">
             <label for>zID</label>
-            <input v-model="zid" type="text" required />
+            <input v-model="zid" type="text" required/>
           </div>
           <div class="label-input-div">
             <label for>Name</label>
-            <input v-model="uname" type="text" required />
+            <input v-model="uname" type="text" required/>
           </div>
           <button>Sign attendance</button>
         </form>
@@ -98,6 +98,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  color: black;
 }
 
 #event-code-title {
