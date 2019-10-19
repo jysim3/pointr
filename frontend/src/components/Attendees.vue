@@ -1,5 +1,5 @@
 <template>
-  <div v-if="len(attendes) != 0" id="attendance-container">
+  <div v-if="attendees.length != 0" id="attendance-container">
     <h2>Attendance</h2>
     <ul>
       <li v-for="(attendee, index) in attendees" :key="index">
