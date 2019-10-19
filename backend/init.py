@@ -124,8 +124,12 @@ def getUser():
     attendance = utilFunctions.getUserAttendance(sanitize(zID))
     if attendance == 'invalid user': 
         return dumps({"status": "failed"})
-    payload = []
-    for event in attendance:
+    payload = {}
+    payload['events'] = []
+    payload['zID'] = zID
+    payload['name'] = attendance[1]
+    print(attendance[0])
+    for event in attendance[0]:
         eventJSON = {}
         # Dont ask what this does
         eventJSON['eventID'] = event[0][0]
@@ -133,7 +137,7 @@ def getUser():
         eventJSON['society'] = event[0][2]
         eventJSON['eventDate'] = event[0][3]
         eventJSON['points'] = event[1]
-        payload.append(eventJSON)
+        payload['events'].append(eventJSON)
     return dumps(payload)
 
 # Delete user attendance
