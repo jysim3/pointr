@@ -6,7 +6,7 @@
         <h2 id="eid-code">{{ this.eid }}</h2>
       </div>
     </div>
-    <h2 id="welcome-header">Welcome to {{ this.name }}</h2>
+    <h1 class="welcome-header">Welcome to {{ this.name }}</h1>
     <div id="qr-and-form-container">
       <EventQRCode v-bind:eid="this.eid" />
       <!-- <h3 id="event-url">{{ eventURL }}</h3> -->
@@ -117,7 +117,6 @@ export default {
 }
 
 #eid-header {
-  text-transform: none;
   font-size: 1rem;
 }
 
@@ -132,11 +131,6 @@ export default {
 
 #qr-container {
   margin-right: 2rem;
-}
-
-#welcome-header {
-  text-transform: none;
-  text-align: center;
 }
 
 </style>

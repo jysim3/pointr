@@ -62,11 +62,4 @@ export default {
 
 <style>
 @import "../assets/style.css";
-
-#create-event-form {
-    /* border: 1px solid black; */
-
-    padding: 3rem 6rem;
-    background-color: var(--primary-yellow);
-}
 </style>

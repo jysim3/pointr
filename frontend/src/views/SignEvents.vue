@@ -1,18 +1,19 @@
 <template>
   <div>
     <h1>Welcome to {{ this.eventName }}!</h1>
-    <form @submit="submitForm">
-      <label class="inp">
-        <span class="label">zid</span>
-        <input type="text" v-model="zid" />
-      </label>
-      <br />
-      <label class="inp">
-        <span class="label">Name</span>
-        <input type="text" v-model="name" />
-        <input type="submit" />
-      </label>
-    </form>
+    <div class="form-container">
+      <form @submit="submitForm">
+        <div class="label-input-div">
+          <label for>zID</label>
+          <input type="text" v-model="zid" />
+        </div>
+        <div class="label-input-div">
+          <label for>Name</label>
+          <input type="text" v-model="name" />
+        </div>
+        <button>Sign attendance</button>
+      </form>
+    </div>
   </div>
 </template>
 <script>
@@ -52,6 +53,14 @@ export default {
             .catch(e => alert(e))
         }
     }
-};
+  };
 </script>
-<style scoped></style>
+
+<style scoped>
+  h2 {
+    text-align: center;
+  }
+  .form-container {
+    margin-top: 3rem;
+  }
+</style>
