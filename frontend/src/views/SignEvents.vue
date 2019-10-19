@@ -18,39 +18,42 @@
 </template>
 <script>
 import { fetchAPI } from "@/util.js";
+import router from '@/router/index.js';
 export default {
-  name: "hi",
-  props: {
-    eid: String
-  },
-  mounted() {
-    fetchAPI(`/api/event?events=${this.eid}`, "GET").then(j => {
-      this.eventName = j.name;
-    });
-  },
-  data() {
-    return {
-      zid: "",
-      name: "",
-      eventName: ""
-    };
-  },
-  methods: {
-    submitForm(e) {
-      const data = {
-        zID: this.zid,
-        name: this.name,
-        eventID: this.eid
-      };
-      e.preventDefault();
-      fetchAPI("/api/attend", "POST", data)
-        .then(() => {
-          window.location.path = "/u/" + this.zid;
+    name: "hi",
+    props: {
+        eid: String
+    },
+    mounted() {
+        fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
+        .then(j => {
+            this.eventName = j.name
         })
-        .catch(e => alert(e));
+    },
+    data() {
+        return {
+            zid: "",
+            name: "",
+            eventName: ""
+        };
+    },
+    methods: {
+        submitForm(e) {
+            const data = 
+            {
+                zID: this.zid,
+                name: this.name,
+                eventID: this.eid
+            }
+            e.preventDefault();
+            fetchAPI("/api/attend", "POST", data)
+            .then(() => {
+                router.push({name: "user", params: {zid: this.zid}})
+            })
+            .catch(e => alert(e))
+        }
     }
-  }
-};
+  };
 </script>
 
 <style scoped>
