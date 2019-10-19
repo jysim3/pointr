@@ -2,24 +2,24 @@
   <div>
     <h1>pointer</h1>
     <div class="form-container">
-        <h2>Create Event</h2>
-        <form @submit="submitForm">
-            <div class="label-input-div">
-                <label for="">Event title</label>
-                <input v-model="title" type="text">
-            </div>
-            <div class="label-input-div">
-                <label for="">Society</label>
-                <input v-model="society" type="text">
-            </div>
-            <div class="label-input-div">
-                <label for="">Set default points</label>
-                <input v-model="point" type="text">
-            </div>
-            <div class="label-input-div">
-                <label for="">Show QR Code/Event link</label>
-                <input type="checkbox">
-            </div>
+      <h2>Create Event</h2>
+      <form @submit="submitForm">
+        <div class="label-input-div">
+          <label for>Event title</label>
+          <input v-model="title" type="text" />
+        </div>
+        <div class="label-input-div">
+          <label for>Society</label>
+          <input v-model="society" type="text" />
+        </div>
+        <div class="label-input-div">
+          <label for>Set default points</label>
+          <input v-model="point" type="text" />
+        </div>
+        <div class="label-input-div">
+          <label for>Show QR Code/Event link</label>
+          <input type="checkbox" />
+        </div>
 
         <button @click="submitForm" class="btn-primary">Create Event</button>
       </form>
@@ -58,7 +58,7 @@ export default {
 
         }
     }
-  }
+  
 };
 </script>
 

@@ -1,6 +1,6 @@
 <template>
     <div>
-        
+       <h1> ajsdkfljasdklf</h1> 
     </div>
 </template>
 
@@ -11,8 +11,14 @@ import { apiURL } from "@/util.js"
 export default {
     name: 'Attendees',
     props: ['eid'],
+    data() {
+
+        return {
+            attendees: '',
+            name: ''
+        }
+    },
     mounted() {
-        const attendees = await fetchAPI('/dummy/event?eventID=' + this.eid)
     }
 }
 </script>
