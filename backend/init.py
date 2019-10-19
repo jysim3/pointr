@@ -34,7 +34,25 @@ def createEvent():
 def getEvent():
     data = request.get_json()
     eventID = data.eventID
-    return generateID(5).upper()
+    payload = {}
+    payload["eventID"] = eventID
+    payload["name"] = "Coffe Night"
+    payload["participants"] = 
+    [{
+        "userID": "z5214808",
+        "name": "Harrison",
+        "points": "10000"
+    }, {
+        "userID": "z6273842",
+        "name": "John",
+        "points": "1"
+    }, {
+        "userID": "z1234567",
+        "name": "Peter",
+        "points": "1203"
+    }]
+    
+    return dumps(payload)
 
 # For adding a user to an event 
 @app.route('/api/attend', methods=['POST'])
