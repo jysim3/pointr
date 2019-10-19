@@ -23,7 +23,7 @@ export default {
         eid: String
     },
     mounted() {
-        fetchAPI(`/api/event?events=${this.eid}`, "GET")
+        fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
         .then(j => {
             this.eventName = j.name
         })
