@@ -11,8 +11,8 @@ import re
 app = Flask(__name__)
 CORS(app)
 
-def sanitizeInput(input):
-    pass
+def sanitize(input):
+    return re.sub("[^\w ']", "", input)
 
 def generateID(number):
     id = ""
@@ -43,7 +43,7 @@ def createEvent():
     print(data)
     eventID = generateID(5).upper()
     payload = {}
-    payload['status'] = utilFunctions.createEvent(data['zID'], eventID, data['name'], data['eventDate'])
+    payload['status'] = utilFunctions.createEvent(sanitize(data['zID']), sanitize(eventID), sanitize(data['name']), sanitize(data['eventDate']))
     if payload['status'] == 'success':
         payload['eventID'] = eventID
     return dumps(payload)
@@ -82,7 +82,7 @@ def getEventDummy():
 def getEvent():
     eventID = request.args.get('eventID')
     payload = {}
-    attendance = utilFunctions.getAttendance(eventID)
+    attendance = utilFunctions.getAttendance(sanitize(eventID))
     if attendance == "failed":
         payload['status'] = 'failed'
     else:
@@ -110,7 +110,7 @@ def attend():
     data = request.get_json()
     payload = {}
     
-    payload['status'] = utilFunctions.register(data['zID'], data['eventID'], data['name'])
+    payload['status'] = utilFunctions.register(sanitize(data['zID']), sanitize(data['eventID']), sanitize(data['name']))
     return dumps(payload)
 
 # For getting the points of a user
@@ -121,7 +121,7 @@ def attend():
 @app.route('/api/user', methods=['GET'])
 def getUser():
     zID = request.args.get('zID')
-    attendance = utilFunctions.getUserAttendance(zID)
+    attendance = utilFunctions.getUserAttendance(sanitize(zID))
     if attendance == 'invalid user': 
         return dumps({"status": "failed"})
     payload = []
@@ -148,7 +148,7 @@ def deletePoints():
     data = request.get_json()
     
     payload = {}
-    payload['status'] = utilFunctions.deleteUserAttendance(data['zID'], data['eventID'])
+    payload['status'] = utilFunctions.deleteUserAttendance(sanitize(data['zID']), sanitize(data['eventID']))
     return dumps(payload)
     
 # Update user attendance
@@ -163,7 +163,7 @@ def deletePoints():
 def updatePoints():
     data = request.get_json()
     payload = {}
-    payload['status'] = utilFunctions.changePoints(data['zID'], data['eventID'], data['points'])
+    payload['status'] = utilFunctions.changePoints(sanitize(data['zID']), sanitize(data['eventID']), sanitize(data['points']))
     return dumps(payload)
 
 # For creating a user
@@ -176,7 +176,7 @@ def updatePoints():
 @app.route('/api/user', methods=['POST'])
 def postUser():
     data = request.get_json()
-    returnVal = utilFunctions.createUser(data['zID'], data['name'])
+    returnVal = utilFunctions.createUser(sanitize(data['zID']), sanitize(data['name']))
     payload = {}
     payload['status'] = returnVal
     return dumps(payload)
