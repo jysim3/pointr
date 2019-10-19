@@ -4,10 +4,10 @@
     <ul>
       <li v-for="(attendee, index) in attendees" :key="index">
         <div id="icons">
-        {{ attendee.name }} - {{ attendee.points }}
-        <i @click="edit(attendee)" class="material-icons">edit</i>
-        <!-- DELETE ICON -->
-        <i v-on:click="del(attendee)" class="material-icons">close</i>
+            {{ attendee.name }} - {{ attendee.points }}
+            <i @click="edit(attendee)" class="material-icons">edit</i>
+            <!-- DELETE ICON -->
+            <i v-on:click="del(attendee)" class="material-icons">close</i>
         </div>
       </li>
     </ul>
@@ -48,10 +48,11 @@ export default {
 li {
   list-style-type: none;
   margin-left: -3rem;
-  background-color: #fff;
+  background-color: white;
   color: black;
-  padding: 1rem;
   border-radius: 0.5rem;
+  display: block;
+  padding: 1rem;
 }
 
 .material-icons {
@@ -60,9 +61,5 @@ li {
 
 ul {
   margin-top: 2rem;
-}
-
-#icons {
-    float: right;
 }
 </style>
