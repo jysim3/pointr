@@ -22,25 +22,30 @@ def checkEvent(eventID):
 
     rows = curs.fetchall()
     if (rows == []):
-        return false
+        return False
     
     return True
 
 # Creating a user 
 def createUser(userID, name):
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("insert into users(zid, name) values(?, ?);", (userID, name,))
+    conn.commit()
 
 # Creting an event
 # Event could maybe have a weight
 def createEvent(userID, eventID, eventName, eventDate, eventPoints):
     # FIXME
     if (checkUser(userID) == False):
-        addUser(userID)
+        createuser(userID)
     
     if (checkEvent(eventID) != False):
         return "Already created"
     
 def fetchUserStatistics():
     # We fetch everything from the participation relationship
+    return 1
 
 def register(userID, userName, eventID, eventName, points):
     sqlUser = ''' 
@@ -48,6 +53,8 @@ def register(userID, userName, eventID, eventName, points):
         values(?, ?);'''
 
 def main():
+    checkUser("z5161616")
+    createUser("z5161616", "Steven Shen")
     checkUser("z5161616")
 
 if __name__ == '__main__':
