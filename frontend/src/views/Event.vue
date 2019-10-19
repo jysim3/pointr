@@ -6,11 +6,11 @@
         <h2 id="eid-code">{{ this.eid }}</h2>
       </div>
     </div>
-    <h2>Welcome to {{ this.name }}</h2>
+    <h2 id="welcome-header">Welcome to {{ this.name }}</h2>
     <div id="qr-and-form-container">
       <EventQRCode v-bind:eid="this.eid" />
-      <h3 id="event-url">{{ eventURL }}</h3>
-      <div class="form-container">
+      <!-- <h3 id="event-url">{{ eventURL }}</h3> -->
+      <div id="event-form-container" class="form-container">
         <form @submit="submitForm" class="form" id="create-event-form" action>
           <div class="label-input-div">
             <label for>zID</label>
@@ -104,7 +104,7 @@ export default {
   box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
   display: inline-block;
   text-align: center;
-  padding: 1rem 2rem;
+  padding: 1rem 3rem;
 }
 
 #event-code-title h2 {
@@ -115,4 +115,23 @@ export default {
   text-transform: none;
   font-size: 1rem;
 }
+
+#qr-container, #event-form-container {
+  display: inline-block;
+}
+
+#qr-and-form-container {
+  display: flex;
+  justify-content: center;
+}
+
+#qr-container {
+  margin-right: 2rem;
+}
+
+#welcome-header {
+  text-transform: none;
+  text-align: center;
+}
+
 </style>
