@@ -1,6 +1,8 @@
 <template>
   <div>
-    <h1>pointer</h1>
+    <div class="img-container">
+      <img src="../assets/logo.png" alt="pointr logo">
+    </div>
     <div class="form-container">
       <form id="create-event-form" @submit="submitForm">
         <h2>Create Event</h2>
@@ -60,6 +62,10 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 @import "../assets/style.css";
+
+.img-container {
+    margin-bottom: 2rem;
+}
 </style>

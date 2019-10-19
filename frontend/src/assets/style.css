@@ -99,7 +99,7 @@ button {
   margin-top: 2rem;
   border: 2px solid var(--primary-yellow);
   color: var(--primary-yellow);
-  width: 100%;
+  /* width: 100%; */
 }
 
 button:hover {
@@ -124,4 +124,15 @@ input:focus {
 label {
   font-size: 1.1rem;
   margin: 0.5rem 0;
+}
+
+img {
+  width: 20%;
+  height: 20%;
+}
+
+.img-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 2rem;
 }

@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div v-if="len(attendes) != 0" id="attendance-container">
+    <h2>Attendance</h2>
     <ul>
       <li v-for="(attendee, index) in attendees" :key="index">
         {{ attendee.name }}
@@ -38,4 +39,7 @@ export default {
 </script>
 
 <style>
+li {
+    list-style-type: none;
+}
 </style>
