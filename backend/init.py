@@ -131,7 +131,7 @@ def attend():
 @app.route('/api/user', methods=['GET'])
 def getUser():
     zID = request.args.get('zID')
-    attendance = utilFunctions.getUserAttendance(sanitize(zID.lower())
+    attendance = utilFunctions.getUserAttendance(sanitize(zID.lower()))
     if attendance == 'invalid user': 
         return dumps({"status": "failed"})
     payload = {}
