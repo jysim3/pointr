@@ -5,6 +5,7 @@ from flask_cors import CORS
 import random
 import string
 from json import dumps
+import utilFunctions
 
 app = Flask(__name__)
 CORS(app)
@@ -30,15 +31,15 @@ def createEvent():
     return generateID(5).upper()
 
 # For getting info on an event
+# Usage:
+# GET /api/event?eventID=ID
 @app.route('/api/event', methods=['GET'])
 def getEvent():
-    data = request.get_json()
-    eventID = data.eventID
+    eventID = request.args.get('eventID')
     payload = {}
     payload["eventID"] = eventID
     payload["name"] = "Coffe Night"
-    payload["participants"] = 
-    [{
+    payload["participants"] = [{
         "userID": "z5214808",
         "name": "Harrison",
         "points": "10000"
@@ -59,16 +60,31 @@ def getEvent():
 def attend():
     data = request.get_json()
     print(data)
-    return dumps({
-        "status": "success"
-    })
+    return 10
 
 # For getting the points of a user
 @app.route('/api/user', methods=['GET'])
 def getPoints():
     data = request.get_json()
     print(data)
-    return 10
+    
+    return "Hello"
+
+# For creating a user
+# Usage: 
+# POST /api/user
+# Takes: 
+# {zID: "z1234567", name: "Harrison Steyn"}
+# Returns: 
+# {"status": "success"}
+
+@app.route('/api/user', methods=['POST'])
+def postUser():
+    data = request.get_json()
+    
+    payload = {}
+    payload['status'] = "success"
+    return dumps(payload)
 
 # SQL Shit
 
