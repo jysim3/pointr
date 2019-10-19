@@ -44,7 +44,7 @@ export default {
                 eventID: this.eid
             }
             e.preventDefault();
-            fetchAPI("/api/event", "POST", data)
+            fetchAPI("/api/attend", "POST", data)
             .then(() => {
                 window.location.path = "/u/"+this.zid
             })
