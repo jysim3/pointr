@@ -19,16 +19,7 @@ export default {
     data() {
         return {
             username: 'Steven',
-            events: [
-                {
-                    name: "Coffee Night #2",
-                    points: 5
-                },
-                {
-                    name: "Coffee Night #3",
-                    points: 5
-                },
-            ]
+            events: []
 
         }
     },
@@ -37,7 +28,8 @@ export default {
         fetchAPI(`/api/user?zID=${this.zid}`, "GET")
         .then(j => {
             console.log(j)// eslint-disable-line
-            this.events=j
+            this.events=j.events
+            this.username=j.user
         })
     }
 
