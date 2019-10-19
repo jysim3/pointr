@@ -37,5 +37,12 @@ export default {
 }
 </script>
 <style scoped>
+@import "../assets/style.css";
 
+#home-container {
+  background-color: var(--primary-yellow);
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+}
 </style>
