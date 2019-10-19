@@ -40,10 +40,19 @@ def hello():
 @app.route('/api/event', methods=['POST'])
 def createEvent():
     data = request.get_json()
-    print(data)
+
     eventID = generateID(5).upper()
+    if not data['hasQR']:
+        data['hasQR'] = False
+    elif lower(data['hasQR']) == "true":
+        data['hasQR'] = True
+    elif lower(data['hasQR']) == "false":
+        data['hasQR'] = False
+    else:
+        data['hasQR'] = False
+            
     payload = {}
-    payload['status'] = utilFunctions.createEvent(sanitize(lower(data['zID'])), sanitize(eventID), sanitize(data['name']), sanitize(data['eventDate']))
+    payload['status'] = utilFunctions.createEvent(sanitize(lower(data['zID'])), sanitize(eventID), sanitize(data['name']), sanitize(data['eventDate']), data['hasQR'])
     if payload['status'] == 'success':
         payload['eventID'] = eventID
     return dumps(payload)
@@ -88,6 +97,7 @@ def getEvent():
     else:
         payload['eventID'] = eventID
         payload['name'] = attendance[1]
+        payload['hasQR'] = True if attendance[2] == 1 else False
         payload['participants'] = []
         for person in attendance[0]:
             personJSON = {}
