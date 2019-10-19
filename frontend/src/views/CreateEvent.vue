@@ -2,8 +2,8 @@
   <div>
     <h1>pointer</h1>
     <div class="form-container">
-      <h2>Create Event</h2>
       <form @submit="submitForm">
+        <h2>Create Event</h2>
         <div class="label-input-div">
           <label for>Event title</label>
           <input v-model="title" type="text" />
@@ -29,7 +29,7 @@
 
 <script>
 import { fetchAPI } from '@/util.js';
-import router from '@/router/index.js'
+import router from '@/router/index.js';
 
 export default {
     name: 'CreateEvent',
@@ -58,7 +58,6 @@ export default {
 
         }
     }
-  
 };
 </script>
 
