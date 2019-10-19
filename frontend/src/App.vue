@@ -18,7 +18,7 @@ export default {
 
 
 <style>
-@import url('https://fonts.googleapis.com/css?family=Roboto:400,100,400i,700i,700');
+/* @import url('https://fonts.googleapis.com/css?family=Roboto:400,100,400i,700i,700');
 html{
   font: 100%/1.5 "Roboto", Verdana, sans-serif;
 }
@@ -36,7 +36,7 @@ h1, .alpha {
     background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: hue 60s infinite linear;
-}
+} */
 /* #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
