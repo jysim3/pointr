@@ -41,6 +41,8 @@ h1 {
   font-size: 3rem;
   font-weight: 300;
   letter-spacing: 0.02rem;
+  text-align: center;
+  margin: 2rem 0;
 }
 
 h2 {
@@ -50,11 +52,6 @@ h2 {
 
 h3 {
   text-transform: none;
-}
-
-.welcome-header {
-  text-align: center;
-  margin: 2rem 0;
 }
 
 /* Form elements */
