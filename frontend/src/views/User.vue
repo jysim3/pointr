@@ -5,7 +5,7 @@
     <div id="container">
       <h2>Events you attended</h2>
       <div id="table-container">
-        <table cellspacing="0" id="attendance-table">
+        <table class="shadow" cellspacing="0" id="attendance-table">
           <tr>
             <th>Event name</th>
             <th>Points</th>
@@ -71,6 +71,7 @@ table {
   width: 40%;
   margin: 0;
   padding: 0;
+  color: black;
 }
 
 th {
