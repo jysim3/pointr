@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1> Hi {{this.username}} </h1>
+    <h1> Thanks for attending, {{this.username}} </h1>
     <table>
         <tr v-for="(event,index) in events" :key="index">
             <td>{{ event.name }}</td>
