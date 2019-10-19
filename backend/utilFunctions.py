@@ -183,8 +183,8 @@ def main():
     register("z5444444", "1234", 'Oltan Sevinc')
     register("z5555555", "1234", 'Will de Dassel')
 
-    # print(getAttendance("1239"))
-    print(getUserAttendance("z5161616"))
+    print(getAttendance("1239"))
+    # print(getUserAttendance("z5161616"))
 
 if __name__ == '__main__':
     main()
