@@ -62,10 +62,6 @@ def createEvent(zID, eventID, eventName, eventDate):
     conn.commit()
     return "success"
 
-def fetchUserStatistics():
-    # We fetch everything from the participation relationship
-    return 1
-
 def register(zID, eventID):
     if (checkUser(zID) == False or checkEvent(eventID) == False):
         return "User or Event does not exist"
@@ -77,6 +73,7 @@ def register(zID, eventID):
     curs = conn.cursor()
     curs.execute("insert into participation(points, user, eventID) values (?, ?, ?)", (1, zID, eventID,))
     conn.commit()
+    return "success"
 
 def getAttendance(eventID):
     if (checkEvent(eventID) == False):
@@ -127,6 +124,27 @@ def getUserAttendance(zid):
         events_output.append(events_info)
         
     return events_output
+
+def changePoints(zID, eventID, newPoints):
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("update participation set points=? where eventID=? and user=?", (newPoints, eventID, zID,))
+    conn.commit()
+    error = curs.fetchone()
+    if error == []:
+        return "failed"
+    return "success"
+
+def deleteUserAttendance(zID, eventID):
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("delete from participation where user=? and eventid=?", (zID, eventID,))
+    conn.commit()
+    error = curs.fetchone()
+    if error == []:
+        return "failed"
+    return "success"
+
 
 def main():
     # add users

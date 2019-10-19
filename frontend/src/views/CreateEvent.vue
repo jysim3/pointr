@@ -2,7 +2,7 @@
   <div>
     <h1>pointer</h1>
     <div class="form-container">
-      <form @submit="submitForm">
+      <form id="create-event-form" @submit="submitForm">
         <h2>Create Event</h2>
         <div class="label-input-div">
           <label for>Event title</label>
@@ -16,11 +16,10 @@
           <label for>Set default points</label>
           <input v-model="point" type="text" />
         </div>
-        <div class="label-input-div">
-          <label for>Show QR Code/Event link</label>
-          <input type="checkbox" />
+        <div>
+            <label for>Show QR Code/Event link</label>
+            <input type="checkbox" />
         </div>
-
         <button @click="submitForm" class="btn-primary">Create Event</button>
       </form>
     </div>
@@ -63,4 +62,11 @@ export default {
 
 <style>
 @import "../assets/style.css";
+
+#create-event-form {
+    /* border: 1px solid black; */
+
+    padding: 3rem 6rem;
+    background-color: var(--primary-yellow);
+}
 </style>
