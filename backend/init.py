@@ -97,26 +97,68 @@ def getEvent():
         payload['status'] = 'success'
     return dumps(payload)
 
-# For adding a user to an event 
+# For adding a user to an event
+# Usage:
+# /api/attend
+# Takes: 
+# {'zID': z5214808, 'eventID': "12332"}
 @app.route('/api/attend', methods=['POST'])
 def attend():
     data = request.get_json()
-    print(data)
-    payload = {}
+    payload = register(data['zID'], data['eventID'])
     
-    payload['status'] = "success"
+    payload['status'] = payload
     return dumps(payload)
 
 # For getting the points of a user
 # Usage:
 # GET /api/user?zID=z5214808
 # Returns:
-# {TODO}
+# [{"eventID": "1239", "name": "Test Event 0", "society": "UNSW Hall", "eventDate": "2019-11-19"}, {"eventID": "1240", "name": "Coffee Night", "society": "UNSW Hall", "eventDate": "2019-11-20"}]
 @app.route('/api/user', methods=['GET'])
 def getUser():
     zID = request.args.get('zID')
+    attendance = utilFunctions.getUserAttendance(zID)
+    if attendance == 'invalid user': 
+        return dumps({"status": "failed"})
+    payload = []
+    for event in attendance:
+        eventJSON = {}
+        eventJSON['eventID'] = event[0][0]
+        eventJSON['name'] = event[0][1]
+        eventJSON['society'] = event[0][2]
+        eventJSON['eventDate'] = event[0][3]
+        eventJSON['points'] = 1
+        payload.append(eventJSON)
+    return dumps(payload)
+
+# Delete user attendance
+# Usage: 
+# DELETE /api/points
+# Takes:
+# {zID: "z5214808", eventID: "13287"}
+# Returns: 
+# {"status": "success"}
+@app.route('/api/points', methods=['DELETE'])
+def deletePoints():
+    data = request.get_json()
+    
     payload = {}
     payload['status'] = "success"
+    return dumps(payload)
+    
+# Update user attendance
+# Usage: 
+# POST /api/points
+# Takes: 
+# {zID: "z5214808", eventID: "13287"}
+# Returns: 
+# {"status": "success"}
+@app.route('/api/points', methods=['POST'])
+def updatePoints():
+    data = request.get_json()
+    payload = {}
+    payload['status'] = returnVal
     return dumps(payload)
 
 # For creating a user
