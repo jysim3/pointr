@@ -127,7 +127,7 @@ def getUserAttendance(zid):
         events_info.append(event[1])
         events_output.append(events_info)
         
-    return events_output
+    return events_output, userName
 
 def changePoints(zID, eventID, newPoints):
     conn = createConnection()
