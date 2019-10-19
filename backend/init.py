@@ -229,6 +229,7 @@ def main():
                 society text,
                 eventdate date not null,
                 owner text not null references users(id),
+                qrCode boolean,
                 primary key(eventID)
             );'''
         createTable(conn, createEventsSQL)
