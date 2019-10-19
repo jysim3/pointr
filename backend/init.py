@@ -105,7 +105,7 @@ def getEvent():
 @app.route('/api/attend', methods=['POST'])
 def attend():
     data = request.get_json()
-    payload = register(data['zID'], data['eventID'])
+    payload = utilFunctions.register(data['zID'], data['eventID'])
     
     payload['status'] = payload
     return dumps(payload)
