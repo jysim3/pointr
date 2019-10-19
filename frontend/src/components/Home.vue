@@ -10,18 +10,21 @@
 </template>
 
 <script>
+import router from '@/router/index.js'
 export default {
   name: 'Home',
   data() {
     return {
-      eid = ""
+      eid: ''
     }
   },
   props: {
     msg: String
   },
   methods: {
-    router.push({name: "event", params: {eid: this.eid}})
+    submitForm() {
+      router.push({name: "event", params: {eid: this.eid}})
+    }
   }
 }
 </script>
