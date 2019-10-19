@@ -6,7 +6,7 @@
         <!-- EDIT ICON -->
         <i class="material-icons">edit</i>
         <!-- DELETE ICON -->
-        <i class="material-icons">edit</i>
+        <i class="material-icons">close</i>
       </li>
     </ul>
   </div>

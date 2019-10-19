@@ -6,15 +6,15 @@
         <h2>Create Event</h2>
         <div class="label-input-div">
           <label for>Event title</label>
-          <input v-model="title" type="text" />
+          <input v-model="title" type="text" required/>
         </div>
         <div class="label-input-div">
           <label for>Society</label>
-          <input v-model="society" type="text" />
+          <input v-model="society" type="text" required/>
         </div>
         <div class="label-input-div">
           <label for>Set default points</label>
-          <input v-model="point" type="text" />
+          <input v-model="point" type="text" required/>
         </div>
         <div>
             <label for>Show QR Code/Event link</label>
