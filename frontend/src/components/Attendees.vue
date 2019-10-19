@@ -6,14 +6,14 @@
         <!-- EDIT ICON -->
         <i @click="edit" class="material-icons">edit</i>
         <!-- DELETE ICON -->
-        <i @click="del" class="material-icons">close</i>
+        <i @click="del(attendee)" class="material-icons">close</i>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
-// import fetchAPI from '@/util.js'
+import {fetchAPI} from '@/util.js'
 // import { apiURL } from "@/util.js"
 
 export default {
@@ -24,7 +24,12 @@ export default {
     edit() {
 
     },
-    del() {
+    del(attendee) {
+      const data = {
+        zID: attendee.zID,
+        eventID: this.edi
+      }
+      fetchAPI('/api/points','DELETE', data)
 
     },
   }

@@ -42,7 +42,7 @@ def createEvent():
     data = request.get_json()
 
     eventID = generateID(5).upper()
-    if not data['hasQR']:
+    if not 'hasQR' in data:
         data['hasQR'] = False
     elif data['hasQR'].lower() == "true":
         data['hasQR'] = True
@@ -97,7 +97,7 @@ def getEvent():
     else:
         payload['eventID'] = eventID
         payload['name'] = attendance[1]
-        payload['hasQR'] = True if attendance[2] == 1 else False
+        payload['hasQR'] = False
         payload['participants'] = []
         for person in attendance[0]:
             personJSON = {}
@@ -131,7 +131,7 @@ def attend():
 @app.route('/api/user', methods=['GET'])
 def getUser():
     zID = request.args.get('zID')
-    attendance = utilFunctions.getUserAttendance(sanitize(zID.lower())
+    attendance = utilFunctions.getUserAttendance(sanitize(zID.lower()))
     if attendance == 'invalid user': 
         return dumps({"status": "failed"})
     payload = {}
