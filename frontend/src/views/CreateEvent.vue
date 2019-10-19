@@ -1,6 +1,7 @@
 <template>
-    <div>
-        <h1>pointer</h1>
+  <div>
+    <h1>pointer</h1>
+    <div class="form-container">
         <h2>Create Event</h2>
         <form @submit="submitForm">
             <div class="label-input-div">
@@ -20,9 +21,10 @@
                 <input type="checkbox">
             </div>
 
-            <button @click="submitForm" class="btn-primary">Create Event</button>
-        </form>
+        <button @click="submitForm" class="btn-primary">Create Event</button>
+      </form>
     </div>
+  </div>
 </template>
 
 <script>
@@ -56,11 +58,10 @@ export default {
 
         }
     }
-}
+  }
+};
 </script>
 
 <style>
-    .label-input-div label {
-        display: block;
-    }
+@import "../assets/style.css";
 </style>
