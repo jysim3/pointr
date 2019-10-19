@@ -24,7 +24,9 @@
         </form>
       </div>
     </div>
+    <div id="attendees">
     <Attendees :eid="this.eid" :attendees="this.participants" />
+    </div>
   </div>
 </template>
 
@@ -128,6 +130,14 @@ export default {
 
 #qr-container {
   margin-right: 2rem;
+}
+
+#attendees {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
 }
 
 </style>

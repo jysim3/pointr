@@ -3,17 +3,19 @@
     <h2>Attendance</h2>
     <ul>
       <li v-for="(attendee, index) in attendees" :key="index">
+        <div id="icons">
         {{ attendee.name }} - {{ attendee.points }}
         <i @click="edit(attendee)" class="material-icons">edit</i>
         <!-- DELETE ICON -->
         <i v-on:click="del(attendee)" class="material-icons">close</i>
+        </div>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
-import {fetchAPI} from '@/util.js'
+import { fetchAPI } from "@/util.js";
 // import { apiURL } from "@/util.js"
 
 export default {
@@ -39,12 +41,29 @@ export default {
 
     },
   }
-
 };
 </script>
 
 <style>
 li {
-    list-style-type: none;
+  list-style-type: none;
+  margin-left: -3rem;
+  margin-top: 1rem;
+  background-color: #fff;
+  color: black;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.material-icons {
+  cursor: pointer;
+}
+
+ul {
+  margin-top: 2rem;
+}
+
+#icons {
+    float: right;
 }
 </style>
