@@ -17,6 +17,7 @@
 </template>
 <script>
 import { fetchAPI } from "@/util.js";
+import router from '@/router/index.js';
 export default {
     name: "hi",
     props: {
@@ -46,7 +47,7 @@ export default {
             e.preventDefault();
             fetchAPI("/api/attend", "POST", data)
             .then(() => {
-                window.location.path = "/u/"+this.zid
+                router.push({name: "user", params: {zid: this.zid}})
             })
             .catch(e => alert(e))
         }
