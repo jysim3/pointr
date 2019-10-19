@@ -2,6 +2,9 @@
   <div id="home-container">
     <div class="center">
       <h1 class="title">Room Pointer</h1>
+      <form @submit="submitForm"> 
+        <input v-model="eid" type="text" />
+      </form> 
     </div>
   </div>
 </template>
@@ -9,8 +12,16 @@
 <script>
 export default {
   name: 'Home',
+  data() {
+    return {
+      eid = ""
+    }
+  },
   props: {
     msg: String
+  },
+  methods: {
+    router.push({name: "event", params: {eid: this.eid}})
   }
 }
 </script>
