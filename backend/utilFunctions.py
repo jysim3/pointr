@@ -176,6 +176,12 @@ def main():
     register("z5161616", "0000")
     #   for Coffee Night
     register("z5161616", "1234")
+    register("z5161798", "1234")
+    register("z5111111", "1234")
+    register("z5222222", "1234")
+    register("z5333333", "1234")
+    register("z5444444", "1234")
+    register("z5555555", "1234")
 
     print(getAttendance("1239"))
     print(getUserAttendance("z5161616"))
