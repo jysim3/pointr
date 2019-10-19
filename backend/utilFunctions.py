@@ -10,16 +10,21 @@ def createConnection():
     return conn
 
 # Check if a user exists in the table
-def checkUser(userID):
+def checkUser(zID):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select * from users where zid=?", (userID,))
+    curs.execute("select * from users where zid=?", (zID,))
     
     rows = curs.fetchall()
-    if (rows == []):
-        return False
+    return False if rows == [] else True
 
-    return True
+def checkParticipation(zID, eventID):
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("select * from participation where user=? and eventid=?", (zID, eventID,))
+    
+    rows = curs.fetchall()
+    return False if rows == [] else True
 
 # Check if an event exists in the table
 def checkEvent(eventID):
@@ -28,45 +33,83 @@ def checkEvent(eventID):
     curs.execute("select * from events where eventid=?", (eventID,))
 
     rows = curs.fetchall()
-    if (rows == []):
-        return False
-    
-    return True
+    return False if rows == [] else True
 
 # Creating a user 
-def createUser(userID, name):
-    if (checkUser(userID) != False):
-        return None
+def createUser(zID, name):
+    if (checkUser(zID) != False):
+        return "Failed"
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into users(zid, name) values(?, ?);", (userID, name,))
+    curs.execute("insert into users(zid, name) values(?, ?);", (zID, name,))
     conn.commit()
+    return "Success"
 
 # Creting an event
 # Event could maybe have a weight
-def createEvent(userID, eventID, eventName, eventDate):
+def createEvent(zID, eventID, eventName, eventDate):
     # FIXME
-    if (checkUser(userID) == False):
-        createUser(userID, "Junyang Sim")
-    
+    if (checkUser(zID) == False):
+        createUser(zID, "Junyang Sim")
+
     if (checkEvent(eventID) != False):
-        return "Already created"
+        return "Event does not exist"
     
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into events(eventID, name, society, owner, eventDate) values (?, ?, ?, ?, ?);", (eventID, eventName, "UNSW Hall", userID, eventDate,))
+    curs.execute("insert into events(eventID, name, society, owner, eventDate) values (?, ?, ?, ?, ?);", (eventID, eventName, "UNSW Hall", zID, eventDate,))
     conn.commit()
+    return "success"
 
 def fetchUserStatistics():
     # We fetch everything from the participation relationship
     return 1
 
-def register(userID, userName, eventID, eventName, points):
-    return 1
+def register(zID, eventID):
+    if (checkUser(zID) == False or checkEvent(eventID) == False):
+        return "User or Event does not exist"
+
+    if (checkParticipation(zID, eventID) == True):
+        return "Already registered"
+
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("insert into participation(points, user, eventID) values (?, ?, ?)", (1, zID, eventID,))
+    conn.commit()
+
+def getAttendance(eventID):
+    if (checkEvent(eventID) == False):
+        return "failed"
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("select * from events where eventid=?", (eventID,))
+    conn.commit()
+    eventInformation = curs.fetchone()
+    # Need to return eventName
+    eventName = eventInformation[1]
+
+    curs.execute("select user from participation where eventid=?", (eventID,))
+    attendees = []
+    rows = curs.fetchall()
+    for row in rows:
+        attendees.append(row[0])
+
+    participation = []
+    for person in attendees:
+        curs.execute("select * from users where zid=?", (person,))
+        rows = curs.fetchall()
+        participation.append([rows, 1])
+
+    return participation, eventName
 
 def main():
-    createEvent("z5161616", "aslhfkjahsdf", "Test Event 0", "2019-11-19")
+    createUser("z5161616", "Steven Shen")
+    createUser("z5161798", "Casey Neistat")
+    createEvent("z5161616", "1239", "Test Event 0", "2019-11-19")
+    register("z5161616", "1239")
+    register("z5161798", "1239")
+    print(getAttendance("1239"))
 
 if __name__ == '__main__':
     main()
