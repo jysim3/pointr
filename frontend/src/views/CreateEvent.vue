@@ -5,15 +5,15 @@
         <form @submit="submitForm">
             <div class="label-input-div">
                 <label for="">Event title</label>
-                <input v-bind="title" type="text">
+                <input v-model="title" type="text">
             </div>
             <div class="label-input-div">
                 <label for="">Society</label>
-                <input v-bind="society" type="text">
+                <input v-model="society" type="text">
             </div>
             <div class="label-input-div">
                 <label for="">Set default points</label>
-                <input v-bind="point" type="text">
+                <input v-model="point" type="text">
             </div>
             <div class="label-input-div">
                 <label for="">Show QR Code/Event link</label>
@@ -26,12 +26,33 @@
 </template>
 
 <script>
+import { fetchAPI } from '@/util.js';
+import router from '@/router/index.js'
+
 export default {
     name: 'CreateEvent',
+    data() {
+        return {
+            title: "",
+            society: "",
+            point: 1
+        }
+    },
     methods: {
-        submit(e) {
+        submitForm(e) {
             e.preventDefault();
-
+            const data = {
+                name: this.title,
+                owner: "Ivan",
+                defaultPoints: this.point,
+                zID: 'adsfh',
+                eventDate: '19700201'
+            }
+            fetchAPI('/api/event', 'POST', data)
+            .then(j => {
+                console.log(j)//eslint-disable-line
+                router.push({name: "event", params: {eid: j.eventID}})
+            }) 
 
         }
     }
