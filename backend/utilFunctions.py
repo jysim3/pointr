@@ -168,20 +168,20 @@ def main():
 
     # register users:
     #   for Hackathon
-    register("z5161616", "1239")
-    register("z5161798", "1239")
+    register("z5161616", "1239", 'Steven')
+    register("z5161798", "1239", 'Casey Neistat')
     #   for Gamer Juice Winery Tour
-    register("z5333333", "0000")
-    register("z5161798", "0000")
-    register("z5161616", "0000")
+    register("z5333333", "0000", 'Ivan Velickovic')
+    register("z5161798", "0000", 'Casey Neistat')
+    register("z5161616", "0000", 'Stevn')
     #   for Coffee Night
-    register("z5161616", "1234")
-    register("z5161798", "1234")
-    register("z5111111", "1234")
-    register("z5222222", "1234")
-    register("z5333333", "1234")
-    register("z5444444", "1234")
-    register("z5555555", "1234")
+    register("z5161616", "1234", 'Steven')
+    register("z5161798", "1234", 'Casey Neistat')
+    register("z5111111", "1234", 'Harrison Steyn')
+    register("z5222222", "1234", 'Junyang Sim')
+    register("z5333333", "1234", 'Ivan Velickovic')
+    register("z5444444", "1234", 'Oltan Sevinc')
+    register("z5555555", "1234", 'Will de Dassel')
 
     print(getAttendance("1239"))
     print(getUserAttendance("z5161616"))
