@@ -24,7 +24,9 @@
         </form>
       </div>
     </div>
-    <Attendees id="attendees" :attendees="this.participants" />
+    <div id="attendees">
+      <Attendees :attendees="this.participants" />
+    </div>
   </div>
 </template>
 
@@ -130,6 +132,12 @@ export default {
   margin-right: 2rem;
 }
 
-
+#attendees {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+}
 
 </style>
