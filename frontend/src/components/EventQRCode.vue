@@ -13,10 +13,10 @@ export default {
   mounted() {
     // Generating and adding QRCode to canvas
     const canvas = document.getElementById("qr-canvas")
-    const url = `${window.location.host}/e/${this.eid}`
+    const url = `${window.location.host}/#/e/${this.eid}`
     QRCode.toCanvas(canvas, url);
-    // canvas.style.height = '10rem'
-    // canvas.style.width = '10rem'
+    canvas.style.height = '15rem'
+    canvas.style.width = '15rem'
     // console.log(url) //eslint-disable-line
   }
 };
