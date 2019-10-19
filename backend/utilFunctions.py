@@ -62,10 +62,6 @@ def createEvent(zID, eventID, eventName, eventDate):
     conn.commit()
     return "success"
 
-def fetchUserStatistics():
-    # We fetch everything from the participation relationship
-    return 1
-
 def register(zID, eventID):
     if (checkUser(zID) == False or checkEvent(eventID) == False):
         return "User or Event does not exist"
@@ -77,6 +73,7 @@ def register(zID, eventID):
     curs = conn.cursor()
     curs.execute("insert into participation(points, user, eventID) values (?, ?, ?)", (1, zID, eventID,))
     conn.commit()
+    return "success"
 
 def getAttendance(eventID):
     if (checkEvent(eventID) == False):
@@ -128,12 +125,54 @@ def getUserAttendance(zid):
         
     return events_output
 
+def changePoints(zID, eventID, newPoints):
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("update participation set points=? where eventID=? and user=?", (newPoints, eventID, zID,))
+    conn.commit()
+    error = curs.fetchone()
+    if error == []:
+        return "failed"
+    return "success"
+
+def deleteUserAttendance(zID, eventID):
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("delete from participation where user=? and eventid=?", (zID, eventID,))
+    conn.commit()
+    error = curs.fetchone()
+    if error == []:
+        return "failed"
+    return "success"
+
+
 def main():
+    # add users
     createUser("z5161616", "Steven Shen")
     createUser("z5161798", "Casey Neistat")
-    createEvent("z5161616", "1239", "Test Event 0", "2019-11-19")
+    createUser("z5111111", "Harrison Steyn")
+    createUser("z5222222", "JunYang Sim")
+    createUser("z5333333", "Ivan Velickovic")
+    createUser("z5444444", "Oltan Sevinc")
+    createUser("z5555555", "Will de Dassel")
+
+    #add events
+    createEvent("z5161616", "1239", "Hackathon", "2019-11-19")
+    createEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2019-09-09")
+    createEvent("z5555555", "1234", "Coffee Night", "2019-10-16")
+    createEvent("z5111111", "4231", "LoL Appreciation", "2019-09-08")
+
+    # register users:
+    #   for Hackathon
     register("z5161616", "1239")
     register("z5161798", "1239")
+    #   for Gamer Juice Winery Tour
+    register("z5333333", "0000")
+    register("z5161798", "0000")
+    register("z5161616", "0000")
+    #   for Coffee Night
+    register("z5161616", "1234")
+
     print(getAttendance("1239"))
     print(getUserAttendance("z5161616"))
 
