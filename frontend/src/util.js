@@ -1,7 +1,8 @@
+const apiURL = 'http://localhost:5000';
 export function fetchAPI(url, method, data) {
     if (localStorage.getItem('token')) {
         return (
-            fetch(apiUrl + url, {
+            fetch(apiURL + url, {
                 method: method, // or 'PUT'
                 body: JSON.stringify(data), // data can be `string` or {object}!
                 headers: {
@@ -13,7 +14,7 @@ export function fetchAPI(url, method, data) {
     } else {
 
         return (
-            fetch(apiUrl + url, {
+            fetch(apiURL + url, {
                 method: method, // or 'PUT'
                 body: JSON.stringify(data), // data can be `string` or {object}!
                 headers: {
@@ -23,3 +24,4 @@ export function fetchAPI(url, method, data) {
         )
     }
 }
+export { apiURL };
