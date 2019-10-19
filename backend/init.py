@@ -5,6 +5,7 @@ from flask_cors import CORS
 import random
 import string
 from json import dumps
+import utilFunctions
 
 app = Flask(__name__)
 CORS(app)
@@ -23,23 +24,36 @@ def hello():
     return "Hello World!"
 
 # For creating an event
+# Usage: 
+# POST /api/event
+# Takes:
+# { zID: "z5214808", name: "Coffee Night", eventDate: "2019-11-19"}
+# Date is in YYYY-MM-DD
+# Returns:
+# { status: "success", eventID: "1234F"}
+# or
+# { status: "ERROR MESSAGE"}
 @app.route('/api/event', methods=['POST'])
 def createEvent():
     data = request.get_json()
     print(data)
-    return generateID(5).upper()
+    eventID = generateID(5).upper()
+    payload = {}
+    payload['status'] = utilFunctions.createEvent(data['zID'], eventID, data['name'], data['eventDate'])
+    if payload['status'] == 'success':
+        payload['eventID'] = eventID
+    return dumps(payload)
 
 # For getting info on an event
-'''
-@app.route('/api/event', methods=['GET'])
-def getEvent():
-    data = request.get_json()
-    eventID = data.eventID
+# Usage:
+# GET /api/event?eventID=ID
+@app.route('/dummy/event', methods=['GET'])
+def getEventDummy():
+    eventID = request.args.get('eventID')
     payload = {}
     payload["eventID"] = eventID
     payload["name"] = "Coffe Night"
-    payload["participants"] = 
-    [{
+    payload["participants"] = [{
         "userID": "z5214808",
         "name": "Harrison",
         "points": "10000"
@@ -54,23 +68,62 @@ def getEvent():
     }]
     
     return dumps(payload)
-'''
+
+# For getting info on an event
+# Usage:
+# GET /api/event?eventID=ID
+@app.route('/api/event', methods=['GET'])
+def getEvent():
+    eventID = request.args.get('eventID')
+    payload = {}
+    payload["eventID"] = eventID
+    payload["name"] = "Coffe Night"
+    payload["participants"] = [{
+        "userID": "z5214808",
+        "name": "Harrison",
+        "points": "10000"
+    }, {
+        "userID": "z6273842",
+        "name": "John",
+        "points": "1"
+    }, {
+        "userID": "z1234567",
+        "name": "Peter",
+        "points": "1203"
+    }]
+    
+    return dumps(payload)
 
 # For adding a user to an event 
 @app.route('/api/attend', methods=['POST'])
 def attend():
     data = request.get_json()
     print(data)
-    return dumps({
-        "status": "success"
-    })
+    return 10
 
 # For getting the points of a user
 @app.route('/api/user', methods=['GET'])
 def getPoints():
     data = request.get_json()
     print(data)
-    return 10
+    
+    return "Hello"
+
+# For creating a user
+# Usage: 
+# POST /api/user
+# Takes: 
+# {zID: "z1234567", name: "Harrison Steyn"}
+# Returns: 
+# {"status": "success"}
+
+@app.route('/api/user', methods=['POST'])
+def postUser():
+    data = request.get_json()
+    returnVal = utilFunctions.createUser(data['zID'], data['name'])
+    payload = {}
+    payload['status'] = returnVal
+    return dumps(payload)
 
 # SQL Shit
 
