@@ -103,6 +103,31 @@ def getAttendance(eventID):
 
     return participation, eventName
 
+def getUserAttendance(zid):
+    if (checkUser(zid) == False):
+        return "invalid user"
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("select * from users where zid=?", (zid,))
+    conn.commit()
+    userInformation = curs.fetchone()
+    # Need to return userName
+    userName = userInformation[1]
+
+    curs.execute("select eventID from participation where user=?", (zid,))
+    conn.commit()
+    events = curs.fetchall()
+    events_output = []
+    for event in events:
+        #events_output.append(event[0])
+        eventNum = event[0]
+        curs.execute("select * from events where eventID=?", (eventNum,))
+        conn.commit()
+        events_info = curs.fetchall()
+        events_output.append(events_info)
+        
+    return events_output
+
 def main():
     createUser("z5161616", "Steven Shen")
     createUser("z5161798", "Casey Neistat")
@@ -110,6 +135,7 @@ def main():
     register("z5161616", "1239")
     register("z5161798", "1239")
     print(getAttendance("1239"))
+    print(getUserAttendance("z5161616"))
 
 if __name__ == '__main__':
     main()
