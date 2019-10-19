@@ -24,11 +24,25 @@ def hello():
     return "Hello World!"
 
 # For creating an event
+# Usage: 
+# POST /api/event
+# Takes:
+# { zID: "z5214808", name: "Coffee Night", eventDate: "2019-11-19"}
+# Date is in YYYY-MM-DD
+# Returns:
+# { status: "success", eventID: "1234F"}
+# or
+# { status: "ERROR MESSAGE"}
 @app.route('/api/event', methods=['POST'])
 def createEvent():
     data = request.get_json()
     print(data)
-    return generateID(5).upper()
+    eventID = generateID(5).upper()
+    payload = {}
+    payload['status'] = utilFunctions.createEvent(data['zID'], eventID, data['name'], data['eventDate'])
+    if payload['status'] == 'success':
+        payload['eventID'] = eventID
+    return dumps(payload)
 
 # For getting info on an event
 # Usage:
@@ -128,6 +142,7 @@ def main():
                 eventID text not null,
                 name text not null,
                 society text,
+                eventdate date not null,
                 owner text not null references users(id),
                 primary key(eventID)
             );'''
