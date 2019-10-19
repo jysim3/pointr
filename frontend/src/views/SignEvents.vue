@@ -53,7 +53,7 @@ export default {
             }
         console.log(apiURL + "/e/"); // eslint-disable-line
         e.preventDefault();
-        fetch(apiURL + "/events", {
+        fetch(apiURL + "/api/event", {
             method: "POST", // or 'PUT'
             body: JSON.stringify(data), // data can be `string` or {object}!
             headers: {
