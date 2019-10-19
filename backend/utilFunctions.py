@@ -88,6 +88,7 @@ def getAttendance(eventID):
     eventInformation = curs.fetchone()
     # Need to return eventName
     eventName = eventInformation[1]
+    eventQR = eventInformation[5]
 
     curs.execute("select user from participation where eventid=?", (eventID,))
     attendees = []
@@ -101,7 +102,7 @@ def getAttendance(eventID):
         rows = curs.fetchall()
         participation.append([rows, 1])
 
-    return participation, eventName
+    return participation, eventName, eventQR
 
 def getUserAttendance(zid):
     if (checkUser(zid) == False):
