@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     submitForm() {
-      router.push({ name: "event", params: { eid: this.eid } });
+      router.push({ name: "signEvent", params: { eid: this.eid } });
     }
   }
 };
@@ -48,6 +48,10 @@ export default {
   flex-direction: column;
   justify-content: center;
   width: 100%;
+}
+
+button {
+  width: auto;
 }
 
 #submit-id {
