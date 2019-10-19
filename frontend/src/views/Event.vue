@@ -6,7 +6,7 @@
         <h2 id="eid-code">{{ this.eid }}</h2>
       </div>
     </div>
-    <h1 class="welcome-header">Welcome to {{ this.name }}</h1>
+    <h1>Welcome to {{ this.name }}</h1>
     <div id="qr-and-form-container">
       <EventQRCode v-bind:eid="this.eid" />
       <!-- <h3 id="event-url">{{ eventURL }}</h3> -->
