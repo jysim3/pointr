@@ -50,20 +50,16 @@ export default {
     };
   },
   mounted() {
-    fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
-    .then(j => {
-      this.name = j.name;
-      this.eventId = j.eventID;
-      const names = [];
-      if (j.participants !== undefined) {
-        j.participants.forEach(user => {
-            names.push(user["name"]);
-        });
-        this.participants = names;
-        }
-    }).catch(e => {
-        console.log(e) // eslint-disable-line
-    });
+    setInterval(() => {
+      fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
+      .then(j => {
+        this.name = j.name;
+        this.eventId = j.eventID;
+        this.participants = j.participants;
+      }).catch(e => {
+          console.log(e) // eslint-disable-line
+      });
+    }, 1000)
   },
   computed: {
     eventURL() {
