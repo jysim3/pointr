@@ -1,11 +1,13 @@
 import sqlite3 
 from sqlite3 import Error
 from flask import Flask, request
+from flask_cors import CORS
 import random
 import string
 from json import dumps
 
 app = Flask(__name__)
+CORS(app)
 
 
 def generateID(number):
