@@ -47,7 +47,7 @@ export default {
 <style>
 li {
   list-style-type: none;
-  margin-left: -3rem;
+  margin: 1rem 0 1rem -3rem;
   background-color: white;
   color: black;
   border-radius: 0.5rem;
