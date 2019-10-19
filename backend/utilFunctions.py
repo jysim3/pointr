@@ -48,7 +48,7 @@ def createUser(zID, name):
 
 # Creting an event
 # Event could maybe have a weight
-def createEvent(zID, eventID, eventName, eventDate):
+def createEvent(zID, eventID, eventName, eventDate, qrFlag):
     # FIXME
     if (checkUser(zID) == False):
         createUser(zID, "Junyang Sim")
@@ -58,7 +58,7 @@ def createEvent(zID, eventID, eventName, eventDate):
     
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into events(eventID, name, society, owner, eventDate) values (?, ?, ?, ?, ?);", (eventID, eventName, "UNSW Hall", zID, eventDate,))
+    curs.execute("insert into events(eventID, name, society, owner, eventDate, qrCode) values (?, ?, ?, ?, ?, ?);", (eventID, eventName, "UNSW Hall", zID, eventDate, qrFlag))
     conn.commit()
     return "success"
 
@@ -161,10 +161,10 @@ def main():
     createUser("z5555555", "Will de Dassel")
 
     #add events
-    createEvent("z5161616", "1239", "Hackathon", "2019-11-19")
-    createEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2019-09-09")
-    createEvent("z5555555", "1234", "Coffee Night", "2019-10-16")
-    createEvent("z5111111", "4231", "LoL Appreciation", "2019-09-08")
+    createEvent("z5161616", "1239", "Hackathon", "2019-11-19", True)
+    createEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2019-09-09", True)
+    createEvent("z5555555", "1234", "Coffee Night", "2019-10-16", True)
+    createEvent("z5111111", "4231", "LoL Appreciation", "2019-09-08", True)
 
     # register users:
     #   for Hackathon
@@ -183,7 +183,7 @@ def main():
     register("z5444444", "1234", 'Oltan Sevinc')
     register("z5555555", "1234", 'Will de Dassel')
 
-    print(getAttendance("1239"))
+    # print(getAttendance("1239"))
     print(getUserAttendance("z5161616"))
 
 if __name__ == '__main__':
