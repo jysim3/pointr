@@ -40,7 +40,6 @@ export default {
 li {
   list-style-type: none;
   margin-left: -3rem;
-  margin-top: 1rem;
   background-color: #fff;
   color: black;
   padding: 1rem;
