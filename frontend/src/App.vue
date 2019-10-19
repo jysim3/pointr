@@ -1,18 +1,16 @@
 <template>
   <div id="app">
     <SignIn/>
-    <Home/>
   </div>
 </template>
 
 <script>
-import Home from './components/Home.vue'
 import SignIn from './components/SignIn.vue'
+export const apiURL = 'localhost:5000'
 
 export default {
   name: 'app',
   components: {
-    Home,
     SignIn
   }
 }
@@ -29,6 +27,14 @@ h1, .alpha {
     font-weight: 100;
     line-height: 1;
     letter-spacing: -.05em;
+}
+.title{
+    color: #f35626;
+    background-image: linear-gradient(92deg, #f35626 0%,#feab3a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: hue 60s infinite linear;
 }
 #app {
   -webkit-font-smoothing: antialiased;
