@@ -62,9 +62,12 @@ def createEvent(zID, eventID, eventName, eventDate):
     conn.commit()
     return "success"
 
-def register(zID, eventID):
-    if (checkUser(zID) == False or checkEvent(eventID) == False):
-        return "User or Event does not exist"
+def register(zID, eventID, userName):
+    if (checkUser(zID) == False):
+        createUser(zID, userName)
+
+    if checkEvent(eventID) == False:
+        return "Event does not exist"
 
     if (checkParticipation(zID, eventID) == True):
         return "Already registered"

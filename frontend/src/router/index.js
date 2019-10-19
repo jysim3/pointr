@@ -4,6 +4,7 @@ import Home from '../components/Home.vue'
 import CreateEvent from '../views/CreateEvent.vue'
 import Event from '../views/Event.vue'
 import SignEvent from '../views/SignEvents.vue'
+import User from '../views/User.vue'
 
 Vue.use(VueRouter)
 
@@ -25,6 +26,12 @@ const routes = [
     path: '/create',
     name: 'create',
     component: CreateEvent
+  },
+  {
+    path: '/u/:zid',
+    name: 'user',
+    component: User,
+    props: true
   },
   {
     path: '/event/:eid',

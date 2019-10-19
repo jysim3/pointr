@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1> Hi {{this.username}} </h1>
+    <h1> Thanks for attending, {{this.username}} </h1>
     <table>
         <tr v-for="(event,index) in events" :key="index">
             <td>{{ event.name }}</td>
@@ -10,7 +10,7 @@
 </div>
 </template>
 <script>
-import {apiURL} from '@/App.vue'
+import {fetchAPI} from '@/util.js'
 export default {
     name: "User",
     props: {
@@ -34,19 +34,11 @@ export default {
     },
     mounted() {
         
-        const data = {
-            "zID": this.zid
-        }
-        fetch(apiURL + "/api/user", {
-            method: "POST", // or 'PUT'
-            body: JSON.stringify(data), // data can be `string` or {object}!
-            headers: {
-            "Content-Type": "application/json"
-            }
+        fetchAPI(`/api/user?zID=${this.zid}`, "GET")
+        .then(j => {
+            console.log(j)// eslint-disable-line
+            this.events=j
         })
-            .then(r => r.json())
-            .then(j => {this.events=j})// eslint-disable-line
-            .catch(e => alert("Backend has errors, please try again\nError: " + e));
     }
 
     
