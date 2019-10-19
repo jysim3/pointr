@@ -29,7 +29,7 @@ export default {
         .then(j => {
             console.log(j)// eslint-disable-line
             this.events=j.events
-            this.username=j.user
+            this.username=j.name
         })
     }
 
@@ -37,5 +37,12 @@ export default {
 }
 </script>
 <style scoped>
+@import "../assets/style.css";
 
+#home-container {
+  background-color: var(--primary-yellow);
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+}
 </style>

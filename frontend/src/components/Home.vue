@@ -2,31 +2,34 @@
   <div id="home-container">
     <div class="center">
       <h1 class="title">Room Pointer</h1>
-      <form @submit="submitForm"> 
+      <form @submit="submitForm">
         <input v-model="eid" type="text" />
-      </form> 
+        <button id="submit-id">
+          <i class="material-icons">arrow_forward</i>
+        </button>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
-import router from '@/router/index.js'
+import router from "@/router/index.js";
 export default {
-  name: 'Home',
+  name: "Home",
   data() {
     return {
-      eid: ''
-    }
+      eid: ""
+    };
   },
   props: {
     msg: String
   },
   methods: {
     submitForm() {
-      router.push({name: "event", params: {eid: this.eid}})
+      router.push({ name: "event", params: { eid: this.eid } });
     }
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -44,6 +47,10 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width:100%;
+  width: 100%;
+}
+
+#submit-id {
+  font-size: 1rem;
 }
 </style>
