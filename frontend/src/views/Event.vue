@@ -25,7 +25,7 @@
       </div>
     </div>
     <div id="attendees">
-      <Attendees :attendees="this.participants" />
+    <Attendees :eid="this.eid" :attendees="this.participants" />
     </div>
   </div>
 </template>

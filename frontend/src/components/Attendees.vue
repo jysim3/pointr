@@ -3,12 +3,11 @@
     <h2>Attendance</h2>
     <ul>
       <li v-for="(attendee, index) in attendees" :key="index">
-        {{ attendee.name }}
         <div id="icons">
-          <!-- EDIT ICON -->
-          <i @click="edit" class="material-icons">edit</i>
-          <!-- DELETE ICON -->
-          <i @click="del(attendee)" class="material-icons">close</i>
+        {{ attendee.name }} - {{ attendee.points }}
+        <i @click="edit(attendee)" class="material-icons">edit</i>
+        <!-- DELETE ICON -->
+        <i v-on:click="del(attendee)" class="material-icons">close</i>
         </div>
       </li>
     </ul>
@@ -24,14 +23,23 @@ export default {
   props: ["eid", "attendees"],
   mounted() {},
   methods: {
-    edit() {},
+    edit(attendee) {
+      const data = {
+        zID: attendee.zID,
+        eventID: this.eid,
+        points: attendee.points - 1 + 2
+      }
+      fetchAPI('/api/points','POST', data)
+
+    },
     del(attendee) {
       const data = {
         zID: attendee.zID,
-        eventID: this.edi
-      };
-      fetchAPI("/api/points", "DELETE", data);
-    }
+        eventID: this.eid
+      }
+      fetchAPI('/api/points','DELETE', data)
+
+    },
   }
 };
 </script>
