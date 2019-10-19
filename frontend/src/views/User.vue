@@ -22,7 +22,7 @@
 <script>
 import { fetchAPI } from "@/util.js";
 export default {
-  name: "User",
+  name: '',
   props: {
     zid: String
   },
@@ -33,7 +33,8 @@ export default {
     };
   },
   mounted() {
-    fetchAPI(`/api/user?zID=${this.zid}`, "GET").then(j => {
+    fetchAPI(`/api/user?zID=${this.zid}`, "GET")
+    .then(j => {
       console.log(j); // eslint-disable-line
       this.events = j.events;
       this.username = j.name;
