@@ -144,21 +144,21 @@ def deletePoints():
     data = request.get_json()
     
     payload = {}
-    payload['status'] = "success"
+    payload['status'] = deleteUserAttendance(data['zID'], data['eventID'])
     return dumps(payload)
     
 # Update user attendance
 # Usage: 
 # POST /api/points
 # Takes: 
-# {zID: "z5214808", eventID: "13287"}
+# {zID: "z5214808", eventID: "13287", points: "10"}
 # Returns: 
 # {"status": "success"}
 @app.route('/api/points', methods=['POST'])
 def updatePoints():
     data = request.get_json()
     payload = {}
-    payload['status'] = returnVal
+    payload['status'] = changePoints(data['zID'], data['eventID'], data['points'])
     return dumps(payload)
 
 # For creating a user
