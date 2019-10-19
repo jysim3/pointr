@@ -47,6 +47,31 @@ def createEvent():
 # For getting info on an event
 # Usage:
 # GET /api/event?eventID=ID
+@app.route('/dummy/event', methods=['GET'])
+def getEventDummy():
+    eventID = request.args.get('eventID')
+    payload = {}
+    payload["eventID"] = eventID
+    payload["name"] = "Coffe Night"
+    payload["participants"] = [{
+        "userID": "z5214808",
+        "name": "Harrison",
+        "points": "10000"
+    }, {
+        "userID": "z6273842",
+        "name": "John",
+        "points": "1"
+    }, {
+        "userID": "z1234567",
+        "name": "Peter",
+        "points": "1203"
+    }]
+    
+    return dumps(payload)
+
+# For getting info on an event
+# Usage:
+# GET /api/event?eventID=ID
 @app.route('/api/event', methods=['GET'])
 def getEvent():
     eventID = request.args.get('eventID')
