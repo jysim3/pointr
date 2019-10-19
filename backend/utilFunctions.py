@@ -10,10 +10,10 @@ def createConnection():
     return conn
 
 # Check if a user exists in the table
-def checkUser(userID):
+def checkUser(zID):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select * from users where zid=?", (userID,))
+    curs.execute("select * from users where zid=?", (zID,))
     
     rows = curs.fetchall()
     if (rows == []):
@@ -34,39 +34,49 @@ def checkEvent(eventID):
     return True
 
 # Creating a user 
-def createUser(userID, name):
-    if (checkUser(userID) != False):
-        return None
+def createUser(zID, name):
+    if (checkUser(zID) != False):
+        return "Failed"
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into users(zid, name) values(?, ?);", (userID, name,))
+    curs.execute("insert into users(zid, name) values(?, ?);", (zID, name,))
     conn.commit()
+    return "Success"
 
 # Creting an event
 # Event could maybe have a weight
-def createEvent(userID, eventID, eventName, eventDate):
+def createEvent(zID, eventID, eventName, eventDate):
     # FIXME
-    if (checkUser(userID) == False):
-        createUser(userID, "Junyang Sim")
-    
+    if (checkUser(zID) == False):
+        createUser(zID, "Junyang Sim")
+
     if (checkEvent(eventID) != False):
-        return "Already created"
+        return "Event does not exist"
     
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into events(eventID, name, society, owner, eventDate) values (?, ?, ?, ?, ?);", (eventID, eventName, "UNSW Hall", userID, eventDate,))
+    curs.execute("insert into events(eventID, name, society, owner, eventDate) values (?, ?, ?, ?, ?);", (eventID, eventName, "UNSW Hall", zID, eventDate,))
     conn.commit()
+    return "success"
 
 def fetchUserStatistics():
     # We fetch everything from the participation relationship
     return 1
 
-def register(userID, userName, eventID, eventName, points):
-    return 1
+def register(zID, eventID):
+    if (checkUser(zID) == False or checkEvent(eventID) == False):
+        return "User or Event does not exist"
+
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("insert into participation(points, user, eventID) values (?, ?, ?)", (1, zID, eventID,))
+    conn.commit()
 
 def main():
-    createEvent("z5161616", "aslhfkjahsdf", "Test Event 0", "2019-11-19")
+    createUser("z5161616", "Steven Shen")
+    createEvent("z5161616", "1239", "Test Event 0", "2019-11-19")
+    register("z5161616", "1239")
 
 if __name__ == '__main__':
     main()
