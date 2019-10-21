@@ -4,6 +4,8 @@ A point/attendance system for colleges - winner of the 2019 UNSW Inter-College H
 
 Created by: [JunYang Sim](https://github.com/jysim3), [Harrison Steyn](https://github.com/martejj), [Ivan Velickovic](https://github.com/Ivan-Velickovic), [Steven Shen](https://github.com/StevenShen1999), [William de Dassel](https://github.com/wdedassel), and [Oltan Sevic](https://github.com/OltanS)
 
+![The team](https://scontent-syd2-1.xx.fbcdn.net/v/t1.0-9/73495328_980841482250944_6461906355576897536_o.jpg?_nc_cat=107&_nc_oc=AQminp_Ph0oJakSi91IvWeUzgjffrfeBy3-89iynbWcqiSFAK-vb_Eqo7IDMivmUEBg&_nc_ht=scontent-syd2-1.xx&oh=56b07bbdb23aa82682d3abcb68163ee0&oe=5E18279F)
+
 ## Uses
 
 UNSW Colleges have a point system called room points. The more you do for the colleges the more room points you get and at the end of the year you can apply for a better room. This is currently a massive hassle for the Deans to organise and this software solution aims to alleviate the pressure on them. This also aims to let the Deans and college staff see how people from diverse cultural and linguistic backgrounds are adapting to college life and integrating with the community and whether they need help or not.
