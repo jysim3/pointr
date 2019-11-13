@@ -1,6 +1,6 @@
 # Pointr
 
-A point/attendance system for colleges - winner of the 2019 UNSW Inter-College Hackathon. 
+A point/attendance system for colleges - winner of the 2019 UNSW Inter-College Hackathon. Currently hosted on http://jysim3.com/pointr#/.
 
 Created by: [JunYang Sim](https://github.com/jysim3), [Harrison Steyn](https://github.com/martejj), [Ivan Velickovic](https://github.com/Ivan-Velickovic), [Steven Shen](https://github.com/StevenShen1999), [William de Dassel](https://github.com/wdedassel), and [Oltan Sevic](https://github.com/OltanS)
 
