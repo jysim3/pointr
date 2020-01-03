@@ -5,6 +5,7 @@ import CreateEvent from '../views/CreateEvent.vue'
 import Event from '../views/Event.vue'
 import SignEvent from '../views/SignEvents.vue'
 import User from '../views/User.vue'
+import Statistics from '@/views/Statistics.vue'
 
 Vue.use(VueRouter)
 
@@ -44,7 +45,12 @@ const routes = [
     name: 'signEvent',
     component: SignEvent,
     props: true
-  }
+  },
+  {
+    path: '/stats',
+    name: 'stats',
+    component: Statistics
+  },
 ]
 
 const router = new VueRouter({
