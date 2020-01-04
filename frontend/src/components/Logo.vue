@@ -1,6 +1,6 @@
 <template>
-    <div>
-        
+    <div class="img-container">
+      <img class="logo" src="../assets/logo.png" alt="pointr logo">
     </div>
 </template>
 
@@ -9,3 +9,9 @@ export default {
     name: 'Logo'
 }
 </script>
+
+<style scoped>
+  .logo {
+    max-width: 15%;
+  }
+</style>
