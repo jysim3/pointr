@@ -1,8 +1,6 @@
 <template>
   <div>
-    <div class="img-container">
-      <img src="../assets/logo.png" alt="pointr logo">
-    </div>
+    <Logo />
     <div class="form-container">
       <form id="create-event-form" @submit="submitForm">
         <h2>Create Event</h2>
@@ -18,7 +16,7 @@
           <label for>Set default points</label>
           <input v-model="point" type="text" required/>
         </div>
-        <div>
+        <div class="label-input-div">
             <label for>Show QR Code/Event link</label>
             <input type="checkbox" checked/>
         </div>
@@ -31,9 +29,13 @@
 <script>
 import { fetchAPI } from '@/util.js';
 import router from '@/router/index.js';
+import Logo from '@/components/Logo.vue';
 
 export default {
     name: 'CreateEvent',
+    components: {
+      Logo
+    },
     data() {
         return {
             title: "",
