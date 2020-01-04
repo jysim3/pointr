@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../components/Home.vue'
+import Home from '../views/Home.vue'
 import CreateEvent from '../views/CreateEvent.vue'
 import Event from '../views/Event.vue'
 import SignEvent from '../views/SignEvents.vue'
