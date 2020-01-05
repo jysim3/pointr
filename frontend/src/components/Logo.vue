@@ -11,6 +11,10 @@ export default {
 </script>
 
 <style scoped>
+  .img-container {
+    margin-bottom: 2rem;
+  }
+
   .logo {
     max-width: 15%;
   }

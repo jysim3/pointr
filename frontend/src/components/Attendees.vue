@@ -6,7 +6,6 @@
         <div id="icons">
             {{ attendee.name }} - {{ attendee.points }}
             <i @click="edit(attendee)" class="material-icons">edit</i>
-            <!-- DELETE ICON -->
             <i v-on:click="del(attendee)" class="material-icons">close</i>
         </div>
       </li>
@@ -16,12 +15,10 @@
 
 <script>
 import { fetchAPI } from "@/util.js";
-// import { apiURL } from "@/util.js"
 
 export default {
   name: "Attendees",
   props: ["eid", "attendees"],
-  mounted() {},
   methods: {
     edit(attendee) {
       const data = {

@@ -2,8 +2,8 @@
   <div>
     <Logo />
     <div class="form-container">
-      <form id="create-event-form" @submit="submitForm">
-        <h2>Create Event</h2>
+      <form id="create-event-form" @submit.prevent="submitEventForm">
+        <h2>Create an event</h2>
         <div class="label-input-div">
           <label for>Event title</label>
           <input v-model="title" type="text" required/>
@@ -20,7 +20,7 @@
             <label for>Show QR Code/Event link</label>
             <input type="checkbox" checked/>
         </div>
-        <button @click="submitForm" class="btn-primary">Create Event</button>
+        <button type="submit" class="btn-primary">Create Event</button>
       </form>
     </div>
   </div>
@@ -44,8 +44,7 @@ export default {
         }
     },
     methods: {
-        submitForm(e) {
-            e.preventDefault();
+        submitEventForm() {
             const data = {
                 name: this.title,
                 owner: "Ivan",
@@ -66,8 +65,4 @@ export default {
 
 <style scoped>
 @import "../assets/style.css";
-
-.img-container {
-    margin-bottom: 2rem;
-}
 </style>
