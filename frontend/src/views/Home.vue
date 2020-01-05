@@ -1,5 +1,5 @@
 <template>
-  <div id="home-container">
+  <div>
     <!-- <div id="container">
       <div id="content">
         <button @click="createEvent" id="create-event-btn" class="home-button">Create event</button>
@@ -15,13 +15,13 @@
       </div>
     </div> -->
     <Logo />
-    <h2 class="heading">The event tracking system for UNSW colleges.</h2>
-    <div class="btn-container">
-      <button @click="createEvent" class="btn-primary btn">Create an event</button>
-      <button class="btn-secondary btn">Mark my attendence</button>
+    <h2 id="heading">The event tracking system for UNSW colleges.</h2>
+    <div id="btn-container">
+      <button @click="createEvent" class="btn-primary">Create an event</button>
+      <button @click="markAttendance" class="btn-secondary btn">Mark my attendance</button>
     </div>
-    <div class="admin">
-      <a href="" class="admin-link">I’m administration</a>
+    <div id="admin">
+      <a href="" id="admin-link">I’m administration</a>
     </div>
   </div>
 </template>
@@ -44,11 +44,15 @@ export default {
     msg: String
   },
   methods: {
-    submitForm() {
-      router.push({ name: "signEvent", params: { eid: this.eid } });
-    },
+    // TODO: needs to be moved
+    // submitForm() {
+    //   router.push({ name: "signEvent", params: { eid: this.eid } });
+    // },
     createEvent() {
       router.push({ name: "create" });
+    },
+    markAttendance() {
+      router.push({ name: "mark-attendance" });
     }
   }
 };
@@ -57,29 +61,29 @@ export default {
 <style scoped>
 @import "../assets/style.css";
 
-.btn-container .btn {
+#heading {
+  text-align: center;
+  margin-top: 2em;
+}
+
+#btn-container > button {
   font-size: 1.5rem;
   /* TODO: fix alignment, does not seem quite center? */
   margin: 0 4rem;
 }
 
-.btn-container {
+#btn-container {
   display: flex;
   justify-content: center;
   margin-top: 7rem;
 }
 
-.heading {
-  text-align: center;
-  margin-top: 2em;
-}
-
-.admin {
+#admin {
   text-align: center;
   margin-top: 7rem;
 }
 
-.admin-link, .admin-link:visited {
+#admin-link, #admin-link:visited {
   text-decoration: none;
   color: var(--dark-grey);
   transition: border-bottom 0.2s;
@@ -87,7 +91,7 @@ export default {
   font-size: 1.5rem;
 }
 
-.admin-link:hover {
+#admin-link:hover {
   border-bottom: 2px solid var(--dark-grey);
 }
 </style>

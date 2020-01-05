@@ -4,42 +4,50 @@
 }
 
 :root {
-  --primary-yellow: #2CA0E1;
-  --secondary-yellow: #2CA0E1;
-  --bgc-grey: #fafafa;
+  /* TODO: make naming more consistent */
+  --primary-blue: #2CA0E1;
+  --bgc-grey: #F4F4F4;
   --primary-grey: #c8dad3;
-  --dark-grey: #3f3f3f;
+  --dark-grey: #4D4D4D;
+  --text-stack: 'SF-Text', Arial, Helvetica, sans-serif;
+  --heading-stack: 'SF-Display', Arial, Helvetica, sans-serif;
+  --border-radius: 5px;
 }
 
 body {
-  font-family: 'SF', Arial, Helvetica, sans-serif;
-  background-color: var(--primary-yellow);
-  color: white;
+  font-family: var(--text-stack);
+  background-color: var(--bgc-grey);
+  color: var(--dark-grey);
 }
 
 /* Typography */
-@font-face {
-  font-family: 'SF';
-  src: url('/fonts/SF-Pro-Text-Light.otf');
-  font-weight: 300;
-}
 
 @font-face {
-  font-family: 'SF';
-  src: url('/fonts/SF-Pro-Text-Regular.otf');
+  font-family: 'SF-Text';
+  src: url('./fonts/SF-Pro-Text-Regular.otf');
   font-weight: 400;
 }
 
 @font-face {
-  font-family: 'SF';
-  src: url('/fonts/SF-Pro-Text-Medium.otf');
+  font-family: 'SF-Text';
+  src: url('./fonts/SF-Pro-Text-Medium.otf');
   font-weight: 500;
 }
 
 @font-face {
-  font-family: 'SF';
-  src: url('/fonts/SF-Pro-Text-Bold.otf');
-  font-weight: 600;
+  font-family: 'SF-Display';
+  src: url('./fonts/SF-Pro-Display-Regular.otf');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'SF-Display';
+  src: url('./fonts/SF-Pro-Display-Medium.otf');
+  font-weight: 500;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--heading-stack);
 }
 
 h1 {
@@ -57,16 +65,32 @@ h2 {
 
 h3 {
   text-transform: none;
+  font-weight: 500;
+}
+
+h4, h5, h6 {
+  font-weight: 400;
 }
 
 /* Form elements */
 form {
   background-color: white;
   padding: 3rem 6rem;
-  color: black;
-  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+  color: var(--dark-grey);
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius);
 }
 
+form .btn-primary {
+  display: block;
+  margin: auto;
+}
+
+form h2 {
+  text-align: center;
+}
+
+/* TODO: This shouldn't exist, fix */
 .shadow {
   box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
 }
@@ -81,39 +105,21 @@ form {
   display: inline-block;
 }
 
+.label-input-div {
+  margin-top: 1.25rem;
+}
+
 .label-input-div label {
   display: block;
-}
-
-/* Button */
-button {
-  padding: 0.75rem 1.5rem;
-  background-color: white;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s, border 0.2s;
-  font-weight: 500;
-  font-size: 1rem;
-  text-transform: uppercase;
-  margin-top: 2rem;
-  border: 2px solid var(--primary-yellow);
-  color: var(--primary-yellow);
-  /* width: 100%; */
-}
-
-button:hover {
-  background-color: var(--primary-yellow);
-  color: white;
-  /* border: 2px solid black; */
 }
 
 /* Inputs and labels */
 input {
   border: 2px solid var(--primary-grey);
-  padding: 0.4rem;
+  padding: 0.5rem;
   transition: border 0.1s, box-shadow 0.2s;
   font-size: 1rem;
+  border-radius: var(--border-radius);
 }
 
 input:focus {
@@ -122,8 +128,38 @@ input:focus {
 }
 
 label {
-  font-size: 1.1rem;
-  margin: 0.5rem 0;
+  color: var(--dark-grey);
+  font-size: 1rem;
+  margin-bottom: 0.3rem;
+}
+
+/* Buttons */
+
+button {
+  padding: 0.75em 1.5em;
+  border: none;
+  transition: box-shadow 0.2s;
+  font-weight: 400;
+  font-family: var(--text-stack);
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: var(--border-radius); /* TODO: should be using px? */
+  box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.12);
+}
+
+button:hover {
+  box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.25);
+}
+
+.btn-primary {
+  color: white;
+  background-color: var(--primary-blue);
+}
+
+.btn-secondary {
+  color: var(--primary-blue);
+  border: 3px solid var(--primary-blue);
+  background-color: var(--bgc-grey);
 }
 
 img {
