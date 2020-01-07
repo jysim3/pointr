@@ -1,5 +1,8 @@
 from sqlite3 import Error
 import sqlite3
+from init import generateID
+
+# 20/12/2019: FIXME: close all database connections after each use for improved security, take a slight performance hit
 
 def createConnection():
     conn = None
@@ -148,6 +151,44 @@ def deleteUserAttendance(zID, eventID):
     error = curs.fetchone()
     if error == []:
         return "failed"
+    return "success"
+
+# 20/12/2019: TODO Fix functions here that correspond to the changes being made to the database, add functions for the new tables
+def getEventForSoc(zID, societyID):
+    return -1
+
+def createSocStaff(zID, societyID, role = None):
+    if (zID == None or societyID == None):
+        return "failed, insufficient inputs"
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("insert into socstaff(society, zid, role) values (?, ?, ?);", (societyID, zID, role))
+    conn.commit()
+    return "success"
+
+def createSociety(zID = None, societyName, role = None):
+    # 20/19/2019: FIXME Change the function below to the UUID generator
+    societyID = generateID(5).upper()
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("insert into society(societyID, societyName) values (?, ?);", (societyID, societyName))
+
+    if (zID == None):
+        conn.commit()
+        return "success"
+
+    response = createSocStaff(zID, societyID, role)
+    return response
+
+def changeRole(zID, societyID, role):
+    conn = createConnection()
+    curs = conn.cusor()
+    try:
+        curs.execute("update socstaff set role = ? where society = ? and zid = ?", (role, societyID, zID,))
+        conn.commit()
+    except Error as e:
+        print(e)
+        return "failed")
     return "success"
 
 

@@ -226,6 +226,7 @@ def main():
     try:
         conn = createConnection()
         createUserSQL = '''
+            drop table if exists users;
             create table if not exists users (
                 zid text not null,
                 name text not null,
@@ -233,6 +234,7 @@ def main():
             );'''
         createTable(conn, createUserSQL)
         createEventsSQL = '''
+            drop table if exists events;
             create table if not exists events (
                 eventID text not null,
                 name text not null,
@@ -242,21 +244,49 @@ def main():
                 qrCode boolean,
                 primary key(eventID)
             );'''
+        # 20/12/2019: FIXME Change the society field into type integer referencing the society table
         createTable(conn, createEventsSQL)
         createPartcipationSQL = '''
+            drop table if exists participation;
             create table if not exists participation (
                 points text not null,
-                user text not null references users(id),
-                eventID text not null references events(id),
+                isArcMember boolean not null,
+                user text not null references users(zid),
+                eventID text not null references events(eventID),
                 primary key (user, eventID)
             );'''
         createTable(conn, createPartcipationSQL)
+        createSocietySQL = '''
+            drop table if exists society;
+            create table if not exists society (
+                societyID integer primary key,
+                societyName text not null,
+            );'''
+        createTable(conn, createSocietySQL)
+        createSocietyHostSQL = '''
+            drop table if exists host;
+            create table if not exists host (
+                society integer references society(societyID),
+                eventID text not null references events(eventID),
+                primary key (society, eventID)
+            );'''
+        createTable(conn, createSocietyHostSQL)
+        createSocStaffSQL = '''
+            drop table if exists socstaff (
+                society integer references society(societyID),
+                zid text references users(zid),
+                role text not null,
+                primary key (society, zid)
+            );'''
+        createTable(conn, createSocStaffSQL)
+    # 20/12/2019: Added two new tables, added a FIXME when fixing the table dependencies
     except Error as e:
         print(e)
         exit(1)
     
     app.run()
 
+# 20/12/2019: Think about refactoring parts of the code (i.e. Flask related features into app.py to keep the functionalities separate)
 
 if __name__ == '__main__':
     main()
