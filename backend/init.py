@@ -225,6 +225,7 @@ def main():
     conn = None
     try:
         conn = createConnection()
+        # TODO: Add a field here to store passwords
         createUserSQL = '''
             drop table if exists users;
             create table if not exists users (
@@ -238,13 +239,12 @@ def main():
             create table if not exists events (
                 eventID text not null,
                 name text not null,
-                society text,
+                societyID integer references society(societyID),
                 eventdate date not null,
                 owner text not null references users(id),
                 qrCode boolean,
                 primary key(eventID)
             );'''
-        # 20/12/2019: FIXME Change the society field into type integer referencing the society table
         createTable(conn, createEventsSQL)
         createPartcipationSQL = '''
             drop table if exists participation;
