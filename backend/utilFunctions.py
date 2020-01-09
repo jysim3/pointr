@@ -1,6 +1,7 @@
 from sqlite3 import Error
+import init
 import sqlite3
-from init import generateID
+import hashlib
 
 def createConnection():
     conn = None
@@ -53,35 +54,48 @@ def checkSoc(societyID):
 
 # Creating a user 
 # 8/1/2020: TODO: To implement the login system, we need to store hashed passwords
-def createUser(zID, name):
+def createUser(zID, name, password):
     if (checkUser(zID) != False):
         return "Failed"
+    # FIXME: Perhaps, we should receive password hashed already from the frontend
+    password = str(password).encode()
+    pwHash = hashlib.sha256(password).hexdigest()
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into users(zid, name) values(?, ?);", (zID, name,))
+    curs.execute("insert into users(zid, name, password) values(?, ?, ?);", (zID, name, pwHash))
     conn.commit()
     conn.close()
     return "Success"
 
 # Creting an event
 # Event could maybe have a weight
-def createEvent(zID, eventID, eventName, eventDate, qrFlag):
+def createEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None):
     # FIXME
     if (checkUser(zID) == False):
         createUser(zID, "Junyang Sim")
 
     if (checkEvent(eventID) != False):
         return "failed"
+    elif (societyID == None):
+        societyID = findSocID("UNSW Hall")
     
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into events(eventID, name, society, owner, eventDate, qrCode) values (?, ?, ?, ?, ?, ?);", (eventID, eventName, "UNSW Hall", zID, eventDate, qrFlag))
+    curs.execute("insert into events(eventID, name, societyID, owner, eventDate, qrCode) values (?, ?, ?, ?, ?, ?);", (eventID, eventName, societyID, zID, eventDate, qrFlag))
     conn.commit()
     conn.close()
     return "success"
 
-def register(zID, eventID, userName):
+def findSocID(socName):
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("select societyID from society where societyName = ?;", (socName,))
+    societyID = curs.fetchone()[0]
+
+    return societyID
+
+def register(zID, eventID, userName, isArc = False):
     if (checkUser(zID) == False):
         createUser(zID, userName)
 
@@ -93,7 +107,7 @@ def register(zID, eventID, userName):
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into participation(points, user, eventID) values (?, ?, ?)", (1, zID, eventID,))
+    curs.execute("insert into participation(points, isArcMember, user, eventID) values (?, ?, ?, ?)", (1, isArc, zID, eventID,))
     conn.commit()
     conn.close()
     return "success"
@@ -185,25 +199,26 @@ def createSocStaff(zID, societyID, role = None):
     # TODO: Check for society and zID existance
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into socstaff(society, zid, role) values (?, ?, ?);", (societyID, zID, role))
+    curs.execute("insert into socstaff(society, zid, role) values (?, ?, ?);", (societyID, zID, role,))
     conn.commit()
     conn.close()
     return "success"
 
-def createSociety(zID = None, societyName = None, role = None):
+def createSociety(zID = None, societyName = None):
     # 20/19/2019: FIXME Change the function below to the UUID generator
-    societyID = generateID(5).upper()
+    societyID = init.generateID(5).upper()
     conn = createConnection()
     curs = conn.cursor()
-    # 8/1/2019: FIXME zID input not used
-    curs.execute("insert into society(societyID, societyName) values (?, ?);", (societyID, societyName))
+    curs.execute("insert into society(societyID, societyName) values (?, ?);", (societyID, societyName,))
+    conn.commit()
+    conn.close()
 
+    # If we didn't specify a staff when creating the soc
     if (zID == None):
-        conn.commit()
         return "success"
 
-    response = createSocStaff(zID, societyID, role)
-    conn.close()
+    # Otherwise, we add a staff with the job title of "President"
+    response = createSocStaff(zID, societyID, "President")
     return response
 
 def changeRole(zID, societyID, role):
@@ -219,23 +234,30 @@ def changeRole(zID, societyID, role):
 
 
 def main():
+    # Moving this section to init.py in the next patch lmao
     # add users
     # 8/1/2020: FIXME: Add some passwords to the accounts
-    createUser("z5161616", "Steven Shen")
-    createUser("z5161798", "Casey Neistat")
-    createUser("z5111111", "Harrison Steyn")
-    createUser("z5222222", "JunYang Sim")
-    createUser("z5333333", "Ivan Velickovic")
-    createUser("z5444444", "Oltan Sevinc")
-    createUser("z5555555", "Will de Dassel")
+    createUser("z5161616", "Steven Shen", "123456")
+    createUser("z5161798", "Casey Neistat", "123456")
+    createUser("z5111111", "Harrison Steyn", "123456")
+    createUser("z5222222", "JunYang Sim", "123456")
+    createUser("z5333333", "Ivan Velickovic", "123456")
+    createUser("z5444444", "Oltan Sevinc", "123456")
+    createUser("z5555555", "Will de Dassel", "123456")
 
+    # TODO: Add some dummy societies and then fix the below add events dummy functions
+    # NOTE: Might not be needed since the current version focuses on implementation just for Hall
+    #add societies
+    createSociety("z5111111", "CSESoc")
+    createSociety("z5123123", "Manchester United FC")
+    createSociety("z5555555", "UNSW Hall")
+
+    # NOTE: Defaults to UNSW Hall (for the society field right now)
     #add events
     createEvent("z5161616", "1239", "Hackathon", "2019-11-19", True)
     createEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2019-09-09", True)
     createEvent("z5555555", "1234", "Coffee Night", "2019-10-16", True)
     createEvent("z5111111", "4231", "LoL Appreciation", "2019-09-08", True)
-
-    # 8/1/2010: TODO: Add some dummy societies and then fix the above add events dummy functions
 
     # register users:
     #   for Hackathon
@@ -254,7 +276,7 @@ def main():
     register("z5444444", "1234", 'Oltan Sevinc')
     register("z5555555", "1234", 'Will de Dassel')
 
-    print(getAttendance("1234"))
+    # print(getAttendance("1234"))
     # print(getUserAttendance("z5161616"))
 
 if __name__ == '__main__':

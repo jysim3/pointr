@@ -7,6 +7,7 @@ import string
 from json import dumps
 import utilFunctions
 import re
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -224,18 +225,20 @@ def runQuery(conn, sql, arg):
 def main():
     conn = None
     try:
+        # NOTE: Optional: 
+        # os.system("rm database.db")
+
         conn = createConnection()
         # TODO: Add a field here to store passwords
         createUserSQL = '''
-            drop table if exists users;
             create table if not exists users (
                 zid text not null,
                 name text not null,
+                password text not null,
                 primary key(zid)
             );'''
         createTable(conn, createUserSQL)
         createEventsSQL = '''
-            drop table if exists events;
             create table if not exists events (
                 eventID text not null,
                 name text not null,
@@ -247,7 +250,6 @@ def main():
             );'''
         createTable(conn, createEventsSQL)
         createPartcipationSQL = '''
-            drop table if exists participation;
             create table if not exists participation (
                 points text not null,
                 isArcMember boolean not null,
@@ -257,14 +259,13 @@ def main():
             );'''
         createTable(conn, createPartcipationSQL)
         createSocietySQL = '''
-            drop table if exists society;
             create table if not exists society (
-                societyID integer primary key,
-                societyName text not null,
+                societyID text,
+                societyName text not null unique,
+                primary key (societyID)
             );'''
         createTable(conn, createSocietySQL)
         createSocietyHostSQL = '''
-            drop table if exists host;
             create table if not exists host (
                 society integer references society(societyID),
                 eventID text not null references events(eventID),
@@ -272,19 +273,21 @@ def main():
             );'''
         createTable(conn, createSocietyHostSQL)
         createSocStaffSQL = '''
-            drop table if exists socstaff (
+            create table if not exists socstaff (
                 society integer references society(societyID),
                 zid text references users(zid),
                 role text not null,
                 primary key (society, zid)
             );'''
         createTable(conn, createSocStaffSQL)
+        conn.close()
     # 20/12/2019: Added two new tables, added a FIXME when fixing the table dependencies
     except Error as e:
         print(e)
         exit(1)
     
-    app.run()
+    # FIXME: Uncomment the line below when features implemented and server required
+    # app.run()
 
 # 20/12/2019: Think about refactoring parts of the code (i.e. Flask related features into app.py to keep the functionalities separate)
 
