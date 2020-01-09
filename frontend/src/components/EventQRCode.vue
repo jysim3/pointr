@@ -15,8 +15,8 @@ export default {
     const canvas = document.getElementById("qr-canvas")
     const url = `${window.location.host}/#/e/${this.eid}`
     QRCode.toCanvas(canvas, url);
-    canvas.style.height = '15rem'
-    canvas.style.width = '15rem'
+    canvas.style.height = '20rem'
+    canvas.style.width = '20rem'
     // console.log(url) //eslint-disable-line
   }
 };
@@ -26,4 +26,9 @@ export default {
 #qr-container {
   display: inline-block;
 }
+
+#qr-canvas {
+  border-radius: var(--border-radius);
+}
+
 </style>
