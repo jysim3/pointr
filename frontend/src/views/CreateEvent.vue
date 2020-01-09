@@ -20,7 +20,7 @@
             <label for>Show QR Code/Event link</label>
             <input type="checkbox" checked/>
         </div>
-        <button type="submit" class="btn-primary">Create Event</button>
+        <button type="submit" class="btn btn-primary">Create Event</button>
       </form>
     </div>
   </div>

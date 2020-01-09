@@ -4,11 +4,9 @@
 }
 
 :root {
-  /* TODO: make naming more consistent */
-  --primary-blue: #2CA0E1;
-  --bgc-grey: #F4F4F4;
-  --primary-grey: #c8dad3;
-  --dark-grey: #4D4D4D;
+  --c-primary: #2CA0E1;
+  --c-secondary: #F4F4F4;
+  --c-secondary-dark: #4D4D4D;
   --text-stack: 'SF-Text', Arial, Helvetica, sans-serif;
   --heading-stack: 'SF-Display', Arial, Helvetica, sans-serif;
   --border-radius: 5px;
@@ -16,8 +14,8 @@
 
 body {
   font-family: var(--text-stack);
-  background-color: var(--bgc-grey);
-  color: var(--dark-grey);
+  background-color: var(--c-secondary);
+  color: var(--c-secondary-dark);
 }
 
 /* Typography */
@@ -52,20 +50,25 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 3rem;
-  font-weight: 300;
-  letter-spacing: 0.02rem;
+  font-weight: 500;
+  letter-spacing: 0.05rem;  
   text-align: center;
-  margin: 2rem 0;
+  color: black;
 }
 
 h2 {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 500;
 }
 
 h3 {
-  text-transform: none;
+  font-size: 1.5rem;
   font-weight: 500;
+  text-transform: none;
+}
+
+h4 {
+  font-size: 1rem;
 }
 
 h4, h5, h6 {
@@ -76,23 +79,18 @@ h4, h5, h6 {
 form {
   background-color: white;
   padding: 3rem 6rem;
-  color: var(--dark-grey);
+  color: var(--c-secondary-dark);
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.05);
   border-radius: var(--border-radius);
 }
 
 form .btn-primary {
   display: block;
-  margin: auto;
+  margin: 1.5rem auto 0 auto;
 }
 
 form h2 {
   text-align: center;
-}
-
-/* TODO: This shouldn't exist, fix */
-.shadow {
-  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
 }
 
 .form-container {
@@ -115,27 +113,28 @@ form h2 {
 
 /* Inputs and labels */
 input {
-  border: 2px solid var(--primary-grey);
+  border: 2px solid var(--c-secondary);
   padding: 0.5rem;
   transition: border 0.1s, box-shadow 0.2s;
   font-size: 1rem;
   border-radius: var(--border-radius);
 }
-
+/* TODO: Make box shadows variables */
+/* TODO: use label classes instead of the element selector */
 input:focus {
-  border: 2px solid var(--dark-grey);
+  border: 2px solid var(--c-secondary-dark);
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
 }
 
 label {
-  color: var(--dark-grey);
+  color: var(--c-secondary-dark);
   font-size: 1rem;
   margin-bottom: 0.3rem;
 }
 
 /* Buttons */
 
-button {
+.btn {
   padding: 0.75em 1.5em;
   border: none;
   transition: box-shadow 0.2s;
@@ -147,19 +146,19 @@ button {
   box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.12);
 }
 
-button:hover {
+.btn:hover {
   box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.25);
 }
 
 .btn-primary {
   color: white;
-  background-color: var(--primary-blue);
+  background-color: var(--c-primary);
 }
 
 .btn-secondary {
-  color: var(--primary-blue);
-  border: 3px solid var(--primary-blue);
-  background-color: var(--bgc-grey);
+  color: var(--c-primary);
+  border: 3px solid var(--c-primary);
+  background-color: var(--c-secondary);
 }
 
 img {

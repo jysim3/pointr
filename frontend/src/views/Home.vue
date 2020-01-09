@@ -17,8 +17,8 @@
     <Logo />
     <h2 id="heading">The event tracking system for UNSW colleges.</h2>
     <div id="btn-container">
-      <button @click="createEvent" class="btn-primary">Create an event</button>
-      <button @click="markAttendance" class="btn-secondary btn">Mark my attendance</button>
+      <button @click="createEvent" class="btn btn-primary">Create an event</button>
+      <button @click="markAttendance" class="btn btn-secondary">Mark my attendance</button>
     </div>
     <div id="admin">
       <a href="" id="admin-link">I’m administration</a>
@@ -40,27 +40,18 @@ export default {
       eid: ""
     };
   },
-  props: {
-    msg: String
-  },
   methods: {
-    // TODO: needs to be moved
-    // submitForm() {
-    //   router.push({ name: "signEvent", params: { eid: this.eid } });
-    // },
     createEvent() {
       router.push({ name: "create" });
     },
     markAttendance() {
-      router.push({ name: "mark-attendance" });
+      router.push({ name: "markAttendance" });
     }
   }
 };
 </script>
 
 <style scoped>
-@import "../assets/style.css";
-
 #heading {
   text-align: center;
   margin-top: 2em;
@@ -85,13 +76,13 @@ export default {
 
 #admin-link, #admin-link:visited {
   text-decoration: none;
-  color: var(--dark-grey);
+  color: var(--c-secondary-dark);
   transition: border-bottom 0.2s;
-  border-bottom: 2px solid var(--bgc-grey);
+  border-bottom: 2px solid var(--c-secondary);
   font-size: 1.5rem;
 }
 
 #admin-link:hover {
-  border-bottom: 2px solid var(--dark-grey);
+  border-bottom: 2px solid var(--c-secondary-dark);
 }
 </style>

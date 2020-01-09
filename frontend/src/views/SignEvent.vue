@@ -1,35 +1,34 @@
 <template>
   <div>
-    <div id="eid-container">
-      <div id="event-code-title">
-        <h2 id="eid-header">Event code</h2>
-        <h2 id="eid-code">{{ this.eid }}</h2>
-      </div>
-    </div>
+    <EventCodeDisplay :eid="eid" />
     <h1>Welcome to {{ this.eventName }}!</h1>
-    <div class="form-container">
+    <label class="form-container">
       <form @submit="submitForm">
         <div class="label-input-div">
           <label for>zID</label>
           <input type="text" v-model="zid" />
         </div>
-        <div class="label-input-div">
+        <label class="label-input-div">
           <label for>Name</label>
           <input type="text" v-model="name" />
-        </div>
-        <button>Sign attendance</button>
+        </label>
+        <button class="btn btn-primary">Sign attendance</button>
       </form>
-    </div>
+    </label>
   </div>
 </template>
 <script>
 import { fetchAPI } from "@/util.js";
 import router from '@/router/index.js';
+import EventCodeDisplay from "@/components/EventCodeDisplay.vue";
 
 export default {
-    name: "hi",
+    name: "SignEvent",
     props: {
         eid: String
+    },
+    components: {
+      EventCodeDisplay
     },
     created() {
         fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
