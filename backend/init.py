@@ -242,7 +242,6 @@ def main():
             create table if not exists events (
                 eventID text not null,
                 name text not null,
-                societyID integer references society(societyID),
                 eventdate date not null,
                 owner text not null references users(id),
                 qrCode boolean,
@@ -267,6 +266,7 @@ def main():
         createTable(conn, createSocietySQL)
         createSocietyHostSQL = '''
             create table if not exists host (
+                location text,
                 society integer references society(societyID),
                 eventID text not null references events(eventID),
                 primary key (society, eventID)

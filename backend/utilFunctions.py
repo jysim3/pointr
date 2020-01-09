@@ -82,7 +82,10 @@ def createEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None):
     
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into events(eventID, name, societyID, owner, eventDate, qrCode) values (?, ?, ?, ?, ?, ?);", (eventID, eventName, societyID, zID, eventDate, qrFlag))
+    curs.execute("insert into events(eventID, name, owner, eventDate, qrCode) values (?, ?, ?, ?, ?);", (eventID, eventName, zID, eventDate, qrFlag))
+
+    # Currently, location defaults to UNSW Hall
+    curs.execute("insert into host(location, society, eventID) values (?, ?, ?);", ("UNSW Hall", societyID, eventID,))
     conn.commit()
     conn.close()
     return "success"
@@ -189,8 +192,20 @@ def deleteUserAttendance(zID, eventID):
     return "success"
 
 # 20/12/2019: TODO Fix functions here that correspond to the changes being made to the database, add functions for the new tables
-def getEventForSoc(zID, societyID):
-    # TODO
+
+
+# Get all the events hosted by a society
+def getEventForSoc(societyID):
+    # 9/1/2020: TODO: Flask routing for this function
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("select * from events join host on events.eventID = host.eventID and society = ?;", (societyID,))
+    events = curs.fetchall()
+    return events
+
+# Get all the events in a society attended by a particular person
+def getPersonEventsForSoc(zID, societyID):
+    # TODO:
     return -1
 
 def createSocStaff(zID, societyID, role = None):
@@ -276,6 +291,7 @@ def main():
     register("z5444444", "1234", 'Oltan Sevinc')
     register("z5555555", "1234", 'Will de Dassel')
 
+    getEventForSoc(findSocID("UNSW Hall"))
     # print(getAttendance("1234"))
     # print(getUserAttendance("z5161616"))
 
