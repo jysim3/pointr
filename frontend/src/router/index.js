@@ -3,8 +3,9 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import CreateEvent from '../views/CreateEvent.vue'
 import Event from '../views/Event.vue'
-import SignEvent from '../views/SignEvents.vue'
+import SignEvent from '../views/SignEvent.vue'
 import User from '../views/User.vue'
+import MarkAttendance from '../views/MarkAttendance.vue'
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+  },
+  {
+    path: '/mark-attendance',
+    name: 'markAttendance',
+    component: MarkAttendance
   },
   {
     path: '/create',
