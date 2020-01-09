@@ -201,12 +201,19 @@ def getEventForSoc(societyID):
     curs = conn.cursor()
     curs.execute("select * from events join host on events.eventID = host.eventID and society = ?;", (societyID,))
     events = curs.fetchall()
+    conn.close()
     return events
 
 # Get all the events in a society attended by a particular person
 def getPersonEventsForSoc(zID, societyID):
-    # TODO:
-    return -1
+    # 9/1/2020: TODO: Flask routing for this function
+    # 9/1/2020: FIXME: Change the line below to select only the stuff that's required
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("select * from events join host join participation on events.eventID = host.eventID and events.eventID = participation.eventID and society = ? and participation.user = ?;", (societyID, zID,))
+    events = curs.fetchall()
+    conn.close()
+    return events
 
 def createSocStaff(zID, societyID, role = None):
     if (zID == None or societyID == None):
@@ -247,8 +254,7 @@ def changeRole(zID, societyID, role):
         return "failed"
     return "success"
 
-
-def main():
+def initDatabase():
     # Moving this section to init.py in the next patch lmao
     # add users
     # 8/1/2020: FIXME: Add some passwords to the accounts
@@ -291,7 +297,11 @@ def main():
     register("z5444444", "1234", 'Oltan Sevinc')
     register("z5555555", "1234", 'Will de Dassel')
 
-    getEventForSoc(findSocID("UNSW Hall"))
+def main():
+    # Uncomment if required
+    # initDatabase()
+
+    print(getPersonEventsForSoc("z5161616", findSocID("UNSW Hall")))
     # print(getAttendance("1234"))
     # print(getUserAttendance("z5161616"))
 
