@@ -2,7 +2,7 @@
   <div>
     <Logo />
     <div class="form-container">
-      <form id="create-event-form" @submit.prevent="submitEventForm">
+      <form id="create-event-form" class="form" @submit.prevent="submitEventForm">
         <h2>Create an event</h2>
         <div class="label-input-div">
           <label for>Event title</label>

@@ -3,7 +3,7 @@
     <EventCodeDisplay :eid="eid" />
     <h1>Welcome to {{ this.eventName }}!</h1>
     <label class="form-container">
-      <form @submit="submitForm">
+      <form class="form" @submit="submitForm">
         <div class="label-input-div">
           <label for>zID</label>
           <input type="text" v-model="zid" />

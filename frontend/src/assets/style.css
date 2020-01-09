@@ -76,7 +76,7 @@ h4, h5, h6 {
 }
 
 /* Form elements */
-form {
+.form {
   background-color: white;
   padding: 3rem 6rem;
   color: var(--c-secondary-dark);
@@ -84,12 +84,12 @@ form {
   border-radius: var(--border-radius);
 }
 
-form .btn-primary {
+.form .btn-primary {
   display: block;
   margin: 1.5rem auto 0 auto;
 }
 
-form h2 {
+.form h2 {
   text-align: center;
 }
 
@@ -99,7 +99,7 @@ form h2 {
   align-items: center;
 }
 
-.form-container form {
+.form-container .form {
   display: inline-block;
 }
 
@@ -124,6 +124,7 @@ input {
 input:focus {
   border: 2px solid var(--c-secondary-dark);
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+  outline: 0;
 }
 
 label {
@@ -136,18 +137,24 @@ label {
 
 .btn {
   padding: 0.75em 1.5em;
-  border: none;
   transition: box-shadow 0.2s;
   font-weight: 400;
   font-family: var(--text-stack);
   font-size: 1rem;
-  cursor: pointer;
   border-radius: var(--border-radius); /* TODO: should be using px? */
   box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  border: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 
 .btn:hover {
   box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.25);
+}
+
+.btn:focus {
+  outline: 0;
 }
 
 .btn-primary {
@@ -159,15 +166,4 @@ label {
   color: var(--c-primary);
   border: 3px solid var(--c-primary);
   background-color: var(--c-secondary);
-}
-
-img {
-  width: 20%;
-  height: 20%;
-}
-
-.img-container {
-  display: flex;
-  justify-content: center;
-  padding-top: 2rem;
 }

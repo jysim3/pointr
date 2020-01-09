@@ -12,7 +12,9 @@ export default {
 
 <style scoped>
   .img-container {
-    margin-bottom: 2rem;
+    margin: 2rem 0;
+    display: flex;
+    justify-content: center;
   }
 
   .logo {

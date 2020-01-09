@@ -6,7 +6,7 @@
     <div id="qr-and-form-container">
       <EventQRCode :eid="this.eid" />
       <div id="event-form-container" class="form-container">
-        <form id="event-form" @submit.prevent="submitEventAttendance">
+        <form id="event-form" class="form" @submit.prevent="submitEventAttendance">
           <div class="label-input-div">
             <label for>zID</label>
             <input v-model="zid" type="text" required/>
@@ -104,8 +104,6 @@ export default {
 #event-form {
   box-shadow: none;
 }
-
-
 
 #qr-container, #event-form-container {
   display: inline-block;

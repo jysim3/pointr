@@ -1,7 +1,7 @@
 <template>
   <div>
     <Logo />
-    <form @submit.prevent="submitAttendanceForm">
+    <form class="form" @submit.prevent="submitAttendanceForm">
       <div class="label-input-div">
         <label for>Event code</label>
         <input v-model="eid" type="text" required/>

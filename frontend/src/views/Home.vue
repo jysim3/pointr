@@ -57,7 +57,7 @@ export default {
   margin-top: 2em;
 }
 
-#btn-container > button {
+.btn {
   font-size: 1.5rem;
   /* TODO: fix alignment, does not seem quite center? */
   margin: 0 4rem;
