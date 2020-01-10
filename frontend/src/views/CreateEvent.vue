@@ -5,20 +5,20 @@
       <form id="create-event-form" class="form" @submit.prevent="submitEventForm">
         <h2>Create an event</h2>
         <div class="label-input-div">
-          <label for>Event title</label>
-          <input v-model="title" type="text" required/>
+          <label class="label" for>Event title</label>
+          <input class="input" v-model="title" type="text" required/>
         </div>
         <div class="label-input-div">
-          <label for>Society</label>
-          <input v-model="society" type="text" required/>
+          <label class="label" for>Society</label>
+          <input class="input" v-model="society" type="text" required/>
         </div>
         <div class="label-input-div">
-          <label for>Set default points</label>
-          <input v-model="point" type="text" required/>
+          <label class="label" for>Set default points</label>
+          <input class="input" v-model="point" type="text" required/>
         </div>
         <div class="label-input-div">
-            <label for>Show QR Code/Event link</label>
-            <input type="checkbox" checked/>
+            <label class="label" for>Show QR Code/Event link</label>
+            <input class="input" type="checkbox" checked/>
         </div>
         <button type="submit" class="btn btn-primary">Create Event</button>
       </form>

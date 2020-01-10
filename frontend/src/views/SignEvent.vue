@@ -2,15 +2,15 @@
   <div>
     <EventCodeDisplay :eid="eid" />
     <h1>Welcome to {{ this.eventName }}!</h1>
-    <label class="form-container">
+    <label class="label" class="form-container">
       <form class="form" @submit="submitForm">
         <div class="label-input-div">
-          <label for>zID</label>
-          <input type="text" v-model="zid" />
+          <label class="label" for>zID</label>
+          <input class="input" type="text" v-model="zid" />
         </div>
-        <label class="label-input-div">
-          <label for>Name</label>
-          <input type="text" v-model="name" />
+        <label class="label" class="label-input-div">
+          <label class="label" for>Name</label>
+          <input class="input" type="text" v-model="name" />
         </label>
         <button class="btn btn-primary">Sign attendance</button>
       </form>

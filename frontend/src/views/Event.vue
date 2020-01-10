@@ -8,12 +8,12 @@
       <div id="event-form-container" class="form-container">
         <form id="event-form" class="form" @submit.prevent="submitEventAttendance">
           <div class="label-input-div">
-            <label for>zID</label>
-            <input v-model="zid" type="text" required/>
+            <label class="label" for>zID</label>
+            <input class="input" v-model="zid" type="text" required/>
           </div>
           <div class="label-input-div">
-            <label for>Name</label>
-            <input v-model="uname" type="text" required/>
+            <label class="label" for>Name</label>
+            <input class="input" v-model="uname" type="text" required/>
           </div>
           <button type="submit" class="btn btn-primary">Sign attendance</button>
         </form>

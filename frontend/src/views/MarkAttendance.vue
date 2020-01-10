@@ -3,16 +3,16 @@
     <Logo />
     <form class="form" @submit.prevent="submitAttendanceForm">
       <div class="label-input-div">
-        <label for>Event code</label>
-        <input v-model="eid" type="text" required/>
+        <label class="label" for>Event code</label>
+        <input class="input" v-model="eid" type="text" required/>
       </div>
       <!-- <div class="label-input-div">
-        <label for>zID</label>
-        <input type="text" />
+        <label class="label" for>zID</label>
+        <input class="input" type="text" />
       </div>
       <div class="label-input-div">
-        <label for>Name</label>
-        <input type="text" />
+        <label class="label" for>Name</label>
+        <input class="input" type="text" />
       </div> -->
       <button class="btn btn-primary" type="submit">Go to event</button>
     </form>

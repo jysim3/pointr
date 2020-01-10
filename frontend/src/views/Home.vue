@@ -5,8 +5,8 @@
         <button @click="createEvent" id="create-event-btn" class="home-button">Create event</button>
         <form @submit="submitForm">
           <div class="label-input-div">
-            <label for>Enter attendance</label>
-            <input placeholder="Event code" v-model="eid" type="text" />
+            <label class="label" for>Enter attendance</label>
+            <input class="input" placeholder="Event code" v-model="eid" type="text" />
           </div>
           <button type="submit" class="home-button" id="submit-id">
             <i class="material-icons">arrow_forward</i>
