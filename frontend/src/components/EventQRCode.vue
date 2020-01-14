@@ -9,7 +9,9 @@ import QRCode from "qrcode";
 
 export default {
   name: "EventQRCode",
-  props: ["eid"],
+  props: {
+    eid: String
+  },
   mounted() {
     // Generating and adding QRCode to canvas
     const canvas = document.getElementById("qr-canvas")
