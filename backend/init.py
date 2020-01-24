@@ -2,17 +2,18 @@ import sqlite3
 from sqlite3 import Error
 from flask import Flask, request
 from flask_cors import CORS
-from flask_restplus import Api
+from flask_restx import Api, Resource
 import random
 import string
 from json import dumps
 import utilFunctions
 import re
-from auth import api as auth
+from namespaces.auth import api as auth
 
 app = Flask(__name__)
-api = Api(app)
-
+api = Api(app, version='0.01', title='Pointr backend',
+    description='Backend for pointr web servers',
+)
 api.add_namespace(auth, path='/auth')
 
 CORS(app)
@@ -28,9 +29,11 @@ def generateID(number):
 
 # Routes
 
-@app.route('/')
-def hello():
-    return "Hello World!"
+@api.route('/')
+class Hello(Resource):
+    @api.response(200, 'OK')
+    def get():
+        return "Hello World!"
 
 # For creating an event
 # Usage: 
@@ -42,26 +45,28 @@ def hello():
 # { status: "success", eventID: "1234F"}
 # or
 # { status: "ERROR MESSAGE"}
-
-@app.route('/api/event', methods=['POST'])
-def createEvent():
-    data = request.get_json()
-
-    eventID = generateID(5).upper()
-    if not 'hasQR' in data:
-        data['hasQR'] = False
-    elif data['hasQR'].lower() == "true":
-        data['hasQR'] = True
-    elif data['hasQR'].lower() == "false":
-        data['hasQR'] = False
-    else:
-        data['hasQR'] = False
-            
-    payload = {}
-    payload['status'] = utilFunctions.createEvent(sanitize(str(data['zID']).lower()), sanitize(str(eventID)), sanitize(str(data['name'])), sanitize(str(data['eventDate'])), data['hasQR'])
-    if payload['status'] == 'success':
-        payload['eventID'] = eventID
-    return dumps(payload)
+@api.route('/api/event', methods=['POST'])
+@api.doc(params={'id': 'An ID'})
+class Event(Resource):
+    @api.response(400, 'Malformed Request')
+    @api.response(409, 'Username Taken')
+    def post():
+        data = request.get_json()
+        eventID = generateID(5).upper()
+        if not 'hasQR' in data:
+            data['hasQR'] = False
+        elif data['hasQR'].lower() == "true":
+            data['hasQR'] = True
+        elif data['hasQR'].lower() == "false":
+            data['hasQR'] = False
+        else:
+            data['hasQR'] = False
+                
+        payload = {}
+        payload['status'] = utilFunctions.createEvent(sanitize(str(data['zID']).lower()), sanitize(str(eventID)), sanitize(str(data['name'])), sanitize(str(data['eventDate'])), data['hasQR'])
+        if payload['status'] == 'success':
+            payload['eventID'] = eventID
+        return dumps(payload)
 
 # For getting info on an event
 # Usage:
