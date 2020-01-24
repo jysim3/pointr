@@ -2,13 +2,19 @@ import sqlite3
 from sqlite3 import Error
 from flask import Flask, request
 from flask_cors import CORS
+from flask_restplus import Api
 import random
 import string
 from json import dumps
 import utilFunctions
 import re
+from auth import api as auth
 
 app = Flask(__name__)
+api = Api(app)
+
+api.add_namespace(auth, path='/auth')
+
 CORS(app)
 
 def sanitize(input):

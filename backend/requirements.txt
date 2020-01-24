@@ -1,2 +1,6 @@
 Flask==1.0.2
 Flask-Cors==3.0.8
+passlib==1.7.2
+PyJWT==1.7.1
+flask-restplus==0.13.0
+marshmallow==3.3.0
