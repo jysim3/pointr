@@ -61,54 +61,26 @@ def createEvent():
 # For getting info on an event
 # Usage:
 # GET /api/event?eventID=ID
-@app.route('/dummy/event', methods=['GET'])
-def getEventDummy():
-    eventID = request.args.get('eventID')
-    payload = {}
-    payload["eventID"] = eventID
-    payload["name"] = "Coffee Night"
-    payload["participants"] = [{
-        "userID": "z5214808",
-        "name": "Harrison",
-        "points": "10000"
-    }, {
-        "userID": "z6273842",
-        "name": "John",
-        "points": "1"
-    }, {
-        "userID": "z1234567",
-        "name": "Peter",
-        "points": "1203"
-    }]
-    
-    return dumps(payload)
-
-# For getting info on an event
-# Usage:
-# GET /api/event?eventID=ID
 # Returns: 
 # {"eventID": "1239", "name": "Test Event 0", "participants": [{"zID": "z5161616", "name": "Steven Shen", "points": 1}, {"zID": "z5161798", "name": "Casey Neistat", "points": 1}]}
-# FIXME
 @app.route('/api/event', methods=['GET'])
 def getEvent():
     eventID = request.args.get('eventID')
     payload = {}
-    print(eventID)
-    attendance = utilFunctions.getAttendance(int(sanitize(eventID)))
+    attendance = utilFunctions.getAttendance(sanitize(eventID))
+    print(attendance)
     if attendance == "failed":
         payload['status'] = 'failed'
     else:
         payload['eventID'] = eventID
         payload['name'] = attendance[1][0]
-        # FIXME: Change the line below
-        payload['hasQR'] = False
+        payload['hasQR'] = attendance[0][0][4]
         payload['participants'] = []
         for person in attendance[0]:
             personJSON = {}
-            print(person)
-            personJSON['zID'] = person[0][0][0].lower()
-            personJSON['name'] = person[0][0][1]
-            personJSON['points'] = person[1]
+            personJSON['zID'] = person[3].lower()
+            personJSON['name'] = person[2]
+            personJSON['points'] = person[0]
             payload['participants'].append(personJSON)
         payload['status'] = 'success'
     return dumps(payload)
@@ -150,6 +122,11 @@ def getUser():
         eventJSON['points'] = event[0]
         payload['events'].append(eventJSON)
     return dumps(payload)
+
+# TODO: Implement the flask routing for getEventForSoc(societyID)
+# TODO: Implement the flask routing for getPersonEventsForSoc(zID, societyID)
+# TODO: Implement society related flask routings
+# @app.route('/api/society', methods=['GET'])
 
 # Delete user attendance
 # Usage: 

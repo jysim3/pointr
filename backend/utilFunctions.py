@@ -224,7 +224,7 @@ def getAttendance(eventID):
         return "failed"
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select points, isArcMember, users.name, users.zid from participation join events join users where participation.eventid = events.eventid and participation.user = users.zid and events.eventID = ?;", (eventID,))
+    curs.execute("select points, isArcMember, users.name, users.zid, qrcode from participation join events join users where participation.eventid = events.eventid and participation.user = users.zid and events.eventID = ?;", (eventID,))
     result = curs.fetchall()
 
     curs.execute("select name from events where eventid = ?;", (eventID,))
@@ -279,8 +279,9 @@ def main():
 
     #print(getPersonEventsForSoc("z5161616", findSocID("UNSW Hall")))
     # print(getAttendance("1234"))
-    print(getUserAttendance("z5161616"))
+    #print(getUserAttendance("z5161616"))
     # print(getAttendance(1234))
+    print("Entered")
 
 if __name__ == '__main__':
     main()
