@@ -88,22 +88,24 @@ def getEventDummy():
 # GET /api/event?eventID=ID
 # Returns: 
 # {"eventID": "1239", "name": "Test Event 0", "participants": [{"zID": "z5161616", "name": "Steven Shen", "points": 1}, {"zID": "z5161798", "name": "Casey Neistat", "points": 1}]}
+# FIXME
 @app.route('/api/event', methods=['GET'])
 def getEvent():
     eventID = request.args.get('eventID')
     payload = {}
-    attendance = utilFunctions.getAttendance(sanitize(eventID))
+    print(eventID)
+    attendance = utilFunctions.getAttendance(int(sanitize(eventID)))
     if attendance == "failed":
         payload['status'] = 'failed'
     else:
         payload['eventID'] = eventID
-        payload['name'] = attendance[1]
+        payload['name'] = attendance[1][0]
+        # FIXME: Change the line below
         payload['hasQR'] = False
         payload['participants'] = []
         for person in attendance[0]:
             personJSON = {}
             print(person)
-            # Fix Stevens shit formatting
             personJSON['zID'] = person[0][0][0].lower()
             personJSON['name'] = person[0][0][1]
             personJSON['points'] = person[1]
@@ -138,16 +140,14 @@ def getUser():
     payload = {}
     payload['events'] = []
     payload['zID'] = zID.lower()
-    payload['name'] = attendance[1]
-    print(attendance[0])
+    payload['name'] = attendance[1][0]
     for event in attendance[0]:
         eventJSON = {}
-        # Dont ask what this does
-        eventJSON['eventID'] = event[0][0]
-        eventJSON['name'] = event[0][1]
-        eventJSON['society'] = event[0][2]
-        eventJSON['eventDate'] = event[0][3]
-        eventJSON['points'] = event[1]
+        eventJSON['eventID'] = event[1]
+        eventJSON['name'] = event[2]
+        eventJSON['society'] = event[4]
+        eventJSON['eventDate'] = event[3]
+        eventJSON['points'] = event[0]
         payload['events'].append(eventJSON)
     return dumps(payload)
 
@@ -229,7 +229,6 @@ def main():
         # os.system("rm database.db")
 
         conn = createConnection()
-        # TODO: Add a field here to store passwords
         createUserSQL = '''
             create table if not exists users (
                 zid text not null,
@@ -287,7 +286,7 @@ def main():
         exit(1)
     
     # FIXME: Uncomment the line below when features implemented and server required
-    # app.run()
+    app.run()
 
 # 20/12/2019: Think about refactoring parts of the code (i.e. Flask related features into app.py to keep the functionalities separate)
 

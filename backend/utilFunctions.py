@@ -85,7 +85,7 @@ def createEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None):
     curs.execute("insert into events(eventID, name, owner, eventDate, qrCode) values (?, ?, ?, ?, ?);", (eventID, eventName, zID, eventDate, qrFlag))
 
     # Currently, location defaults to UNSW Hall
-    curs.execute("insert into host(location, society, eventID) values (?, ?, ?);", ("UNSW Hall", societyID, eventID,))
+    curs.execute("insert into host(location, society, eventID) values (?, ?, ?);", ("UNSW Hall", societyID if societyID is not None else -1, eventID,))
     conn.commit()
     conn.close()
     return "success"
@@ -115,60 +115,6 @@ def register(zID, eventID, userName, isArc = False):
     conn.close()
     return "success"
 
-def getAttendance(eventID):
-    if (checkEvent(eventID) == False):
-        return "failed"
-    conn = createConnection()
-    curs = conn.cursor()
-    curs.execute("select * from events where eventid=?", (eventID,))
-    conn.commit()
-    eventInformation = curs.fetchone()
-    # Need to return eventName
-    eventName = eventInformation[1]
-    eventQR = eventInformation[5]
-
-    curs.execute("select user, points from participation where eventid=?", (eventID,))
-    attendees = []
-    rows = curs.fetchall()
-    for row in rows:
-        attendees.append([row[0], row[1]])
-
-    participation = []
-    for person in attendees:
-        curs.execute("select * from users where zid=?", (person[0],))
-        rows = curs.fetchall()
-        participation.append([rows, person[1]])
-
-    conn.close()
-    return participation, eventName, eventQR
-
-def getUserAttendance(zid):
-    if (checkUser(zid) == False):
-        return "invalid user"
-    conn = createConnection()
-    curs = conn.cursor()
-    curs.execute("select * from users where zid=?", (zid,))
-    conn.commit()
-    userInformation = curs.fetchone()
-    # Need to return userName
-    userName = userInformation[1]
-
-    curs.execute("select eventID, points from participation where user=?", (zid,))
-    conn.commit()
-    events = curs.fetchall()
-    events_output = []
-    for event in events:
-        eventNum = event[0]
-        curs.execute("select * from events where eventID=?", (eventNum,))
-        conn.commit()
-        events_info = curs.fetchall()
-        #add points
-        events_info.append(event[1])
-        events_output.append(events_info)
-        
-    conn.close()
-    return events_output, userName
-
 def changePoints(zID, eventID, newPoints):
     conn = createConnection()
     curs = conn.cursor()
@@ -190,30 +136,6 @@ def deleteUserAttendance(zID, eventID):
     if error == []:
         return "failed"
     return "success"
-
-# 20/12/2019: TODO Fix functions here that correspond to the changes being made to the database, add functions for the new tables
-
-
-# Get all the events hosted by a society
-def getEventForSoc(societyID):
-    # 9/1/2020: TODO: Flask routing for this function
-    conn = createConnection()
-    curs = conn.cursor()
-    curs.execute("select * from events join host on events.eventID = host.eventID and society = ?;", (societyID,))
-    events = curs.fetchall()
-    conn.close()
-    return events
-
-# Get all the events in a society attended by a particular person
-def getPersonEventsForSoc(zID, societyID):
-    # 9/1/2020: TODO: Flask routing for this function
-    # 9/1/2020: FIXME: Change the line below to select only the stuff that's required
-    conn = createConnection()
-    curs = conn.cursor()
-    curs.execute("select * from events join host join participation on events.eventID = host.eventID and events.eventID = participation.eventID and society = ? and participation.user = ?;", (societyID, zID,))
-    events = curs.fetchall()
-    conn.close()
-    return events
 
 def createSocStaff(zID, societyID, role = None):
     if (zID == None or societyID == None):
@@ -254,10 +176,66 @@ def changeRole(zID, societyID, role):
         return "failed"
     return "success"
 
+# BELOW ARE ALL THE QUERY FUNCTIONS
+# Get all the events hosted by a society
+def getEventForSoc(societyID):
+    # 9/1/2020: TODO: Flask routing for this function
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("select * from events join host on events.eventID = host.eventID and society = ?;", (societyID,))
+    events = curs.fetchall()
+    conn.close()
+    return events
+
+# Get all the events in a society attended by a particular person
+def getPersonEventsForSoc(zID, societyID):
+    # 9/1/2020: TODO: Flask routing for this function
+    # 9/1/2020: FIXME: Change the line below to select only the stuff that's required
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("select * from events join host join participation on events.eventID = host.eventID and events.eventID = participation.eventID and society = ? and participation.user = ?;", (societyID, zID,))
+    events = curs.fetchall()
+    conn.close()
+    return events
+
+# return a list of events in the form of: [(points, eventID, eventName, date, societyName), (...)]
+# Get all the events attended by the user ever in every society
+def getUserAttendance(zid):
+    if (checkUser(zid) == False):
+        return "invalid user"
+    conn = createConnection()
+    curs = conn.cursor()
+
+    curs.execute("select points, events.eventID, events.name, eventdate, societyName from participation join events join host join society on society = society.societyid and participation.eventID = events.eventID and host.eventID = events.eventid and user = ?;", (zid,))
+    results = curs.fetchall()
+
+    curs.execute("select name from users where users.zid = ?", (zid,))
+    name = curs.fetchone()
+
+    conn.close()
+    return results, name
+
+# Get the attendance information of one particular event
+# return a list of attendees in the form of: [(points, isArcMember, name, zid), (...)]
+# NOTE: isArcMember is bool, 0 == False, 1 == True
+# NOTE: Potentially we dont need to return the name of the user here
+def getAttendance(eventID):
+    if (checkEvent(eventID) == False):
+        return "failed"
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("select points, isArcMember, users.name, users.zid from participation join events join users where participation.eventid = events.eventid and participation.user = users.zid and events.eventID = ?;", (eventID,))
+    result = curs.fetchall()
+
+    curs.execute("select name from events where eventid = ?;", (eventID,))
+    name = curs.fetchone()
+
+    conn.close()
+    return result, name
+
 def initDatabase():
     # Moving this section to init.py in the next patch lmao
     # add users
-    # 8/1/2020: FIXME: Add some passwords to the accounts
     createUser("z5161616", "Steven Shen", "123456")
     createUser("z5161798", "Casey Neistat", "123456")
     createUser("z5111111", "Harrison Steyn", "123456")
@@ -268,13 +246,11 @@ def initDatabase():
 
     # TODO: Add some dummy societies and then fix the below add events dummy functions
     # NOTE: Might not be needed since the current version focuses on implementation just for Hall
-    #add societies
     createSociety("z5111111", "CSESoc")
     createSociety("z5123123", "Manchester United FC")
     createSociety("z5555555", "UNSW Hall")
 
     # NOTE: Defaults to UNSW Hall (for the society field right now)
-    #add events
     createEvent("z5161616", "1239", "Hackathon", "2019-11-19", True)
     createEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2019-09-09", True)
     createEvent("z5555555", "1234", "Coffee Night", "2019-10-16", True)
@@ -301,9 +277,10 @@ def main():
     # Uncomment if required
     # initDatabase()
 
-    print(getPersonEventsForSoc("z5161616", findSocID("UNSW Hall")))
+    #print(getPersonEventsForSoc("z5161616", findSocID("UNSW Hall")))
     # print(getAttendance("1234"))
-    # print(getUserAttendance("z5161616"))
+    print(getUserAttendance("z5161616"))
+    # print(getAttendance(1234))
 
 if __name__ == '__main__':
     main()
