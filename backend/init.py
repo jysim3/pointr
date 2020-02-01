@@ -98,7 +98,7 @@ def attend():
     payload['status'] = utilFunctions.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(data['name']))
     return dumps(payload)
 
-# For getting the points of a user
+# Returns a list of events this person has attended
 # Usage:
 # GET /api/user?zID=z5214808
 # Returns:
@@ -123,9 +123,71 @@ def getUser():
         payload['events'].append(eventJSON)
     return dumps(payload)
 
-# TODO: Implement the flask routing for getEventForSoc(societyID)
-# TODO: Implement the flask routing for getPersonEventsForSoc(zID, societyID)
+# Get all the events hosted by a society
+@app.route('/api/soc/eventsHosted', methods=['GET'])
+def getHostedEvents():
+    societyID = request.args.get('societyID')
+    if (societyID is None):
+        return dumps({"status": "Failed", "msg": "No societyID inputted"})
+    eventsList = utilFunctions.getEventForSoc(societyID)
+    if (eventsList == "No such society"):
+        return dumps({"status": "Failed", "msg": "No such society"})
+    
+    payload = {}
+    payload['events'] = []
+    payload['societyName'] = eventsList[1]
+    for event in eventsList[0]:
+        eventJSON = {}
+        eventJSON['eventID'] = event[0]
+        eventJSON['name'] = event[1]
+        eventJSON['society'] = event[3]
+        eventJSON['eventDate'] = event[2]
+        payload['events'].append(eventJSON)
+    return dumps(payload)
+
 # TODO: Implement society related flask routings
+# Creates a society
+# Returns the societyID as part of the result JSON in the "msg" field
+@app.route('/api/soc/create', methods=['POST'])
+def createSoc():
+    data = request.get_json()
+    
+    result = utilFunctions.createSociety(sanitize(data['founder'] if data['founder'] is not None else 'Not Applicable'), sanitize(data['societyName']))
+    if (result == "exists already"):
+        return dumps({"status": "Failed", "msg": "A society with this name already exists"})
+    return dumps({"status": "Success", "msg": result})
+
+# TODO: Add a two layer system (i.e. admins), thus a flask route for adding admins
+
+# Returns a list of events attended by a person in one society
+@app.route('/api/stats/userSocAttendance', methods=['GET'])
+def userAllAttendance():
+    zID = request.args.get('zID')
+    socID = request.args.get('societyID')
+    if (zID is None):
+        return dumps({"status": "Failed", "msg": "No zID provided"})
+    elif (socID is None):
+        return dumps({"status": "Failed", "msg": "No socID provided"})
+
+    eventsAttended = utilFunctions.getPersonEventsForSoc(zID, socID)
+    if (eventsAttended == "No such user"):
+        return dumps({"status": "Failed", "msg": "No such user"})
+
+    payload = {}
+    payload['userName'] = eventsAttended[1]
+    payload['societyName'] = eventsAttended[2]
+    for event in eventsAttended[0]:
+        eventJSON = {}
+        eventJSON['eventID'] = event[0]
+        eventJSON['name'] = event[1]
+        eventJSON['society'] = event[3]
+        eventJSON['eventDate'] = event[2]
+        eventJSON['points'] = event[4]
+        payload['events'].append(eventJSON)
+    return dumps(payload)
+
+# TODO: Implement a function to get all events happening on a particular day
+# TODO: Recurrent Event (Potentially, if enough time)
 # @app.route('/api/society', methods=['GET'])
 
 # Delete user attendance

@@ -153,17 +153,23 @@ def createSociety(zID = None, societyName = None):
     societyID = init.generateID(5).upper()
     conn = createConnection()
     curs = conn.cursor()
+    curs.execute("select * from society where societyName = ?;", (societyName,))
+    result = curs.fetchone()
+    if (result != None):
+        conn.close()
+        return "exists already"
+
     curs.execute("insert into society(societyID, societyName) values (?, ?);", (societyID, societyName,))
     conn.commit()
     conn.close()
 
     # If we didn't specify a staff when creating the soc
     if (zID == None):
-        return "success"
+        return societyID
 
     # Otherwise, we add a staff with the job title of "President"
-    response = createSocStaff(zID, societyID, "President")
-    return response
+    createSocStaff(zID, societyID, "President")
+    return societyID
 
 def changeRole(zID, societyID, role):
     conn = createConnection()
@@ -182,10 +188,18 @@ def getEventForSoc(societyID):
     # 9/1/2020: TODO: Flask routing for this function
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select * from events join host on events.eventID = host.eventID and society = ?;", (societyID,))
+
+    curs.execute("select societyName from society where societyID = ?;", (societyID,))
+    name = curs.fetchone()
+    if (name == None):
+        conn.close()
+        return "No such society"
+
+    curs.execute("select events.eventID, name, eventDate, location, society from events join host on events.eventID = host.eventID and society = ?;", (societyID,))
     events = curs.fetchall()
+
     conn.close()
-    return events
+    return events, name[0]
 
 # Get all the events in a society attended by a particular person
 def getPersonEventsForSoc(zID, societyID):
@@ -193,10 +207,20 @@ def getPersonEventsForSoc(zID, societyID):
     # 9/1/2020: FIXME: Change the line below to select only the stuff that's required
     conn = createConnection()
     curs = conn.cursor()
+    curs.execute("select name from users where zid = ?;", (zID,))
+    name = curs.fetchone()
+    if (name is None):
+        return "No such user"
+
+    curs.execute("select societyName from society where societyID = ?;", (societyID,))
+    socName = curs.fetchone()
+    if (socName is None):
+        return None
+
     curs.execute("select * from events join host join participation on events.eventID = host.eventID and events.eventID = participation.eventID and society = ? and participation.user = ?;", (societyID, zID,))
     events = curs.fetchall()
     conn.close()
-    return events
+    return events, name[0], socName[0]
 
 # return a list of events in the form of: [(points, eventID, eventName, date, societyName), (...)]
 # Get all the events attended by the user ever in every society
@@ -251,10 +275,10 @@ def initDatabase():
     createSociety("z5555555", "UNSW Hall")
 
     # NOTE: Defaults to UNSW Hall (for the society field right now)
-    createEvent("z5161616", "1239", "Hackathon", "2019-11-19", True)
-    createEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2019-09-09", True)
-    createEvent("z5555555", "1234", "Coffee Night", "2019-10-16", True)
-    createEvent("z5111111", "4231", "LoL Appreciation", "2019-09-08", True)
+    createEvent("z5161616", "1239", "Hackathon", "2019-11-19", True, findSocID("UNSW Hall"))
+    createEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2019-09-09", True, findSocID("UNSW Hall"))
+    createEvent("z5555555", "1234", "Coffee Night", "2019-10-16", True, findSocID("UNSW Hall"))
+    createEvent("z5111111", "4231", "LoL Appreciation", "2019-09-08", True, findSocID("UNSW Hall"))
 
     # register users:
     #   for Hackathon
@@ -281,7 +305,9 @@ def main():
     # print(getAttendance("1234"))
     #print(getUserAttendance("z5161616"))
     # print(getAttendance(1234))
-    print("Entered")
+    #print("Entered")
+    #print(getEventForSoc(findSocID("UNSW Hall")))
+    print(getPersonEventsForSoc("z5161616", findSocID("UNSW Hall")))
 
 if __name__ == '__main__':
     main()
