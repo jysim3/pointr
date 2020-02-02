@@ -2,6 +2,9 @@ from sqlite3 import Error
 import init
 import sqlite3
 import hashlib
+from datetime import datetime
+from datetime import timedelta
+from dateutil.relativedelta import relativedelta
 
 def createConnection():
     conn = None
@@ -68,12 +71,11 @@ def createUser(zID, name, password):
     conn.close()
     return "Success"
 
-# Creting an event
-# Event could maybe have a weight
-def createEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None):
+# Creting an event (single instance events)
+def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None):
     # FIXME
     if (checkUser(zID) == False):
-        createUser(zID, "Junyang Sim")
+        createUser(zID, "N/A")
 
     if (checkEvent(eventID) != False):
         return "failed"
@@ -82,13 +84,58 @@ def createEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None):
     
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into events(eventID, name, owner, eventDate, qrCode) values (?, ?, ?, ?, ?);", (eventID, eventName, zID, eventDate, qrFlag))
+    curs.execute("insert into events(eventID, eventInstance, name, owner, eventDate, qrCode) values (?, ?, ?, ?, ?, ?);", (eventID, 0, eventName, zID, eventDate, qrFlag,))
 
     # Currently, location defaults to UNSW Hall
-    curs.execute("insert into host(location, society, eventID) values (?, ?, ?);", ("UNSW Hall", societyID if societyID is not None else -1, eventID,))
+    curs.execute("insert into host(location, society, eventID, eventInstance) values (?, ?, ?, ?);", ("UNSW Hall", societyID if societyID is not None else -1, eventID, 0))
     conn.commit()
     conn.close()
     return "success"
+
+'''
+     Creating a recurring event (need specification on what kind of recurrence)
+    # Currently, accept four different recurrent parametres, startDate and endDate to indicate how muuch this recurrence will be
+    # recurType indicates what kind of recurrence this is (accepts: "day", "week", "month")
+    # recurInterval indicates how many of said recurType is inbetween each interval (accepts any int less than 365)
+    # Example: startDate = 2020-01-30, endDate = 2020-05-30, recurType = "day", recurInterval = 14 
+    # Example Cont.: The above indicates this event occurs every fortnightly starting with 30/1/2020 to 30/5/2020
+'''
+def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag, societyID = None):
+    if (checkUser(zID) == False):
+        createUser(zID, "N/A")
+
+    if (checkEvent(eventID) != False):
+        return "Event already exists"
+    elif (societyID == None):
+        societyID = findSocID("UNSW Hall")
+
+    interval = None
+    if (recurType == "day"):
+        interval = relativedelta(days=recurInterval)
+    elif (recurType == "week"):
+        interval = relativedelta(weeks=recurInterval)
+    elif (recurType == "month"):
+        interval = relativedelta(months=recurInterval)
+    else:
+        return "Unacceptable parametre"
+
+    conn = createConnection()
+    curs = conn.cursor()
+    eventStartDate = datetime.strptime(eventStartDate, "%Y-%m-%d").date()
+    eventEndDate = datetime.strptime(eventEndDate, "%Y-%m-%d").date()
+    counter = 0
+    while eventStartDate < eventEndDate:
+        try:
+            curs.execute("insert into events(eventID, eventInstance, name, owner, eventDate, qrCode) values (?, ?, ?, ?, ?, ?);", (eventID, counter, eventName, zID, eventStartDate, qrFlag,))
+
+            curs.execute("insert into host(location, society, eventID, eventInstance,) values (?, ?, ?, ?);", ("UNSW Hall", societyID if societyID is not None else -1, eventID, counter,))
+        except Error as e:
+            return "Error encountered"
+        eventStartDate += interval
+    conn.commit()
+    conn.close()
+
+    return success
 
 def findSocID(socName):
     conn = createConnection()
@@ -98,6 +145,7 @@ def findSocID(socName):
 
     return societyID
 
+# TODO: CHANGE THIS FUNCTION TO REFLECT ON THE CHANGE IN THE EVENT TABLE
 def register(zID, eventID, userName, isArc = False):
     if (checkUser(zID) == False):
         createUser(zID, userName)
@@ -275,10 +323,10 @@ def initDatabase():
     createSociety("z5555555", "UNSW Hall")
 
     # NOTE: Defaults to UNSW Hall (for the society field right now)
-    createEvent("z5161616", "1239", "Hackathon", "2019-11-19", True, findSocID("UNSW Hall"))
-    createEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2019-09-09", True, findSocID("UNSW Hall"))
-    createEvent("z5555555", "1234", "Coffee Night", "2019-10-16", True, findSocID("UNSW Hall"))
-    createEvent("z5111111", "4231", "LoL Appreciation", "2019-09-08", True, findSocID("UNSW Hall"))
+    createSingleEvent("z5161616", "1239", "Hackathon", "2019-11-19", True, findSocID("UNSW Hall"))
+    createSingleEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2019-09-09", True, findSocID("UNSW Hall"))
+    createSingleEvent("z5555555", "1234", "Coffee Night", "2019-10-16", True, findSocID("UNSW Hall"))
+    createSingleEvent("z5111111", "4231", "LoL Appreciation", "2019-09-08", True, findSocID("UNSW Hall"))
 
     # register users:
     #   for Hackathon
@@ -307,7 +355,17 @@ def main():
     # print(getAttendance(1234))
     #print("Entered")
     #print(getEventForSoc(findSocID("UNSW Hall")))
-    print(getPersonEventsForSoc("z5161616", findSocID("UNSW Hall")))
+    #print(getPersonEventsForSoc("z5161616", findSocID("UNSW Hall")))
+    '''
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("select eventdate from events;")
+    results = curs.fetchall()
+    date1 = datetime.strptime(results[0][0], '%Y-%m-%d').date()
+    print(date1)
+    print(date1 + relativedelta(months=3))
+    '''
+    createRecurrentEvent("z5161616", "0000aaaa", "coffee night", "2020-03-13", "2020-04-15", 7, "day", False)
 
 if __name__ == '__main__':
     main()

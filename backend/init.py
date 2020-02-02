@@ -53,12 +53,12 @@ def createEvent():
         data['hasQR'] = False
             
     payload = {}
-    payload['status'] = utilFunctions.createEvent(sanitize(str(data['zID']).lower()), sanitize(str(eventID)), sanitize(str(data['name'])), sanitize(str(data['eventDate'])), data['hasQR'])
+    payload['status'] = utilFunctions.createSingleEvent(sanitize(str(data['zID']).lower()), sanitize(str(eventID)), sanitize(str(data['name'])), sanitize(str(data['eventDate'])), data['hasQR'])
     if payload['status'] == 'success':
         payload['eventID'] = eventID
     return dumps(payload)
 
-# For getting info on an event
+# For getting info on an event, i.e. participation information
 # Usage:
 # GET /api/event?eventID=ID
 # Returns: 
@@ -186,7 +186,17 @@ def userAllAttendance():
         payload['events'].append(eventJSON)
     return dumps(payload)
 
-# TODO: Implement a function to get all events happening on a particular day
+# TODO: Implement a function to get all events happening on a particular day (for one soc)
+# Will probably be involved in some kind of a "today's events" type of thing
+@app.route('/api/events/onthisday')
+def onThisDay():
+    date = request.args.get('date')
+    if (date is None):
+        return dumps({"status": "Failed", "msg": "No date provided"})
+    
+    # TODO: Complete this
+    results = utilFunctions.getEventOnThisDay(date)
+
 # TODO: Recurrent Event (Potentially, if enough time)
 # @app.route('/api/society', methods=['GET'])
 
@@ -276,14 +286,18 @@ def main():
                 primary key(zid)
             );'''
         createTable(conn, createUserSQL)
+        # NOTE: TODO: FIXME: CHANGED THE TABLE BELOW TO INCLUDE EVENTINSTANCE
+        # FIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX IN WHATEVER ELSE THAT USES THIS
         createEventsSQL = '''
             create table if not exists events (
                 eventID text not null,
+                eventInstance integer not null,
                 name text not null,
                 eventdate date not null,
                 owner text not null references users(id),
                 qrCode boolean,
-                primary key(eventID)
+                description text,
+                primary key(eventID, eventInstance)
             );'''
         createTable(conn, createEventsSQL)
         createPartcipationSQL = '''
@@ -307,7 +321,8 @@ def main():
                 location text,
                 society integer references society(societyID),
                 eventID text not null references events(eventID),
-                primary key (society, eventID)
+                eventInstance integer not null references events(eventInstance),
+                primary key (society, eventID, eventInstance)
             );'''
         createTable(conn, createSocietyHostSQL)
         createSocStaffSQL = '''
