@@ -51,12 +51,52 @@ def createEvent():
         data['hasQR'] = False
     else:
         data['hasQR'] = False
-            
+    
     payload = {}
     payload['status'] = utilFunctions.createSingleEvent(sanitize(str(data['zID']).lower()), sanitize(str(eventID)), sanitize(str(data['name'])), sanitize(str(data['eventDate'])), data['hasQR'])
     if payload['status'] == 'success':
         payload['eventID'] = eventID
     return dumps(payload)
+
+# For creating a recurrent event
+# Usage: 
+# POST /api/event/createRecurrent
+# Takes:
+# { zID: "z5214808", name: "Coffee Night", startDate: "2020-01-01", endDate: "2020-04-04", recurType: "day", recurInterval: 6}
+# Date is in YYYY-MM-DD
+    # Currently, accept four different recurrent parametres, startDate and endDate to indicate how muuch this recurrence will be
+    # recurType indicates what kind of recurrence this is (accepts: "day", "week", "month")
+    # recurInterval indicates how many of said recurType is inbetween each interval (accepts any int less than 365)
+    # Example: startDate = 2020-01-30, endDate = 2020-05-30, recurType = "day", recurInterval = 14 
+    # Example Cont.: The above indicates this event occurs every fortnightly starting with 30/1/2020 to 30/5/2020
+# Returns:
+# { status: "success", eventID: "1234F"}
+# or
+# { status: "ERROR MESSAGE"}
+@app.route('/api/event/createRecurrent', methods=['POST'])
+def createRecurEvent():
+    data = request.get_json()
+    eventID = generateID(5).upper()
+    if not 'hasQR' in data:
+        data['hasQR'] = False
+    elif data['hasQR'].lower() == "true":
+        data['hasQR'] = True
+    elif data['hasQR'].lower() == "false":
+        data['hasQR'] = False
+    else:
+        data['hasQR'] = Fals
+
+    startDate = sanitize(str(data['startDate']).lower())
+    endDate = sanitize(str(data['endDate']).lower())
+    recurType = sanitize(str(data['recurType']).lower())
+    recurInterval = sanitize(str(data['recurInterval']).lower())
+    zID = sanitize(str(data['zID']))
+    eventName = sanitize(str(data['name']))
+    hasQR = sanitize(str(data['hasQR']))
+    results = utilFunctions.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR)
+    if (isinstance(results, str)):
+        return dumps({"status": "failed", "msg": results})
+    return dumps({"status": "Success", "msg": results})
 
 # For getting info on an event, i.e. participation information
 # Usage:
@@ -84,6 +124,20 @@ def getEvent():
             payload['participants'].append(personJSON)
         payload['status'] = 'success'
     return dumps(payload)
+
+# For getting information on a set of recurrent events
+# Usage:
+# GET /api/stat/recurEvent?eventID=?
+# Returns:
+# {["eventID": "ASDA", "name": "AA meeting", "date": "2020-04-03", "attendance": 41], [...]}
+@app.route('/api/stat/recurEvent', methods=['GET'])
+def getRecurEventStats():
+    eventID = request.args.get('eventID')
+    if (eventID == None):
+        return dumps({"status": "Failed", "msg": "No eventID"})
+
+    return dumps(utilFunctions.fetchRecur(eventID))
+
 
 # For adding a user to an event
 # Usage:
@@ -286,18 +340,15 @@ def main():
                 primary key(zid)
             );'''
         createTable(conn, createUserSQL)
-        # NOTE: TODO: FIXME: CHANGED THE TABLE BELOW TO INCLUDE EVENTINSTANCE
-        # FIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX IN WHATEVER ELSE THAT USES THIS
         createEventsSQL = '''
             create table if not exists events (
                 eventID text not null,
-                eventInstance integer not null,
                 name text not null,
                 eventdate date not null,
                 owner text not null references users(id),
                 qrCode boolean,
                 description text,
-                primary key(eventID, eventInstance)
+                primary key(eventID)
             );'''
         createTable(conn, createEventsSQL)
         createPartcipationSQL = '''
@@ -321,8 +372,7 @@ def main():
                 location text,
                 society integer references society(societyID),
                 eventID text not null references events(eventID),
-                eventInstance integer not null references events(eventInstance),
-                primary key (society, eventID, eventInstance)
+                primary key (society, eventID)
             );'''
         createTable(conn, createSocietyHostSQL)
         createSocStaffSQL = '''

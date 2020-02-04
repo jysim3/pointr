@@ -84,16 +84,16 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
     
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into events(eventID, eventInstance, name, owner, eventDate, qrCode) values (?, ?, ?, ?, ?, ?);", (eventID, 0, eventName, zID, eventDate, qrFlag,))
+    curs.execute("insert into events(eventID, name, owner, eventDate, qrCode) values (?, ?, ?, ?, ?);", (eventID, eventName, zID, eventDate, qrFlag,))
 
     # Currently, location defaults to UNSW Hall
-    curs.execute("insert into host(location, society, eventID, eventInstance) values (?, ?, ?, ?);", ("UNSW Hall", societyID if societyID is not None else -1, eventID, 0))
+    curs.execute("insert into host(location, society, eventID) values (?, ?, ?);", ("UNSW Hall", societyID if societyID is not None else -1, eventID))
     conn.commit()
     conn.close()
     return "success"
 
 '''
-     Creating a recurring event (need specification on what kind of recurrence)
+    # Creating a recurring event (need specification on what kind of recurrence)
     # Currently, accept four different recurrent parametres, startDate and endDate to indicate how muuch this recurrence will be
     # recurType indicates what kind of recurrence this is (accepts: "day", "week", "month")
     # recurInterval indicates how many of said recurType is inbetween each interval (accepts any int less than 365)
@@ -110,6 +110,7 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
         societyID = findSocID("UNSW Hall")
 
     interval = None
+    recurInterval = int(recurInterval)
     if (recurType == "day"):
         interval = relativedelta(days=recurInterval)
     elif (recurType == "week"):
@@ -121,21 +122,48 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
 
     conn = createConnection()
     curs = conn.cursor()
-    eventStartDate = datetime.strptime(eventStartDate, "%Y-%m-%d").date()
-    eventEndDate = datetime.strptime(eventEndDate, "%Y-%m-%d").date()
+    eventStartDate = datetime.strptime(eventStartDate, "%Y%m%d").date()
+    eventEndDate = datetime.strptime(eventEndDate, "%Y%m%d").date()
     counter = 0
+    eventIDLists = []
     while eventStartDate < eventEndDate:
+        currEventID = eventID + f"{counter:05d}"
+        eventIDLists.append({"date": str(eventStartDate), "eventID": currEventID})
         try:
-            curs.execute("insert into events(eventID, eventInstance, name, owner, eventDate, qrCode) values (?, ?, ?, ?, ?, ?);", (eventID, counter, eventName, zID, eventStartDate, qrFlag,))
+            curs.execute("insert into events(eventID, name, owner, eventDate, qrCode) values (?, ?, ?, ?, ?);", (currEventID, eventName, zID, eventStartDate, qrFlag,))
 
-            curs.execute("insert into host(location, society, eventID, eventInstance,) values (?, ?, ?, ?);", ("UNSW Hall", societyID if societyID is not None else -1, eventID, counter,))
+            curs.execute("insert into host(location, society, eventID) values (?, ?, ?);", ("UNSW Hall", societyID if societyID is not None else -1, currEventID,))
         except Error as e:
+            print(e)
             return "Error encountered"
         eventStartDate += interval
+        counter += 1
     conn.commit()
     conn.close()
 
-    return success
+    return eventIDLists
+
+# Returns a set of attendance numbers for each events
+def fetchRecur(eventID):
+    baseID = eventID[:5]
+
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute(f"select * from events where eventID like '{baseID}%';")
+    results = curs.fetchall()
+    payload = []
+    for event in results:
+        eventJSON = {}
+        eventJSON['eventID'] = event[0]
+        eventJSON['name'] = event[1]
+        eventJSON['date'] = event[2]
+
+        curs.execute("select count(*) as count from participation where eventID = ?;", (event[0],))
+        eventJSON['attendance'] = curs.fetchone()[0]
+
+        payload.append(eventJSON)
+    conn.close()
+    return payload
 
 def findSocID(socName):
     conn = createConnection()
@@ -347,7 +375,7 @@ def initDatabase():
 
 def main():
     # Uncomment if required
-    # initDatabase()
+    #initDatabase()
 
     #print(getPersonEventsForSoc("z5161616", findSocID("UNSW Hall")))
     # print(getAttendance("1234"))
@@ -365,7 +393,8 @@ def main():
     print(date1)
     print(date1 + relativedelta(months=3))
     '''
-    createRecurrentEvent("z5161616", "0000aaaa", "coffee night", "2020-03-13", "2020-04-15", 7, "day", False)
+    #print(createRecurrentEvent("z5161616", "aaaaa", "coffee night", "2020-03-13", "2020-04-15", 7, "day", False))
+    print(fetchRecur("1FAEA00018"))
 
 if __name__ == '__main__':
     main()
