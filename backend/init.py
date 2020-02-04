@@ -5,7 +5,8 @@ from flask_cors import CORS
 import random
 import string
 from json import dumps
-import utilFunctions
+#import util.utilFunctions as utilFunctions
+from util import events, participation, societies, users, utilFunctions
 import re
 import os
 
@@ -53,7 +54,7 @@ def createEvent():
         data['hasQR'] = False
     
     payload = {}
-    payload['status'] = utilFunctions.createSingleEvent(sanitize(str(data['zID']).lower()), sanitize(str(eventID)), sanitize(str(data['name'])), sanitize(str(data['eventDate'])), data['hasQR'])
+    payload['status'] = events.createSingleEvent(sanitize(str(data['zID']).lower()), sanitize(str(eventID)), sanitize(str(data['name'])), sanitize(str(data['eventDate'])), data['hasQR'])
     if payload['status'] == 'success':
         payload['eventID'] = eventID
     return dumps(payload)
@@ -93,7 +94,8 @@ def createRecurEvent():
     zID = sanitize(str(data['zID']))
     eventName = sanitize(str(data['name']))
     hasQR = sanitize(str(data['hasQR']))
-    results = utilFunctions.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR)
+
+    results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR)
     if (isinstance(results, str)):
         return dumps({"status": "failed", "msg": results})
     return dumps({"status": "Success", "msg": results})
@@ -107,8 +109,7 @@ def createRecurEvent():
 def getEvent():
     eventID = request.args.get('eventID')
     payload = {}
-    attendance = utilFunctions.getAttendance(sanitize(eventID))
-    print(attendance)
+    attendance = participation.getAttendance(sanitize(eventID))
     if attendance == "failed":
         payload['status'] = 'failed'
     else:
@@ -136,7 +137,7 @@ def getRecurEventStats():
     if (eventID == None):
         return dumps({"status": "Failed", "msg": "No eventID"})
 
-    return dumps(utilFunctions.fetchRecur(eventID))
+    return dumps(events.fetchRecur(eventID))
 
 
 # For adding a user to an event
@@ -149,7 +150,7 @@ def attend():
     data = request.get_json()
     payload = {}
     
-    payload['status'] = utilFunctions.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(data['name']))
+    payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(data['name']))
     return dumps(payload)
 
 # Returns a list of events this person has attended
@@ -160,7 +161,7 @@ def attend():
 @app.route('/api/user', methods=['GET'])
 def getUser():
     zID = request.args.get('zID')
-    attendance = utilFunctions.getUserAttendance(sanitize(zID.lower()))
+    attendance = users.getUserAttendance(sanitize(zID.lower()))
     if attendance == 'invalid user': 
         return dumps({"status": "failed"})
     payload = {}
@@ -183,7 +184,7 @@ def getHostedEvents():
     societyID = request.args.get('societyID')
     if (societyID is None):
         return dumps({"status": "Failed", "msg": "No societyID inputted"})
-    eventsList = utilFunctions.getEventForSoc(societyID)
+    eventsList = societies.getEventForSoc(societyID)
     if (eventsList == "No such society"):
         return dumps({"status": "Failed", "msg": "No such society"})
     
@@ -206,7 +207,7 @@ def getHostedEvents():
 def createSoc():
     data = request.get_json()
     
-    result = utilFunctions.createSociety(sanitize(data['founder'] if data['founder'] is not None else 'Not Applicable'), sanitize(data['societyName']))
+    result = societies.createSociety(sanitize(data['founder'] if data['founder'] is not None else 'Not Applicable'), sanitize(data['societyName']))
     if (result == "exists already"):
         return dumps({"status": "Failed", "msg": "A society with this name already exists"})
     return dumps({"status": "Success", "msg": result})
@@ -223,7 +224,7 @@ def userAllAttendance():
     elif (socID is None):
         return dumps({"status": "Failed", "msg": "No socID provided"})
 
-    eventsAttended = utilFunctions.getPersonEventsForSoc(zID, socID)
+    eventsAttended = users.getPersonEventsForSoc(zID, socID)
     if (eventsAttended == "No such user"):
         return dumps({"status": "Failed", "msg": "No such user"})
 
@@ -240,19 +241,18 @@ def userAllAttendance():
         payload['events'].append(eventJSON)
     return dumps(payload)
 
-# TODO: Implement a function to get all events happening on a particular day (for one soc)
 # Will probably be involved in some kind of a "today's events" type of thing
-@app.route('/api/events/onthisday')
+# GET /api/events/onthisday?date=2020-04-04
+# Returns:
+# [{"eventID": "1239", "name": "Test Event 0", "society": "UNSW Hall", "eventDate": "2019-11-19"}, {"eventID": "1240", "name": "Coffee Night", "society": "UNSW Hall", "eventDate": "2019-11-20"}]
+@app.route('/api/events/onthisday', methods=['GET'])
 def onThisDay():
+    # TODO: Add an optional field to get the events happening on a particular day for one society
     date = request.args.get('date')
     if (date is None):
         return dumps({"status": "Failed", "msg": "No date provided"})
     
-    # TODO: Complete this
-    results = utilFunctions.getEventOnThisDay(date)
-
-# TODO: Recurrent Event (Potentially, if enough time)
-# @app.route('/api/society', methods=['GET'])
+    return dumps(utilFunctions.onThisDay(date))
 
 # Delete user attendance
 # Usage: 
@@ -266,7 +266,7 @@ def deletePoints():
     data = request.get_json()
     
     payload = {}
-    payload['status'] = utilFunctions.deleteUserAttendance(sanitize(data['zID'].lower()), sanitize(data['eventID']))
+    payload['status'] = participation.deleteUserAttendance(sanitize(data['zID'].lower()), sanitize(data['eventID']))
     return dumps(payload)
     
 # Update user attendance
@@ -281,7 +281,7 @@ def deletePoints():
 def updatePoints():
     data = request.get_json()
     payload = {}
-    payload['status'] = utilFunctions.changePoints(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(str(data['points'])))
+    payload['status'] = participation.changePoints(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(str(data['points'])))
     return dumps(payload)
 
 # For creating a user
@@ -294,7 +294,7 @@ def updatePoints():
 @app.route('/api/user', methods=['POST'])
 def postUser():
     data = request.get_json()
-    returnVal = utilFunctions.createUser(sanitize(data['zID'].lower()), sanitize(data['name']))
+    returnVal = users.createUser(sanitize(data['zID'].lower()), sanitize(data['name']))
     payload = {}
     payload['status'] = returnVal
     return dumps(payload)
@@ -391,8 +391,6 @@ def main():
     
     # FIXME: Uncomment the line below when features implemented and server required
     app.run()
-
-# 20/12/2019: Think about refactoring parts of the code (i.e. Flask related features into app.py to keep the functionalities separate)
 
 if __name__ == '__main__':
     main()
