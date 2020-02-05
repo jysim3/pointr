@@ -49,10 +49,17 @@ def checkEvent(eventID):
 
 # General utilities functions
 # Accepts a date in the form of "YYYY-MM-DD"
-def onThisDay(date):
+def onThisDay(date, socID = None):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select * from events where eventdate = ?;", (date,))
+
+    if socID == None:
+        curs.execute("select * from events where eventdate = ?;", (date,))
+    else:
+        result = checkSoc(socID)
+        if result == False:
+            return []
+        curs.execute("select * from events join host on host.eventID = events.eventID and society = ? and eventDate = ?;", (socID, date,))
 
     results = curs.fetchall()
     payload = []

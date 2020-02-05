@@ -66,3 +66,8 @@ def getAttendance(eventID):
 
     conn.close()
     return result, name
+
+
+# TODO: Average Monthly/Weekly Attendance info (for recurring events)
+# TODO: Average Monthly/Weekly Attendance info (for one society)
+# TODO: Average Monthly/Weekly Attendance info (for one user)

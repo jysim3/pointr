@@ -5,7 +5,7 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 # Creting an event (single instance events)
-def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None):
+def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag = None, location = None, societyID = None):
     # FIXME
     if (checkUser(zID) == False):
         createUser(zID, "N/A")
@@ -21,11 +21,11 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
     curs = conn.cursor()
     curs.execute("insert into events(eventID, name, owner, eventDate, qrCode) values (?, ?, ?, ?, ?);", (eventID, eventName, zID, eventDate, qrFlag,))
 
-    # Currently, location defaults to UNSW Hall
-    curs.execute("insert into host(location, society, eventID) values (?, ?, ?);", ("UNSW Hall", societyID if societyID is not None else -1, eventID,))
+    # NOTE: Currently, location defaults to UNSW Hall if one isnt provided
+    curs.execute("insert into host(location, society, eventID) values (?, ?, ?);", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
     conn.commit()
     conn.close()
-    return "success"
+    return eventID
 
 '''
     # Creating a recurring event (need specification on what kind of recurrence)
@@ -35,7 +35,7 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
     # Example: startDate = 2020-01-30, endDate = 2020-05-30, recurType = "day", recurInterval = 14 
     # Example Cont.: The above indicates this event occurs every fortnightly starting with 30/1/2020 to 30/5/2020
 '''
-def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag, societyID = None):
+def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag = None, location = None, societyID = None):
     if (checkUser(zID) == False):
         createUser(zID, "N/A")
 
@@ -63,11 +63,12 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
     eventIDLists = []
     while eventStartDate < eventEndDate:
         currEventID = eventID + f"{counter:05d}"
-        eventIDLists.append({"date": str(eventStartDate), "eventID": currEventID})
         try:
             curs.execute("insert into events(eventID, name, owner, eventDate, qrCode) values (?, ?, ?, ?, ?);", (currEventID, eventName, zID, eventStartDate, qrFlag,))
 
-            curs.execute("insert into host(location, society, eventID) values (?, ?, ?);", ("UNSW Hall", societyID if societyID is not None else -1, currEventID,))
+            curs.execute("insert into host(location, society, eventID) values (?, ?, ?);", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, currEventID,))
+
+            eventIDLists.append({"date": str(eventStartDate), "eventID": currEventID})
         except Error as e:
             print(e)
             return "Error encountered"

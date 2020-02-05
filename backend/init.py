@@ -28,54 +28,27 @@ def generateID(number):
 def hello():
     return "Hello World!"
 
-# For creating an event
+# For creating a recurrent event
 # Usage: 
 # POST /api/event
 # Takes:
-# { zID: "z5214808", name: "Coffee Night", eventDate: "2019-11-19"}
+# { zID: "z5214808", name: "Coffee Night", location: "UNSW Hall", eventDate: "2020-01-01", endDate: "2020-04-04", recurType: "day", recurInterval: 6, "socID": "1DASD", "isRecur": "True"}
+# NOTE: isRecur needs to be 1 for this to be a recurrentEvent creation, 0 for single instance event
+# NOTE: For single instance events, everything after startDate is not required
 # Date is in YYYY-MM-DD
-# Returns:
-# { status: "success", eventID: "1234F"}
-# or
-# { status: "ERROR MESSAGE"}
-
-@app.route('/api/event', methods=['POST'])
-def createEvent():
-    data = request.get_json()
-
-    eventID = generateID(5).upper()
-    if not 'hasQR' in data:
-        data['hasQR'] = False
-    elif data['hasQR'].lower() == "true":
-        data['hasQR'] = True
-    elif data['hasQR'].lower() == "false":
-        data['hasQR'] = False
-    else:
-        data['hasQR'] = False
-    
-    payload = {}
-    payload['status'] = events.createSingleEvent(sanitize(str(data['zID']).lower()), sanitize(str(eventID)), sanitize(str(data['name'])), sanitize(str(data['eventDate'])), data['hasQR'])
-    if payload['status'] == 'success':
-        payload['eventID'] = eventID
-    return dumps(payload)
-
-# For creating a recurrent event
-# Usage: 
-# POST /api/event/createRecurrent
-# Takes:
-# { zID: "z5214808", name: "Coffee Night", startDate: "2020-01-01", endDate: "2020-04-04", recurType: "day", recurInterval: 6}
-# Date is in YYYY-MM-DD
+'''
     # Currently, accept four different recurrent parametres, startDate and endDate to indicate how muuch this recurrence will be
     # recurType indicates what kind of recurrence this is (accepts: "day", "week", "month")
     # recurInterval indicates how many of said recurType is inbetween each interval (accepts any int less than 365)
     # Example: startDate = 2020-01-30, endDate = 2020-05-30, recurType = "day", recurInterval = 14 
     # Example Cont.: The above indicates this event occurs every fortnightly starting with 30/1/2020 to 30/5/2020
+'''
 # Returns:
-# { status: "success", eventID: "1234F"}
+# { status: "success", "msg": [{"date": 2020-04-04, "eventID": "1FAEA00001"}, {...}}
 # or
 # { status: "ERROR MESSAGE"}
-@app.route('/api/event/createRecurrent', methods=['POST'])
-def createRecurEvent():
+@app.route('/api/event', methods=['POST'])
+def createEvent():
     data = request.get_json()
     eventID = generateID(5).upper()
     if not 'hasQR' in data:
@@ -85,18 +58,26 @@ def createRecurEvent():
     elif data['hasQR'].lower() == "false":
         data['hasQR'] = False
     else:
-        data['hasQR'] = Fals
+        data['hasQR'] = False
 
-    startDate = sanitize(str(data['startDate']).lower())
-    endDate = sanitize(str(data['endDate']).lower())
-    recurType = sanitize(str(data['recurType']).lower())
-    recurInterval = sanitize(str(data['recurInterval']).lower())
+    location = sanitize(str(data['location'])).lower() if 'location' in data else None
+    startDate = sanitize(str(data['eventDate'])).lower()
+    endDate = sanitize(str(data['endDate']).lower()) if 'endDate' in data else None
+    recurType = sanitize(str(data['recurType']).lower()) if 'recurType' in data else None
+    recurInterval = sanitize(data['recurInterval']).lower() if 'recurInterval' in data else None
     zID = sanitize(str(data['zID']))
     eventName = sanitize(str(data['name']))
-    hasQR = sanitize(str(data['hasQR']))
+    hasQR = str(data['hasQR'])
+    societyID = str(data['socID']) if 'socID' in data else None
+    isRecur = str(data['isRecur']) if 'isRecur' in data and data['isRecur'] == 1 else False
 
-    results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR)
-    if (isinstance(results, str)):
+    results = None
+    if isRecur is not False:
+        results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID)
+    else:
+        results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID)
+
+    if (results == "Unacceptable parametre" or results == "Error encountered" or results == "Event already exists" or results == "failed"):
         return dumps({"status": "failed", "msg": results})
     return dumps({"status": "Success", "msg": results})
 
@@ -242,17 +223,18 @@ def userAllAttendance():
     return dumps(payload)
 
 # Will probably be involved in some kind of a "today's events" type of thing
-# GET /api/events/onthisday?date=2020-04-04
+# GET /api/events/onthisday?date=2020-04-04&socID=1AEF0 (Note: socID optional)
 # Returns:
 # [{"eventID": "1239", "name": "Test Event 0", "society": "UNSW Hall", "eventDate": "2019-11-19"}, {"eventID": "1240", "name": "Coffee Night", "society": "UNSW Hall", "eventDate": "2019-11-20"}]
 @app.route('/api/events/onthisday', methods=['GET'])
 def onThisDay():
-    # TODO: Add an optional field to get the events happening on a particular day for one society
     date = request.args.get('date')
+    socID = request.args.get('socID')
+
     if (date is None):
         return dumps({"status": "Failed", "msg": "No date provided"})
-    
-    return dumps(utilFunctions.onThisDay(date))
+
+    return dumps(utilFunctions.onThisDay(date)) if socID == None else dumps(utilFunctions.onThisDay(date, socID))
 
 # Delete user attendance
 # Usage: 
