@@ -15,7 +15,7 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag = None, locatio
     elif (societyID == None):
         societyID = findSocID("UNSW Hall")
 
-    eventDate = datetime.strptime(eventDate, "%Y%m%d").date()
+    eventDate = datetime.strptime(eventDate, "%Y-%m-%d").date()
 
     conn = createConnection()
     curs = conn.cursor()

@@ -1,4 +1,6 @@
-from util.utilFunctions import createConnection, checkUser
+from util.utilFunctions import createConnection, checkUser, checkEvent
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 # TODO: CHANGE THIS FUNCTION TO REFLECT ON THE CHANGE IN THE EVENT TABLE
 def register(zID, eventID, userName, isArc = False):
@@ -66,6 +68,11 @@ def getAttendance(eventID):
 
     conn.close()
     return result, name
+
+
+def getRecurStat (timeInterval, eventID):
+    # TODO:
+    return 0
 
 
 # TODO: Average Monthly/Weekly Attendance info (for recurring events)

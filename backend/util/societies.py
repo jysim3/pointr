@@ -1,4 +1,6 @@
 from util.utilFunctions import createConnection
+import random
+import string
 
 def generateID(number):
     id = ""
@@ -27,7 +29,7 @@ def createSocStaff(zID, societyID, role = None):
 
 def createSociety(zID = None, societyName = None):
     # 20/19/2019: FIXME Change the function below to the UUID generator
-    societyID = init.generateID(5).upper()
+    societyID = generateID(5).upper()
     conn = createConnection()
     curs = conn.cursor()
     curs.execute("select * from society where societyName = ?;", (societyName,))
