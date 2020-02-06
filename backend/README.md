@@ -2,10 +2,10 @@
 
 ## FOR SETTING UP THE POSTGRESQL SERVER 
 ```
-./psqlSetup.sh
+./setup/psqlSetup.sh
 ```
 
 ## FOR SETTING UP THE DATABASE AND POPULATING IT WITH SOME DEFAULT DATA
 ```
-./setup.sh
+./setup/setup.sh
 ```

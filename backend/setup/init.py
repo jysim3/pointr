@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append('../')
 # NOTE: Uncomment the five lines below when reinitialising the database is required
 from util.events import createSingleEvent, createRecurrentEvent
 from util.users import createUser
