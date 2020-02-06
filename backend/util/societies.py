@@ -11,7 +11,7 @@ def generateID(number):
 def findSocID(socName):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select societyID from society where societyName = ?;", (socName,))
+    curs.execute("select societyID from society where societyName = (%s);", (socName,))
     societyID = curs.fetchone()[0]
 
     return societyID
@@ -22,7 +22,7 @@ def createSocStaff(zID, societyID, role = None):
     # TODO: Check for society and zID existance
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into socstaff(society, zid, role) values (?, ?, ?);", (societyID, zID, role,))
+    curs.execute("insert into socstaff(society, zid, role) values ((%s), (%s), (%s));", (societyID, zID, role,))
     conn.commit()
     conn.close()
     return "success"
@@ -32,13 +32,13 @@ def createSociety(zID = None, societyName = None):
     societyID = generateID(5).upper()
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select * from society where societyName = ?;", (societyName,))
+    curs.execute("select * from society where societyName = (%s);", (societyName,))
     result = curs.fetchone()
     if (result != None):
         conn.close()
         return "exists already"
 
-    curs.execute("insert into society(societyID, societyName) values (?, ?);", (societyID, societyName,))
+    curs.execute("insert into society(societyID, societyName) values ((%s), (%s));", (societyID, societyName,))
     conn.commit()
     conn.close()
 
@@ -54,7 +54,7 @@ def changeRole(zID, societyID, role):
     conn = createConnection()
     curs = conn.cusor()
     try:
-        curs.execute("update socstaff set role = ? where society = ? and zid = ?", (role, societyID, zID,))
+        curs.execute("update socstaff set role = (%s) where society = (%s) and zid = (%s);", (role, societyID, zID,))
         conn.commit()
         conn.close()
     except Error as e:
@@ -68,13 +68,13 @@ def getEventForSoc(societyID):
     conn = createConnection()
     curs = conn.cursor()
 
-    curs.execute("select societyName from society where societyID = ?;", (societyID,))
+    curs.execute("select societyName from society where societyID = (%s);", (societyID,))
     name = curs.fetchone()
     if (name == None):
         conn.close()
         return "No such society"
 
-    curs.execute("select events.eventID, name, eventDate, location, society from events join host on events.eventID = host.eventID and society = ?;", (societyID,))
+    curs.execute("select events.eventID, name, eventDate, location, society from events join host on events.eventID = host.eventID and society = (%s);", (societyID,))
     events = curs.fetchall()
 
     conn.close()

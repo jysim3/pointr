@@ -14,7 +14,7 @@ app = Flask(__name__)
 CORS(app)
 
 def sanitize(input):
-    return re.sub("[^\w ']", "", input)
+    return re.sub("[^\w '-]", "", input)
 
 def generateID(number):
     id = ""

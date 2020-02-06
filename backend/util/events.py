@@ -5,7 +5,7 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 # Creting an event (single instance events)
-def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag = None, location = None, societyID = None):
+def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag = None, societyID = None, location = None):
     # FIXME
     if (checkUser(zID) == False):
         createUser(zID, "N/A")
@@ -19,10 +19,10 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag = None, locatio
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into events(eventID, name, owner, eventDate, qrCode) values (?, ?, ?, ?, ?);", (eventID, eventName, zID, eventDate, qrFlag,))
+    curs.execute("insert into events(eventID, name, owner, eventDate, qrCode) values ((%s), (%s), (%s), (%s), (%s));", (eventID, eventName, zID, eventDate, qrFlag,))
 
     # NOTE: Currently, location defaults to UNSW Hall if one isnt provided
-    curs.execute("insert into host(location, society, eventID) values (?, ?, ?);", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
+    curs.execute("insert into host(location, society, eventID) values ((%s), (%s), (%s));", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
     conn.commit()
     conn.close()
     return eventID
@@ -57,16 +57,16 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
 
     conn = createConnection()
     curs = conn.cursor()
-    eventStartDate = datetime.strptime(eventStartDate, "%Y%m%d").date()
-    eventEndDate = datetime.strptime(eventEndDate, "%Y%m%d").date()
+    eventStartDate = datetime.strptime(eventStartDate, "%Y-%m-%d").date()
+    eventEndDate = datetime.strptime(eventEndDate, "%Y-%m-%d").date()
     counter = 0
     eventIDLists = []
     while eventStartDate < eventEndDate:
         currEventID = eventID + f"{counter:05d}"
         try:
-            curs.execute("insert into events(eventID, name, owner, eventDate, qrCode) values (?, ?, ?, ?, ?);", (currEventID, eventName, zID, eventStartDate, qrFlag,))
+            curs.execute("insert into events(eventID, name, owner, eventDate, qrCode) values ((%s), (%s), (%s), (%s), (%s));", (currEventID, eventName, zID, eventStartDate, qrFlag,))
 
-            curs.execute("insert into host(location, society, eventID) values (?, ?, ?);", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, currEventID,))
+            curs.execute("insert into host(location, society, eventID) values ((%s), (%s), (%s));", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, currEventID,))
 
             eventIDLists.append({"date": str(eventStartDate), "eventID": currEventID})
         except Error as e:
@@ -85,7 +85,7 @@ def fetchRecur(eventID):
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute(f"select * from events where eventID like '{baseID}%';")
+    curs.execute("select * from events where eventID like (%s);", (baseID,))
     results = curs.fetchall()
     payload = []
     for event in results:
@@ -94,7 +94,7 @@ def fetchRecur(eventID):
         eventJSON['name'] = event[1]
         eventJSON['date'] = event[2]
 
-        curs.execute("select count(*) as count from participation where eventID = ?;", (event[0],))
+        curs.execute("select count(*) as count from participation where eventID = (%s);", (event[0],))
         eventJSON['attendance'] = curs.fetchone()[0]
 
         payload.append(eventJSON)

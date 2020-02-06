@@ -12,7 +12,7 @@ def createUser(zID, name, password):
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into users(zid, name, password) values(?, ?, ?);", (zID, name, pwHash))
+    curs.execute("insert into users(zid, name, password) values((%s), (%s), (%s));", (zID, name, pwHash,))
     conn.commit()
     conn.close()
     return "Success"
@@ -25,10 +25,10 @@ def getUserAttendance(zid):
     conn = createConnection()
     curs = conn.cursor()
 
-    curs.execute("select points, events.eventID, events.name, eventdate, societyName from participation join events join host join society on society = society.societyid and participation.eventID = events.eventID and host.eventID = events.eventid and user = ?;", (zid,))
+    curs.execute("select points, events.eventID, events.name, eventdate, societyName from participation join events join host join society on society = society.societyid and participation.eventID = events.eventID and host.eventID = events.eventid and user = (%s);", (zid,))
     results = curs.fetchall()
 
-    curs.execute("select name from users where users.zid = ?", (zid,))
+    curs.execute("select name from users where users.zid = (%s);", (zid,))
     name = curs.fetchone()
 
     conn.close()
@@ -40,17 +40,17 @@ def getPersonEventsForSoc(zID, societyID):
     # 9/1/2020: FIXME: Change the line below to select only the stuff that's required
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select name from users where zid = ?;", (zID,))
+    curs.execute("select name from users where zid = (%s);", (zID,))
     name = curs.fetchone()
     if (name is None):
         return "No such user"
 
-    curs.execute("select societyName from society where societyID = ?;", (societyID,))
+    curs.execute("select societyName from society where societyID = (%s);", (societyID,))
     socName = curs.fetchone()
     if (socName is None):
         return None
 
-    curs.execute("select * from events join host join participation on events.eventID = host.eventID and events.eventID = participation.eventID and society = ? and participation.user = ?;", (societyID, zID,))
+    curs.execute("select * from events join host join participation on events.eventID = host.eventID and events.eventID = participation.eventID and society = (%s) and participation.zid = (%s);", (societyID, zID,))
     events = curs.fetchall()
     conn.close()
     return events, name[0], socName[0]

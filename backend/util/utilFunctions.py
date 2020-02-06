@@ -1,5 +1,7 @@
-from sqlite3 import Error
-import sqlite3
+#from sqlite3 import Error
+#import sqlite3
+from psycopg2 import Error
+import psycopg2
 
 # This file contains the check functions and that's it
 
@@ -7,7 +9,8 @@ import sqlite3
 def createConnection():
     conn = None
     try:
-        conn = sqlite3.connect(r'./database.db')
+        #conn = sqlite3.connect(r'./database.db')
+        conn = psycopg2.connect(database = "pointrDB")
     except Error as e:
         print(e)
     return conn
@@ -16,7 +19,7 @@ def createConnection():
 def checkUser(zID):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select * from users where zid=?;", (zID,))
+    curs.execute("select * from users where zid=(%s);", (zID,))
 
     rows = curs.fetchall()
     conn.close()
@@ -26,7 +29,7 @@ def checkUser(zID):
 def checkSoc(societyID):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select * from society where societyID = ?;", (societyID,))
+    curs.execute("select * from society where societyID = (%s);", (societyID,))
 
     rows = curs.fetchall()
     conn.close()
@@ -36,7 +39,7 @@ def checkSoc(societyID):
 def checkEvent(eventID):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select * from events where eventid=?;", (eventID,))
+    curs.execute("select * from events where eventid=(%s);", (eventID,))
 
     rows = curs.fetchall()
     conn.close()
@@ -50,12 +53,12 @@ def onThisDay(date, socID = None):
     curs = conn.cursor()
 
     if socID == None:
-        curs.execute("select * from events where eventdate = ?;", (date,))
+        curs.execute("select * from events where eventdate = (%s);", (date,))
     else:
         result = checkSoc(socID)
         if result == False:
             return []
-        curs.execute("select * from events join host on host.eventID = events.eventID and society = ? and eventDate = ?;", (socID, date,))
+        curs.execute("select * from events join host on host.eventID = events.eventID and society = (%s) and eventDate = (%s);", (socID, date,))
 
     results = curs.fetchall()
     payload = []
@@ -65,7 +68,7 @@ def onThisDay(date, socID = None):
         eventJSON['name'] = event[1]
         eventJSON['date'] = event[2]
 
-        curs.execute("select count(*) as count from participation where eventID = ?;", (event[0],))
+        curs.execute("select count(*) as count from participation where eventID = (%s);", (event[0],))
         eventJSON['attendance'] = curs.fetchone()[0]
 
         payload.append(eventJSON)
@@ -84,6 +87,7 @@ def main():
     #print(getPersonEventsForSoc("z5161616", findSocID("UNSW Hall")))
     #print(createRecurrentEvent("z5161616", "aaaaa", "coffee night", "2020-03-13", "2020-04-15", 7, "day", False))
     #print(fetchRecur("1FAEA00018"))
+    return 0
     #print(onThisDay("2020-03-06"))
 
 if __name__ == '__main__':

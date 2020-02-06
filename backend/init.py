@@ -1,36 +1,10 @@
-from sqlite3 import Error
-import sqlite3
 import os
-# Uncomment the five lines below when reinitialising the database is required
+# NOTE: Uncomment the five lines below when reinitialising the database is required
 from util.events import createSingleEvent, createRecurrentEvent
 from util.users import createUser
 from util.participation import register
 from util.societies import createSociety, createSocStaff, findSocID
 from util.utilFunctions import checkEvent
-
-def createConnection():
-    conn = None
-    try:
-        conn = sqlite3.connect(r'./database.db')
-    except Error as e:
-        print(e)
-    return conn
-
-def createTable(conn, sql):
-    try:
-        curs = conn.cursor()
-        curs.execute(sql)
-    except Error as e:
-        print(e)
-        exit(1)
-
-def runQuery(conn, sql, arg):
-    try:
-        curs = conn.cursor()
-        curs.execute(sql, arg)
-    except Error as e:
-        print(e)
-        exit(1)
 
 def initDatabase():
     # Moving this section to init.py in the next patch lmao
@@ -46,7 +20,7 @@ def initDatabase():
     # TODO: Add some dummy societies and then fix the below add events dummy functions
     # NOTE: Might not be needed since the current version focuses on implementation just for Hall
     createSociety("z5111111", "CSESoc")
-    createSociety("z5123123", "Manchester United FC")
+    createSociety("z5161616", "Manchester United FC")
     createSociety("z5555555", "UNSW Hall")
 
     # NOTE: Defaults to UNSW Hall (for the society field right now)
@@ -73,66 +47,7 @@ def initDatabase():
     register("z5555555", "1234", 'Will de Dassel')
 
 def main():
-    os.system("rm database.db")
-
-    conn = None
-    try:
-        conn = createConnection()
-        createUserSQL = '''
-            create table if not exists users (
-                zid text not null,
-                name text not null,
-                password text not null,
-                primary key(zid)
-            );'''
-        createTable(conn, createUserSQL)
-        createEventsSQL = '''
-            create table if not exists events (
-                eventID text not null,
-                name text not null,
-                eventdate date not null,
-                owner text not null references users(id),
-                qrCode boolean,
-                description text,
-                primary key(eventID)
-            );'''
-        createTable(conn, createEventsSQL)
-        createPartcipationSQL = '''
-            create table if not exists participation (
-                points text not null,
-                isArcMember boolean not null,
-                user text not null references users(zid),
-                eventID text not null references events(eventID),
-                primary key (user, eventID)
-            );'''
-        createTable(conn, createPartcipationSQL)
-        createSocietySQL = '''
-            create table if not exists society (
-                societyID text,
-                societyName text not null unique,
-                primary key (societyID)
-            );'''
-        createTable(conn, createSocietySQL)
-        createSocietyHostSQL = '''
-            create table if not exists host (
-                location text,
-                society integer references society(societyID),
-                eventID text not null references events(eventID),
-                primary key (society, eventID)
-            );'''
-        createTable(conn, createSocietyHostSQL)
-        createSocStaffSQL = '''
-            create table if not exists socstaff (
-                society integer references society(societyID),
-                zid text references users(zid),
-                role text not null,
-                primary key (society, zid)
-            );'''
-        createTable(conn, createSocStaffSQL)
-        conn.close()
-    # 20/12/2019: Added two new tables, added a FIXME when fixing the table dependencies
-    except Error as e:
-        print(e)
+    # os.system("rm database.db")
     
     initDatabase()
 

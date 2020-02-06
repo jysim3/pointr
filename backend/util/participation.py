@@ -15,7 +15,7 @@ def register(zID, eventID, userName, isArc = False):
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into participation(points, isArcMember, user, eventID) values (?, ?, ?, ?)", (1, isArc, zID, eventID,))
+    curs.execute("insert into participation(points, isArcMember, zid, eventID) values ((%s), (%s), (%s), (%s))", (1, isArc, zID, eventID,))
     conn.commit()
     conn.close()
     return "success"
@@ -23,7 +23,7 @@ def register(zID, eventID, userName, isArc = False):
 def changePoints(zID, eventID, newPoints):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("update participation set points=? where eventID=? and user=?", (newPoints, eventID, zID,))
+    curs.execute("update participation set points=(%s) where eventID=(%s) and zid=(%s)", (newPoints, eventID, zID,))
     conn.commit()
     error = curs.fetchone()
     conn.close()
@@ -34,7 +34,7 @@ def changePoints(zID, eventID, newPoints):
 def deleteUserAttendance(zID, eventID):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("delete from participation where user=? and eventid=?", (zID, eventID,))
+    curs.execute("delete from participation where zid=(%s) and eventid=(%s)", (zID, eventID,))
     conn.commit()
     error = curs.fetchone()
     conn.close()
@@ -45,7 +45,7 @@ def deleteUserAttendance(zID, eventID):
 def checkParticipation(zID, eventID):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select * from participation where user=? and eventid=?", (zID, eventID,))
+    curs.execute("select * from participation where zid=(%s) and eventid=(%s)", (zID, eventID,))
 
     rows = curs.fetchall()
     conn.close()
@@ -60,10 +60,10 @@ def getAttendance(eventID):
         return "failed"
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select points, isArcMember, users.name, users.zid, qrcode from participation join events join users where participation.eventid = events.eventid and participation.user = users.zid and events.eventID = ?;", (eventID,))
+    curs.execute("select points, isArcMember, users.name, users.zid, qrcode from participation join events join users where participation.eventid = events.eventid and participation.user = users.zid and events.eventID = (%s);", (eventID,))
     result = curs.fetchall()
 
-    curs.execute("select name from events where eventid = ?;", (eventID,))
+    curs.execute("select name from events where eventid = (%s);", (eventID,))
     name = curs.fetchone()
 
     conn.close()
@@ -71,7 +71,13 @@ def getAttendance(eventID):
 
 
 def getRecurStat (timeInterval, eventID):
-    # TODO:
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("select eventDate from events;")
+    results = curs.fetchall()
+    eventDate = datetime.strptime(results[0][0], "%Y-%m-%d").date()
+    print(eventDate)
+
     return 0
 
 
