@@ -6,6 +6,6 @@
 ```
 
 ## FOR SETTING UP THE DATABASE AND POPULATING IT WITH SOME DEFAULT DATA
-'''
+```
 ./setup.sh
-'''
+```
