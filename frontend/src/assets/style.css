@@ -1,4 +1,5 @@
 /* TODO: change all px and em to rem, in component files as well! */
+/* TODO: favicon */
 /* Global */
 *, html {
     margin: 0;
@@ -8,13 +9,13 @@
   --c-primary: #2CA0E1;
   --c-secondary: #F4F4F4;
   --c-secondary-dark: #4D4D4D;
-  --text-stack: 'SF-Text', Arial, Helvetica, sans-serif;
-  --heading-stack: 'SF-Display', Arial, Helvetica, sans-serif;
+  --font-stack--text: 'SF-Text', Arial, Helvetica, sans-serif;
+  --font-stack--display: 'SF-Display', Arial, Helvetica, sans-serif;
   --border-radius: 5px;
 }
 
 body {
-  font-family: var(--text-stack);
+  font-family: var(--font-stack--text);
   background-color: var(--c-secondary);
   color: var(--c-secondary-dark);
 }
@@ -51,12 +52,23 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--heading-stack);
+  font-family: var(--font-stack--display);
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 500;
+}
+
+h4, 
+h5, 
+h6 {
+  font-weight: 400;
 }
 
 h1 {
   font-size: 3rem;
-  font-weight: 500;
   letter-spacing: 0.05rem;  
   text-align: center;
   color: black;
@@ -64,12 +76,10 @@ h1 {
 
 h2 {
   font-size: 2rem;
-  font-weight: 500;
 }
 
 h3 {
   font-size: 1.5rem;
-  font-weight: 500;
   text-transform: none;
 }
 
@@ -77,10 +87,17 @@ h4 {
   font-size: 1rem;
 }
 
-h4, 
-h5, 
-h6 {
-  font-weight: 400;
+a {
+  transition: box-shadow 0.2s;
+  padding-bottom: 0.5rem;
+}
+
+a:hover {
+  box-shadow: inset 0 -2px 0 0 var(--c-secondary-dark);
+}
+
+::-moz-focus-inner {
+  border: 0;
 }
 
 /* Form elements */
@@ -95,7 +112,8 @@ h6 {
 
 .form .btn-primary {
   display: block;
-  margin: 1.5rem auto 0 auto;
+  margin: 2rem auto 0 auto;
+  font-size: 1.25rem;
 }
 
 .form h2 {
@@ -123,7 +141,7 @@ h6 {
 /* Inputs and labels */
 
 .input {
-  border: 2px solid var(--c-secondary);
+  border: 2px solid #dbdbdb;
   padding: 0.5rem;
   transition: border 0.1s, box-shadow 0.2s;
   font-size: 1rem;
@@ -148,7 +166,7 @@ h6 {
   padding: 0.75em 1.5em;
   transition: box-shadow 0.2s;
   font-weight: 400;
-  font-family: var(--text-stack);
+  font-family: var(--font-stack--text);
   font-size: 1rem;
   border-radius: var(--border-radius); /* TODO: should be using px? */
   box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.12);
@@ -156,23 +174,26 @@ h6 {
   border: 0;
   -webkit-appearance: none;
   -moz-appearance: none;
+  background-color: var(--c-btn-bgc);
 }
 
 .btn:hover {
-  box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.25);
 }
 
 .btn:focus {
+  box-shadow: 
+    0 5px 50px rgba(0, 0, 0, 0.25);
   outline: 0;
 }
 
 .btn-primary {
+  --c-btn-bgc: var(--c-primary);
   color: white;
-  background-color: var(--c-primary);
 }
 
 .btn-secondary {
+  --c-btn-bgc: var(--c-secondary);
   color: var(--c-primary);
   border: 3px solid var(--c-primary);
-  background-color: var(--c-secondary);
 }

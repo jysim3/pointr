@@ -77,12 +77,6 @@ export default {
 #admin-link, #admin-link:visited {
   text-decoration: none;
   color: var(--c-secondary-dark);
-  transition: border-bottom 0.2s;
-  border-bottom: 2px solid var(--c-secondary);
   font-size: 1.5rem;
-}
-
-#admin-link:hover {
-  border-bottom: 2px solid var(--c-secondary-dark);
 }
 </style>

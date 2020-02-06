@@ -19,54 +19,52 @@
 </template>
 <script>
 import { fetchAPI } from "@/util.js";
-import router from '@/router/index.js';
+import router from "@/router/index.js";
 import EventCodeDisplay from "@/components/EventCodeDisplay.vue";
 
 export default {
-    name: "SignEvent",
-    props: {
-        eid: String
-    },
-    components: {
-      EventCodeDisplay
-    },
-    created() {
-        fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
-        .then(j => {
-            this.eventName = j.name
+  name: "SignEvent",
+  props: {
+    eid: String
+  },
+  components: {
+    EventCodeDisplay
+  },
+  created() {
+    fetchAPI(`/api/event?eventID=${this.eid}`, "GET").then(j => {
+      this.eventName = j.name;
+    });
+  },
+  data() {
+    return {
+      zid: "",
+      name: "",
+      eventName: ""
+    };
+  },
+  methods: {
+    submitForm(e) {
+      const data = {
+        zID: this.zid,
+        name: this.name,
+        eventID: this.eid
+      };
+      e.preventDefault();
+      fetchAPI("/api/attend", "POST", data)
+        .then(() => {
+          router.push({ name: "user", params: { zid: this.zid } });
         })
-    },
-    data() {
-        return {
-            zid: "",
-            name: "",
-            eventName: ""
-        };
-    },
-    methods: {
-        submitForm(e) {
-            const data = 
-            {
-                zID: this.zid,
-                name: this.name,
-                eventID: this.eid
-            }
-            e.preventDefault();
-            fetchAPI("/api/attend", "POST", data)
-            .then(() => {
-                router.push({name: "user", params: {zid: this.zid}})
-            })
-            .catch(e => alert(e))
-        }
+        .catch(e => alert(e));
     }
-  };
+  }
+};
 </script>
 
 <style scoped>
-  h2 {
-    text-align: center;
-  }
-  .form-container {
-    margin-top: 3rem;
-  }
+h2 {
+  text-align: center;
+}
+.form-container {
+  margin-top: 3rem;
+}
 </style>

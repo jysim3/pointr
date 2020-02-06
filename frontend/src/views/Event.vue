@@ -6,6 +6,7 @@
     <div id="qr-and-form-container">
       <EventQRCode :eid="this.eid" />
       <div id="event-form-container" class="form-container">
+        <!-- TODO: Have forms be their own component with slots? -->
         <form id="event-form" class="form" @submit.prevent="submitEventAttendance">
           <div class="label-input-div">
             <label class="label" for>zID</label>
@@ -44,7 +45,7 @@ export default {
   data() {
     return {
       name: "",
-      eventId: "",
+      // eventId: "",
       participants: [],
       zid: "",
       uname: ""
@@ -55,7 +56,7 @@ export default {
       fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
       .then(j => {
         this.name = j.name;
-        this.eventId = j.eventID;
+        // this.eventId = j.eventID;
         this.participants = j.participants;
       }).catch(e => {
           console.log(e) // eslint-disable-line
@@ -86,6 +87,7 @@ export default {
 </script>
 
 <style scoped>
+/* TODO: refactor this CSS */
 #welcome-header {
   margin: 2rem 0;
 }
