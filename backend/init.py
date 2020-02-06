@@ -17,8 +17,6 @@ def initDatabase():
     createUser("z5444444", "Oltan Sevinc", "123456")
     createUser("z5555555", "Will de Dassel", "123456")
 
-    # TODO: Add some dummy societies and then fix the below add events dummy functions
-    # NOTE: Might not be needed since the current version focuses on implementation just for Hall
     createSociety("z5111111", "CSESoc")
     createSociety("z5161616", "Manchester United FC")
     createSociety("z5555555", "UNSW Hall")
