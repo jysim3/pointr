@@ -1,9 +1,7 @@
 <template>
   <div class="attendee">
     <p class="name">{{ attendee.name }}</p>
-    <p class="points">
-      {{ attendee.points }} point<span v-if="attendee.points != 1">s</span>
-    </p>
+    <p class="points">{{ pointsString }}</p>
     <div v-if="beingEdited">
       <!-- TODO: proper styling, implement input--number class in style.css -->
       <input type="number" class="input input--number" v-model="newPoints" />
@@ -32,6 +30,15 @@ export default {
       newPoints: this.attendee.points
     };
   },
+  computed: {
+    pointsString() {
+      if (this.attendee.points != 1) {
+        return `${this.attendee.points} points`;
+      } else {
+        return `${this.attendee.points} point`;
+      }
+    }
+  },
   methods: {
     changeBeingEdited() {
       this.beingEdited = !this.beingEdited;
@@ -43,7 +50,7 @@ export default {
         points: parseInt(this.newPoints)
       };
       fetchAPI("/api/points", "POST", data);
-      this.changeBeingEdited()
+      this.changeBeingEdited();
       // .then(r => r.json())
       // .then(r => {
       //   if (r['status'] == "success") {
