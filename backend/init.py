@@ -3,18 +3,22 @@ from sqlite3 import Error
 from flask import Flask, request
 from flask_cors import CORS
 from flask_restx import Api, Resource
+
+app = Flask(__name__)
+api = Api(app, version='0.01', title='Pointr backend',
+    description='Backend for pointr web servers',
+)
+
 import random
 import string
 from json import dumps
 import utilFunctions
 import re
 from namespaces.auth import api as auth
+from namespaces.event import api as event
 
-app = Flask(__name__)
-api = Api(app, version='0.01', title='Pointr backend',
-    description='Backend for pointr web servers',
-)
 api.add_namespace(auth, path='/auth')
+api.add_namespace(event, path='/event')
 
 CORS(app)
 
@@ -46,7 +50,6 @@ class Hello(Resource):
 # or
 # { status: "ERROR MESSAGE"}
 @api.route('/api/event', methods=['POST'])
-@api.doc(params={'id': 'An ID'})
 class Event(Resource):
     @api.response(400, 'Malformed Request')
     @api.response(409, 'Username Taken')

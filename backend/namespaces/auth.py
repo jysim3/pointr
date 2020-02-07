@@ -1,31 +1,28 @@
 from flask import request
-from flask_restx import Namespace, Resource, abort, reqparse, fields
+from flask_restx import Namespace, Resource, abort, reqparse
+from flask_restx import fields as flask_fields
 from json import dumps
 from utils.auth_services import *
-import jwt
-from datetime import datetime, date, time, timedelta
+from models.models import *
 from marshmallow import Schema, fields, ValidationError, validates, validate
 
 api = Namespace('auth', description='Authentication & Authorization Services')
 
-login_details = api.model('login_details', {
-    'username': fields.String(required=True, example='xX_greginator_Xx'),
-    'password': fields.String(required=True, example='1234'),
-})
-
 class LoginDetailsSchema(Schema):
     username = fields.Str(required=True, validate=validate.Length(min=1, max=256))
     password = fields.Str(required=True, validate=validate.Length(min=1, max=256))
+    
+class TokenSchema(Schema):
+    token = fields.Str(required=True)
 
 @api.route('/register')
 class Register(Resource):
     # @api.response(200, 'Success', token_details)
+    @api.response(200, 'Success', token_details)
     @api.response(400, 'Malformed Request')
+    @api.response(403, 'Invalid Credentials')
     @api.response(409, 'Username Taken')
-    #@api.expect(api.model('login_details', {
-    #    'username': fields.String(required=True, example='xX_greginator_Xx'),
-    #    'password': fields.String(required=True, example='1234'),
-    #}))
+    @api.expect(auth_details)
     def post(self):
         
         # Ensure the request is json
@@ -52,20 +49,49 @@ class Register(Resource):
 @api.route('/login')
 class Login(Resource):
     
+    @api.response(200, 'Success', token_details)
+    @api.response(400, 'Malformed Request')
+    @api.response(403, 'Invalid Credentials')
+    @api.expect(auth_details)
     def post(self):
-        data = request.get_json()
+        # Check request is json
+        if not request.json:
+            abort(400, 'Malformed Request')
+        
+        # Validate data
+        try:
+            data = LoginDetailsSchema().load(request.get_json())
+        except ValidationError as err:
+            abort(400, err.messages)
+        
+        # Login and if successful return the token otherwise invalid credentials
         token = login(data['username'], data['password'])
         if (token):
             return dumps({"token": token})
         else:
-            return dumps({"error": "Failed login"})
+            abort(403, 'Invalid Credentials')
         
 @api.route('/test')
 class Test(Resource):
-
+    
+    @api.response(200, 'Success', token_check)
+    @api.response(400, 'Malformed Request')
+    @api.expect(token_details)
     def post(self):
-        data = request.get_json()
+        # Check request is json
+        if not request.json:
+            abort(400, 'Malformed Request')
+        
+        # Validate data
+        try:
+            data = TokenSchema().load(request.get_json())
+        except ValidationError as err:
+            abort(400, err.messages)
+        
+        # Authorize token and return true or false
         token_data = authorize_token(data['token'])
-        print(token_data)
-        return dumps({"some": "data"})
+        if (token_data.valid):
+            return dumps({"valid": True})
+        else:
+            return dumps({"valid": False})
     

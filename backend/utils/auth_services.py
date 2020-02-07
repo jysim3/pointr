@@ -15,7 +15,7 @@ def authorize_token(token):
         return {"valid": True, "data": token_data}
     except jwt.InvalidSignatureError:
         print("Received invalid token signature")
-        return {"valid": False, "reason": "Invalid token signature"}
+        return {"valid": False, "reason": "Invalid token"}
     except jwt.ExpiredSignatureError:
         print("Received expired token")
         return {"valid": False, "reason": "Expired token"}
