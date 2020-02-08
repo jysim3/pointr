@@ -1,5 +1,5 @@
 from flask_restx import fields as flask_fields
-from init import api
+from app import api
 
 event_details = api.model('event_details', {
     'z_id': flask_fields.String(required=True, example='z1234567'),
