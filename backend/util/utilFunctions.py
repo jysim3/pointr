@@ -49,6 +49,7 @@ def checkEvent(eventID):
 # General utilities functions
 # Accepts a date in the form of "YYYY-MM-DD"
 def onThisDay(date, socID = None):
+    # TODO: Check user if they belong in this soc
     conn = createConnection()
     curs = conn.cursor()
 

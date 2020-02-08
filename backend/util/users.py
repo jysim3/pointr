@@ -3,7 +3,7 @@ import hashlib
 
 # Creating a user 
 # 8/1/2020: TODO: To implement the login system, we need to store hashed passwords
-def createUser(zID, name, password):
+def createUser(zID, name, password, role = None):
     if (checkUser(zID) != False):
         return "Failed"
     # FIXME: Perhaps, we should receive password hashed already from the frontend

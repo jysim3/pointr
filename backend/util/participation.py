@@ -1,6 +1,16 @@
+# Comment out the two lines below in production
+import sys
+sys.path.append('/mnt/c/Users/Steven Shen/COMP/intercollegeHack/project/backend')
 from util.utilFunctions import createConnection, checkUser, checkEvent
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+
+week = datetime.strptime('2020-02-17', "%Y-%m-%d").date()
+#end = datetime.strptime('2021-01-01', "%Y-%m-%d").date()
+weekDate = {}
+for counter in range(0, 12):
+    weekDate[f'T1W{str(counter)}'] = str(week)
+    week += relativedelta(days=7)
 
 # TODO: CHANGE THIS FUNCTION TO REFLECT ON THE CHANGE IN THE EVENT TABLE
 def register(zID, eventID, userName, isArc = False):
@@ -69,18 +79,39 @@ def getAttendance(eventID):
     conn.close()
     return result, name
 
+# TODO: Average Monthly/Weekly Attendance info (for recurring events)
 
-def getRecurStat (timeInterval, eventID):
+# TODO: Average Monthly/Weekly Attendance info (for one society)
+# NOTE: Accept two arguments, dataType must be in ['week', 'month'], inputting either will display the results of the calendar year 2020
+def averageAttendance(dateType, socID):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select eventDate from events;")
-    results = curs.fetchall()
-    eventDate = datetime.strptime(results[0][0], "%Y-%m-%d").date()
-    print(eventDate)
 
-    return 0
+    payload = {}
+    for i in range(0, len(weekDate) - 1):
+        curs.execute("select * from events join host on host.eventID = events.eventID where eventDate > (%s) and eventDate < (%s) and society = (%s);", (weekDate[f'T1W{str(i)}'], weekDate[f'T1W{str(i + 1)}'], socID,))
+        #conn.commit()
+        results = curs.fetchall()
+        currPayload = []
+        for event in results:
+            eventJSON = {}
+            eventJSON['eventID'] = event[0]
+            eventJSON['name'] = event[1]
+            eventJSON['date'] = event[2]
 
+            # TODO: Change this to average
+            curs.execute("select count(*) as count from participation where eventID = (%s);", (event[0],))
+            eventJSON['attendance'] = curs.fetchone()[0]
 
-# TODO: Average Monthly/Weekly Attendance info (for recurring events)
-# TODO: Average Monthly/Weekly Attendance info (for one society)
+            currPayload.append(eventJSON)
+        if currPayload != []:
+            payload[f'T1W{str(i)}'] = currPayload
+    conn.close()
+    return payload
+    
 # TODO: Average Monthly/Weekly Attendance info (for one user)
+def main():
+    print(averageAttendance('week', '00000'))
+
+if __name__ == '__main__':
+    main()
