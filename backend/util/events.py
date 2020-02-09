@@ -1,8 +1,27 @@
 from util.utilFunctions import createConnection, checkUser, checkEvent
 from util.societies import findSocID
+from util.users import createUser
 from datetime import datetime
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
+
+# NOTE: The dict below is for the "onThisWeek" statistics
+# NOTE: CHANGE THE EVENT TABLE TO INCLUDE THE WEEK 
+week = datetime.strptime('2020-02-17', "%Y-%m-%d").date()
+weekDate = {}
+for counter in range(0, 12):
+    weekDate[f'T1W{str(counter)}'] = str(week)
+    week += relativedelta(days=7)
+
+week = datetime.strptime('2020-06-01', "%Y-%m-%d").date()
+for counter in range(0, 12):
+    weekDate[f'T2W{str(counter)}'] = str(week)
+    week += relativedelta(days=7)
+
+week = datetime.strptime('2020-09-14', "%Y-%m-%d").date()
+for counter in range(0, 12):
+    weekDate[f'T3W{str(counter)}'] = str(week)
+    week += relativedelta(days=7)
 
 # Creting an event (single instance events)
 def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag = None, societyID = None, location = None):
