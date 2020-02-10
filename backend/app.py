@@ -23,6 +23,7 @@ def generateID(number):
     return id
 
 # Routes
+# TODO: Add a flask route for averageAttedance
 
 @app.route('/')
 def hello():
@@ -70,12 +71,13 @@ def createEvent():
     hasQR = str(data['hasQR'])
     societyID = str(data['socID']) if 'socID' in data else None
     isRecur = str(data['isRecur']) if 'isRecur' in data and data['isRecur'] == 1 else False
+    description = sanitize(data['description']).lower() if 'description' in data else None
 
     results = None
     if isRecur is not False:
-        results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID)
+        results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description)
     else:
-        results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID)
+        results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID, description)
 
     if (results == "Unacceptable parametre" or results == "Error encountered" or results == "Event already exists" or results == "failed"):
         return dumps({"status": "failed", "msg": results})
@@ -131,7 +133,7 @@ def attend():
     data = request.get_json()
     payload = {}
     
-    payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(data['name']))
+    payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']))
     return dumps(payload)
 
 # Returns a list of events this person has attended
@@ -223,18 +225,23 @@ def userAllAttendance():
     return dumps(payload)
 
 # Will probably be involved in some kind of a "today's events" type of thing
-# GET /api/events/onthisday?date=2020-04-04&socID=1AEF0 (Note: socID optional)
+# Accepts three arguments (two compulsory)
+# interval accepts either a date in the form of "YYYY-MM-DD", or a week in the form of "T[1-3]W[1-10]", or a month in the range of [1-12]
+# intervalType accepts ['day', 'week', 'month']
+
+# GET /api/events/onthisday?interval=2020-04-04&intervalType=day&socID=1AEF0 (Note: socID optional)
 # Returns:
 # [{"eventID": "1239", "name": "Test Event 0", "society": "UNSW Hall", "eventDate": "2019-11-19"}, {"eventID": "1240", "name": "Coffee Night", "society": "UNSW Hall", "eventDate": "2019-11-20"}]
-@app.route('/api/events/onthisday', methods=['GET'])
-def onThisDay():
-    date = request.args.get('date')
+@app.route('/api/whatsOn', methods=['GET'])
+def whatsOn():
+    interval = request.args.get('interval')
+    intervalType = request.args.get('intervalType')
     socID = request.args.get('socID')
 
-    if (date is None):
+    if (interval is None or intervalType is None):
         return dumps({"status": "Failed", "msg": "No date provided"})
 
-    return dumps(utilFunctions.onThisDay(date)) if socID == None else dumps(utilFunctions.onThisDay(date, socID))
+    return dumps(utilFunctions.onThisDay(interval, intervalType)) if socID == None else dumps(utilFunctions.onThisDay(interval, intervalType, socID))
 
 # Delete user attendance
 # Usage: 

@@ -47,19 +47,30 @@ def checkEvent(eventID):
 
 
 # General utilities functions
-# Accepts a date in the form of "YYYY-MM-DD"
-def onThisDay(date, socID = None):
+# Accepts either a date in the form of "YYYY-MM-DD", or a week in the form of "T[1-3]W[1-10]", or a month in the range of [1-12]
+def onThisDay(interval, intervalType, socID = None):
     # TODO: Check user if they belong in this soc
     conn = createConnection()
     curs = conn.cursor()
 
+    dataType = None
+    if (intervalType == "day"):
+        dataType = "eventDate"
+    elif (intervalType == "week"):
+        dataType = "eventWeek"
+    elif (intervalType == "month"):
+        # TODO: Finish this part
+        return -1
+    else:
+        return None
+
     if socID == None:
-        curs.execute("select * from events where eventdate = (%s);", (date,))
+        curs.execute(f"select * from events where {dataType} = (%s);", (interval,))
     else:
         result = checkSoc(socID)
         if result == False:
             return []
-        curs.execute("select * from events join host on host.eventID = events.eventID and society = (%s) and eventDate = (%s);", (socID, date,))
+        curs.execute(f"select * from events join host on host.eventID = events.eventID and society = (%s) and {dataType} = (%s);", (socID, interval,))
 
     results = curs.fetchall()
     payload = []
@@ -67,7 +78,7 @@ def onThisDay(date, socID = None):
         eventJSON = {}
         eventJSON['eventID'] = event[0]
         eventJSON['name'] = event[1]
-        eventJSON['date'] = event[2]
+        eventJSON['date'] = str(event[2])
 
         curs.execute("select count(*) as count from participation where eventID = (%s);", (event[0],))
         eventJSON['attendance'] = curs.fetchone()[0]
@@ -88,6 +99,7 @@ def main():
     #print(getPersonEventsForSoc("z5161616", findSocID("UNSW Hall")))
     #print(createRecurrentEvent("z5161616", "aaaaa", "coffee night", "2020-03-13", "2020-04-15", 7, "day", False))
     #print(fetchRecur("1FAEA00018"))
+    print(onThisDay("T1W1", "week", socID = None))
     return 0
     #print(onThisDay("2020-03-06"))
 

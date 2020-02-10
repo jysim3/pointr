@@ -9,25 +9,38 @@ from dateutil.relativedelta import relativedelta
 # NOTE: CHANGE THE EVENT TABLE TO INCLUDE THE WEEK 
 week = datetime.strptime('2020-02-17', "%Y-%m-%d").date()
 weekDate = {}
-for counter in range(0, 12):
+for counter in range(1, 12):
     weekDate[f'T1W{str(counter)}'] = str(week)
     week += relativedelta(days=7)
 
 week = datetime.strptime('2020-06-01', "%Y-%m-%d").date()
-for counter in range(0, 12):
+for counter in range(1, 12):
     weekDate[f'T2W{str(counter)}'] = str(week)
     week += relativedelta(days=7)
 
 week = datetime.strptime('2020-09-14', "%Y-%m-%d").date()
-for counter in range(0, 12):
+for counter in range(1, 12):
     weekDate[f'T3W{str(counter)}'] = str(week)
     week += relativedelta(days=7)
 
+def findWeek(date: datetime):
+    previousI = 0
+    for i in weekDate.keys():
+        currWeek = datetime.strptime(weekDate[i], "%Y-%m-%d").date()
+        if (date < currWeek):
+            if (previousI == 0):
+                return None
+            return previousI
+
+        previousI = i
+    return None
+
+
 # Creting an event (single instance events)
-def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag = None, societyID = None, location = None):
+def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag = None, societyID = None, location = None, description = None):
     # FIXME
     if (checkUser(zID) == False):
-        createUser(zID, "N/A")
+        createUser(zID, "N/A", "000000")
 
     if (checkEvent(eventID) != False):
         return "failed"
@@ -35,10 +48,13 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag = None, society
         societyID = findSocID("UNSW Hall")
 
     eventDate = datetime.strptime(eventDate, "%Y-%m-%d").date()
+    week = findWeek(eventDate)
+    if (week == None):
+        return "failed"
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into events(eventID, name, owner, eventDate, qrCode) values ((%s), (%s), (%s), (%s), (%s));", (eventID, eventName, zID, eventDate, qrFlag,))
+    curs.execute("insert into events(eventID, name, owner, eventDate, eventWeek, qrCode, description) values ((%s), (%s), (%s), (%s), (%s), (%s), (%s));", (eventID, eventName, zID, eventDate, week, qrFlag, description,))
 
     # NOTE: Currently, location defaults to UNSW Hall if one isnt provided
     curs.execute("insert into host(location, society, eventID) values ((%s), (%s), (%s));", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
@@ -54,7 +70,7 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag = None, society
     # Example: startDate = 2020-01-30, endDate = 2020-05-30, recurType = "day", recurInterval = 14 
     # Example Cont.: The above indicates this event occurs every fortnightly starting with 30/1/2020 to 30/5/2020
 '''
-def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag = None, location = None, societyID = None):
+def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag = None, location = None, societyID = None, description = None):
     if (checkUser(zID) == False):
         createUser(zID, "N/A")
 
@@ -82,8 +98,11 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
     eventIDLists = []
     while eventStartDate < eventEndDate:
         currEventID = eventID + f"{counter:05d}"
+        week = findWeek(eventStartDate)
+        
+
         try:
-            curs.execute("insert into events(eventID, name, owner, eventDate, qrCode) values ((%s), (%s), (%s), (%s), (%s));", (currEventID, eventName, zID, eventStartDate, qrFlag,))
+            curs.execute("insert into events(eventID, name, owner, eventDate, eventWeek, qrCode, description) values ((%s), (%s), (%s), (%s), (%s), (%s), (%s));", (currEventID, eventName, zID, eventStartDate, week, qrFlag, description,))
 
             curs.execute("insert into host(location, society, eventID) values ((%s), (%s), (%s));", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, currEventID,))
 

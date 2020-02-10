@@ -1,6 +1,6 @@
 # Comment out the two lines below in production
 import sys
-sys.path.append('/mnt/c/Users/Steven Shen/COMP/intercollegeHack/project/backend')
+sys.path.append('../')
 from util.utilFunctions import createConnection, checkUser, checkEvent
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
@@ -13,7 +13,7 @@ for counter in range(0, 12):
     week += relativedelta(days=7)
 
 # TODO: CHANGE THIS FUNCTION TO REFLECT ON THE CHANGE IN THE EVENT TABLE
-def register(zID, eventID, userName, isArc = False):
+def register(zID, eventID, isArc = False):
     if (checkUser(zID) == False):
         createUser(zID, userName)
 
@@ -70,7 +70,7 @@ def getAttendance(eventID):
         return "failed"
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select points, isArcMember, users.name, users.zid, qrcode from participation join events join users where participation.eventid = events.eventid and participation.user = users.zid and events.eventID = (%s);", (eventID,))
+    curs.execute("select points, isArcMember, users.name, users.zid, qrcode from participation join (select * from events) as events on (participation.eventid = events.eventid) join (select * from users) as users on (participation.zid = users.zid) where events.eventID = (%s);", (eventID,))
     result = curs.fetchall()
 
     curs.execute("select name from events where eventid = (%s);", (eventID,))
@@ -97,7 +97,7 @@ def averageAttendance(dateType, socID):
             eventJSON = {}
             eventJSON['eventID'] = event[0]
             eventJSON['name'] = event[1]
-            eventJSON['date'] = event[2]
+            eventJSON['date'] = str(event[2])
 
             # TODO: Change this to average
             curs.execute("select count(*) as count from participation where eventID = (%s);", (event[0],))
@@ -111,7 +111,7 @@ def averageAttendance(dateType, socID):
     
 # TODO: Average Monthly/Weekly Attendance info (for one user)
 def main():
-    print(averageAttendance('week', '00000'))
+    print(averageAttendance('week', '74DF2'))
 
 if __name__ == '__main__':
     main()
