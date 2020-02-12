@@ -1,9 +1,9 @@
 # Comment out the two lines below in production
 import sys
 sys.path.append('../')
-from util.utilFunctions import createConnection, checkUser, checkEvent
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
+FROM util.utilFunctions import createConnection, checkUser, checkEvent
+FROM datetime import datetime
+FROM dateutil.relativedelta import relativedelta
 
 week = datetime.strptime('2020-02-17', "%Y-%m-%d").date()
 #end = datetime.strptime('2021-01-01', "%Y-%m-%d").date()
@@ -25,7 +25,7 @@ def register(zID, eventID, isArc = False):
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into participation(points, isArcMember, zid, eventID) values ((%s), (%s), (%s), (%s))", (1, isArc, zID, eventID,))
+    curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID) VALUES ((%s), (%s), (%s), (%s))", (1, isArc, zID, eventID,))
     conn.commit()
     conn.close()
     return "success"
@@ -33,7 +33,7 @@ def register(zID, eventID, isArc = False):
 def changePoints(zID, eventID, newPoints):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("update participation set points=(%s) where eventID=(%s) and zid=(%s)", (newPoints, eventID, zID,))
+    curs.execute("update participation set points=(%s) WHERE eventID=(%s) and zid=(%s)", (newPoints, eventID, zID,))
     conn.commit()
     error = curs.fetchone()
     conn.close()
@@ -41,10 +41,10 @@ def changePoints(zID, eventID, newPoints):
         return "failed"
     return "success"
 
-def deleteUserAttendance(zID, eventID):
+def DELETEUserAttendance(zID, eventID):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("delete from participation where zid=(%s) and eventid=(%s)", (zID, eventID,))
+    curs.execute("DELETE FROM participation WHERE zid=(%s) and eventid=(%s)", (zID, eventID,))
     conn.commit()
     error = curs.fetchone()
     conn.close()
@@ -55,7 +55,7 @@ def deleteUserAttendance(zID, eventID):
 def checkParticipation(zID, eventID):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select * from participation where zid=(%s) and eventid=(%s)", (zID, eventID,))
+    curs.execute("SELECT * FROM participation WHERE zid=(%s) and eventid=(%s)", (zID, eventID,))
 
     rows = curs.fetchall()
     conn.close()
@@ -70,10 +70,10 @@ def getAttendance(eventID):
         return "failed"
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select points, isArcMember, users.name, users.zid, qrcode from participation join (select * from events) as events on (participation.eventid = events.eventid) join (select * from users) as users on (participation.zid = users.zid) where events.eventID = (%s);", (eventID,))
+    curs.execute("SELECT points, isArcMember, users.name, users.zid, qrcode FROM participation JOIN (SELECT * FROM events) AS events ON (participation.eventid = events.eventid) JOIN (SELECT * FROM users) AS users ON (participation.zid = users.zid) WHERE events.eventID = (%s);", (eventID,))
     result = curs.fetchall()
 
-    curs.execute("select name from events where eventid = (%s);", (eventID,))
+    curs.execute("SELECT name FROM events WHERE eventid = (%s);", (eventID,))
     name = curs.fetchone()
 
     conn.close()
@@ -89,7 +89,7 @@ def averageAttendance(dateType, socID):
 
     payload = {}
     for i in range(0, len(weekDate) - 1):
-        curs.execute("select * from events join host on host.eventID = events.eventID where eventDate > (%s) and eventDate < (%s) and society = (%s);", (weekDate[f'T1W{str(i)}'], weekDate[f'T1W{str(i + 1)}'], socID,))
+        curs.execute("SELECT * FROM events JOIN host ON (host.eventID = events.eventID) WHERE eventDate > (%s) and eventDate < (%s) and society = (%s);", (weekDate[f'T1W{str(i)}'], weekDate[f'T1W{str(i + 1)}'], socID,))
         #conn.commit()
         results = curs.fetchall()
         currPayload = []
@@ -100,7 +100,7 @@ def averageAttendance(dateType, socID):
             eventJSON['date'] = str(event[2])
 
             # TODO: Change this to average
-            curs.execute("select count(*) as count from participation where eventID = (%s);", (event[0],))
+            curs.execute("SELECT count(*) AS count FROM participation WHERE eventID = (%s);", (event[0],))
             eventJSON['attendance'] = curs.fetchone()[0]
 
             currPayload.append(eventJSON)

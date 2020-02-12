@@ -3,7 +3,7 @@ import sys
 sys.path.append('../')
 # NOTE: Uncomment the five lines below when reinitialising the database is required
 from util.events import createSingleEvent, createRecurrentEvent
-from util.users import createUser
+from util.users import createUser, getUserAttendance
 from util.participation import register
 from util.societies import createSociety, createSocStaff, findSocID
 from util.utilFunctions import checkEvent
@@ -49,7 +49,8 @@ def initDatabase():
 def main():
     # os.system("rm database.db")
     
-    initDatabase()
+    #initDatabase()
+    print(getUserAttendance("z5161616"))
 
 if __name__ == '__main__':
     main()

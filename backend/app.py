@@ -145,21 +145,7 @@ def attend():
 def getUser():
     zID = request.args.get('zID')
     attendance = users.getUserAttendance(sanitize(zID.lower()))
-    if attendance == 'invalid user': 
-        return dumps({"status": "failed"})
-    payload = {}
-    payload['events'] = []
-    payload['zID'] = zID.lower()
-    payload['name'] = attendance[1][0]
-    for event in attendance[0]:
-        eventJSON = {}
-        eventJSON['eventID'] = event[1]
-        eventJSON['name'] = event[2]
-        eventJSON['society'] = event[4]
-        eventJSON['eventDate'] = event[3]
-        eventJSON['points'] = event[0]
-        payload['events'].append(eventJSON)
-    return dumps(payload)
+    return dumps(attendance)
 
 # Get all the events hosted by a society
 @app.route('/api/soc/eventsHosted', methods=['GET'])
@@ -214,12 +200,13 @@ def userAllAttendance():
     payload = {}
     payload['userName'] = eventsAttended[1]
     payload['societyName'] = eventsAttended[2]
+    payload['events'] = []
     for event in eventsAttended[0]:
         eventJSON = {}
         eventJSON['eventID'] = event[0]
         eventJSON['name'] = event[1]
         eventJSON['society'] = event[3]
-        eventJSON['eventDate'] = event[2]
+        eventJSON['eventDate'] = str(event[2])
         eventJSON['points'] = event[4]
         payload['events'].append(eventJSON)
     return dumps(payload)

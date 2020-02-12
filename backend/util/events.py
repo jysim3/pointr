@@ -54,10 +54,10 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag = None, society
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into events(eventID, name, owner, eventDate, eventWeek, qrCode, description) values ((%s), (%s), (%s), (%s), (%s), (%s), (%s));", (eventID, eventName, zID, eventDate, week, qrFlag, description,))
+    curs.execute("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s));", (eventID, eventName, zID, eventDate, week, qrFlag, description,))
 
     # NOTE: Currently, location defaults to UNSW Hall if one isnt provided
-    curs.execute("insert into host(location, society, eventID) values ((%s), (%s), (%s));", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
+    curs.execute("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
     conn.commit()
     conn.close()
     return eventID
@@ -102,9 +102,9 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
         
 
         try:
-            curs.execute("insert into events(eventID, name, owner, eventDate, eventWeek, qrCode, description) values ((%s), (%s), (%s), (%s), (%s), (%s), (%s));", (currEventID, eventName, zID, eventStartDate, week, qrFlag, description,))
+            curs.execute("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s));", (currEventID, eventName, zID, eventStartDate, week, qrFlag, description,))
 
-            curs.execute("insert into host(location, society, eventID) values ((%s), (%s), (%s));", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, currEventID,))
+            curs.execute("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, currEventID,))
 
             eventIDLists.append({"date": str(eventStartDate), "eventID": currEventID})
         except Error as e:

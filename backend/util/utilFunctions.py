@@ -70,7 +70,7 @@ def onThisDay(interval, intervalType, socID = None):
         result = checkSoc(socID)
         if result == False:
             return []
-        curs.execute(f"select * from events join host on host.eventID = events.eventID and society = (%s) and {dataType} = (%s);", (socID, interval,))
+        curs.execute(f"select * from events join host on (host.eventID = events.eventID) where society = (%s) and {dataType} = (%s);", (socID, interval,))
 
     results = curs.fetchall()
     payload = []
@@ -99,7 +99,7 @@ def main():
     #print(getPersonEventsForSoc("z5161616", findSocID("UNSW Hall")))
     #print(createRecurrentEvent("z5161616", "aaaaa", "coffee night", "2020-03-13", "2020-04-15", 7, "day", False))
     #print(fetchRecur("1FAEA00018"))
-    print(onThisDay("T1W1", "week", socID = None))
+    #print(onThisDay("T1W1", "week", socID = None))
     return 0
     #print(onThisDay("2020-03-06"))
 
