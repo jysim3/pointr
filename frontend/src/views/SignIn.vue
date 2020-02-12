@@ -4,15 +4,15 @@
       <h2>Sign in to Pointr</h2>
       <div class="label-input-div">
         <label class="label">zID</label>
-        <input class="input" type="text" required />
+        <input v-model="zid" class="input" type="text" required />
       </div>
       <div class="label-input-div">
         <label class="label">Password</label>
-        <input class="input" type="password" required />
+        <input v-model="password" class="input" type="password" required />
       </div>
       <div class="label-input-div">
         <label class="label">Remember me</label>
-        <input class="input input--checkbox" type="checkbox" />
+        <input v-model="rememberUser" class="input input-checkbox" type="checkbox" />
       </div>
       <button type="submit" class="btn btn-primary">Sign In</button>
     </form>
@@ -22,6 +22,13 @@
 <script>
 export default {
   name: "SignIn",
+  data() {
+    return {
+      zid: "",
+      password: "",
+      rememberUser: false
+    }
+  },
   methods: {
     submitSignInForm() {
       // [zZ][0-9](7)
