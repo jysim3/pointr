@@ -8,6 +8,7 @@
         :key="index"
         :eid="eid"
         :attendee="attendee"
+        class="attendee"
       />
     </div>
     <h3 v-else id="no-attendees-msg">All attendees will appear here.</h3>
@@ -60,5 +61,9 @@ export default {
 #attendees-container {
   width: 100%;
   margin: 1rem 0 2rem 0;
+}
+
+.attendee + .attendee {
+  border-top: 4px solid var(--c-secondary); /* TODO: change to better colour or change to margin instead of border */
 }
 </style>

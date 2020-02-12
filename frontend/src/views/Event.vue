@@ -10,18 +10,18 @@
         <form id="event-form" class="form" @submit.prevent="submitEventAttendance">
           <div class="label-input-div">
             <label class="label" for>zID</label>
-            <input class="input" v-model="zid" type="text" required/>
+            <input class="input" v-model="zid" type="text" required />
           </div>
           <div class="label-input-div">
             <label class="label" for>Name</label>
-            <input class="input" v-model="uname" type="text" required/>
+            <input class="input" v-model="uname" type="text" required />
           </div>
           <button type="submit" class="btn btn-primary">Sign attendance</button>
         </form>
       </div>
     </div>
     <div id="event-attendance-container">
-      <EventAttendance :eid="eid" :attendees="participants" />
+      <EventAttendance class="attendee" :eid="eid" :attendees="participants" />
     </div>
   </div>
 </template>
@@ -29,7 +29,7 @@
 <script>
 import EventAttendance from "@/components/EventAttendance.vue";
 import EventQRCode from "@/components/EventQRCode.vue";
-import EventCodeDisplay from "@/components/EventCodeDisplay.vue"
+import EventCodeDisplay from "@/components/EventCodeDisplay.vue";
 import { fetchAPI } from "@/util.js";
 
 export default {
@@ -54,14 +54,15 @@ export default {
   mounted() {
     setInterval(() => {
       fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
-      .then(j => {
-        this.name = j.name;
-        // this.eventId = j.eventID;
-        this.participants = j.participants;
-      }).catch(e => {
-          console.log(e) // eslint-disable-line
-      });
-    }, 1000)
+        .then(j => {
+          this.name = j.name;
+          // this.eventId = j.eventID;
+          this.participants = j.participants.reverse();
+        })
+        .catch(e => {
+          console.log(e); // eslint-disable-line
+        });
+    }, 1000);
   },
   computed: {
     eventURL() {
@@ -107,7 +108,8 @@ export default {
   box-shadow: none;
 }
 
-#qr-container, #event-form-container {
+#qr-container,
+#event-form-container {
   display: inline-block;
 }
 
@@ -126,5 +128,4 @@ export default {
   justify-content: center;
   font-size: 1.5rem;
 }
-
 </style>
