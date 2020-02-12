@@ -45,24 +45,24 @@ export default {
   data() {
     return {
       name: "",
-      // eventId: "",
       participants: [],
       zid: "",
       uname: ""
     };
   },
-  mounted() {
+  created() {
+    fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
+      .then(j => {
+        this.name = j.name;
+        this.participants = j.participants.reverse();
+      })
+      .catch(e => {
+        console.log(e); // eslint-disable-line
+      });
+
     setInterval(() => {
-      fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
-        .then(j => {
-          this.name = j.name;
-          // this.eventId = j.eventID;
-          this.participants = j.participants.reverse();
-        })
-        .catch(e => {
-          console.log(e); // eslint-disable-line
-        });
-    }, 1000);
+      this.fetchAttendees();
+    }, 2000);
   },
   computed: {
     eventURL() {
@@ -81,7 +81,17 @@ export default {
           this.zid = "";
           this.uname = "";
         })
+        .then(() => this.fetchAttendees())
         .catch(e => alert(e));
+    },
+    fetchAttendees() {
+      fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
+        .then(r => {
+          this.participants = r.participants;
+        })
+        .catch(e => {
+          console.log(e); // eslint-disable-line
+        });
     }
   }
 };

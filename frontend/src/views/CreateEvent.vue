@@ -50,6 +50,7 @@ export default {
         owner: "Ivan",
         defaultPoints: this.point,
         zID: "adsfh",
+        location: 'Test location',
         eventDate: "19700201"
       };
       fetchAPI("/api/event", "POST", data).then(j => {

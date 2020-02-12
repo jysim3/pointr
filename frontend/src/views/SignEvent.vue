@@ -2,7 +2,7 @@
   <div>
     <EventCodeDisplay :eid="eid" />
     <h1>Welcome to {{ this.eventName }}!</h1>
-    <div class="form-container">
+    <div id="sign-event-form">
       <form class="form" @submit="submitForm">
         <div class="label-input-div">
           <label class="label" for>zID</label>
@@ -64,7 +64,7 @@ export default {
 h2 {
   text-align: center;
 }
-.form-container {
+#sign-event-form {
   margin-top: 3rem;
 }
 </style>
