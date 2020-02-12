@@ -1,51 +1,51 @@
 <template>
   <div>
-    <div id="eid-container">
-      <div id="event-code-title">
-        <h2 id="eid-header">Event code</h2>
-        <h2 id="eid-code">{{ this.eid }}</h2>
-      </div>
-    </div>
-    <h1>Welcome to {{ this.name }}</h1>
+    <EventCodeDisplay :eid="eid" />
+    <h1 id="welcome-header">Welcome to {{ this.name }}</h1>
+    <h2 id="mark-attendance-header">Mark your attendance</h2>
     <div id="qr-and-form-container">
-      <EventQRCode v-bind:eid="this.eid" />
-      <!-- <h3 id="event-url">{{ eventURL }}</h3> -->
+      <EventQRCode :eid="this.eid" />
       <div id="event-form-container" class="form-container">
-        <form @submit="submitForm" class="form" id="create-event-form" action>
+        <!-- TODO: Have forms be their own component with slots? -->
+        <form id="event-form" class="form" @submit.prevent="submitEventAttendance">
           <div class="label-input-div">
-            <label for>zID</label>
-            <input v-model="zid" type="text" required/>
+            <label class="label" for>zID</label>
+            <input class="input" v-model="zid" type="text" required />
           </div>
           <div class="label-input-div">
-            <label for>Name</label>
-            <input v-model="uname" type="text" required/>
+            <label class="label" for>Name</label>
+            <input class="input" v-model="uname" type="text" required />
           </div>
-          <button>Sign attendance</button>
+          <button type="submit" class="btn btn-primary">Sign attendance</button>
         </form>
       </div>
     </div>
-    <div id="attendees">
-    <Attendees :eid="this.eid" :attendees="this.participants" />
+    <div id="event-attendance-container">
+      <EventAttendance class="attendee" :eid="eid" :attendees="participants" />
     </div>
   </div>
 </template>
 
 <script>
-import Attendees from "@/components/Attendees.vue";
-import EventQRCode from "../components/EventQRCode.vue";
+import EventAttendance from "@/components/EventAttendance.vue";
+import EventQRCode from "@/components/EventQRCode.vue";
+import EventCodeDisplay from "@/components/EventCodeDisplay.vue";
 import { fetchAPI } from "@/util.js";
 
 export default {
   name: "Event",
-  props: ["eid"],
+  props: {
+    eid: String
+  },
   components: {
     EventQRCode,
-    Attendees
+    EventAttendance,
+    EventCodeDisplay
   },
   data() {
     return {
       name: "",
-      eventId: "",
+      // eventId: "",
       participants: [],
       zid: "",
       uname: ""
@@ -54,14 +54,15 @@ export default {
   mounted() {
     setInterval(() => {
       fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
-      .then(j => {
-        this.name = j.name;
-        this.eventId = j.eventID;
-        this.participants = j.participants;
-      }).catch(e => {
-          console.log(e) // eslint-disable-line
-      });
-    }, 1000)
+        .then(j => {
+          this.name = j.name;
+          // this.eventId = j.eventID;
+          this.participants = j.participants.reverse();
+        })
+        .catch(e => {
+          console.log(e); // eslint-disable-line
+        });
+    }, 1000);
   },
   computed: {
     eventURL() {
@@ -69,8 +70,7 @@ export default {
     }
   },
   methods: {
-    submitForm(e) {
-      e.preventDefault();
+    submitEventAttendance() {
       const data = {
         zID: this.zid,
         name: this.uname,
@@ -87,39 +87,29 @@ export default {
 };
 </script>
 
-<style>
-@import "../assets/style.css";
+<style scoped>
+/* TODO: refactor this CSS */
+#welcome-header {
+  margin: 2rem 0;
+}
+
+#mark-attendance-header {
+  text-align: center;
+  margin: 3rem 0 2rem 0;
+  font-weight: 400;
+}
 
 #event-url {
   text-transform: none;
   font-family: monospace;
 }
 
-#eid-container {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: black;
+#event-form {
+  box-shadow: none;
 }
 
-#event-code-title {
-  background-color: white;
-  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05);
-  display: inline-block;
-  text-align: center;
-  padding: 1rem 3rem;
-}
-
-#event-code-title h2 {
-  margin: 0;
-}
-
-#eid-header {
-  font-size: 1rem;
-}
-
-#qr-container, #event-form-container {
+#qr-container,
+#event-form-container {
   display: inline-block;
 }
 
@@ -132,12 +122,10 @@ export default {
   margin-right: 2rem;
 }
 
-#attendees {
+#event-attendance-container {
   margin-top: 3rem;
   display: flex;
   justify-content: center;
-  align-items: center;
   font-size: 1.5rem;
 }
-
 </style>
