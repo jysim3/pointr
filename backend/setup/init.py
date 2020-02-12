@@ -24,33 +24,33 @@ def initDatabase():
     createSociety("z5555555", "UNSW Hall")
 
     # NOTE: Defaults to UNSW Hall (for the society field right now)
-    createSingleEvent("z5161616", "1239", "Hackathon", "2019-11-19", True, findSocID("UNSW Hall"))
-    createSingleEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2019-09-09", True, findSocID("UNSW Hall"))
-    createSingleEvent("z5555555", "1234", "Coffee Night", "2019-10-16", True, findSocID("UNSW Hall"))
-    createSingleEvent("z5111111", "4231", "LoL Appreciation", "2019-09-08", True, findSocID("UNSW Hall"))
+    createSingleEvent("z5161616", "1239", "Hackathon", "2020-11-19", True, findSocID("UNSW Hall"))
+    createSingleEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2020-09-09", True, findSocID("UNSW Hall"))
+    createSingleEvent("z5555555", "1234", "Coffee Night", "2020-10-16", True, findSocID("UNSW Hall"))
+    createSingleEvent("z5111111", "4231", "LoL Appreciation", "2020-09-08", True, findSocID("UNSW Hall"))
 
     # register users:
     #   for Hackathon
-    register("z5161616", "1239", 'Steven')
-    register("z5161798", "1239", 'Casey Neistat')
+    register("z5161616", "1239")
+    register("z5161798", "1239")
     #   for Gamer Juice Winery Tour
-    register("z5333333", "0000", 'Ivan Velickovic')
-    register("z5161798", "0000", 'Casey Neistat')
-    register("z5161616", "0000", 'Stevn')
+    register("z5333333", "0000")
+    register("z5161798", "0000")
+    register("z5161616", "0000")
     #   for Coffee Night
-    register("z5161616", "1234", 'Steven')
-    register("z5161798", "1234", 'Casey Neistat')
-    register("z5111111", "1234", 'Harrison Steyn')
-    register("z5222222", "1234", 'Junyang Sim')
-    register("z5333333", "1234", 'Ivan Velickovic')
-    register("z5444444", "1234", 'Oltan Sevinc')
-    register("z5555555", "1234", 'Will de Dassel')
+    register("z5161616", "1234")
+    register("z5161798", "1234")
+    register("z5111111", "1234")
+    register("z5222222", "1234")
+    register("z5333333", "1234")
+    register("z5444444", "1234")
+    register("z5555555", "1234")
 
 def main():
     # os.system("rm database.db")
     
-    #initDatabase()
-    print(getUserAttendance("z5161616"))
+    initDatabase()
+    #print(getUserAttendance("z5161616"))
 
 if __name__ == '__main__':
     main()

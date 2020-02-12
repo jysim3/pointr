@@ -12,7 +12,7 @@ def createUser(zID, name, password, role = None):
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into users(zid, name, password) values((%s), (%s), (%s));", (zID, name, pwHash,))
+    curs.execute("INSERT INTO users(zid, name, password) values((%s), (%s), (%s));", (zID, name, pwHash,))
     conn.commit()
     conn.close()
     return "Success"

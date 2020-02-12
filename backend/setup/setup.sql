@@ -1,46 +1,46 @@
--- drop table if exists users cascade;
-create table if not exists users (
-    zid text not null,
-    name text not null,
-    password text not null,
+drop TABLE IF EXISTS users cascade;
+CREATE TABLE IF NOT EXISTS users (
+    zid text NOT NULL,
+    name text NOT NULL,
+    password text NOT NULL,
     primary key(zid)
 );
--- drop table if exists events cascade;
-create table if not exists events (
-    eventID text not null,
-    name text not null,
-    eventdate date not null,
-	eventWeek text not null,
-    owner text not null references users(zid),
+drop TABLE IF EXISTS events cascade;
+CREATE TABLE IF NOT EXISTS events (
+    eventID text NOT NULL,
+    name text NOT NULL,
+    eventdate date NOT NULL,
+	eventWeek text NOT NULL,
+    owner text NOT NULL references users(zid),
     qrCode boolean,
     description text,
-    primary key(eventID)
+ primary key(eventID)
 );
--- drop table if exists participation cascade;
-create table if not exists participation (
-    points text not null,
-    isArcMember boolean not null,
-    zid text not null references users(zid),
-    eventID text not null references events(eventID),
+drop TABLE IF EXISTS participation cascade;
+CREATE TABLE IF NOT EXISTS participation (
+    points text NOT NULL,
+    isArcMember boolean NOT NULL,
+    zid text NOT NULL references users(zid),
+    eventID text NOT NULL references events(eventID),
     primary key (zid, eventID)
 );
--- drop table if exists society cascade;
-create table if not exists society (
+drop TABLE IF EXISTS society cascade;
+CREATE TABLE IF NOT EXISTS society (
     societyID text,
-    societyName text not null unique,
+    societyName text NOT NULL unique,
     primary key (societyID)
 );
--- drop table if exists host cascade;
-create table if not exists host (
+drop TABLE IF EXISTS host cascade;
+CREATE TABLE IF NOT EXISTS host (
     location text,
     society text references society(societyID),
-    eventID text not null references events(eventID),
+    eventID text NOT NULL references events(eventID),
     primary key (society, eventID)
 );
--- drop table if exists socstaff cascade;
-create table if not exists socstaff (
+drop TABLE IF EXISTS socstaff cascade;
+CREATE TABLE IF NOT EXISTS socstaff (
     society text references society(societyID),
     zid text references users(zid),
-    role text not null,
+    role INTEGER NOT NULL,
     primary key (society, zid)
 );

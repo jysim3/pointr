@@ -1,9 +1,9 @@
 # Comment out the two lines below in production
 import sys
 sys.path.append('../')
-FROM util.utilFunctions import createConnection, checkUser, checkEvent
-FROM datetime import datetime
-FROM dateutil.relativedelta import relativedelta
+from util.utilFunctions import createConnection, checkUser, checkEvent
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 week = datetime.strptime('2020-02-17', "%Y-%m-%d").date()
 #end = datetime.strptime('2021-01-01', "%Y-%m-%d").date()
@@ -12,11 +12,7 @@ for counter in range(0, 12):
     weekDate[f'T1W{str(counter)}'] = str(week)
     week += relativedelta(days=7)
 
-# TODO: CHANGE THIS FUNCTION TO REFLECT ON THE CHANGE IN THE EVENT TABLE
 def register(zID, eventID, isArc = False):
-    if (checkUser(zID) == False):
-        createUser(zID, userName)
-
     if checkEvent(eventID) == False:
         return "Event does not exist"
 
@@ -41,7 +37,7 @@ def changePoints(zID, eventID, newPoints):
         return "failed"
     return "success"
 
-def DELETEUserAttendance(zID, eventID):
+def deleteUserAttendance(zID, eventID):
     conn = createConnection()
     curs = conn.cursor()
     curs.execute("DELETE FROM participation WHERE zid=(%s) and eventid=(%s)", (zID, eventID,))
@@ -70,14 +66,17 @@ def getAttendance(eventID):
         return "failed"
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("SELECT points, isArcMember, users.name, users.zid, qrcode FROM participation JOIN (SELECT * FROM events) AS events ON (participation.eventid = events.eventid) JOIN (SELECT * FROM users) AS users ON (participation.zid = users.zid) WHERE events.eventID = (%s);", (eventID,))
+    curs.execute("SELECT qrCode FROM events WHERE eventid = (%s);", (eventID,))
+    qrCode = curs.fetchone()
+    qrCode = qrCode[0] if qrCode != [] else None
+    curs.execute("SELECT points, isArcMember, users.name, users.zid FROM participation JOIN (SELECT * FROM events) AS events ON (participation.eventid = events.eventid) JOIN (SELECT * FROM users) AS users ON (participation.zid = users.zid) WHERE events.eventID = (%s);", (eventID,))
     result = curs.fetchall()
 
     curs.execute("SELECT name FROM events WHERE eventid = (%s);", (eventID,))
     name = curs.fetchone()
 
     conn.close()
-    return result, name
+    return result, name, qrCode
 
 # TODO: Average Monthly/Weekly Attendance info (for recurring events)
 

@@ -79,9 +79,9 @@ def createEvent():
     else:
         results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID, description)
 
-    if (results == "Unacceptable parametre" or results == "Error encountered" or results == "Event already exists" or results == "failed"):
+    if (isinstance(results, str) == True):
         return dumps({"status": "failed", "msg": results})
-    return dumps({"status": "Success", "msg": results})
+    return dumps({"status": "Success", "msg": results[0]})
 
 # For getting info on an event, i.e. participation information
 # Usage:
@@ -93,12 +93,13 @@ def getEvent():
     eventID = request.args.get('eventID')
     payload = {}
     attendance = participation.getAttendance(sanitize(eventID))
+    print(attendance)
     if attendance == "failed":
         payload['status'] = 'failed'
     else:
         payload['eventID'] = eventID
         payload['name'] = attendance[1][0]
-        payload['hasQR'] = attendance[0][0][4]
+        payload['hasQR'] = attendance[2]
         payload['participants'] = []
         for person in attendance[0]:
             personJSON = {}
@@ -120,6 +121,7 @@ def getRecurEventStats():
     if (eventID == None):
         return dumps({"status": "Failed", "msg": "No eventID"})
 
+    print(events.fetchRecur(eventID))
     return dumps(events.fetchRecur(eventID))
 
 
@@ -165,7 +167,7 @@ def getHostedEvents():
         eventJSON['eventID'] = event[0]
         eventJSON['name'] = event[1]
         eventJSON['society'] = event[3]
-        eventJSON['eventDate'] = event[2]
+        eventJSON['eventDate'] = str(event[2])
         payload['events'].append(eventJSON)
     return dumps(payload)
 

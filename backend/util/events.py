@@ -37,30 +37,36 @@ def findWeek(date: datetime):
 
 
 # Creting an event (single instance events)
-def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag = None, societyID = None, location = None, description = None):
-    # FIXME
+def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID, location = None, description = None):
+    conn = createConnection()
+    curs = conn.cursor()
+
     if (checkUser(zID) == False):
-        createUser(zID, "N/A", "000000")
+        return "no such user"
+    else:
+        curs.execute("SELECT * FROM socStaff WHERE society = (%s) AND zid = (%s) AND role = 1;", (societyID, zID,))
+        results = curs.fetchone()
+        if (results == []):
+            return "not an admin"
 
     if (checkEvent(eventID) != False):
-        return "failed"
+        return "already exists"
     elif (societyID == None):
+        # NOTE: Currently, defaults to UNSW Hall
         societyID = findSocID("UNSW Hall")
 
     eventDate = datetime.strptime(eventDate, "%Y-%m-%d").date()
     week = findWeek(eventDate)
     if (week == None):
-        return "failed"
+        return "Not a valid date for events"
 
-    conn = createConnection()
-    curs = conn.cursor()
     curs.execute("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s));", (eventID, eventName, zID, eventDate, week, qrFlag, description,))
 
     # NOTE: Currently, location defaults to UNSW Hall if one isnt provided
     curs.execute("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
     conn.commit()
     conn.close()
-    return eventID
+    return eventID, True
 
 '''
     # Creating a recurring event (need specification on what kind of recurrence)
@@ -71,10 +77,21 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag = None, society
     # Example Cont.: The above indicates this event occurs every fortnightly starting with 30/1/2020 to 30/5/2020
 '''
 def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag = None, location = None, societyID = None, description = None):
+    conn = createConnection()
+    curs = conn.cursor()
+
     if (checkUser(zID) == False):
-        createUser(zID, "N/A")
+        conn.close()
+        return "no such user"
+    else:
+        curs.execute("SELECT * FROM socStaff WHERE society = (%s) AND zid = (%s) AND role = 1;", (societyID, zID,))
+        results = curs.fetchone()
+        if (results == []):
+            conn.close()
+            return "not an adminsuch user"
 
     if (checkEvent(eventID) != False):
+        conn.close()
         return "Event already exists"
     elif (societyID == None):
         societyID = findSocID("UNSW Hall")
@@ -88,10 +105,9 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
     elif (recurType == "month"):
         interval = relativedelta(months=recurInterval)
     else:
+        conn.close()
         return "Unacceptable parametre"
 
-    conn = createConnection()
-    curs = conn.cursor()
     eventStartDate = datetime.strptime(eventStartDate, "%Y-%m-%d").date()
     eventEndDate = datetime.strptime(eventEndDate, "%Y-%m-%d").date()
     counter = 0
@@ -107,7 +123,7 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
             curs.execute("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, currEventID,))
 
             eventIDLists.append({"date": str(eventStartDate), "eventID": currEventID})
-        except Error as e:
+        except Exception as e:
             print(e)
             return "Error encountered"
         eventStartDate += interval
@@ -115,22 +131,23 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
     conn.commit()
     conn.close()
 
-    return eventIDLists
+    return eventIDLists, True
 
 # Returns a set of attendance numbers for each events
 def fetchRecur(eventID):
     baseID = eventID[:5]
+    print(baseID)
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select * from events where eventID like (%s);", (baseID,))
+    curs.execute(f"select * from events where eventID like '{baseID}%';")
     results = curs.fetchall()
     payload = []
     for event in results:
         eventJSON = {}
         eventJSON['eventID'] = event[0]
         eventJSON['name'] = event[1]
-        eventJSON['date'] = event[2]
+        eventJSON['date'] = str(event[2])
 
         curs.execute("select count(*) as count from participation where eventID = (%s);", (event[0],))
         eventJSON['attendance'] = curs.fetchone()[0]
