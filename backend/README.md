@@ -9,5 +9,5 @@ cd setup
 ## FOR SETTING UP THE DATABASE AND POPULATING IT WITH SOME DEFAULT DATA (Requires Sudo)
 ```
 cd setup
-./setup/setup.sh
+./setup.sh
 ```
