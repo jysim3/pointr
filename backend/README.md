@@ -2,10 +2,12 @@
 
 ## FOR SETTING UP THE POSTGRESQL SERVER (Requires Sudo)
 ```
-./setup/psqlSetup.sh
+cd setup
+./psqlSetup.sh
 ```
 
 ## FOR SETTING UP THE DATABASE AND POPULATING IT WITH SOME DEFAULT DATA (Requires Sudo)
 ```
+cd setup
 ./setup/setup.sh
 ```
