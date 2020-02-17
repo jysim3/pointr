@@ -135,7 +135,7 @@ def attend():
     data = request.get_json()
     payload = {}
     
-    payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']))
+    payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(data['isArc']))
     return dumps(payload)
 
 # Returns a list of events this person has attended
@@ -182,8 +182,6 @@ def createSoc():
     if (result == "exists already"):
         return dumps({"status": "Failed", "msg": "A society with this name already exists"})
     return dumps({"status": "Success", "msg": result})
-
-# TODO: Add a two layer system (i.e. admins), thus a flask route for adding admins
 
 # Returns a list of events attended by a person in one society
 @app.route('/api/stats/userSocAttendance', methods=['GET'])
