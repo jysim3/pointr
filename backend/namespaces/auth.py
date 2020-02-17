@@ -87,6 +87,7 @@ class Test(Resource):
 
 
 class LoginDetailsSchema(Schema):
+    # FIXME: Check if the username follows the pattern of [zZ][0-9](7)
     username = fields.Str(required=True, validate=validate.Length(min=1, max=256))
     password = fields.Str(required=True, validate=validate.Length(min=1, max=256))
     

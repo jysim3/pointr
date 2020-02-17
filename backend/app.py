@@ -2,7 +2,7 @@ import sqlite3
 from sqlite3 import Error
 from flask import Flask, request
 from flask_cors import CORS
-from flask_restx import Api, Resource
+from flask_restplus import Api, Resource
 
 app = Flask(__name__)
 api = Api(app, version='0.02', title='Pointr backend',

@@ -1,5 +1,6 @@
 import jwt
 from datetime import datetime, date, time, timedelta
+from util.users import checkUserInfo, checkUser, createUser
 
 # Expiration time on tokens - 60 minutes
 token_exp = 60*60
@@ -22,17 +23,13 @@ def authorize_token(token):
     return {"valid": False, "reason": "Unknown"}
 
 def register_user(username, password):
-    global users
-    if (not users.get(username)):
-        # Hash password 
-        users[username] = password
-        return True
+    if (checkUser(username) == False):
+        createUser(username, password)
     return False
 
 def login(username, password):
-    global users
-    # instead of checking dictionary check database & hash 
-    if (users.get(username) == password):
+    results = checkUserInfo(username, password)
+    if (results == True):
         global token_exp
         token = jwt.encode(
             {
@@ -43,4 +40,4 @@ def login(username, password):
             'secret', algorithm='HS256' # TODO ensure secret is secret
         ) 
         return token.decode("utf-8")
-    return False
+    return None

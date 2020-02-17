@@ -1,11 +1,9 @@
-#from sqlite3 import Error
-#import sqlite3
 from psycopg2 import Error
 import psycopg2
 
 # This file contains the check functions and that's it
 
-# FIXME: If we want a different database for each different set of users, change this function below
+# NOTE: If we want a different database for each different set of users, change this function below
 def createConnection():
     conn = None
     try:
@@ -87,21 +85,3 @@ def onThisDay(interval, intervalType, socID = None):
 
     conn.close()
     return payload
-
-
-def main():
-    #print(getPersonEventsForSoc("z5161616", findSocID("UNSW Hall")))
-    # print(getAttendance("1234"))
-    #print(getUserAttendance("z5161616"))
-    # print(getAttendance(1234))
-    #print("Entered")
-    #print(getEventForSoc(findSocID("UNSW Hall")))
-    #print(getPersonEventsForSoc("z5161616", findSocID("UNSW Hall")))
-    #print(createRecurrentEvent("z5161616", "aaaaa", "coffee night", "2020-03-13", "2020-04-15", 7, "day", False))
-    #print(fetchRecur("1FAEA00018"))
-    #print(onThisDay("T1W1", "week", socID = None))
-    return 0
-    #print(onThisDay("2020-03-06"))
-
-if __name__ == '__main__':
-    main()
