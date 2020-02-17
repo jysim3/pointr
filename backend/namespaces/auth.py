@@ -29,7 +29,7 @@ class Register(Resource):
         # Attempt to create a new user with the username and password
         if not register_user(data['username'], data['password']):
             abort(409, 'Username Taken')
-            
+
         # Login the user and return 
         token = login(data['username'], data['password'])
         if (token):

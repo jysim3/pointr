@@ -24,7 +24,7 @@ def authorize_token(token):
 
 def register_user(username, password):
     if (checkUser(username) == False):
-        createUser(username, password)
+        return True if createUser(username, password) == "Success" else False
     return False
 
 def login(username, password):
