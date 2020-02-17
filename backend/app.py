@@ -16,15 +16,16 @@ from json import dumps
 from util import events, participation, societies, users, utilFunctions
 import re
 import os
-from namespaces.auth import api as auth
+
 from namespaces.event import api as event
 from namespaces.stats import api as stats
 from namespaces.user import api as user
+from namespaces.auth import api as auth
 
-api.add_namespace(auth, path='/api/auth')
 api.add_namespace(event, path='/api/event')
 # api.add_namespace(stats, path='/api/stats')
 api.add_namespace(user, path='/api/user')
+api.add_namespace(auth, path='/api/auth')
 
 CORS(app)
 
@@ -48,6 +49,7 @@ def getRecurEventStats():
     if (eventID == None):
         return dumps({"status": "Failed", "msg": "No eventID"})
 
+    print(events.fetchRecur(eventID))
     return dumps(events.fetchRecur(eventID))
 
 # Get all the events hosted by a society
@@ -68,7 +70,7 @@ def getHostedEvents():
         eventJSON['eventID'] = event[0]
         eventJSON['name'] = event[1]
         eventJSON['society'] = event[3]
-        eventJSON['eventDate'] = event[2]
+        eventJSON['eventDate'] = str(event[2])
         payload['events'].append(eventJSON)
     return dumps(payload)
 
@@ -103,12 +105,13 @@ def userAllAttendance():
     payload = {}
     payload['userName'] = eventsAttended[1]
     payload['societyName'] = eventsAttended[2]
+    payload['events'] = []
     for event in eventsAttended[0]:
         eventJSON = {}
         eventJSON['eventID'] = event[0]
         eventJSON['name'] = event[1]
         eventJSON['society'] = event[3]
-        eventJSON['eventDate'] = event[2]
+        eventJSON['eventDate'] = str(event[2])
         eventJSON['points'] = event[4]
         payload['events'].append(eventJSON)
     return dumps(payload)

@@ -6,23 +6,14 @@ from util.auth_services import *
 from marshmallow import Schema, fields, ValidationError, validates, validate
 
 api = Namespace('auth', description='Authentication & Authorization Services')
-
-class LoginDetailsSchema(Schema):
-    username = fields.Str(required=True, validate=validate.Length(min=1, max=256))
-    password = fields.Str(required=True, validate=validate.Length(min=1, max=256))
     
-class TokenSchema(Schema):
-    token = fields.Str(required=True)
-    
-from models.models import *
-
 @api.route('/register')
 class Register(Resource):
     # @api.response(200, 'Success', token_details)
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
     @api.response(409, 'Username Taken')
-    @api.expect(auth_details)
+    # @api.expect(auth_details)
     def post(self):
         
         # Ensure the request is json
@@ -52,7 +43,6 @@ class Login(Resource):
     # @api.response(200, 'Success', token_details)
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
-    @api.expect(auth_details)
     def post(self):
         # Check request is json
         if not request.json:
@@ -74,9 +64,9 @@ class Login(Resource):
 @api.route('/test')
 class Test(Resource):
     
-    @api.response(200, 'Success', token_check)
+    # @api.response(200, 'Success', token_check)
     @api.response(400, 'Malformed Request')
-    @api.expect(token_details)
+    # @api.expect(token_details)
     def post(self):
         # Check request is json
         if not request.json:
@@ -90,8 +80,15 @@ class Test(Resource):
         
         # Authorize token and return true or false
         token_data = authorize_token(data['token'])
-        if (token_data.valid):
+        if (token_data['valid']):
             return dumps({"valid": True})
         else:
             return dumps({"valid": False})
+
+
+class LoginDetailsSchema(Schema):
+    username = fields.Str(required=True, validate=validate.Length(min=1, max=256))
+    password = fields.Str(required=True, validate=validate.Length(min=1, max=256))
     
+class TokenSchema(Schema):
+    token = fields.Str(required=True)

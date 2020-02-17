@@ -3,9 +3,9 @@
     <h1>Thanks for attending, {{this.username}}</h1>
 
     <div id="container">
-      <h2>Events you attended</h2>
+      <h2>Events you've attended</h2>
       <div id="table-container">
-        <table class="shadow" cellspacing="0" id="attendance-table">
+        <table cellspacing="0" id="attendance-table">
           <tr>
             <th>Event name</th>
             <th>Points</th>
@@ -42,13 +42,6 @@ export default {
 };
 </script>
 <style scoped>
-@import "../assets/style.css";
-
-#home-container {
-  background-color: var(--primary-yellow);
-  width: 100vw;
-  height: 100vh;
-}
 
 #table-container {
   display: flex;
@@ -71,13 +64,12 @@ table {
   width: 40%;
   margin: 0;
   padding: 0;
-  color: black;
 }
 
 th {
   font-size: 1.75rem;
   text-align: left;
-  background-color: var(--dark-grey);
+  background-color: var(--c-primary);
   color: white;
   font-weight: 400;
   padding: 1rem;
@@ -86,7 +78,7 @@ th {
 tr {
   font-size: 1.5rem;
   text-align: left;
-  border: 1px solid var(--dark-grey);
+  border: 1px solid var(--c-secondary-dark);
 }
 
 td {
@@ -97,6 +89,6 @@ td {
     background: white;
 }
 .td-points {
-    background: var(--bgc-grey);
+    background: var(--c-secondary-light);
 }
 </style>

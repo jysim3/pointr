@@ -3,9 +3,9 @@ from flask_restx import Namespace, Resource, abort, reqparse
 from flask_restx import fields as flask_fields
 from json import dumps
 from util.users import *
-from models.models import *
 from util.sanitisation_services import sanitize
 from marshmallow import Schema, fields, ValidationError, validates, validate
+from util.auth_services import *
 
 api = Namespace('user', description='User Services')
 
@@ -19,32 +19,25 @@ class User(Resource):
     def get(self):
         zID = request.args.get('zID')
         attendance = getUserAttendance(sanitize(zID.lower()))
-        if attendance == 'invalid user': 
-            return dumps({"status": "failed"})
-        payload = {}
-        payload['events'] = []
-        payload['zID'] = zID.lower()
-        payload['name'] = attendance[1][0]
-        for event in attendance[0]:
-            eventJSON = {}
-            eventJSON['eventID'] = event[1]
-            eventJSON['name'] = event[2]
-            eventJSON['society'] = event[4]
-            eventJSON['eventDate'] = event[3]
-            eventJSON['points'] = event[0]
-            payload['events'].append(eventJSON)
-        return dumps(payload)
-        
+        return dumps(attendance)
+            
     # For creating a user
     # Usage: 
     # POST /api/user
     # Takes: 
-    # {zID: "z1234567", name: "Harrison Steyn"}
+    # {zID: "z1234567", name: "Harrison Steyn", token: "fdsmksfksefoi3m.sadsad3r.fda"}
     # Returns: 
     # {"status": "success"}
     def post(self):
         data = request.get_json()
-        returnVal = users.createUser(sanitize(data['zID'].lower()), sanitize(data['name']))
-        payload = {}
-        payload['status'] = returnVal
-        return dumps(payload)
+        if ('token' in data):
+            token = data['token']
+            authorized = authorize_token(token)
+            if (authorized['valid']):
+                returnVal = createUser(sanitize(data['zID'].lower()), sanitize(data['name']))
+                payload = {}
+                payload['status'] = returnVal
+                return dumps(payload)
+            else:
+                return dumps(authorized)
+        abort(400, 'Malformed Request')

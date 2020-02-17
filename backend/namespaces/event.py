@@ -6,7 +6,6 @@ from flask_restx import Namespace, Resource, abort, reqparse
 from flask_restx import fields as flask_fields
 from json import dumps
 from util.auth_services import *
-from models.models import *
 from schemata.event_schemata import *
 from util import events, participation, utilFunctions
 from util.sanitisation_services import sanitize

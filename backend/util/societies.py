@@ -11,18 +11,18 @@ def generateID(number):
 def findSocID(socName):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select societyID from society where societyName = (%s);", (socName,))
+    curs.execute("SELECT societyID FROM society WHERE societyName = (%s);", (socName,))
     societyID = curs.fetchone()[0]
 
     return societyID
 
-def createSocStaff(zID, societyID, role = None):
+def createSocStaff(zID, societyID, role = 0):
     if (zID == None or societyID == None):
         return "failed, insufficient inputs"
     # TODO: Check for society and zID existance
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("insert into socstaff(society, zid, role) values ((%s), (%s), (%s));", (societyID, zID, role,))
+    curs.execute("INSERT INTO socstaff(society, zid, role) VALUES ((%s), (%s), (%s));", (societyID, zID, role,))
     conn.commit()
     conn.close()
     return "success"
@@ -32,13 +32,13 @@ def createSociety(zID = None, societyName = None):
     societyID = generateID(5).upper()
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select * from society where societyName = (%s);", (societyName,))
+    curs.execute("SELECT * FROM society WHERE societyName = (%s);", (societyName,))
     result = curs.fetchone()
     if (result != None):
         conn.close()
         return "exists already"
 
-    curs.execute("insert into society(societyID, societyName) values ((%s), (%s));", (societyID, societyName,))
+    curs.execute("INSERT INTO society(societyID, societyName) VALUES ((%s), (%s));", (societyID, societyName,))
     conn.commit()
     conn.close()
 
@@ -47,17 +47,25 @@ def createSociety(zID = None, societyName = None):
         return societyID
 
     # Otherwise, we add a staff with the job title of "President"
-    createSocStaff(zID, societyID, "President")
+    createSocStaff(zID, societyID, 1)
     return societyID
+
+# TODO: Make a flask route for this
+def registerToSoc(zID, societyID):
+    conn = createConnection()
+    curs = conn.cusor()
+    curs.execute("INSERT INTO socStaff(society, zid, role) VALUES (%s, %s, %s);", (societyID, zID, 0))
+    conn.commit()
+    conn.close()
 
 def changeRole(zID, societyID, role):
     conn = createConnection()
     curs = conn.cusor()
     try:
-        curs.execute("update socstaff set role = (%s) where society = (%s) and zid = (%s);", (role, societyID, zID,))
+        curs.execute("update socstaff set role = (%s) WHERE society = (%s) and zid = (%s);", (role, societyID, zID,))
         conn.commit()
         conn.close()
-    except Error as e:
+    except Exception as e:
         return "failed"
     return "success"
 
@@ -68,13 +76,13 @@ def getEventForSoc(societyID):
     conn = createConnection()
     curs = conn.cursor()
 
-    curs.execute("select societyName from society where societyID = (%s);", (societyID,))
+    curs.execute("SELECT societyName FROM society WHERE societyID = (%s);", (societyID,))
     name = curs.fetchone()
     if (name == None):
         conn.close()
         return "No such society"
 
-    curs.execute("select events.eventID, name, eventDate, location, society from events join host on events.eventID = host.eventID and society = (%s);", (societyID,))
+    curs.execute("SELECT events.eventID, name, eventDate, location, society FROM events join host on events.eventID = host.eventID and society = (%s);", (societyID,))
     events = curs.fetchall()
 
     conn.close()

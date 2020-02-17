@@ -24,12 +24,14 @@ def authorize_token(token):
 def register_user(username, password):
     global users
     if (not users.get(username)):
+        # Hash password 
         users[username] = password
         return True
     return False
 
 def login(username, password):
     global users
+    # instead of checking dictionary check database & hash 
     if (users.get(username) == password):
         global token_exp
         token = jwt.encode(
