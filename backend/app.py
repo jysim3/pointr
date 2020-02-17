@@ -2,7 +2,7 @@ import sqlite3
 from sqlite3 import Error
 from flask import Flask, request
 from flask_cors import CORS
-from flask_restx import Api, Resource
+from flask_restplus import Api, Resource
 
 app = Flask(__name__)
 api = Api(app, version='0.02', title='Pointr backend',
@@ -85,8 +85,6 @@ def createSoc():
     if (result == "exists already"):
         return dumps({"status": "Failed", "msg": "A society with this name already exists"})
     return dumps({"status": "Success", "msg": result})
-
-# TODO: Add a two layer system (i.e. admins), thus a flask route for adding admins
 
 # Returns a list of events attended by a person in one society
 @app.route('/api/stats/userSocAttendance', methods=['GET'])

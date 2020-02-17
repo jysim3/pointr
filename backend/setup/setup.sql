@@ -1,7 +1,6 @@
 drop TABLE IF EXISTS users cascade;
 CREATE TABLE IF NOT EXISTS users (
     zid text NOT NULL,
-    name text NOT NULL,
     password text NOT NULL,
     primary key(zid)
 );

@@ -1,7 +1,6 @@
 import os
 import sys
 sys.path.append('../')
-# NOTE: Uncomment the five lines below when reinitialising the database is required
 from util.events import createSingleEvent, createRecurrentEvent
 from util.users import createUser, getUserAttendance
 from util.participation import register
@@ -11,13 +10,13 @@ from util.utilFunctions import checkEvent
 def initDatabase():
     # Moving this section to init.py in the next patch lmao
     # add users
-    createUser("z5161616", "Steven Shen", "123456")
-    createUser("z5161798", "Casey Neistat", "123456")
-    createUser("z5111111", "Harrison Steyn", "123456")
-    createUser("z5222222", "JunYang Sim", "123456")
-    createUser("z5333333", "Ivan Velickovic", "123456")
-    createUser("z5444444", "Oltan Sevinc", "123456")
-    createUser("z5555555", "Will de Dassel", "123456")
+    createUser("z5161616", "123456")
+    createUser("z5161798", "123456")
+    createUser("z5111111", "123456")
+    createUser("z5222222", "123456")
+    createUser("z5333333", "123456")
+    createUser("z5444444", "123456")
+    createUser("z5555555", "123456")
 
     createSociety("z5111111", "CSESoc")
     createSociety("z5161616", "Manchester United FC")

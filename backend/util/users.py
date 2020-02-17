@@ -3,19 +3,26 @@ import hashlib
 
 # Creating a user 
 # 8/1/2020: TODO: To implement the login system, we need to store hashed passwords
-def createUser(zID, name, password, role = None):
+def createUser(zID, password, role = None):
     if (checkUser(zID) != False):
         return "Failed"
-    # FIXME: Perhaps, we should receive password hashed already from the frontend
-    password = str(password).encode()
+    password = str(password).encode('UTF-8')
     pwHash = hashlib.sha256(password).hexdigest()
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("INSERT INTO users(zid, name, password) values((%s), (%s), (%s));", (zID, name, pwHash,))
+    curs.execute("INSERT INTO users(zid, password) values((%s), (%s));", (zID, pwHash,))
     conn.commit()
     conn.close()
     return "Success"
+
+def checkUserInfo(zID, password):
+    password = hashlib.sha256(password.encode(encoding="utf-8")).hexdigest()
+
+    conn = createConnection()
+    curs = conn.cursor()
+    curs.execute("SELECT * FROM users where zid = (%s) AND password = (%s);", (zID, password,))
+    return False if curs.fetchone() == [] else True
 
 # return a list of events in the form of: [(points, eventID, eventName, date, societyName), (...)]
 # Get all the events attended by the user ever in every society

@@ -29,7 +29,7 @@ class Register(Resource):
         # Attempt to create a new user with the username and password
         if not register_user(data['username'], data['password']):
             abort(409, 'Username Taken')
-            
+
         # Login the user and return 
         token = login(data['username'], data['password'])
         if (token):
@@ -87,6 +87,7 @@ class Test(Resource):
 
 
 class LoginDetailsSchema(Schema):
+    # FIXME: Check if the username follows the pattern of [zZ][0-9](7)
     username = fields.Str(required=True, validate=validate.Length(min=1, max=256))
     password = fields.Str(required=True, validate=validate.Length(min=1, max=256))
     
