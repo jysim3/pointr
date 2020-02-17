@@ -1,30 +1,17 @@
-from sys
+import sys
 sys.path.append("../")
 
 from flask import request
 from flask_restx import Namespace, Resource, abort, reqparse
 from flask_restx import fields as flask_fields
 from json import dumps
-from utils.auth_services import *
+from util.auth_services import *
 from models.models import *
 from schemata.event_schemata import *
 from util import events, participation, utilFunctions
+from util.sanitisation_services import sanitize
 
 api = Namespace('event', description='Event Management Services')
-
-# For creating an event
-# Usage: 
-# POST /api/event
-# Takes:
-# { zID: "z5214808", name: "Coffee Night", eventDate: "2019-11-19"}
-# Date is in YYYY-MM-DD
-# Returns:
-# { status: "success", eventID: "1234F"}
-# or
-# { status: "ERROR MESSAGE"}
-
-def sanitize(input):
-    return re.sub("[^\w ']", "", input)
 
 def generateID(number):
     id = ""
@@ -118,7 +105,7 @@ class Event(Resource):
             payload['status'] = 'success'
         return dumps(payload)
         
-@app.route('/onthisday')
+@api.route('/onthisday')
 class OnThisDay(Resource):
     # Will probably be involved in some kind of a "today's events" type of thing
     # GET /api/events/onthisday?date=2020-04-04&socID=1AEF0 (Note: socID optional)
@@ -133,7 +120,7 @@ class OnThisDay(Resource):
 
         return dumps(utilFunctions.onThisDay(date)) if socID == None else dumps(utilFunctions.onThisDay(date, socID))
 
-@app.route('/attend')
+@api.route('/attend')
 class Attend(Resource):
     # For adding a user to an event
     # Usage:

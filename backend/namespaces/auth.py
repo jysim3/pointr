@@ -3,7 +3,6 @@ from flask_restx import Namespace, Resource, abort, reqparse
 from flask_restx import fields as flask_fields
 from json import dumps
 from util.auth_services import *
-from models.models import *
 from marshmallow import Schema, fields, ValidationError, validates, validate
 
 api = Namespace('auth', description='Authentication & Authorization Services')
@@ -14,11 +13,12 @@ class LoginDetailsSchema(Schema):
     
 class TokenSchema(Schema):
     token = fields.Str(required=True)
+    
+from models.models import *
 
 @api.route('/register')
 class Register(Resource):
     # @api.response(200, 'Success', token_details)
-    @api.response(200, 'Success', token_details)
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
     @api.response(409, 'Username Taken')
@@ -49,7 +49,7 @@ class Register(Resource):
 @api.route('/login')
 class Login(Resource):
     
-    @api.response(200, 'Success', token_details)
+    # @api.response(200, 'Success', token_details)
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
     @api.expect(auth_details)
