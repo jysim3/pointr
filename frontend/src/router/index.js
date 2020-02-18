@@ -8,6 +8,7 @@ import User from '@/views/User.vue'
 import MarkAttendance from '@/views/MarkAttendance.vue'
 import SignIn from '@/views/SignIn.vue'
 import SignUp from '@/views/SignUp.vue'
+import Profile from "@/views/Profile.vue"
 
 Vue.use(VueRouter)
 
@@ -54,6 +55,11 @@ const routes = [
     path: '/signup',
     name: 'signUp',
     component: SignUp
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: Profile
   }
 ]
 
