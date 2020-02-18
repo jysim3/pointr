@@ -9,6 +9,7 @@ from util.auth_services import *
 from schemata.event_schemata import *
 from util import events, participation, utilFunctions
 from util.sanitisation_services import sanitize
+from datetime import datetime
 
 api = Namespace('event', description='Event Management Services')
 
@@ -43,7 +44,7 @@ class Event(Resource):
     @api.response(200, 'Success')
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
-    def post():
+    def post(self):
         data = request.get_json()
         eventID = generateID(5).upper()
         if not 'hasQR' in data:
@@ -125,10 +126,20 @@ class Attend(Resource):
     # Usage:
     # /api/attend
     # Takes: 
-    # {'zID': z5214808, 'eventID': "12332"}
+    # {'zID': z5214808, 'eventID': "12332", 'time': "2020-04-04 11:55:59 (i.e. YYYY-MM-DD HH:MM:DD)"}
+    @api.response(400, "Malformed Request")
     def post(self):
         data = request.get_json()
         payload = {}
-        
-        payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(data['name']))
+
+        time = None
+        if 'time' in data:
+            try:
+                time = datetime.strptime(str(data['time']), "%Y-%m-%d %H:%M:%S")
+            except Exception as e:
+                print(e)
+                abort(400, "Malformed Request")
+        else:
+            time = datetime.now()
+        payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), time)
         return dumps(payload)
