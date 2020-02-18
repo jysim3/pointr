@@ -7,6 +7,7 @@ from dateutil.relativedelta import relativedelta
 
 # NOTE: The dict below is for the "onThisWeek" statistics
 # NOTE: CHANGE THE EVENT TABLE TO INCLUDE THE WEEK 
+# FIXME: FIXME WHEN IT COMES TO 2021
 week = datetime.strptime('2020-02-17', "%Y-%m-%d").date()
 weekDate = {}
 for counter in range(1, 12):
@@ -156,3 +157,4 @@ def fetchRecur(eventID):
     conn.close()
     return payload
 
+#def getAttendance
