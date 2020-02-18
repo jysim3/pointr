@@ -1,6 +1,7 @@
 import jwt
 from datetime import datetime, date, time, timedelta
 from util.users import checkUserInfo, checkUser, createUser
+from flask_restx import abort
 
 # Expiration time on tokens - 60 minutes
 token_exp = 60*60
@@ -20,7 +21,29 @@ def authorize_token(token):
     except jwt.ExpiredSignatureError:
         print("Received expired token")
         return {"valid": False, "reason": "Expired token"}
+    except jwt.DecodeError:
+        print("Received invalid token data")
+        return {"valid": False, "reason": "Invalid token"}
     return {"valid": False, "reason": "Unknown"}
+
+def authorize(token):
+    try:
+        token_data = jwt.decode(
+            token,
+            'secret',
+            algorithms='HS256'
+        )
+        return {"valid": True, "data": token_data}
+    except jwt.InvalidSignatureError:
+        print("Received invalid token signature")
+        abort(403, 'Invalid Credentials')
+    except jwt.ExpiredSignatureError:
+        print("Received expired token")
+        abort(401, 'Expired Token')
+    except jwt.DecodeError:
+        print("Received invalid token data")
+        abort(403, 'Invalid Credentials')
+    abort(400, 'Malformed Request')
 
 def register_user(username, password):
     if (checkUser(username) == False):
