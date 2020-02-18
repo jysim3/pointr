@@ -3,7 +3,7 @@
     <Logo />
     <h2 id="heading">The event tracking system for UNSW colleges.</h2>
     <div id="btn-container">
-      <button @click="createEvent" class="btn btn-primary">Create an event</button>
+      <button @click="eventCreate" class="btn btn-primary">Create an event</button>
       <button @click="markAttendance" class="btn btn-secondary">Mark my attendance</button>
     </div>
     <div id="admin">
@@ -28,7 +28,7 @@ export default {
     };
   },
   methods: {
-    createEvent() {
+    eventCreate() {
       router.push({ name: "create" });
     },
     markAttendance() {

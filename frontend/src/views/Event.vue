@@ -22,6 +22,7 @@
     </div>
     <div id="event-attendance-container">
       <EventAttendance class="attendee" :eid="eid" :attendees="reversedParticipants" />
+      <!-- TODO: only show last 10 people who have joined? Click 'view all' to show all participants? -->
     </div>
   </div>
 </template>

@@ -32,7 +32,7 @@ import router from "@/router/index.js";
 import Logo from "@/components/Logo.vue";
 
 export default {
-  name: "CreateEvent",
+  name: "EventCreate",
   components: {
     Logo
   },

@@ -10,6 +10,7 @@
         :attendee="attendee"
         class="attendee"
       />
+      <!-- TODO: be able to select mutliple attendees so don't have to delete/edit one by one -->
     </div>
     <h3 v-else id="no-attendees-msg">All attendees will appear here.</h3>
   </div>

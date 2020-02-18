@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '@/views/Home.vue'
-import CreateEvent from '@/views/CreateEvent.vue'
+import EventCreate from '@/views/EventCreate.vue'
 import Event from '@/views/Event.vue'
 import SignEvent from '@/views/SignEvent.vue'
 import User from '@/views/User.vue'
@@ -25,7 +25,7 @@ const routes = [
   {
     path: '/create',
     name: 'create',
-    component: CreateEvent
+    component: EventCreate
   },
   {
     path: '/u/:zid',
