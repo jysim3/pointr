@@ -7,6 +7,7 @@ from util import auth_services, users, participation
 from schemata.auth_schemata import TokenSchema
 from schemata.user_schemata import UserCreationSchema, ZIDSchema
 import util.auth_services as auth_service
+from util.auth_services import ADMIN, USER
 
 api = Namespace('user', description='User Services')
 

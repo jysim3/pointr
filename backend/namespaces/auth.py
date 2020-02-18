@@ -2,6 +2,7 @@ from flask import request, jsonify
 from flask_restx import Namespace, Resource, abort, reqparse
 from flask_restx import fields as flask_fields
 import util.auth_services as auth_services
+from util.auth_services import authorize_token, ADMIN, USER
 import util.users
 from util.users import addActivationLink, activateAccount
 from marshmallow import Schema, fields, ValidationError, validates, validate
