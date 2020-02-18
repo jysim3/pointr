@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from flask_restplus import Api, Resource
+from flask_restx import Api
 
 app = Flask(__name__)
 api = Api(app, version='0.02', title='Pointr backend',

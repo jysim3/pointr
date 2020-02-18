@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort, reqparse
 from schemata import event_schemata
 from util import events, participation, utilFunctions
@@ -32,7 +32,7 @@ def generateID(number = None):
 # { status: "ERROR MESSAGE"}
 @api.route('/')
 class Event(Resource):
-    
+
     @api.response(200, 'Success')
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
@@ -65,9 +65,9 @@ class Event(Resource):
         else:
             results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID)
 
-        if (results == "Unacceptable parametre" or results == "Error encountered" or results == "Event already exists" or results == "failed"):
+        if (isinstance(results, tuple) == False):
             return jsonify({"status": "failed", "msg": results})
-        return jsonify({"status": "Success", "msg": results})
+        return jsonify({"status": "Success", "msg": results[0]})
 
     # For getting info on an event, i.e. participation information
     # Usage:
@@ -136,3 +136,13 @@ class Attend(Resource):
             time = datetime.now()
         payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), time)
         return jsonify(payload)
+
+@api.route('/getAttendance')
+class getAttendance(Resource):
+    def get(self):
+        eventID = request.args.get('eventID')
+        try:
+            return send_file(participation.getAttendanceCSV(eventID), as_attachment=True)
+        except Exception as e:
+            #print(str(e))
+            abort(400, "Cannot find file")

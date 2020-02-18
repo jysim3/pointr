@@ -5,6 +5,7 @@ from util.utilFunctions import createConnection, checkUser, checkEvent
 from util.users import checkArc
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import csv
 
 week = datetime.strptime('2020-02-17', "%Y-%m-%d").date()
 #end = datetime.strptime('2021-01-01', "%Y-%m-%d").date()
@@ -81,6 +82,34 @@ def getAttendance(eventID):
 
     conn.close()
     return result, name, qrCode
+
+def getAttendanceCSV(eventID):
+    if (checkEvent(eventID) == False):
+        return "failed"
+    conn = createConnection()
+    curs = conn.cursor()
+    #curs.execute("COPY (SELECT isArcMember, zID, time FROM participation JOIN EVENTS ON (participation.eventID = events.eventID) WHERE events.eventID = (%s)) TO '/mnt/c/Users/Shen/COMP/HallHackathon/backend/test.csv' DELIMITER ',' CSV HEADER;", (eventID, ))
+    curs.execute("SELECT isArcMember, zID, time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) WHERE events.eventID = (%s);", (eventID,))
+    results = curs.fetchall()
+    if results == []:
+        return "No attendance"
+    conn.commit()
+
+    import os
+    path = os.getcwd()
+    path += f'/csvFiles/{eventID}.csv'
+    print(path)
+    try:
+        with open(path, 'w', newline='') as file:
+            file.write("isArcMember|zID|time\n")
+            writer = csv.writer(file, delimiter='|')
+            writer.writerows(results)
+    except Exception as e:
+        print(e)
+        return "Failed"
+    
+    conn.close()
+    return path
 
 # TODO: Average Monthly/Weekly Attendance info (for recurring events)
 
