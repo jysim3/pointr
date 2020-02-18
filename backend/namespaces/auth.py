@@ -61,8 +61,8 @@ class Login(Resource):
         else:
             abort(403, 'Invalid Credentials')
         
-@api.route('/test')
-class Test(Resource):
+@api.route('/admin')
+class TestAdmin(Resource):
     
     # @api.response(200, 'Success', token_check)
     @api.response(400, 'Malformed Request')
@@ -79,7 +79,31 @@ class Test(Resource):
             abort(400, err.messages)
         
         # Authorize token and return true or false
-        token_data = authorize_token(data['token'])
+        token_data = authorize_token(data['token'], ADMIN)
+        if (token_data['valid']):
+            return dumps({"valid": True})
+        else:
+            return dumps({"valid": False})
+            
+@api.route('/user')
+class TestUser(Resource):
+    
+    # @api.response(200, 'Success', token_check)
+    @api.response(400, 'Malformed Request')
+    # @api.expect(token_details)
+    def post(self):
+        # Check request is json
+        if not request.json:
+            abort(400, 'Malformed Request')
+        
+        # Validate data
+        try:
+            data = TokenSchema().load(request.get_json())
+        except ValidationError as err:
+            abort(400, err.messages)
+        
+        # Authorize token and return true or false
+        token_data = authorize_token(data['token'], USER)
         if (token_data['valid']):
             return dumps({"valid": True})
         else:

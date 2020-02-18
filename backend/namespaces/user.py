@@ -57,7 +57,7 @@ class User(Resource):
         except ValidationError as err:
             abort(400, err.messages)
             
-        authorized = authorize(data['token'])
+        authorized = authorize(data['token'], ADMIN)
         
         if (authorized['valid']):
             returnVal = createUser(sanitize(data['zID'].lower()), sanitize(data['name']))

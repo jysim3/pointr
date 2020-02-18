@@ -21,11 +21,13 @@ from namespaces.event import api as event
 from namespaces.stats import api as stats
 from namespaces.user import api as user
 from namespaces.auth import api as auth
+from namespaces.soc import api as soc
 
 api.add_namespace(event, path='/api/event')
 # api.add_namespace(stats, path='/api/stats')
 api.add_namespace(user, path='/api/user')
 api.add_namespace(auth, path='/api/auth')
+api.add_namespace(soc, path='/api/soc')
 
 CORS(app)
 
@@ -37,7 +39,7 @@ def generateID(number):
     for x in range(0, number):
         id += random.choice(string.hexdigits)
     return id
-
+##########################################################################################
 # For getting information on a set of recurrent events
 # Usage:
 # GET /api/stat/recurEvent?eventID=?
@@ -85,6 +87,8 @@ def createSoc():
     if (result == "exists already"):
         return dumps({"status": "Failed", "msg": "A society with this name already exists"})
     return dumps({"status": "Success", "msg": result})
+
+####################################################################################
 
 # Returns a list of events attended by a person in one society
 @app.route('/api/stats/userSocAttendance', methods=['GET'])
