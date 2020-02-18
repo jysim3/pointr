@@ -1,46 +1,47 @@
 drop TABLE IF EXISTS users cascade;
 CREATE TABLE IF NOT EXISTS users (
-    zid text NOT NULL,
-    name text NOT NULL,
-    password text NOT NULL,
+    zid TEXT NOT NULL,
+    password TEXT NOT NULL,
+    isArc BOOLEAN NOT NULL,
     primary key(zid)
 );
 drop TABLE IF EXISTS events cascade;
 CREATE TABLE IF NOT EXISTS events (
-    eventID text NOT NULL,
-    name text NOT NULL,
+    eventID TEXT NOT NULL,
+    name TEXT NOT NULL,
     eventdate date NOT NULL,
-	eventWeek text NOT NULL,
-    owner text NOT NULL references users(zid),
+	eventWeek TEXT NOT NULL,
+    owner TEXT NOT NULL REFERENCES users(zid),
     qrCode boolean,
-    description text,
+    description TEXT,
  primary key(eventID)
 );
 drop TABLE IF EXISTS participation cascade;
 CREATE TABLE IF NOT EXISTS participation (
-    points text NOT NULL,
+    points TEXT NOT NULL,
     isArcMember boolean NOT NULL,
-    zid text NOT NULL references users(zid),
-    eventID text NOT NULL references events(eventID),
+    zid TEXT NOT NULL REFERENCES users(zid),
+    eventID TEXT NOT NULL REFERENCES events(eventID),
+    time timestamp NOT NULL,
     primary key (zid, eventID)
 );
 drop TABLE IF EXISTS society cascade;
 CREATE TABLE IF NOT EXISTS society (
-    societyID text,
-    societyName text NOT NULL unique,
+    societyID TEXT,
+    societyName TEXT NOT NULL unique,
     primary key (societyID)
 );
 drop TABLE IF EXISTS host cascade;
 CREATE TABLE IF NOT EXISTS host (
-    location text,
-    society text references society(societyID),
-    eventID text NOT NULL references events(eventID),
+    location TEXT,
+    society TEXT REFERENCES society(societyID),
+    eventID TEXT NOT NULL REFERENCES events(eventID),
     primary key (society, eventID)
 );
 drop TABLE IF EXISTS socstaff cascade;
 CREATE TABLE IF NOT EXISTS socstaff (
-    society text references society(societyID),
-    zid text references users(zid),
+    society TEXT REFERENCES society(societyID),
+    zid TEXT REFERENCES users(zid),
     role INTEGER NOT NULL,
     primary key (society, zid)
 );

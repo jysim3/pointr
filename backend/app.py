@@ -2,6 +2,13 @@ import sqlite3
 from sqlite3 import Error
 from flask import Flask, request
 from flask_cors import CORS
+from flask_restplus import Api, Resource
+
+app = Flask(__name__)
+api = Api(app, version='0.02', title='Pointr backend',
+    description='Backend for pointr web servers',
+)
+
 import random
 import string
 from json import dumps
@@ -10,7 +17,20 @@ from util import events, participation, societies, users, utilFunctions
 import re
 import os
 
-app = Flask(__name__)
+from namespaces.event import api as event
+from namespaces.stats import api as stats
+from namespaces.user import api as user
+from namespaces.auth import api as auth
+from namespaces.soc import api as soc
+from namespaces.other import api as other
+
+api.add_namespace(event, path='/api/event')
+# api.add_namespace(stats, path='/api/stats')
+api.add_namespace(user, path='/api/user')
+api.add_namespace(auth, path='/api/auth')
+api.add_namespace(soc, path='/api/soc')
+api.add_namespace(other, path='/api/other')
+
 CORS(app)
 
 def sanitize(input):
@@ -21,94 +41,6 @@ def generateID(number):
     for x in range(0, number):
         id += random.choice(string.hexdigits)
     return id
-
-# Routes
-# TODO: Add a flask route for averageAttedance
-
-@app.route('/')
-def hello():
-    return "Hello World!"
-
-# For creating a recurrent event
-# Usage: 
-# POST /api/event
-# Takes:
-# { zID: "z5214808", name: "Coffee Night", location: "UNSW Hall", eventDate: "2020-01-01", endDate: "2020-04-04", recurType: "day", recurInterval: 6, "socID": "1DASD", "isRecur": "True"}
-# NOTE: isRecur needs to be 1 for this to be a recurrentEvent creation, 0 for single instance event
-# NOTE: For single instance events, everything after startDate is not required
-# Date is in YYYY-MM-DD
-'''
-    # Currently, accept four different recurrent parametres, startDate and endDate to indicate how muuch this recurrence will be
-    # recurType indicates what kind of recurrence this is (accepts: "day", "week", "month")
-    # recurInterval indicates how many of said recurType is inbetween each interval (accepts any int less than 365)
-    # Example: startDate = 2020-01-30, endDate = 2020-05-30, recurType = "day", recurInterval = 14 
-    # Example Cont.: The above indicates this event occurs every fortnightly starting with 30/1/2020 to 30/5/2020
-'''
-# Returns:
-# { status: "success", "msg": [{"date": 2020-04-04, "eventID": "1FAEA00001"}, {...}}
-# or
-# { status: "ERROR MESSAGE"}
-@app.route('/api/event', methods=['POST'])
-def createEvent():
-    data = request.get_json()
-    eventID = generateID(5).upper()
-    if not 'hasQR' in data:
-        data['hasQR'] = False
-    elif data['hasQR'].lower() == "true":
-        data['hasQR'] = True
-    elif data['hasQR'].lower() == "false":
-        data['hasQR'] = False
-    else:
-        data['hasQR'] = False
-
-    location = sanitize(str(data['location'])).lower() if 'location' in data else None
-    startDate = sanitize(str(data['eventDate'])).lower()
-    endDate = sanitize(str(data['endDate']).lower()) if 'endDate' in data else None
-    recurType = sanitize(str(data['recurType']).lower()) if 'recurType' in data else None
-    recurInterval = sanitize(data['recurInterval']).lower() if 'recurInterval' in data else None
-    zID = sanitize(str(data['zID']))
-    eventName = sanitize(str(data['name']))
-    hasQR = str(data['hasQR'])
-    societyID = str(data['socID']) if 'socID' in data else None
-    isRecur = str(data['isRecur']) if 'isRecur' in data and data['isRecur'] == 1 else False
-    description = sanitize(data['description']).lower() if 'description' in data else None
-
-    results = None
-    if isRecur is not False:
-        results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description)
-    else:
-        results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID, description)
-
-    if (isinstance(results, str) == True):
-        return dumps({"status": "failed", "msg": results})
-    return dumps({"status": "Success", "msg": results[0]})
-
-# For getting info on an event, i.e. participation information
-# Usage:
-# GET /api/event?eventID=ID
-# Returns: 
-# {"eventID": "1239", "name": "Test Event 0", "participants": [{"zID": "z5161616", "name": "Steven Shen", "points": 1}, {"zID": "z5161798", "name": "Casey Neistat", "points": 1}]}
-@app.route('/api/event', methods=['GET'])
-def getEvent():
-    eventID = request.args.get('eventID')
-    payload = {}
-    attendance = participation.getAttendance(sanitize(eventID))
-    print(attendance)
-    if attendance == "failed":
-        payload['status'] = 'failed'
-    else:
-        payload['eventID'] = eventID
-        payload['name'] = attendance[1][0]
-        payload['hasQR'] = attendance[2]
-        payload['participants'] = []
-        for person in attendance[0]:
-            personJSON = {}
-            personJSON['zID'] = person[3].lower()
-            personJSON['name'] = person[2]
-            personJSON['points'] = person[0]
-            payload['participants'].append(personJSON)
-        payload['status'] = 'success'
-    return dumps(payload)
 
 # For getting information on a set of recurrent events
 # Usage:
@@ -123,31 +55,6 @@ def getRecurEventStats():
 
     print(events.fetchRecur(eventID))
     return dumps(events.fetchRecur(eventID))
-
-
-# For adding a user to an event
-# Usage:
-# /api/attend
-# Takes: 
-# {'zID': z5214808, 'eventID': "12332"}
-@app.route('/api/attend', methods=['POST'])
-def attend():
-    data = request.get_json()
-    payload = {}
-    
-    payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']))
-    return dumps(payload)
-
-# Returns a list of events this person has attended
-# Usage:
-# GET /api/user?zID=z5214808
-# Returns:
-# [{"eventID": "1239", "name": "Test Event 0", "society": "UNSW Hall", "eventDate": "2019-11-19"}, {"eventID": "1240", "name": "Coffee Night", "society": "UNSW Hall", "eventDate": "2019-11-20"}]
-@app.route('/api/user', methods=['GET'])
-def getUser():
-    zID = request.args.get('zID')
-    attendance = users.getUserAttendance(sanitize(zID.lower()))
-    return dumps(attendance)
 
 # Get all the events hosted by a society
 @app.route('/api/soc/eventsHosted', methods=['GET'])
@@ -182,8 +89,6 @@ def createSoc():
     if (result == "exists already"):
         return dumps({"status": "Failed", "msg": "A society with this name already exists"})
     return dumps({"status": "Success", "msg": result})
-
-# TODO: Add a two layer system (i.e. admins), thus a flask route for adding admins
 
 # Returns a list of events attended by a person in one society
 @app.route('/api/stats/userSocAttendance', methods=['GET'])
@@ -261,22 +166,6 @@ def updatePoints():
     payload = {}
     payload['status'] = participation.changePoints(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(str(data['points'])))
     return dumps(payload)
-
-# For creating a user
-# Usage: 
-# POST /api/user
-# Takes: 
-# {zID: "z1234567", name: "Harrison Steyn"}
-# Returns: 
-# {"status": "success"}
-@app.route('/api/user', methods=['POST'])
-def postUser():
-    data = request.get_json()
-    returnVal = users.createUser(sanitize(data['zID'].lower()), sanitize(data['name']))
-    payload = {}
-    payload['status'] = returnVal
-    return dumps(payload)
-
 
 def main():
     app.run()
