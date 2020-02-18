@@ -5,13 +5,14 @@ from json import dumps
 from util.auth_services import *
 from marshmallow import Schema, fields, ValidationError, validates, validate
 from util import societies
+from flask import jsonify
 
 api = Namespace('soc', description='societies-related routes')
 
 @api.route('/getAllSocs')
 class getSocs(Resource):
     def get(self):
-        return dumps(societies.getAllSocs())
+        return jsonify(societies.getAllSocs())
 
 @api.route('/joinSoc')
 class joinSoc(Resource):
@@ -22,7 +23,7 @@ class joinSoc(Resource):
         result = societies.joinSoc(str(data['zID']), str(data['socID']))
         if result == 'failed':
             abort(400, "Bad arguments")
-        return dumps({"status": "success"})
+        return jsonify({"status": "success"})
 
 @api.route('/makeStaff')
 class makeStaff(Resource):
@@ -30,3 +31,4 @@ class makeStaff(Resource):
         data = request.get_json()
         if ('zID' not in data or 'socID' not in data):
             abort(400, "Malformed Request")
+        # TODO: Complete This

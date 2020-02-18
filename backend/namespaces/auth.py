@@ -1,7 +1,6 @@
-from flask import request
+from flask import request, jsonify
 from flask_restx import Namespace, Resource, abort, reqparse
 from flask_restx import fields as flask_fields
-from json import dumps
 from util.auth_services import *
 from marshmallow import Schema, fields, ValidationError, validates, validate
 
@@ -33,7 +32,7 @@ class Register(Resource):
         # Login the user and return 
         token = login(data['username'], data['password'])
         if (token):
-            return dumps({"token": token})
+            return jsonify({"token": token})
         else:
             abort(403, 'Invalid Username/Password')
 
@@ -57,7 +56,7 @@ class Login(Resource):
         # Login and if successful return the token otherwise invalid credentials
         token = login(data['username'], data['password'])
         if (token):
-            return dumps({"token": token})
+            return jsonify({"token": token})
         else:
             abort(403, 'Invalid Credentials')
         
@@ -81,9 +80,9 @@ class Test(Resource):
         # Authorize token and return true or false
         token_data = authorize_token(data['token'])
         if (token_data['valid']):
-            return dumps({"valid": True})
+            return jsonify({"valid": True})
         else:
-            return dumps({"valid": False})
+            return jsonify({"valid": False})
 
 
 class LoginDetailsSchema(Schema):

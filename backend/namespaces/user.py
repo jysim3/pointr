@@ -1,7 +1,6 @@
-from flask import request
+from flask import request, jsonify
 from flask_restx import Namespace, Resource, abort, reqparse
 from flask_restx import fields as flask_fields
-from json import dumps
 from util.users import *
 from util.sanitisation_services import sanitize
 from marshmallow import Schema, fields, ValidationError, validates, validate
@@ -34,7 +33,7 @@ class User(Resource):
             
         zID = data['zID']
         attendance = getUserAttendance(sanitize(zID.lower()))
-        return dumps(attendance)
+        return jsonify(attendance)
             
     # For creating a user
     # Usage: 
@@ -63,7 +62,7 @@ class User(Resource):
             returnVal = createUser(sanitize(data['zID'].lower()), sanitize(data['name']))
             payload = {}
             payload['status'] = returnVal
-            return dumps(payload)
+            return jsonify(payload)
         else:
-            return dumps(authorized)
+            return jsonify(authorized)
         abort(400, 'Malformed Request')
