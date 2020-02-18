@@ -87,3 +87,17 @@ def getEventForSoc(societyID):
 
     conn.close()
     return events, name[0]
+
+def getAllSocs():
+    conn = createConnection()
+    curs = conn.cursor()
+
+    curs.execute("SELECT societyName, societyID FROM society;")
+    names = curs.fetchall()
+    payload = []
+    for i in names:
+        currSoc = {}
+        currSoc['societyID'] = i[1]
+        currSoc['societyName'] = i[0]
+        payload.append(currSoc)
+    return payload
