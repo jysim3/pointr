@@ -70,9 +70,13 @@ class Event(Resource):
         else:
             results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID)
 
-        if (results == "Unacceptable parametre" or results == "Error encountered" or results == "Event already exists" or results == "failed"):
+        # if (results == "Unacceptable parametre" or results == "Error encountered" or results == "Event already exists" or results == "failed"):
+        #print(type(results))
+        if (isinstance(results, tuple) == False):
+            #print("entered here")
             return jsonify({"status": "failed", "msg": results})
-        return jsonify({"status": "Success", "msg": results})
+        #print("EHHHH")
+        return jsonify({"status": "Success", "msg": results[0]})
 
     # For getting info on an event, i.e. participation information
     # Usage:
