@@ -1,22 +1,15 @@
-import sys
-sys.path.append("../")
-
-from flask import request
+from flask import request, jsonify
 from flask_restx import Namespace, Resource, abort, reqparse
-from flask_restx import fields as flask_fields
-from json import dumps
-from util.auth_services import *
-from schemata.event_schemata import *
+from schemata import event_schemata
 from util import events, participation, utilFunctions
 from util.sanitisation_services import sanitize
+from datetime import datetime
+import uuid
 
 api = Namespace('event', description='Event Management Services')
 
-def generateID(number):
-    id = ""
-    for x in range(0, number):
-        id += random.choice(string.hexdigits)
-    return id
+def generateID(number = None):
+    return str(uuid.uuid4().hex)[:10]
 
 # For creating a recurrent event
 # Usage: 
@@ -43,7 +36,7 @@ class Event(Resource):
     @api.response(200, 'Success')
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
-    def post():
+    def post(self):
         data = request.get_json()
         eventID = generateID(5).upper()
         if not 'hasQR' in data:
@@ -73,8 +66,8 @@ class Event(Resource):
             results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID)
 
         if (results == "Unacceptable parametre" or results == "Error encountered" or results == "Event already exists" or results == "failed"):
-            return dumps({"status": "failed", "msg": results})
-        return dumps({"status": "Success", "msg": results})
+            return jsonify({"status": "failed", "msg": results})
+        return jsonify({"status": "Success", "msg": results})
 
     # For getting info on an event, i.e. participation information
     # Usage:
@@ -102,7 +95,7 @@ class Event(Resource):
                 personJSON['points'] = person[0]
                 payload['participants'].append(personJSON)
             payload['status'] = 'success'
-        return dumps(payload)
+        return jsonify(payload)
         
 @api.route('/onthisday')
 class OnThisDay(Resource):
@@ -115,9 +108,9 @@ class OnThisDay(Resource):
         socID = request.args.get('socID')
 
         if (date is None):
-            return dumps({"status": "Failed", "msg": "No date provided"})
+            return jsonify({"status": "Failed", "msg": "No date provided"})
 
-        return dumps(utilFunctions.onThisDay(date)) if socID == None else dumps(utilFunctions.onThisDay(date, socID))
+        return jsonify(utilFunctions.onThisDay(date)) if socID == None else jsonify(utilFunctions.onThisDay(date, socID))
 
 @api.route('/attend')
 class Attend(Resource):
@@ -125,10 +118,21 @@ class Attend(Resource):
     # Usage:
     # /api/attend
     # Takes: 
-    # {'zID': z5214808, 'eventID': "12332"}
+    # {'zID': z5214808, 'eventID': "12332", 'time': "2020-04-04 11:55:59 (i.e. YYYY-MM-DD HH:MM:DD)"}
+    # TODO Take Token instead of ZID
+    @api.response(400, "Malformed Request")
     def post(self):
         data = request.get_json()
         payload = {}
-        
-        payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(data['name']))
-        return dumps(payload)
+
+        time = None
+        if 'time' in data:
+            try:
+                time = datetime.strptime(str(data['time']), "%Y-%m-%d %H:%M:%S")
+            except Exception as e:
+                print(e)
+                abort(400, "Malformed Request")
+        else:
+            time = datetime.now()
+        payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), time)
+        return jsonify(payload)

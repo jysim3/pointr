@@ -10,8 +10,8 @@ from util.utilFunctions import checkEvent
 def initDatabase():
     # Moving this section to init.py in the next patch lmao
     # add users
-    createUser("z5161616", "123456")
-    createUser("z5161798", "123456")
+    createUser("z5161616", "123456", True)
+    createUser("z5161798", "123456", True)
     createUser("z5111111", "123456")
     createUser("z5222222", "123456")
     createUser("z5333333", "123456")

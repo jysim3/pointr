@@ -2,6 +2,7 @@
 import sys
 sys.path.append('../')
 from util.utilFunctions import createConnection, checkUser, checkEvent
+from util.users import checkArc
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -12,16 +13,19 @@ for counter in range(0, 12):
     weekDate[f'T1W{str(counter)}'] = str(week)
     week += relativedelta(days=7)
 
-def register(zID, eventID, isArc = False):
+def register(zID, eventID, time = None):
     if checkEvent(eventID) == False:
         return "Event does not exist"
 
     if checkParticipation(zID, eventID) == True:
         return "Already registered"
 
+    isArc = checkArc(zID)
+
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID) VALUES ((%s), (%s), (%s), (%s))", (1, isArc, zID, eventID,))
+    # NOTE: DEFAULTS TO THE CURRENT TIME, unless a time argument has been provided
+    curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, datetime.now() if time == None else time))
     conn.commit()
     conn.close()
     return "success"
