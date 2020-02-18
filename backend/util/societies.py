@@ -101,3 +101,18 @@ def getAllSocs():
         currSoc['societyName'] = i[0]
         payload.append(currSoc)
     return payload
+
+def joinSoc(zID, socID):
+    conn = createConnection()
+    curs = conn.cursor()
+
+    try:
+        curs.execute("INSERT INTO SOCSTAFF(society, zid, role) VALUES ((%s), (%s), (%s));", (socID, zID, 0,))
+        conn.commit()
+    except Exception as e:
+        print(e)
+        conn.close()
+        return "failed"
+
+    conn.close()
+    return "success"

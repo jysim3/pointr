@@ -164,10 +164,6 @@ def updatePoints():
     payload = {}
     payload['status'] = participation.changePoints(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(str(data['points'])))
     return dumps(payload)
-    
-@app.route('/api/soc/getAllSocs', methods=['GET'])
-def getAllSocs():
-    societies.getAllSocs()
 
 def main():
     app.run()
