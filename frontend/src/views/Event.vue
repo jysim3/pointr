@@ -21,7 +21,7 @@
       </div>
     </div>
     <div id="event-attendance-container">
-      <EventAttendance class="attendee" :eid="eid" :attendees="participants" />
+      <EventAttendance class="attendee" :eid="eid" :attendees="reversedParticipants" />
     </div>
   </div>
 </template>
@@ -54,7 +54,7 @@ export default {
     fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
       .then(j => {
         this.name = j.name;
-        this.participants = j.participants.reverse();
+        this.participants = j.participants;
       })
       .catch(e => {
         console.log(e); // eslint-disable-line
@@ -67,6 +67,10 @@ export default {
   computed: {
     eventURL() {
       return `${window.location.host}/#/e/${this.eid}`;
+    },
+    reversedParticipants() {
+      const participantsCopy = this.participants.slice();
+      return participantsCopy.reverse();
     }
   },
   methods: {

@@ -1,18 +1,17 @@
 <template>
   <div id="home-container">
     <h1>Thanks for attending, {{this.username}}</h1>
-
     <div id="container">
       <h2>Events you've attended</h2>
       <div id="table-container">
         <table cellspacing="0" id="attendance-table">
           <tr>
             <th>Event name</th>
-            <th>Points</th>
+            <!-- <th>Points</th> -->
           </tr>
           <tr v-for="(event,index) in events" :key="index">
             <td class="td-name">{{ event.name }}</td>
-            <td class="td-points">{{ event.points }}</td>
+            <!-- <td class="td-points">{{ event.points }}</td> -->
           </tr>
         </table>
       </div>
@@ -32,7 +31,7 @@ export default {
       events: []
     };
   },
-  mounted() {
+  created() {
     fetchAPI(`/api/user?zID=${this.zid}`, "GET").then(j => {
       console.log(j); // eslint-disable-line
       this.events = j.events;
