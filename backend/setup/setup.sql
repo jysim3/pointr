@@ -3,6 +3,8 @@ CREATE TABLE IF NOT EXISTS users (
     zid TEXT NOT NULL,
     password TEXT NOT NULL,
     isArc BOOLEAN NOT NULL,
+    activationLink TEXT,
+    activationStatus BOOLEAN NOT NULL,
     primary key(zid)
 );
 drop TABLE IF EXISTS events cascade;
