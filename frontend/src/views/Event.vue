@@ -21,7 +21,8 @@
       </div>
     </div>
     <div id="event-attendance-container">
-      <EventAttendance class="attendee" :eid="eid" :attendees="participants" />
+      <EventAttendance class="attendee" :eid="eid" :attendees="reversedParticipants" />
+      <!-- TODO: only show last 10 people who have joined? Click 'view all' to show all participants? -->
     </div>
   </div>
 </template>
@@ -45,28 +46,32 @@ export default {
   data() {
     return {
       name: "",
-      // eventId: "",
       participants: [],
       zid: "",
       uname: ""
     };
   },
-  mounted() {
+  created() {
+    fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
+      .then(j => {
+        this.name = j.name;
+        this.participants = j.participants;
+      })
+      .catch(e => {
+        console.log(e); // eslint-disable-line
+      });
+
     setInterval(() => {
-      fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
-        .then(j => {
-          this.name = j.name;
-          // this.eventId = j.eventID;
-          this.participants = j.participants.reverse();
-        })
-        .catch(e => {
-          console.log(e); // eslint-disable-line
-        });
-    }, 1000);
+      this.fetchAttendees();
+    }, 2000);
   },
   computed: {
     eventURL() {
       return `${window.location.host}/#/e/${this.eid}`;
+    },
+    reversedParticipants() {
+      const participantsCopy = this.participants.slice();
+      return participantsCopy.reverse();
     }
   },
   methods: {
@@ -81,7 +86,17 @@ export default {
           this.zid = "";
           this.uname = "";
         })
+        .then(() => this.fetchAttendees())
         .catch(e => alert(e));
+    },
+    fetchAttendees() {
+      fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
+        .then(r => {
+          this.participants = r.participants;
+        })
+        .catch(e => {
+          console.log(e); // eslint-disable-line
+        });
     }
   }
 };

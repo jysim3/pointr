@@ -1,6 +1,7 @@
 <template>
   <div>
     <Logo />
+    <!-- TODO: possible societies depend on USER logged in -->
     <div class="form-container">
       <form id="create-event-form" class="form" @submit.prevent="submitEventForm">
         <h2>Create an event</h2>
@@ -32,7 +33,7 @@ import router from "@/router/index.js";
 import Logo from "@/components/Logo.vue";
 
 export default {
-  name: "CreateEvent",
+  name: "EventCreate",
   components: {
     Logo
   },
@@ -50,6 +51,7 @@ export default {
         owner: "Ivan",
         defaultPoints: this.point,
         zID: "adsfh",
+        location: 'Test location',
         eventDate: "19700201"
       };
       fetchAPI("/api/event", "POST", data).then(j => {

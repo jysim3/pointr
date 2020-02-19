@@ -1,11 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-import CreateEvent from '../views/CreateEvent.vue'
-import Event from '../views/Event.vue'
-import SignEvent from '../views/SignEvent.vue'
-import User from '../views/User.vue'
-import MarkAttendance from '../views/MarkAttendance.vue'
+import Home from '@/views/Home.vue'
+import EventCreate from '@/views/EventCreate.vue'
+import Event from '@/views/Event.vue'
+import SignEvent from '@/views/SignEvent.vue'
+import User from '@/views/User.vue'
+import MarkAttendance from '@/views/MarkAttendance.vue'
+import SignIn from '@/views/SignIn.vue'
+import SignUp from '@/views/SignUp.vue'
+import Profile from "@/views/Profile.vue"
 
 Vue.use(VueRouter)
 
@@ -23,7 +26,7 @@ const routes = [
   {
     path: '/create',
     name: 'create',
-    component: CreateEvent
+    component: EventCreate
   },
   {
     path: '/u/:zid',
@@ -42,6 +45,21 @@ const routes = [
     name: 'signEvent',
     component: SignEvent,
     props: true
+  },
+  {
+    path: '/signin',
+    name: 'signIn',
+    component: SignIn
+  },
+  {
+    path: '/signup',
+    name: 'signUp',
+    component: SignUp
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: Profile
   }
 ]
 

@@ -1,28 +1,15 @@
 <template>
   <div>
-    <!-- <div id="container">
-      <div id="content">
-        <button @click="createEvent" id="create-event-btn" class="home-button">Create event</button>
-        <form @submit="submitForm">
-          <div class="label-input-div">
-            <label class="label" for>Enter attendance</label>
-            <input class="input" placeholder="Event code" v-model="eid" type="text" />
-          </div>
-          <button type="submit" class="home-button" id="submit-id">
-            <i class="material-icons">arrow_forward</i>
-          </button>
-        </form>
-      </div>
-    </div> -->
     <Logo />
     <h2 id="heading">The event tracking system for UNSW colleges.</h2>
     <div id="btn-container">
-      <button @click="createEvent" class="btn btn-primary">Create an event</button>
+      <button @click="eventCreate" class="btn btn-primary">Create an event</button>
       <button @click="markAttendance" class="btn btn-secondary">Mark my attendance</button>
     </div>
     <div id="admin">
       <a href="" id="admin-link">I’m administration</a>
     </div>
+    <button class="btn btn-primary" @click="signIn">Sign In</button>
   </div>
 </template>
 
@@ -41,11 +28,14 @@ export default {
     };
   },
   methods: {
-    createEvent() {
+    eventCreate() {
       router.push({ name: "create" });
     },
     markAttendance() {
       router.push({ name: "markAttendance" });
+    },
+    signIn() {
+      router.push({ name: "signIn" })
     }
   }
 };
