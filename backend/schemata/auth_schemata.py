@@ -1,11 +1,13 @@
 from marshmallow import Schema, fields, ValidationError, validates, validate, EXCLUDE
+from schemata import common_schemata
 
+class RegisterDetailsSchema(Schema):
+    zID = common_schemata.zid
+    password = common_schemata.password
+    
 class LoginDetailsSchema(Schema):
-    username = fields.Str(required=True, validate=validate.Length(min=1, max=256))
-    password = fields.Str(required=True, validate=validate.Length(min=1, max=256))
+    zID = common_schemata.zid
+    password = common_schemata.password
 
 class TokenSchema(Schema):
-    token = fields.Str(required=True)
-    
-    class Meta():
-        unknown = EXCLUDE
+    token = common_schemata.token

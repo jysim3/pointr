@@ -111,6 +111,48 @@ def getAttendanceCSV(eventID):
     conn.close()
     return path
 
+def getUpcomingEvents(zID):
+    conn = createConnection()
+    curs = conn.cursor()
+    try:
+        curs.execute("SELECT * FROM userparticipatedEvents where zID = (%s) order by eventDate;", (zID,))
+    except Exception as e:
+        return "failed"
+    results = curs.fetchall()
+
+    payload = []
+    for event in results:
+        eventJSON = {}
+        eventJSON['eventID'] = event[0]
+        eventJSON['name'] = event[1]
+        eventJSON['date'] = str(event[2])
+        eventJSON['location'] = event[3]
+        eventJSON['societyName'] = event[4]
+        eventJSON['societyID'] = event[5]
+
+        payload.append(eventJSON)
+
+    return payload
+
+def getUserSocieties(zID):
+    conn = createConnection()
+    curs = conn.cursor()
+    try:
+        curs.execute("SELECT * FROM userInSociety where zID = (%s);", (zID,))
+    except Exception as e:
+        #print(e)
+        return "failed"
+    results = curs.fetchall()
+
+    payload = []
+    for society in results:
+        societyJSON = {}
+        societyJSON['societID'] = society[0]
+        societyJSON['societyName'] = society[1]
+        payload.append(societyJSON)
+
+    return payload
+
 # TODO: Average Monthly/Weekly Attendance info (for recurring events)
 
 # TODO: Average Monthly/Weekly Attendance info (for one society)
