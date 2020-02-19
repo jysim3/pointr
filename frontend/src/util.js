@@ -1,4 +1,5 @@
 const apiURL = 'http://localhost:5000';
+
 export function fetchAPI(url, method, data) {
     if (localStorage.getItem('token')) {
         return (
@@ -33,4 +34,10 @@ export function fetchAPI(url, method, data) {
         )
     }
 }
+
+export function getToken() {
+    const token = localStorage.getItem('token')
+    return token
+}
+
 export { apiURL };

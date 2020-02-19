@@ -14,11 +14,13 @@
 <script>
 import router from "@/router/index.js";
 import { fetchAPI } from "@/util.js";
+import tokenCheck from "@/mixins/tokenCheck.js"
 import JoinSociety from "@/components/JoinSociety.vue";
 import ProfileEventsView from "@/components/ProfileEventsView.vue";
 
 export default {
   name: "Profile",
+  mixins: [tokenCheck],
   components: {
     JoinSociety,
     ProfileEventsView

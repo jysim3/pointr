@@ -2,9 +2,10 @@
   <div class="form-container" id="sign-in-form-container">
     <form @submit.prevent="submitSignInForm" class="form">
       <h2>Sign in to Pointr</h2>
+      <FormError v-if="error.status" :msg="error.msg" />
       <div class="label-input-div">
         <label class="label">zID</label>
-        <input v-model="zid" class="input" type="text" required />
+        <input v-model="zID" class="input" type="text" required />
       </div>
       <div class="label-input-div">
         <label class="label">Password</label>
@@ -20,20 +21,43 @@
 </template>
 
 <script>
+import { fetchAPI } from "@/util.js"
+import FormError from "@/components/FormError.vue"
+
 export default {
   name: "SignIn",
+  components: {
+    FormError
+  },
   data() {
     return {
-      zid: "",
+      zID: "",
       password: "",
-      rememberUser: false
+      rememberUser: false,
+      error: {
+        status: false,
+        msg: ""
+      }
     }
   },
   methods: {
     submitSignInForm() {
       // [zZ][0-9](7)
       // If sign in successfull, push route to profile
-      
+      fetchAPI("/api/auth/login", "POST", {
+        "zID": this.zID,
+        "password": this.password
+      })
+      .then(r => {
+        if (r.status === 403) {
+          this.error.status = true
+          this.error.msg = "Please check your zID and password"
+        }
+      })
+      .catch(err => {
+        this.error.status = true
+        this.error.msg = `Error has occured: ${err}`
+      })
     }
   }
 };

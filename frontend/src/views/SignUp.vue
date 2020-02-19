@@ -22,9 +22,15 @@
       </div>
       <div class="label-input-div">
         <label class="label">Year began study</label>
-        <input v-model="queryData.comencmentYear" class="input" type="number" :max="currentYear" required />
+        <input
+          v-model.number="queryData.comencmentYear"
+          :max="currentYear"
+          type="number"
+          class="input"
+          required
+        />
       </div>
-      <label class="label">Degree type</label>
+      <label for="degree-type" class="label">Degree type</label>
       <div class="label-input-div radio-div">
         <input id="undergraduate" type="radio" name="degree-type" required />
         <label for="undergraduate" class="label">Undergraduate</label>
@@ -33,6 +39,16 @@
         <input id="postgraduate" type="radio" name="degree-type" required />
         <label for="postgraduate" class="label">Postgraduate</label>
       </div>
+      <label for="student-type" class="label">Student type</label>
+      <div class="label-input-div radio-div">
+        <input id="domestic" type="radio" name="student-type" required />
+        <label for="domestic" class="label">Domestic</label>
+      </div>
+      <div class="label-input-div radio-div">
+        <input id="international" type="radio" name="student-type" required />
+        <label for="international" class="label">International</label>
+      </div>
+      <!-- Gender, domestic or international -->
       <button type="submit" class="btn btn-primary">Sign Up</button>
     </form>
   </div>
@@ -48,16 +64,19 @@ export default {
       repeatPassword: "",
       queryData: {
         degree: "",
-        comencmentYear: 2020,
+        comencmentYear: "",
         degreeType: ""
       }
     };
+  },
+  created() {
+    this.queryData.comencmentYear = this.currentYear
   },
   computed: {
     passwordsNotEqual() {
       // Only want to make input invalid after user has started typing
       if (!this.repeatPassword) {
-        return false
+        return false;
       }
       return this.password !== this.repeatPassword;
     },
