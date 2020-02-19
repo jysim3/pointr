@@ -11,7 +11,7 @@ def createUser(zID, password, isArc = False):
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("INSERT INTO users(zid, password, isArc) values((%s), (%s), (%s));", (zID, pwHash, isArc,))
+    curs.execute("INSERT INTO users(zid, password, isArc, activationStatus) values((%s), (%s), (%s), False);", (zID, pwHash, isArc,))
     conn.commit()
     conn.close()
     return "Success"
@@ -86,3 +86,30 @@ def checkArc(zID):
     curs.execute("SELECT isArc FROM USERS WHERE zid = (%s);", (zID,))
     name = curs.fetchone()
     return True if name != [] else False
+
+def addActivationLink(zID, activationLink):
+    conn = createConnection()
+    curs = conn.cursor()
+    try:
+        curs.execute("UPDATE users SET activationLink = (%s) WHERE zID = (%s);", (activationLink, zID,))
+        conn.commit()
+    except Exception as e:
+        conn.close()
+        return "failed"
+    return "success"
+
+def activateAccount(zID, activationLink):
+    conn = createConnection()
+    curs = conn.cursor()
+    try:
+        curs.execute("SELECT activationLink FROM users WHERE zID = (%s);", (zID,))
+        result = curs.fetchone()[0]
+    except Exception as e:
+        return "failed"
+
+    if result == activationLink:
+        curs.execute("UPDATE users SET activationStatus = True WHERE zID = (%s);", (zID,))
+        conn.commit()
+        return "success"
+    else:
+        return "incorrect activationLink"

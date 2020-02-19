@@ -2,7 +2,7 @@ import sqlite3
 from sqlite3 import Error
 from flask import Flask, request
 from flask_cors import CORS
-from flask_restplus import Api, Resource
+from flask_restx import Api, Resource
 
 app = Flask(__name__)
 api = Api(app, version='0.02', title='Pointr backend',
@@ -118,25 +118,6 @@ def userAllAttendance():
         payload['events'].append(eventJSON)
     return dumps(payload)
 
-# Will probably be involved in some kind of a "today's events" type of thing
-# Accepts three arguments (two compulsory)
-# interval accepts either a date in the form of "YYYY-MM-DD", or a week in the form of "T[1-3]W[1-10]", or a month in the range of [1-12]
-# intervalType accepts ['day', 'week', 'month']
-
-# GET /api/events/onthisday?interval=2020-04-04&intervalType=day&socID=1AEF0 (Note: socID optional)
-# Returns:
-# [{"eventID": "1239", "name": "Test Event 0", "society": "UNSW Hall", "eventDate": "2019-11-19"}, {"eventID": "1240", "name": "Coffee Night", "society": "UNSW Hall", "eventDate": "2019-11-20"}]
-@app.route('/api/whatsOn', methods=['GET'])
-def whatsOn():
-    interval = request.args.get('interval')
-    intervalType = request.args.get('intervalType')
-    socID = request.args.get('socID')
-
-    if (interval is None or intervalType is None):
-        return dumps({"status": "Failed", "msg": "No date provided"})
-
-    return dumps(utilFunctions.onThisDay(interval, intervalType)) if socID == None else dumps(utilFunctions.onThisDay(interval, intervalType, socID))
-
 # Delete user attendance
 # Usage: 
 # DELETE /api/points
@@ -159,7 +140,6 @@ def deletePoints():
 # {zID: "z5214808", eventID: "13287", points: "10"}
 # Returns: 
 # {"status": "success"}  "points": 1000
-
 @app.route('/api/points', methods=['POST'])
 def updatePoints():
     data = request.get_json()
