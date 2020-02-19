@@ -1,11 +1,6 @@
-import sys
-sys.path.append("../")
-
 from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort, reqparse
-from flask_restx import fields as flask_fields
-from util.auth_services import *
-from schemata.event_schemata import *
+from schemata import event_schemata
 from util import events, participation, utilFunctions
 from util.sanitisation_services import sanitize
 from datetime import datetime
@@ -124,6 +119,7 @@ class Attend(Resource):
     # /api/attend
     # Takes: 
     # {'zID': z5214808, 'eventID': "12332", 'time': "2020-04-04 11:55:59 (i.e. YYYY-MM-DD HH:MM:DD)"}
+    # TODO Take Token instead of ZID
     @api.response(400, "Malformed Request")
     def post(self):
         data = request.get_json()
