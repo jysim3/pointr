@@ -11,7 +11,10 @@ def generateID(number):
 def findSocID(socName):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("SELECT societyID FROM society WHERE societyName = (%s);", (socName,))
+    try:
+        curs.execute("SELECT societyID FROM society WHERE societyName = (%s);", (socName,))
+    except Exception as e:
+        return "failed"
     societyID = curs.fetchone()[0]
 
     return societyID
@@ -22,7 +25,10 @@ def createSocStaff(zID, societyID, role = 0):
     # TODO: Check for society and zID existance
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("INSERT INTO socstaff(society, zid, role) VALUES ((%s), (%s), (%s));", (societyID, zID, role,))
+    try:
+        curs.execute("INSERT INTO socstaff(society, zid, role) VALUES ((%s), (%s), (%s));", (societyID, zID, role,))
+    except Exception as e:
+        return "failed"
     conn.commit()
     conn.close()
     return "success"
@@ -32,13 +38,19 @@ def createSociety(zID = None, societyName = None):
     societyID = generateID(5).upper()
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("SELECT * FROM society WHERE societyName = (%s);", (societyName,))
+    try:
+        curs.execute("SELECT * FROM society WHERE societyName = (%s);", (societyName,))
+    except Exception as e:
+        return "failed"
     result = curs.fetchone()
     if (result != None):
         conn.close()
         return "exists already"
 
-    curs.execute("INSERT INTO society(societyID, societyName) VALUES ((%s), (%s));", (societyID, societyName,))
+    try:
+        curs.execute("INSERT INTO society(societyID, societyName) VALUES ((%s), (%s));", (societyID, societyName,))
+    except Exception as e:
+        return "failed"
     conn.commit()
     conn.close()
 
@@ -54,7 +66,10 @@ def createSociety(zID = None, societyName = None):
 def registerToSoc(zID, societyID):
     conn = createConnection()
     curs = conn.cusor()
-    curs.execute("INSERT INTO socStaff(society, zid, role) VALUES (%s, %s, %s);", (societyID, zID, 0))
+    try:
+        curs.execute("INSERT INTO socStaff(society, zid, role) VALUES (%s, %s, %s);", (societyID, zID, 0))
+    except Exception as e:
+        return "failed"
     conn.commit()
     conn.close()
 
@@ -76,14 +91,18 @@ def getEventForSoc(societyID):
     conn = createConnection()
     curs = conn.cursor()
 
-    curs.execute("SELECT societyName FROM society WHERE societyID = (%s);", (societyID,))
-    name = curs.fetchone()
-    if (name == None):
-        conn.close()
-        return "No such society"
+    try:
+        curs.execute("SELECT societyName FROM society WHERE societyID = (%s);", (societyID,))
+        name = curs.fetchone()
+        if (name == None):
+            conn.close()
+            return "No such society"
 
-    curs.execute("SELECT events.eventID, name, eventDate, location, society FROM events join host on events.eventID = host.eventID and society = (%s);", (societyID,))
-    events = curs.fetchall()
+        curs.execute("SELECT events.eventID, name, eventDate, location, society FROM events join host on events.eventID = host.eventID and society = (%s);", (societyID,))
+        events = curs.fetchall()
+    except Exception as e:
+        conn.close()
+        return "failed"
 
     conn.close()
     return events, name[0]
@@ -92,7 +111,10 @@ def getAllSocs():
     conn = createConnection()
     curs = conn.cursor()
 
-    curs.execute("SELECT societyName, societyID FROM society;")
+    try:
+        curs.execute("SELECT societyName, societyID FROM society;")
+    except Exception as e:
+        return "failed"
     names = curs.fetchall()
     payload = []
     for i in names:

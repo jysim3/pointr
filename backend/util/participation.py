@@ -26,7 +26,10 @@ def register(zID, eventID, time = None):
     conn = createConnection()
     curs = conn.cursor()
     # NOTE: DEFAULTS TO THE CURRENT TIME, unless a time argument has been provided
-    curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, datetime.now() if time == None else time))
+    try:
+        curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, datetime.now() if time == None else time))
+    except Exception as e:
+        return "failed"
     conn.commit()
     conn.close()
     return "success"
@@ -34,33 +37,42 @@ def register(zID, eventID, time = None):
 def changePoints(zID, eventID, newPoints):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("update participation set points=(%s) WHERE eventID=(%s) and zid=(%s)", (newPoints, eventID, zID,))
+    try:
+        curs.execute("update participation set points=(%s) WHERE eventID=(%s) and zid=(%s)", (newPoints, eventID, zID,))
+    except Exception as e:
+        return "failed"
     conn.commit()
     error = curs.fetchone()
     conn.close()
-    if error == []:
+    if error is None:
         return "failed"
     return "success"
 
 def deleteUserAttendance(zID, eventID):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("DELETE FROM participation WHERE zid=(%s) and eventid=(%s)", (zID, eventID,))
+    try:
+        curs.execute("DELETE FROM participation WHERE zid=(%s) and eventid=(%s)", (zID, eventID,))
+    except Exception as e:
+        return "failed"
     conn.commit()
     error = curs.fetchone()
     conn.close()
-    if error == []:
+    if error is not None:
         return "failed"
     return "success"
 
 def checkParticipation(zID, eventID):
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("SELECT * FROM participation WHERE zid=(%s) and eventid=(%s)", (zID, eventID,))
+    try:
+        curs.execute("SELECT * FROM participation WHERE zid=(%s) and eventid=(%s)", (zID, eventID,))
+    except Exception as e:
+        return False
 
     rows = curs.fetchall()
     conn.close()
-    return False if rows == [] else True
+    return False if rows is None else True
 
 # Get the attendance information of one particular event
 # return a list of attendees in the form of: [(points, isArcMember, name, zid), (...)]
@@ -71,10 +83,16 @@ def getAttendance(eventID):
         return "failed"
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("SELECT qrCode FROM events WHERE eventid = (%s);", (eventID,))
+    try:
+        curs.execute("SELECT qrCode FROM events WHERE eventid = (%s);", (eventID,))
+    except Exception as e:
+        return "failed"
     qrCode = curs.fetchone()
-    qrCode = qrCode[0] if qrCode != [] else None
-    curs.execute("SELECT points, isArcMember, users.name, users.zid FROM participation JOIN (SELECT * FROM events) AS events ON (participation.eventid = events.eventid) JOIN (SELECT * FROM users) AS users ON (participation.zid = users.zid) WHERE events.eventID = (%s);", (eventID,))
+    qrCode = qrCode[0] if qrCode is not None else None
+    try:
+        curs.execute("SELECT points, isArcMember, users.name, users.zid FROM participation JOIN (SELECT * FROM events) AS events ON (participation.eventid = events.eventid) JOIN (SELECT * FROM users) AS users ON (participation.zid = users.zid) WHERE events.eventID = (%s);", (eventID,))
+    except Exception as e:
+        return "failed"
     result = curs.fetchall()
 
     curs.execute("SELECT name FROM events WHERE eventid = (%s);", (eventID,))
@@ -89,9 +107,12 @@ def getAttendanceCSV(eventID):
     conn = createConnection()
     curs = conn.cursor()
     #curs.execute("COPY (SELECT isArcMember, zID, time FROM participation JOIN EVENTS ON (participation.eventID = events.eventID) WHERE events.eventID = (%s)) TO '/mnt/c/Users/Shen/COMP/HallHackathon/backend/test.csv' DELIMITER ',' CSV HEADER;", (eventID, ))
-    curs.execute("SELECT isArcMember, zID, time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) WHERE events.eventID = (%s);", (eventID,))
+    try:
+        curs.execute("SELECT isArcMember, zID, time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) WHERE events.eventID = (%s);", (eventID,))
+    except Exception as e:
+        return "failed"
     results = curs.fetchall()
-    if results == []:
+    if results is None:
         return "No attendance"
     conn.commit()
 

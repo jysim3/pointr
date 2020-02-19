@@ -21,7 +21,7 @@ def checkUser(zID):
 
     rows = curs.fetchall()
     conn.close()
-    return False if rows == [] else True
+    return False if rows is None else True
 
 # Check if a specified society already exists
 def checkSoc(societyID):
@@ -31,7 +31,7 @@ def checkSoc(societyID):
 
     rows = curs.fetchall()
     conn.close()
-    return False if rows == [] else True
+    return False if rows is None else True
 
 # Check if an event exists in the table
 def checkEvent(eventID):
@@ -41,7 +41,7 @@ def checkEvent(eventID):
 
     rows = curs.fetchall()
     conn.close()
-    return False if rows == [] else True
+    return False if rows is None else True
 
 
 # General utilities functions
