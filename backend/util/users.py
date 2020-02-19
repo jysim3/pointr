@@ -22,7 +22,8 @@ def checkUserInfo(zID, password):
     conn = createConnection()
     curs = conn.cursor()
     curs.execute("SELECT * FROM users where zid = (%s) AND password = (%s);", (zID, password,))
-    return False if curs.fetchone() == [] else True
+    result = curs.fetchone()
+    return False if result is None else True
 
 # return a list of events in the form of: [(points, eventID, eventName, date, societyName), (...)]
 # Get all the events attended by the user ever in every society
