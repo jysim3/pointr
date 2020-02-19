@@ -92,12 +92,13 @@ class Login(Resource):
             abort(400, 'Malformed Request')
         
         # Validate data
-        try:
-            data = LoginDetailsSchema().load(request.get_json())
-        except ValidationError as err:
-            abort(400, err.messages)
+        #try:
+            #data = LoginDetailsSchema().load(request.get_json())
+        #except ValidationError as err:
+            #abort(400, err.messages)
         
         # Login and if successful return the token otherwise invalid credentials
+        data = request.get_json()
         token = auth_services.login(data['zID'], data['password'])
         if (token):
             return jsonify({"token": token})
