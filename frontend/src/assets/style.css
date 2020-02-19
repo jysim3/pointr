@@ -135,6 +135,9 @@ a:hover {
 
 .label-input-div {
   margin-top: 1.25rem;
+  /* display: flex;
+  flex-direction: column;
+  justify-content: center; */
 }
 
 .label-input-div .label {
@@ -146,6 +149,10 @@ a:hover {
   color: black;
   margin-left: 1rem;
 }
+
+/* .label + .radio-div {
+  margin: 1rem;
+} */
 
 input[type="radio"] {
   background-color: var(--c-primary);
@@ -193,6 +200,11 @@ input:invalid {
   color: var(--c-secondary-dark);
   font-size: 1rem;
   margin-bottom: 0.3rem;
+}
+
+.form-error-msg {
+  color: var(--c-warning);
+  font-weight: 500;
 }
 
 /* Buttons */
