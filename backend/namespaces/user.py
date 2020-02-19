@@ -47,7 +47,7 @@ class User(Resource):
         try:
             data = ZIDSchema().load(request.get_json())
         except ValidationError as err:
-            abort(400, err.messages)
+            abort(400, jsonify(err.messages))
             
         zID = data['zID']
         attendance = users.getUserAttendance(sanitize(zID.lower()))
@@ -72,7 +72,7 @@ class User(Resource):
         try:
             data = UserCreationSchema().load(request.get_json())
         except ValidationError as err:
-            abort(400, err.messages)
+            abort(400, jsonify(err.messages))
             
         authorized = auth_services.authorize(data['token'], ADMIN)
         
