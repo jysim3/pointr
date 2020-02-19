@@ -172,6 +172,17 @@ input[type="radio"] {
   border: 2px solid var(--c-warning);
 }
 
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  border: 2px solid black;
+  font-size: 1.5rem;
+  padding: 0.5rem 2rem;
+  cursor: pointer;
+}
+
 input:invalid {
   /* border: 2px solid var(--c-warning); */
   box-shadow: none;

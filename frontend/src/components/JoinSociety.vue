@@ -6,7 +6,11 @@
         <label for="society" class="label">Choose a society</label>
         <!-- TODO: This would need to become searchable in the future.  -->
         <select class="input--select" name="society-select">
-          <option v-for="(society, index) in societies" :key="index" :value="society.societyName" />
+          <option
+            v-for="(society, index) in societies"
+            :key="index"
+            :value="society.societyName"
+          >{{ society.societyName }}</option>
         </select>
       </div>
       <button type="submit" class="btn btn-primary">Join</button>
@@ -21,23 +25,20 @@ export default {
   name: "JoinSociety",
   data() {
     return {
-      society: "",
-      societies: []
+      societies: [],
     };
   },
   created() {
-    fetchAPI("/api/soc/getAllSocs")
-      .then(r => {
-        this.societies = r.societies;
+    fetchAPI("/api/soc/getAllSocs", "GET")
+      .then(j => {
+        this.societies = j;
       })
-      .catch(e => console.log(e));
+      .catch(e => alert(e));
   },
   methods: {
     submitJoinSocietyForm() {
-      fetchAPI("/api/soc/joinSoc", "POST", {
-
-      })
-      .catch(e => console.log(e)) //TODO: need to properly handle errors in forms
+      fetchAPI("/api/soc/joinSoc", "POST", {}).catch(e => alert(e)); //TODO: need to properly handle errors in forms
+      console.log(this.selected) //eslint-disable-line
     }
   }
 };
