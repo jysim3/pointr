@@ -8,6 +8,24 @@ from schemata.user_schemata import UserCreationSchema, ZIDSchema
 from util.auth_services import ADMIN, USER
 
 api = Namespace('user', description='User Services')
+@api.route('/getUpcomingEvents')
+class upcomingEvents(Resource):
+    def get(self):
+        zID = request.args.get('zID')
+        results = participation.getUpcomingEvents(zID)
+        if (isinstance(results, str) == True):
+            abort(400, "Malformed Request")
+        return jsonify({"status": "success", "message": results})
+
+@api.route('/getAllSocieties')
+class userSocieties(Resource):
+    def get(self):
+        zID = request.args.get('zID')
+        results = participation.getUserSocieties(zID)
+        print(results)
+        if (isinstance(results, str) == True):
+            abort(400, "Malformed Request")
+        return jsonify({"status": "success", "message": results})
 
 @api.route('/')
 class User(Resource):
@@ -20,6 +38,7 @@ class User(Resource):
     # [{"eventID": "1239", "name": "Test Event 0", "society": "UNSW Hall", "eventDate": "2019-11-19"}, {"eventID": "1240", "name": "Coffee Night", "society": "UNSW Hall", "eventDate": "2019-11-20"}]
     @api.response(400, 'Malformed Request')
     # @api.description('Retrieves data on user')
+    # FIXME: FIXMEMEEJRWKEJRWERBWEJRBKEWJ
     def get(self):
         if not request.json:
             abort(400, 'Malformed Request')

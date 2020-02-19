@@ -47,14 +47,13 @@ class Register(Resource):
             abort(403, 'Invalid Username/Password')
 
 # NOTE: FIXME: TODO: FOR TESTING ONLY, DO NOT USE IN PRODUCTION
-'''
+
 @api.route('/sendActivationEmail')
 class activationEmail(Resource):
     def post(self):
         data = request.get_json()
         activationLink = str(uuid.uuid4().hex).upper()
         sendActivationEmail(f"127.0.0.1/api/user/activation?zID={data['username']}&activation={activationLink}", f"{data['username']}@student.unsw.edu.au")
-'''
 
 @api.route('/activation')
 class activate(Resource):
