@@ -1,8 +1,4 @@
 <template>
-  <!-- Be able go to create an event -->
-  <!-- Be able to join society -->
-  <!-- View current events -->
-  <!-- View events user went to -->
   <div>
     <button @click="eventCreate" class="btn btn-primary">Create an event</button>
     <!-- <button @click="joinSociety" class="btn btn-primary">Join a society</button> -->
@@ -13,7 +9,7 @@
 
 <script>
 import router from "@/router/index.js";
-import { fetchAPI } from "@/util.js";
+// import { fetchAPI } from "@/util.js";
 import tokenCheck from "@/mixins/tokenCheck.js"
 import JoinSociety from "@/components/JoinSociety.vue";
 import ProfileEventsView from "@/components/ProfileEventsView.vue";
@@ -38,16 +34,16 @@ export default {
     
 
     // backend will implement route to get events that are close in the future, can have a 'view all' for a particular society which will get all of them
-    fetchAPI("").then(r => {
-      r.forEach(society => {
-         fetchAPI(
-          `/api/soc/eventsHosted?societyID=${society.societyID}`
-        ).then(events => {
-          society['events'] = events
-          this.usersSocieties.push(society);
-        });
-      });
-    });
+    // fetchAPI("").then(r => {
+    //   r.forEach(society => {
+    //      fetchAPI(
+    //       `/api/soc/eventsHosted?societyID=${society.societyID}`
+    //     ).then(events => {
+    //       society['events'] = events
+    //       this.usersSocieties.push(society);
+    //     });
+    //   });
+    // });
   },
   methods: {
     eventCreate() {

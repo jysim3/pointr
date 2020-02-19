@@ -1,4 +1,4 @@
-import router from "@/router/index.js"
+// import router from "@/router/index.js"
 import { getToken } from "@/util.js"
 
 export default {
@@ -10,8 +10,8 @@ export default {
     created() {
         const localStorageToken = getToken()
         if (!localStorageToken) {
-            // console.log('redirecting to home') //eslint-disable-line
-            router.push({ name: "home" })
+            console.log('NO TOKEN FOUND') //eslint-disable-line
+            // router.push({ name: "signIn" }) //TODO: redirect is bad UX because can't go back!
         } else {
             this.token = localStorageToken
         }

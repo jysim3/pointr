@@ -6,8 +6,8 @@ import Event from '@/views/Event.vue'
 import SignEvent from '@/views/SignEvent.vue'
 import User from '@/views/User.vue'
 import MarkAttendance from '@/views/MarkAttendance.vue'
-import SignIn from '@/views/SignIn.vue'
-import SignUp from '@/views/SignUp.vue'
+import SignIn from '@/views/auth/SignIn.vue'
+import SignUp from '@/views/auth/SignUp.vue'
 import Profile from "@/views/Profile.vue"
 
 Vue.use(VueRouter)
@@ -17,6 +17,7 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home
+    // TODO: depending on whether there is token, have profile/dashboard as page
   },
   {
     path: '/mark-attendance',

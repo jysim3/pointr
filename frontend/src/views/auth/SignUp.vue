@@ -2,6 +2,7 @@
   <div class="form-container">
     <form @submit.prevent="submitSignUpForm" class="form">
       <h2>Join Pointr</h2>
+      <FormError v-if="formErrorMessage" :msg="formErrorMessage" />
       <div class="label-input-div">
         <label class="label">zID</label>
         <input class="input" type="text" required />
@@ -25,8 +26,10 @@
         <input
           v-model.number="queryData.comencmentYear"
           :max="currentYear"
+          :min="2000"
           type="number"
           class="input"
+          :class="comencmentYearValid"
           required
         />
       </div>
@@ -55,6 +58,8 @@
 </template>
 
 <script>
+import { fetchAPI } from "@/util.js"
+
 export default {
   name: "SignUp",
   data() {
@@ -62,6 +67,7 @@ export default {
       zID: "",
       password: "",
       repeatPassword: "",
+      formErrorMessage: "",
       queryData: {
         degree: "",
         comencmentYear: "",
@@ -83,10 +89,30 @@ export default {
     currentYear() {
       const date = new Date();
       return date.getFullYear();
+    },
+    comencmentYearValid() {
+      const year = this.queryData.comencmentYear
+      let isInvalid = false
+
+      if (year > 2020 || year < 2000) {
+        isInvalid = true
+      }
+
+      return { 'input--invalid': isInvalid  }   
     }
   },
   methods: {
-    submitSignUpForm() {}
+    submitSignUpForm() {
+      fetchAPI("/api/auth/register", "POST", {
+        zID: this.zID,
+        password: this.password,
+      })
+      .then(r => {
+          if (r.status !== 200) {
+            this.formErrorMessage = r.message
+          }
+        })
+    }
   }
 };
 </script>

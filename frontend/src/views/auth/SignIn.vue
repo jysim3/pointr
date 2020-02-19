@@ -12,17 +12,18 @@
         <input v-model="password" class="input" type="password" required />
       </div>
       <div class="label-input-div">
-        <label class="label">Remember me</label>
-        <input v-model="rememberUser" class="input input-checkbox" type="checkbox" />
+        <label class="label input--checkbox-label">Remember me</label>
+        <input v-model="rememberUser" class="input input--checkbox" type="checkbox" />
       </div>
       <button type="submit" class="btn btn-primary">Sign In</button>
+      <!-- TODO: add button for sign up -->
     </form>
   </div>
 </template>
 
 <script>
-import { fetchAPI } from "@/util.js"
-import FormError from "@/components/FormError.vue"
+import { fetchAPI } from "@/util.js";
+import FormError from "@/components/FormError.vue";
 
 export default {
   name: "SignIn",
@@ -38,26 +39,26 @@ export default {
         status: false,
         msg: ""
       }
-    }
+    };
   },
   methods: {
     submitSignInForm() {
-      // [zZ][0-9](7)
+      // [zZ][0-9](7) // TODO: check zID input
       // If sign in successfull, push route to profile
       fetchAPI("/api/auth/login", "POST", {
-        "zID": this.zID,
-        "password": this.password
+        zID: this.zID,
+        password: this.password
       })
-      .then(r => {
-        if (r.status === 403) {
-          this.error.status = true
-          this.error.msg = "Please check your zID and password"
-        }
-      })
-      .catch(err => {
-        this.error.status = true
-        this.error.msg = `Error has occured: ${err}`
-      })
+        .then(r => {
+          if (r.status !== 200) {
+            this.error.status = true;
+            this.error.msg = "Invalid credentials";
+          }
+        })
+        // .catch(err => {
+        //   this.error.status = true;
+        //   this.error.msg = err;
+        // });
     }
   }
 };
