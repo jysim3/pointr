@@ -58,10 +58,15 @@
 </template>
 
 <script>
-import { fetchAPI } from "@/util.js"
+import router from "@/router/index.js";
+import { fetchAPI } from "@/util.js";
+import FormError from "@/components/FormError.vue";
 
 export default {
   name: "SignUp",
+  components: {
+    FormError
+  },
   data() {
     return {
       zID: "",
@@ -76,7 +81,7 @@ export default {
     };
   },
   created() {
-    this.queryData.comencmentYear = this.currentYear
+    this.queryData.comencmentYear = this.currentYear;
   },
   computed: {
     passwordsNotEqual() {
@@ -91,27 +96,34 @@ export default {
       return date.getFullYear();
     },
     comencmentYearValid() {
-      const year = this.queryData.comencmentYear
-      let isInvalid = false
+      const year = this.queryData.comencmentYear;
+      let isInvalid = year > 2020 || year < 2000;
 
-      if (year > 2020 || year < 2000) {
-        isInvalid = true
-      }
-
-      return { 'input--invalid': isInvalid  }   
+      return { "input--invalid": isInvalid };
+      // TODO: should computed return a class or should classes be dealth with in the template after computed returns value?
     }
   },
   methods: {
     submitSignUpForm() {
       fetchAPI("/api/auth/register", "POST", {
         zID: this.zID,
-        password: this.password,
-      })
-      .then(r => {
-          if (r.status !== 200) {
-            this.formErrorMessage = r.message
+        password: this.password
+      }).then(r => {
+        if (r.status !== 200) {
+          console.log("r is ", r); //eslint-disable-line
+          console.log(r.message["zID"]); //eslint-disable-line
+          if (r.message["zID"]) {
+            this.formErrorMessage = "Please check your zID";
+          } else {
+            this.formErrorMessage = r.message;
           }
-        })
+        } else {
+          // In the case of a successful response, want to store token and redirect to home
+          localStorage.setItem("token", r.token);
+          router.push({ name: 'home' });
+          console.log("r is ", r); //eslint-disable-line
+        }
+      });
     }
   }
 };
