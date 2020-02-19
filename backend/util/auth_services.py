@@ -3,8 +3,9 @@ from datetime import datetime, date, time, timedelta
 from util.users import checkUserInfo, checkUser, createUser
 from flask_restx import abort
 
-# Expiration time on tokens - 60 minutes
-token_exp = 60*60
+# Expiration time on tokens - 60 minutes #FIXME
+token_exp = 1000*60
+activationTokenTimeout = 1000*60
 users = {}
 ADMIN = 'Admin'
 USER = 'User'
@@ -59,9 +60,9 @@ def authorize(token, permission):
         abort(403, 'Invalid Credentials')
     abort(400, 'Malformed Request')
 
-def register_user(zID, password):
-    if (checkUser(zID) == False):
-        return True if createUser(zID, password) == "Success" else False
+def register_user(zID, password, isArc=True):
+    if (checkUser(zID) == False): #TODO fixe isArc
+        return True if createUser(zID, password, isArc) == "Success" else False
     return False
 
 def login(zID, password):
@@ -79,3 +80,35 @@ def login(zID, password):
         ) 
         return token.decode("utf-8")
     return None
+    
+def generateActivationToken(zID):
+    global activationTokenTimeout
+    token = jwt.encode(
+        {
+            'exp': datetime.utcnow() + timedelta(seconds=activationTokenTimeout),
+            'iat': datetime.utcnow(),
+            'zID': zID,
+            'permission': 0
+        }, 
+        'secret', algorithm='HS256' # TODO ensure secret is secret
+    ) 
+    return token.decode("utf-8")
+
+def authorizeActivationToken(token):
+    try:
+        token_data = jwt.decode(
+            token,
+            'secret',
+            algorithms='HS256'
+        )
+        return {"valid": True, "token_data": token_data}
+    except jwt.InvalidSignatureError:
+        print("Received invalid token signature")
+        abort(403, 'Invalid Credentials')
+    except jwt.ExpiredSignatureError:
+        print("Received expired token")
+        abort(401, 'Expired Token')
+    except jwt.DecodeError:
+        print("Received invalid token data")
+        abort(403, 'Invalid Credentials')
+    abort(400, 'Malformed Request')

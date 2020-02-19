@@ -98,18 +98,9 @@ def addActivationLink(zID, activationLink):
         return "failed"
     return "success"
 
-def activateAccount(zID, activationLink):
+def activateAccount(zID):
     conn = createConnection()
     curs = conn.cursor()
-    try:
-        curs.execute("SELECT activationLink FROM users WHERE zID = (%s);", (zID,))
-        result = curs.fetchone()[0]
-    except Exception as e:
-        return "failed"
-
-    if result == activationLink:
-        curs.execute("UPDATE users SET activationStatus = True WHERE zID = (%s);", (zID,))
-        conn.commit()
-        return "success"
-    else:
-        return "incorrect activationLink"
+    curs.execute("UPDATE users SET activationStatus = True WHERE zID = (%s);", (zID,))
+    conn.commit()
+    return "success"
