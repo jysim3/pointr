@@ -1,12 +1,10 @@
 from flask import request, jsonify
 from flask_restx import Namespace, Resource, abort, reqparse
-from util.users import *
 from util.sanitisation_services import sanitize
 from marshmallow import Schema, fields, ValidationError, validates, validate
 from util import auth_services, users, participation
 from schemata.auth_schemata import TokenSchema
 from schemata.user_schemata import UserCreationSchema, ZIDSchema
-import util.auth_services as auth_service
 from util.auth_services import ADMIN, USER
 
 api = Namespace('user', description='User Services')
@@ -57,7 +55,7 @@ class User(Resource):
         except ValidationError as err:
             abort(400, err.messages)
             
-        authorized = auth_service.authorize(data['token'], ADMIN)
+        authorized = auth_services.authorize(data['token'], ADMIN)
         
         if (authorized['valid']):
             returnVal = users.createUser(sanitize(data['zID'].lower()), sanitize(data['name']))

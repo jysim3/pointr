@@ -1,10 +1,7 @@
 from flask import request, jsonify
 from flask_restx import Namespace, Resource, abort, reqparse
-from flask_restx import fields as flask_fields
-import util.auth_services as auth_services
-from util.auth_services import authorize_token, ADMIN, USER
-import util.users
-from util.users import addActivationLink, activateAccount
+from util import auth_services, users
+from util.auth_services import ADMIN, USER
 from marshmallow import Schema, fields, ValidationError, validates, validate
 from emailPointr import sendActivationEmail
 import uuid
@@ -36,7 +33,7 @@ class Register(Resource):
 
         # At this point, the user is created, we now send the activation email
         activationLink = str(uuid.uuid4().hex).upper()
-        addActivationLink(data['username'], activationLink)
+        users.addActivationLink(data['username'], activationLink)
         # FIXME: Change this to pointr.live when in production
         sendActivationEmail(f"127.0.0.1:5000/api/auth/activation?zID={data['username']}&activationLink={activationLink}", f"{data['username']}@student.unsw.edu.au")
 
@@ -66,7 +63,7 @@ class activate(Resource):
         zID = request.args.get('zID')
         activationLink = request.args.get('activationLink')
         print(activationLink)
-        result = activateAccount(zID, activationLink)
+        result = users.activateAccount(zID, activationLink)
         if (result != 'success'):
             abort(400, result)
 
@@ -117,7 +114,7 @@ class TestAdmin(Resource):
             abort(400, err.messages)
         
         # Authorize token and return true or false
-        token_data = authorize_token(data['token'], ADMIN)
+        token_data = auth_services.authorize_token(data['token'], ADMIN)
         if (token_data['valid']):
             return jsonify({"valid": True})
         else:
@@ -141,7 +138,7 @@ class TestUser(Resource):
             abort(400, err.messages)
         
         # Authorize token and return true or false
-        token_data = authorize_token(data['token'], USER)
+        token_data = auth_services.authorize_token(data['token'], USER)
         if (token_data['valid']):
             return jsonify({"valid": True})
         else:
