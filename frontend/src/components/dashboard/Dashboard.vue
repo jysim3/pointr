@@ -2,8 +2,8 @@
   <div>
     <button @click="eventCreate" class="btn btn-primary">Create an event</button>
     <!-- <button @click="joinSociety" class="btn btn-primary">Join a society</button> -->
-    <JoinSociety />
-    <ProfileEventsView :societiesData="userSocieties" />
+    <DashboardJoinSociety />
+    <DashboardUpcomingEvents :societiesData="userSocieties" />
   </div>
 </template>
 
@@ -11,15 +11,15 @@
 import router from "@/router/index.js";
 // import { fetchAPI } from "@/util.js";
 import tokenCheck from "@/mixins/tokenCheck.js"
-import JoinSociety from "@/components/JoinSociety.vue";
-import ProfileEventsView from "@/components/ProfileEventsView.vue";
+import DashboardJoinSociety from "@/components/dashboard/DashboardJoinSociety.vue";
+import DashboardUpcomingEvents from "@/components/dashboard/DashboardUpcomingEvents.vue";
 
 export default {
-  name: "Profile",
+  name: "Dashboard",
   mixins: [tokenCheck],
   components: {
-    JoinSociety,
-    ProfileEventsView
+    DashboardJoinSociety,
+    DashboardUpcomingEvents
   },
   data() {
     return {

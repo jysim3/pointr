@@ -8,7 +8,7 @@ import User from '@/views/User.vue'
 import MarkAttendance from '@/views/MarkAttendance.vue'
 import SignIn from '@/views/auth/SignIn.vue'
 import SignUp from '@/views/auth/SignUp.vue'
-import Profile from "@/views/Profile.vue"
+// import Profile from "@/views/Profile.vue"
 
 Vue.use(VueRouter)
 
@@ -57,11 +57,11 @@ const routes = [
     name: 'signUp',
     component: SignUp
   },
-  {
-    path: '/profile',
-    name: 'profile',
-    component: Profile
-  }
+  // {
+  //   path: '/profile',
+  //   name: 'profile',
+  //   component: Profile
+  // }
 ]
 
 const router = new VueRouter({

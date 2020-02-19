@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: "ProfileEventsView",
+  name: "UpcomingEvents",
   props: {
     societiesData: Array
   }
