@@ -29,7 +29,7 @@ class Register(Resource):
         try:
             data = RegisterDetailsSchema().load(request.get_json())
         except ValidationError as err:
-            abort(400, err.messages)
+            abort(400, jsonify(err.messages))
             
         # Attempt to create a new user with the username and password
         if not auth_services.register_user(data['zID'], data['password']):
@@ -64,7 +64,7 @@ class activate(Resource):
         try:
             data = TokenSchema().load(request.get_json())
         except ValidationError as err:
-            abort(400, err.messages)
+            abort(400, jsonify(err.messages))
         
         # Authorize token and return true or false
         ret_data = auth_services.authorize_token(data['token'], 0)
@@ -95,7 +95,7 @@ class Login(Resource):
         try:
             data = LoginDetailsSchema().load(request.get_json())
         except ValidationError as err:
-            abort(400, err.messages)
+            abort(400, jsonify(err.messages))
         
         # Login and if successful return the token otherwise invalid credentials
         token = auth_services.login(data['zID'], data['password'])
@@ -119,7 +119,7 @@ class TestAdmin(Resource):
         try:
             data = TokenSchema().load(request.get_json())
         except ValidationError as err:
-            abort(400, err.messages)
+            abort(400, jsonify(err.messages))
         
         # Authorize token and return true or false
         token_data = auth_services.authorize_token(data['token'], ADMIN)
@@ -143,7 +143,7 @@ class TestUser(Resource):
         try:
             data = TokenSchema().load(request.get_json())
         except ValidationError as err:
-            abort(400, err.messages)
+            abort(400, jsonify(err.messages))
         
         # Authorize token and return true or false
         token_data = auth_services.authorize_token(data['token'], USER)
@@ -167,7 +167,7 @@ class Authorize(Resource):
         try:
             data = TokenSchema().load(request.get_json())
         except ValidationError as err:
-            abort(400, err.messages)
+            abort(400, jsonify(err.messages))
         
         # Authorize token and return true or false
         token_data = auth_services.authorize_token(data['token'], 0)
