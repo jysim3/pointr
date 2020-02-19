@@ -10,7 +10,7 @@
         <form id="event-form" class="form" @submit.prevent="submitEventAttendance">
           <div class="label-input-div">
             <label class="label" for>zID</label>
-            <input class="input" v-model="zid" type="text" required />
+            <input class="input" v-model="zID" type="text" required />
           </div>
           <div class="label-input-div">
             <label class="label" for>Name</label>
@@ -47,7 +47,7 @@ export default {
     return {
       name: "",
       participants: [],
-      zid: "",
+      zID: "",
       uname: ""
     };
   },
@@ -77,13 +77,13 @@ export default {
   methods: {
     submitEventAttendance() {
       const data = {
-        zID: this.zid,
+        zID: this.zID,
         name: this.uname,
         eventID: this.eid
       };
       fetchAPI("/api/attend", "POST", data)
         .then(() => {
-          this.zid = "";
+          this.zID = "";
           this.uname = "";
         })
         .then(() => this.fetchAttendees())

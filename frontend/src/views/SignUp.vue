@@ -59,7 +59,7 @@ export default {
   name: "SignUp",
   data() {
     return {
-      zid: "",
+      zID: "",
       password: "",
       repeatPassword: "",
       queryData: {

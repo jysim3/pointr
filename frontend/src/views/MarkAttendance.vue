@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       eid: "",
-      zid: "",
+      zID: "",
       name: ""
     };
   },

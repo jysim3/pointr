@@ -6,7 +6,7 @@
       <form class="form" @submit="submitForm">
         <div class="label-input-div">
           <label class="label" for>zID</label>
-          <input class="input" type="text" v-model="zid" />
+          <input class="input" type="text" v-model="zID" />
         </div>
         <div class="label-input-div">
           <label class="label" for>Name</label>
@@ -37,7 +37,7 @@ export default {
   },
   data() {
     return {
-      zid: "",
+      zID: "",
       name: "",
       eventName: ""
     };
@@ -45,14 +45,14 @@ export default {
   methods: {
     submitForm(e) {
       const data = {
-        zID: this.zid,
+        zID: this.zID,
         name: this.name,
         eventID: this.eid
       };
       e.preventDefault();
       fetchAPI("/api/attend", "POST", data)
         .then(() => {
-          router.push({ name: "user", params: { zid: this.zid } });
+          router.push({ name: "user", params: { zID: this.zID } });
         })
         .catch(e => alert(e));
     }
