@@ -10,14 +10,12 @@
 <script>
 import router from "@/router/index.js";
 import jwt from "jsonwebtoken";
-import { fetchAPI, getToken } from "@/util.js";
-import tokenCheck from "@/mixins/tokenCheck.js";
+import { fetchAPI } from "@/util.js";
 import DashboardJoinSociety from "@/components/dashboard/DashboardJoinSociety.vue";
 import DashboardUpcomingEvents from "@/components/dashboard/DashboardUpcomingEvents.vue";
 
 export default {
   name: "Dashboard",
-  mixins: [tokenCheck],
   components: {
     DashboardJoinSociety,
     DashboardUpcomingEvents
@@ -29,11 +27,13 @@ export default {
     };
   },
   created() {
-    const zID = jwt.decode(getToken())
-    fetchAPI(`api/user/getAllSocieties?zID=${zID}`).then(r => {
+    // Decoding token from tokenCheck mixin
+    const zID = jwt.decode(this.token)
+    fetchAPI(`/api/user/getAllSocieties?zID=${zID}`).then(r => {
       // TODO: think about performance, should we be requesting all of the events from server?
       // Now we have a list of events that are upcoming for the user
       // TODO: FORMAT: [{'society': 'UNSW Hall', 'events': [{}]}]
+      // TODO: shouldn't this route need a token instead of a zID?
 
       // Currently this will get the next five upcoming events.
       this.upcomingEvents = r.message.slice(0, 5);

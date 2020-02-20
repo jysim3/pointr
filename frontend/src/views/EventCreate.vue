@@ -29,13 +29,11 @@
 
 <script>
 import { fetchAPI } from "@/util.js";
-import tokenCheck from "@/mixins/tokenCheck.js"
 import router from "@/router/index.js";
 import Logo from "@/components/Logo.vue";
 
 export default {
   name: "EventCreate",
-  mixins: [tokenCheck],
   components: {
     Logo
   },

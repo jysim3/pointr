@@ -40,4 +40,16 @@ export function getToken() {
     return token
 }
 
+export function isAuthenticated() {
+    // const localStorageToken = getToken()
+    // const tokenIsValid = false
+
+    // if (!localStorageToken) {
+    //     return false
+    // }
+
+    // return tokenIsValid
+    return true // TODO: for debugging purposes user is always authenticated.
+}
+
 export { apiURL };

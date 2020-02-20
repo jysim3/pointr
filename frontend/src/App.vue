@@ -5,8 +5,11 @@
 </template>
 
 <script>
+import tokenCheck from "@/mixins/tokenCheck.js"
+
 export default {
-  name: "app"
+  name: "app",
+  mixins: [tokenCheck]
 };
 </script>
 

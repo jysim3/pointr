@@ -1,16 +1,16 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '@/views/Home.vue'
-import EventCreate from '@/views/EventCreate.vue'
-import Event from '@/views/Event.vue'
-import SignEvent from '@/views/SignEvent.vue'
-import User from '@/views/User.vue'
-import MarkAttendance from '@/views/MarkAttendance.vue'
-import SignIn from '@/views/auth/SignIn.vue'
-import SignUp from '@/views/auth/SignUp.vue'
-// import Profile from "@/views/Profile.vue"
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import { isAuthenticated } from "@/util.js";
+import Home from '@/views/Home.vue';
+import EventCreate from '@/views/EventCreate.vue';
+import Event from '@/views/Event.vue';
+import SignEvent from '@/views/SignEvent.vue';
+import User from '@/views/User.vue';
+import MarkAttendance from '@/views/MarkAttendance.vue';
+import SignIn from '@/views/auth/SignIn.vue';
+import SignUp from '@/views/auth/SignUp.vue';
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
@@ -22,30 +22,45 @@ const routes = [
   {
     path: '/mark-attendance',
     name: 'markAttendance',
-    component: MarkAttendance
+    component: MarkAttendance,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/create',
     name: 'create',
-    component: EventCreate
+    component: EventCreate,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/u/:zid',
     name: 'user',
     component: User,
-    props: true
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/event/:eid',
     name: 'event',
     component: Event,
-    props: true
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/e/:eid',
     name: 'signEvent',
     component: SignEvent,
-    props: true
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/signin',
@@ -56,16 +71,29 @@ const routes = [
     path: '/signup',
     name: 'signUp',
     component: SignUp
-  },
-  // {
-  //   path: '/profile',
-  //   name: 'profile',
-  //   component: Profile
-  // }
-]
+  }
+];
 
 const router = new VueRouter({
   routes
-})
+});
 
-export default router
+// For more info regarding this visit: 
+// https://www.digitalocean.com/community/tutorials/how-to-set-up-vue-js-authentication-and-route-handling-using-vue-router
+router.beforeEach((to, from, next) => {
+  // TODO: clean up the else statements?
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!isAuthenticated()) {
+      next({
+        path: '/signin',
+        params: { nextUrl: to.fullPath }
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+export default router;
