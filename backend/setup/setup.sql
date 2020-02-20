@@ -47,6 +47,10 @@ CREATE TABLE IF NOT EXISTS socstaff (
     role INTEGER NOT NULL,
     primary key (society, zid)
 );
+drop TABLE IF EXISTS encrypt;
+CREATE TABLE IF NOT EXISTS emailEncrypt (
+    password TEXT primary key
+);
 
 create or replace view hostedEvents as select events.eventID, name, eventdate, location, societyname from events join host on events.eventID = host.eventID join society on (society.societyID = host.society);
 create or replace view userInSociety as select societyid, societyname, users.zID from society join socstaff on society.societyid = socstaff.society join users on socstaff.zid = users.zid;
