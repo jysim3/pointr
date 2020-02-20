@@ -1,7 +1,7 @@
 <template>
   <div>
-    <LandingPage v-if="!isLoggedIn"></LandingPage>
-    <Dashboard v-if="isLoggedIn"></Dashboard>
+    <LandingPage v-if="!isAuthenticated"></LandingPage>
+    <Dashboard v-else></Dashboard>
   </div>
 
   <!-- Want to show landing page if not logged in, else want to show dashboard -->
@@ -19,11 +19,6 @@ export default {
   components: {
     LandingPage,
     Dashboard
-  },
-  data() {
-    return {
-      isLoggedIn: false
-    };
   },
 };
 </script>

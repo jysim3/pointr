@@ -19,7 +19,6 @@
 </template>
 <script>
 import { fetchAPI } from "@/util.js";
-import router from "@/router/index.js";
 import EventCodeDisplay from "@/components/EventCodeDisplay.vue";
 
 export default {
@@ -52,7 +51,7 @@ export default {
       e.preventDefault();
       fetchAPI("/api/attend", "POST", data)
         .then(() => {
-          router.push({ name: "user", params: { zID: this.zID } });
+          this.$route.push({ name: "user", params: { zID: this.zID } });
         })
         .catch(e => alert(e));
     }

@@ -29,7 +29,6 @@
 
 <script>
 import { fetchAPI } from "@/util.js";
-import router from "@/router/index.js";
 import Logo from "@/components/Logo.vue";
 
 export default {
@@ -57,7 +56,7 @@ export default {
       };
       fetchAPI("/api/event", "POST", data).then(j => {
         console.log(j); //eslint-disable-line
-        router.push({ name: "event", params: { eid: j.eventID } });
+        this.$route.push({ name: "event", params: { eid: j.eventID } });
       });
     }
   }

@@ -5,11 +5,11 @@
 </template>
 
 <script>
-import tokenCheck from "@/mixins/tokenCheck.js"
+import auth from "@/mixins/auth.js"
 
 export default {
   name: "app",
-  mixins: [tokenCheck]
+  mixins: [auth]
 };
 </script>
 

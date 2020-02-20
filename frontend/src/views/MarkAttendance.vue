@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import router from "@/router/index.js";
 import Logo from "@/components/Logo.vue";
 
 export default {
@@ -31,7 +30,7 @@ export default {
   },
   methods: {
     submitAttendanceForm() {
-      router.push({ name: "signEvent", params: { eid: this.eid } });
+      this.$route.push({ name: "signEvent", params: { eid: this.eid } });
     }
   }
 };

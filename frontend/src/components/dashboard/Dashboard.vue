@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import router from "@/router/index.js";
 import jwt from "jsonwebtoken";
 import { fetchAPI } from "@/util.js";
 import DashboardJoinSociety from "@/components/dashboard/DashboardJoinSociety.vue";
@@ -42,7 +41,7 @@ export default {
   methods: {
     eventCreate() {
       // TODO: this is a common method - repetitive code
-      router.push({ name: "create" });
+      this.$route.push({ name: "create" });
     }
   }
 };

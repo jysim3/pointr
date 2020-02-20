@@ -58,7 +58,6 @@
 </template>
 
 <script>
-import router from "@/router/index.js";
 import { fetchAPI } from "@/util.js";
 import FormError from "@/components/FormError.vue";
 
@@ -120,7 +119,7 @@ export default {
         } else {
           // In the case of a successful response, want to store token and redirect to home
           localStorage.setItem("token", r.token);
-          router.push({ name: 'home' });
+          this.$route.push({ name: 'home' });
           console.log("r is ", r); //eslint-disable-line
         }
       });
