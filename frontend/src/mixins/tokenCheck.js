@@ -1,5 +1,5 @@
 // import router from "@/router/index.js"
-import getToken from "@/util.js";
+import { getToken } from "@/util.js";
 
 export default {
     data() {
