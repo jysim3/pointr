@@ -3,14 +3,15 @@
     <button @click="eventCreate" class="btn btn-primary">Create an event</button>
     <!-- <button @click="joinSociety" class="btn btn-primary">Join a society</button> -->
     <DashboardJoinSociety />
-    <DashboardUpcomingEvents :societiesData="userSocieties" />
+    <DashboardUpcomingEvents :upcomingEvents="upcomingEvents" />
   </div>
 </template>
 
 <script>
 import router from "@/router/index.js";
-// import { fetchAPI } from "@/util.js";
-import tokenCheck from "@/mixins/tokenCheck.js"
+import jwt from "jsonwebtoken";
+import { fetchAPI, getToken } from "@/util.js";
+import tokenCheck from "@/mixins/tokenCheck.js";
 import DashboardJoinSociety from "@/components/dashboard/DashboardJoinSociety.vue";
 import DashboardUpcomingEvents from "@/components/dashboard/DashboardUpcomingEvents.vue";
 
@@ -24,35 +25,25 @@ export default {
   data() {
     return {
       showJoinSociety: false,
-      userSocieties: []
+      upcomingEvents: []
     };
   },
   created() {
-    // Want to get all the events for a particular user -> get all the societies user is part of -> get all the events for each of those societies
-    // get all the socities for user, then /api/soc/eventsHosted for each society
-    // TODO: make this way cleaner
-    
+    const zID = jwt.decode(getToken())
+    fetchAPI(`api/user/getAllSocieties?zID=${zID}`).then(r => {
+      // TODO: think about performance, should we be requesting all of the events from server?
+      // Now we have a list of events that are upcoming for the user
+      // TODO: FORMAT: [{'society': 'UNSW Hall', 'events': [{}]}]
 
-    // backend will implement route to get events that are close in the future, can have a 'view all' for a particular society which will get all of them
-    // fetchAPI("").then(r => {
-    //   r.forEach(society => {
-    //      fetchAPI(
-    //       `/api/soc/eventsHosted?societyID=${society.societyID}`
-    //     ).then(events => {
-    //       society['events'] = events
-    //       this.usersSocieties.push(society);
-    //     });
-    //   });
-    // });
+      // Currently this will get the next five upcoming events.
+      this.upcomingEvents = r.message.slice(0, 5);
+    });
   },
   methods: {
     eventCreate() {
       // TODO: this is a common method - repetitive code
       router.push({ name: "create" });
     }
-    // joinSociety() {
-    //   this.showJoinSociety = true
-    // }
   }
 };
 </script>

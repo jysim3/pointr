@@ -1,18 +1,23 @@
 <template>
-  <!-- Shows all the events for a given user -->
   <div class="event-view">
-    <div v-for="(society, index) in societiesData" :key="index">
-      <h1>{{ society.name }}</h1>
-      <p v-for="(event, index) in societiesData.events" :key="index">{{ event.name }}</p>
-    </div>
+      <DashboardEventCard
+        v-for="(event, index) in upcomingEvents"
+        :key="index"
+        :eventData="event"
+      ></DashboardEventCard>
   </div>
 </template>
 
 <script>
+import DashboardEventCard from "@/components/dashboard/DashboardEventCard.vue";
+
 export default {
   name: "UpcomingEvents",
+  components: {
+    DashboardEventCard
+  },
   props: {
-    societiesData: Array
+    upcomingEvents: Array
   }
 };
 </script>
