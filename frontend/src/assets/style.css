@@ -175,7 +175,7 @@ input[type="radio"] {
   outline: 0;
 }
 
-.input--invalid {
+.input.input--invalid {
   border: 2px solid var(--c-warning);
 }
 

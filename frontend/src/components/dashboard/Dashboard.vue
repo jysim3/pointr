@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="eventCreate" class="btn btn-primary">Create an event</button>
+    <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link>
     <!-- <button @click="joinSociety" class="btn btn-primary">Join a society</button> -->
     <DashboardJoinSociety />
     <DashboardUpcomingEvents :upcomingEvents="upcomingEvents" />
@@ -27,7 +27,7 @@ export default {
   },
   created() {
     // Decoding token from tokenCheck mixin
-    const zID = jwt.decode(this.token)
+    const zID = jwt.decode(this.token);
     fetchAPI(`/api/user/getAllSocieties?zID=${zID}`).then(r => {
       // TODO: think about performance, should we be requesting all of the events from server?
       // Now we have a list of events that are upcoming for the user
@@ -37,12 +37,6 @@ export default {
       // Currently this will get the next five upcoming events.
       this.upcomingEvents = r.message.slice(0, 5);
     });
-  },
-  methods: {
-    eventCreate() {
-      // TODO: this is a common method - repetitive code
-      this.$route.push({ name: "create" });
-    }
   }
 };
 </script>
