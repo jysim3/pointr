@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, request
 from flask_restx import Namespace, Resource, abort, reqparse
 from util import auth_services, users
 from util.auth_services import ADMIN, USER
@@ -83,7 +83,6 @@ class activate(Resource):
 @api.route('/login')
 class Login(Resource):
     
-    # @api.response(200, 'Success', token_details)
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
     def post(self):
@@ -92,87 +91,23 @@ class Login(Resource):
             abort(400, 'Malformed Request')
         
         # Validate data
-        #try:
-            #data = LoginDetailsSchema().load(request.get_json())
-        #except ValidationError as err:
-            #abort(400, err.messages)
+        try:
+            data = LoginDetailsSchema().load(request.get_json())
+        except ValidationError as err:
+            abort(400, err.messages)
         
         # Login and if successful return the token otherwise invalid credentials
-        data = request.get_json()
         token = auth_services.login(data['zID'], data['password'])
         if (token):
             return jsonify({"token": token})
         else:
             abort(403, 'Invalid Credentials')
-        
-@api.route('/admin')
-class TestAdmin(Resource):
-    
-    # @api.response(200, 'Success', token_check)
-    @api.response(400, 'Malformed Request')
-    # @api.expect(token_details)
-    def post(self):
-        # Check request is json
-        if not request.json:
-            abort(400, 'Malformed Request')
-        
-        # Validate data
-        try:
-            data = TokenSchema().load(request.get_json())
-        except ValidationError as err:
-            abort(400, jsonify(err.messages))
-        
-        # Authorize token and return true or false
-        token_data = auth_services.authorize_token(data['token'], ADMIN)
-        if (token_data['valid']):
-            return jsonify({"valid": True})
-        else:
-            return jsonify({"valid": False})
-            
-@api.route('/user')
-class TestUser(Resource):
-    
-    # @api.response(200, 'Success', token_check)
-    @api.response(400, 'Malformed Request')
-    # @api.expect(token_details)
-    def post(self):
-        # Check request is json
-        if not request.json:
-            abort(400, 'Malformed Request')
-        
-        # Validate data
-        try:
-            data = TokenSchema().load(request.get_json())
-        except ValidationError as err:
-            abort(400, jsonify(err.messages))
-        
-        # Authorize token and return true or false
-        token_data = auth_services.authorize_token(data['token'], USER)
-        if (token_data['valid']):
-            return jsonify({"valid": True})
-        else:
-            return jsonify({"valid": False})
 
 @api.route('/validate')
+@api.param('token', description='Users Token', type='String', required='True')
 class Authorize(Resource):
-    
-    # @api.response(200, 'Success', token_check)
+
     @api.response(400, 'Malformed Request')
-    # @api.expect(token_details)
-    def post(self):
-        # Check request is json
-        if not request.json:
-            abort(400, 'Malformed Request')
-        
-        # Validate data
-        try:
-            data = TokenSchema().load(request.get_json())
-        except ValidationError as err:
-            abort(400, jsonify(err.messages))
-        
-        # Authorize token and return true or false
-        token_data = auth_services.authorize_token(data['token'], 0)
-        if (token_data['valid']):
-            return jsonify({"valid": True})
-        else:
-            abort(403, 'Invalid Credentials')
+    @auth_services.check_authorization(activationRequired=False, level=0)
+    def post(self, token_data):
+        return jsonify({"valid" : "true"})
