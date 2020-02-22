@@ -5,6 +5,7 @@ from util.auth_services import ADMIN, USER
 from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema
 from marshmallow import Schema, fields, ValidationError, validates, validate
 from emailPointr import sendActivationEmail
+from util.validation_services import validate_with
 import pprint
 import uuid
 
@@ -18,18 +19,8 @@ class Register(Resource):
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
     @api.response(409, 'Username Taken')
-    # @api.expect(auth_details)
-    def post(self):
-        
-        # Ensure the request is json
-        if not request.json:
-            abort(400, 'Malformed Request')
-            
-        # Validate the data
-        try:
-            data = RegisterDetailsSchema().load(request.get_json())
-        except ValidationError as err:
-            abort(400, jsonify(err.messages))
+    @validate_with(RegisterDetailsSchema)
+    def post(self, data):
             
         # Attempt to create a new user with the username and password
         if not auth_services.register_user(data['zID'], data['password']):
@@ -53,27 +44,11 @@ class activationEmail(Resource):
         sendActivationEmail(f"127.0.0.1/api/user/activation?zID={data['username']}&activation={activationLink}", f"{data['username']}@student.unsw.edu.au")
 
 @api.route('/activate')
-class activate(Resource):
-    def post(self):
-        
-        # Check request is json
-        if not request.json:
-            abort(400, 'Malformed Request')
-        
-        # Validate data
-        try:
-            data = TokenSchema().load(request.get_json())
-        except ValidationError as err:
-            abort(400, jsonify(err.messages))
-        
-        # Authorize token and return true or false
-        ret_data = auth_services.authorize_token(data['token'], 0)
-        if (not ret_data['valid']):
-            abort(403, 'Invalid Credentials')
-        
-        # TODO: Do some validation-related shit
-        pprint.pprint(ret_data)
-        token_data = ret_data['data']
+@api.param('token', description='Users Token', type='String', required='True')
+class Activate(Resource):
+    
+    @auth_services.check_authorization(activationRequired=False, level=0)
+    def post(self, token_data):
 
         result = users.activateAccount(token_data['zID'])
         if (result != 'success'):
@@ -85,16 +60,8 @@ class Login(Resource):
     
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
-    def post(self):
-        # Check request is json
-        if not request.json:
-            abort(400, 'Malformed Request')
-        
-        # Validate data
-        try:
-            data = LoginDetailsSchema().load(request.get_json())
-        except ValidationError as err:
-            abort(400, err.messages)
+    @validate_with(LoginDetailsSchema)
+    def post(self, data):
         
         # Login and if successful return the token otherwise invalid credentials
         token = auth_services.login(data['zID'], data['password'])
@@ -104,7 +71,7 @@ class Login(Resource):
             abort(403, 'Invalid Credentials')
 
 @api.route('/validate')
-@api.param('token', description='Users Token', type='String', required='True')
+@api.param('token', description='User Token', type='String', required='True')
 class Authorize(Resource):
 
     @api.response(400, 'Malformed Request')

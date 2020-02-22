@@ -3,6 +3,8 @@ from datetime import datetime, date, time, timedelta
 from util.users import checkUserInfo, checkUser, createUser
 from flask_restx import abort
 from flask import request
+from schemata.auth_schemata import TokenSchema
+from marshmallow import ValidationError
 
 # Expiration time on tokens - 60 minutes #FIXME
 token_exp = 1000*60
@@ -119,11 +121,20 @@ def check_authorization(activationRequired=True, level=0):
     def decorator(func):
         def wrapper(*args, **kwargs):
             try:
+                # Validate token
+                try:
+                    data = TokenSchema().load({"token": request.args.get("token")})
+                except ValidationError as err:
+                    abort(400, err.messages)
+                
+                # Decode token
                 token_data = jwt.decode(
-                    request.args.get("token"),
+                    data['token'],
                     'secret',
                     algorithms='HS256'
                 )
+                
+                # Check permissions on token
                 if (int(token_data['permission']) >= level):
                     # TODO Also check if admin of specific club
                     return func(token_data=token_data, *args, **kwargs)
