@@ -116,11 +116,12 @@ class OnThisDay(Resource):
 class Attend(Resource):
     # For adding a user to an event
     # Usage:
-    # /api/attend
+    # /api/attend?token=2132.23133.21332
     # Takes: 
-    # {'zID': z5214808, 'eventID': "12332", 'time': "2020-04-04 11:55:59 (i.e. YYYY-MM-DD HH:MM:DD)"}
+    # {eventID': "12332", 'time': "2020-04-04 11:55:59 (i.e. YYYY-MM-DD HH:MM:DD)"}
     @api.response(400, "Malformed Request")
-    def post(self):
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
         data = request.get_json()
         payload = {}
 
@@ -133,11 +134,15 @@ class Attend(Resource):
                 abort(400, "Malformed Request")
         else:
             time = datetime.now()
-        payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), time)
+        payload['status'] = participation.register(sanitize(token_data['zID'].lower()), sanitize(data['eventID']), time)
         return jsonify(payload)
 
 @api.route('/getAttendance')
 class getAttendance(Resource):
+    
+    @api.response(400, "Cannot find file")
+    @api.response(400, "Malformed Response")
+    @auth_services.check_authorization(level=2)
     def get(self):
         eventID = request.args.get('eventID')
         try:

@@ -117,7 +117,7 @@ def authorizeActivationToken(token):
         abort(403, 'Invalid Credentials')
     abort(400, 'Malformed Request')
 
-def check_authorization(activationRequired=True, level=0):
+def check_authorization(activationRequired=True, level=0, allowSelf=False):
     def decorator(func):
         def wrapper(*args, **kwargs):
             try:
