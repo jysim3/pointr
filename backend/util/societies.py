@@ -138,3 +138,54 @@ def joinSoc(zID, socID):
 
     conn.close()
     return "success"
+
+# Base user: socStaff -> Role -> 0, admin 1
+def checkZidForSoc(zID, socID):
+    conn = createConnection()
+    curs = conn.cursor()
+
+    try:
+        curs.execute("SELECT * FROM SOCSTAFF WHERE society = (%s) and zid = (%s);", (socID, zID,))
+    except Exception as e:
+        conn.close()
+        return False
+
+    results = curs.fetchone()
+    return True if results == [] else False
+
+# NOTE: Feed me a socID and a userType, accepts ["admin", "user"]
+def getAdminsForSoc(socID, userType = "admin"):
+    if (userType == "admin"):
+        userType = 1
+    else:
+        userType = 0
+    conn = createConnection()
+    curs = conn.cursor()
+
+    try:
+        curs.execute("SELECT * FROM SOCSTAFF WHERE society = (%s) and role = (%d);", (socID, userType,))
+    except Exception as e:
+        conn.close()
+        return "failed"
+
+    payload = []
+    for result in curs.fetchall():
+        personJSON = {}
+        personJSON['zID'] = result[1]
+        personJSON['role'] = "admin" if result[2] == 1 else "basic"
+        payload.append(personJSON)
+    
+    return payload
+
+def getSocIDFromEventID(eventID):
+    conn = createConnection()
+    curs = conn.cusor()
+
+    try:
+        curs.execute("SELECT society FROM host WHERE eventID = (%s);", ((eventID,)))
+    except Exception as e:
+        conn.close()
+        return "Failed"
+
+    results = curs.fetchone()
+    return None if results == [] else results[0]

@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS socstaff (
     primary key (society, zid)
 );
 drop TABLE IF EXISTS encrypt;
-CREATE TABLE IF NOT EXISTS emailEncrypt (
+CREATE TABLE IF NOT EXISTS encrypt (
     password TEXT primary key
 );
 
