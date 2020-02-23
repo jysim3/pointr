@@ -3,7 +3,7 @@ import hashlib
 
 # Creating a user 
 # 8/1/2020: TODO: To implement the login system, we need to store hashed passwords
-def createUser(zID, password, isArc = True):
+def createUser(zID, name, password, isArc = True):
     if (checkUser(zID) != False):
         return "Failed"
     password = str(password).encode('UTF-8')
@@ -12,7 +12,7 @@ def createUser(zID, password, isArc = True):
     conn = createConnection()
     curs = conn.cursor()
     try:
-        curs.execute("INSERT INTO users(zid, password, isArc, activationStatus) values((%s), (%s), (%s), False);", (zID, pwHash, isArc,))
+        curs.execute("INSERT INTO users(zid, name, password, isArc, activationStatus) values((%s), (%s), (%s), (%s), False);", (zID, name, pwHash, isArc,))
     except Exception as e:
         print(e)
         return "Failed"
