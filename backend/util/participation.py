@@ -3,6 +3,7 @@ import sys
 sys.path.append('../')
 from util.utilFunctions import createConnection, checkUser, checkEvent
 from util.users import checkArc
+from util.events import getEndTime
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import csv
@@ -26,6 +27,10 @@ def register(zID, eventID, time = None):
     conn = createConnection()
     curs = conn.cursor()
     # NOTE: DEFAULTS TO THE CURRENT TIME, unless a time argument has been provided
+    endTime = getEndTime(eventID)
+    if (endTime != None):
+        if (datetime.now().time() > endTime):
+            return "Event closed already"
     try:
         curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, datetime.now() if time == None else time))
     except Exception as e:
@@ -72,7 +77,7 @@ def checkParticipation(zID, eventID):
 
     rows = curs.fetchall()
     conn.close()
-    return False if rows is None else True
+    return False if rows == [] else True
 
 # Get the attendance information of one particular event
 # return a list of attendees in the form of: [(points, isArcMember, name, zid), (...)]

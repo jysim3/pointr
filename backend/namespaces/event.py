@@ -58,12 +58,14 @@ class Event(Resource):
         hasQR = str(data['hasQR'])
         societyID = str(data['socID']) if 'socID' in data else None
         isRecur = str(data['isRecur']) if 'isRecur' in data and data['isRecur'] == 1 else False
+        description = str(data['description']) if 'description' in data else None
+        endTime = str(data['endTime']) if 'endTime' in data else None
 
         results = None
         if isRecur is not False:
-            results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID)
+            results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description, endTime)
         else:
-            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID)
+            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID, description, endTime)
 
         if (isinstance(results, tuple) == False):
             return jsonify({"status": "failed", "msg": results})
@@ -125,6 +127,7 @@ class Attend(Resource):
         data = request.get_json()
         payload = {}
 
+        '''
         time = None
         if 'time' in data:
             try:
@@ -133,8 +136,11 @@ class Attend(Resource):
                 print(e)
                 abort(400, "Malformed Request")
         else:
-            time = datetime.now()
-        payload['status'] = participation.register(sanitize(token_data['zID'].lower()), sanitize(data['eventID']), time)
+        '''
+        if ('zID' not in data or 'eventID' not in data):
+            abort(400, "Malformed Request")
+        time = datetime.now().date()
+        payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), time)
         return jsonify(payload)
 
 @api.route('/getAttendance')
