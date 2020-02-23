@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS events (
     eventID TEXT NOT NULL,
     name TEXT NOT NULL,
     eventdate date NOT NULL,
+    endTime time,
 	eventWeek TEXT NOT NULL,
     owner TEXT NOT NULL REFERENCES users(zid),
     qrCode boolean,

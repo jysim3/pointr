@@ -78,8 +78,6 @@ def getPersonEventsForSoc(zID, societyID):
     if (socName is None):
         return None
 
-    # TODO: Debug this query below
-    #curs.execute("select * from events join host join participation on events.eventID = host.eventID and events.eventID = participation.eventID and society = (%s) and participation.zid = (%s);", (societyID, zID,))
     curs.execute("select * from events join host on (events.eventID = host.eventID) join participation on (events.eventID = participation.eventID) where society = (%s) and participation.zid = (%s);", (societyID, zID,))
     events = curs.fetchall()
     conn.close()
