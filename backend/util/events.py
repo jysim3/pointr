@@ -113,10 +113,15 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
     eventEndDate = datetime.strptime(eventEndDate, "%Y-%m-%d").date()
     counter = 0
     eventIDLists = []
+    previousWeek = None
     while eventStartDate < eventEndDate:
         currEventID = eventID + f"{counter:05d}"
         week = findWeek(eventStartDate)
-        
+        if (week is None):
+            break
+        elif (previousWeek == week):
+            eventStartDate += interval
+            continue
 
         try:
             curs.execute("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s));", (currEventID, eventName, zID, eventStartDate, week, qrFlag, description,))
@@ -125,10 +130,11 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
 
             eventIDLists.append({"date": str(eventStartDate), "eventID": currEventID})
         except Exception as e:
-            print(e)
+            conn.commit()
             return "Error encountered"
         eventStartDate += interval
         counter += 1
+        previousWeek = week
     conn.commit()
     conn.close()
 
