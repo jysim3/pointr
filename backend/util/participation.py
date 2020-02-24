@@ -80,7 +80,7 @@ def checkParticipation(zID, eventID):
     return False if rows == [] else True
 
 # Get the attendance information of one particular event
-# return a list of attendees in the form of: [(points, isArcMember, name, zid), (...)]
+# return a list of attendees in the form of: [(points, isArcMember, name, zid, time), (...)]
 # NOTE: isArcMember is bool, 0 == False, 1 == True
 # NOTE: Potentially we dont need to return the name of the user here
 def getAttendance(eventID):
@@ -89,22 +89,37 @@ def getAttendance(eventID):
     conn = createConnection()
     curs = conn.cursor()
     try:
-        curs.execute("SELECT qrCode FROM events WHERE eventid = (%s);", (eventID,))
+        curs.execute("SELECT name, eventdate, location, societyname, societyID FROM userParticipatedEvents;")
     except Exception as e:
+        conn.close()
         return "failed"
-    qrCode = curs.fetchone()
-    qrCode = qrCode[0] if qrCode is not None else None
+    results = curs.fetchone()
+    if (results is None):
+        return "failed"
+    payload = {}
+    payload['eventName'] = results[0]
+    payload['eventDate'] = results[1]
+    payload['location'] = results[2]
+    payload['societyName'] = results[3]
+    payload['societyID'] = results[4]
+    payload['attendance'] = []
     try:
-        curs.execute("SELECT points, isArcMember, users.name, users.zid FROM participation JOIN (SELECT * FROM events) AS events ON (participation.eventid = events.eventid) JOIN (SELECT * FROM users) AS users ON (participation.zid = users.zid) WHERE events.eventID = (%s);", (eventID,))
+        curs.execute("SELECT points, isArcMember, users.name, users.zID, participation.time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) JOIN USERS ON (PARTICIPATION.ZID = USERS.zID) WHERE events.eventID = (%s);", (eventID,))
     except Exception as e:
+        conn.close()
         return "failed"
-    result = curs.fetchall()
-
-    curs.execute("SELECT name FROM events WHERE eventid = (%s);", (eventID,))
-    name = curs.fetchone()
-
-    conn.close()
-    return result, name, qrCode
+    results = curs.fetchall()
+    if results == []:
+        return "failed"
+    for result in results:
+        personJSON = {}
+        personJSON['points'] = result[0]
+        personJSON['isArcMember'] = result[1]
+        personJSON['userName'] = result[2]
+        personJSON['zID'] = result[3]
+        personJSON['attendanceTime'] = result[4]
+        payload['attendance'].append(personJSON)
+    return payload
 
 def getAttendanceCSV(eventID):
     if (checkEvent(eventID) == False):
@@ -116,7 +131,7 @@ def getAttendanceCSV(eventID):
     except Exception as e:
         return "failed"
     results = curs.fetchall()
-    if results is None:
+    if results == []:
         return "No attendance"
     conn.commit()
 

@@ -62,12 +62,12 @@ class Join(Resource):
     @auth_services.check_authorization(level=1)
     @validate_with(SocietyIDSchema)
     def post(self, token_data, data):
-        
-        result = societies.joinSoc(token_data['zID'], data['socID'])
+
+        result = societies.joinSoc(token_data['zID'], data['societyID'])
         if result == 'failed':
             abort(400, "Bad arguments")
         return jsonify({"status": "success"})
-        
+
     def delete(self):
         #TODO
         pass

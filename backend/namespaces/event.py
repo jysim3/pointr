@@ -75,30 +75,18 @@ class Event(Resource):
     # Usage:
     # GET /api/event?eventID=ID
     # Returns: 
-    # {"eventID": "1239", "name": "Test Event 0", "participants": [{"zID": "z5161616", "name": "Steven Shen", "points": 1}, {"zID": "z5161798", "name": "Casey Neistat", "points": 1}]}
+    # {"eventName": "memes", "eventDate": "2020-04-01", "location": "UNSW Hall", "societyName": "UNSW Hall", "societyID": "MEMESASD", "attendance": ["points": 1, "isArc" = True, "username": "steven shen", "zID": "z5161616", time: "2020-02-25 00:19:05"]}
     @api.response(200, 'Success')
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
     def get(self):
         eventID = request.args.get('eventID')
-        payload = {}
         attendance = participation.getAttendance(sanitize(eventID))
         if attendance == "failed":
-            payload['status'] = 'failed'
-        else:
-            payload['eventID'] = eventID
-            payload['name'] = attendance[1][0]
-            payload['hasQR'] = attendance[0][0][4]
-            payload['participants'] = []
-            for person in attendance[0]:
-                personJSON = {}
-                personJSON['zID'] = person[3].lower()
-                personJSON['name'] = person[2]
-                personJSON['points'] = person[0]
-                payload['participants'].append(personJSON)
-            payload['status'] = 'success'
-        return jsonify(payload)
-        
+            abort(400, "No such event")
+
+        return jsonify(attendance)
+
 @api.route('/onthisday')
 class OnThisDay(Resource):
     # Will probably be involved in some kind of a "today's events" type of thing

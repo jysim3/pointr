@@ -8,5 +8,5 @@ fi
 export POINTR_EMAIL_PASSWORD="$1"
 export POINTR_SERVER_SECRET="$2"
 export FLASK_APP=app.py 
-export FLASK_ENV=deployment 
+export FLASK_ENV=development 
 python3 -m flask run

@@ -88,7 +88,7 @@ def login(zID, password):
                 'zID': zID,
                 'permission': 1 # TODO Make it so admins and users can be created
             }, 
-            jwt_secret, algorithm='HS256' # TODO ensure secret is secret
+            jwt_secret, algorithm='HS256' 
         ) 
         return token.decode("utf-8")
     return None
@@ -102,7 +102,7 @@ def generateActivationToken(zID):
             'zID': zID,
             'permission': 0
         }, 
-        jwt_secret, algorithm='HS256' # TODO ensure secret is secret
+        jwt_secret, algorithm='HS256' 
     ) 
     return token.decode("utf-8")
 

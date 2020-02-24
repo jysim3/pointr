@@ -38,7 +38,7 @@ class User(Resource):
     # [{"eventID": "1239", "name": "Test Event 0", "society": "UNSW Hall", "eventDate": "2019-11-19"}, {"eventID": "1240", "name": "Coffee Night", "society": "UNSW Hall", "eventDate": "2019-11-20"}]
     @api.response(400, 'Malformed Request')
     # @api.description('Retrieves data on user')
-    # FIXME: FIXMEMEEJRWKEJRWERBWEJRBKEWJ
+    # FIXME: FIXMEMEEJRWKEJRWERBWEJRBKEWJ, HARRISON PLEZZZZZZZZZ
     def get(self):
         if not request.json:
             abort(400, 'Malformed Request')
