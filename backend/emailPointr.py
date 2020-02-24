@@ -13,18 +13,12 @@ def getPassword():
 port = 465  # For SSL
 smtp_server = "smtp.gmail.com"
 sender_email = "pointr.help@gmail.com"
-<<<<<<< HEAD
 
 if (os.environ.get('POINTR_EMAIL_PASSWORD') == None):
     print("Missing environment secret key for email address. Set env variable POINT_EMAIL_PASSWORD to the password.")
     sys.exit()
 
 password = os.environ.get('POINTR_EMAIL_PASSWORD')
-=======
-#password = getPassword()
-# FIXME: Move this line below into the database then delete it
-password = "!4wKrKwAp&WfU"
->>>>>>> f1a6fed9b96e0d2064b9787e0d523aa7062acb2b
 context = ssl.create_default_context()
 server = smtplib.SMTP_SSL(smtp_server, port, context=context)
 server.login(sender_email, password)
