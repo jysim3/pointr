@@ -1,7 +1,7 @@
 <template>
   <div class="event-view">
       <DashboardEventCard
-        v-for="(event, index) in upcomingEvents"
+        v-for="(event, index) in events"
         :key="index"
         :eventData="event"
       ></DashboardEventCard>
@@ -12,12 +12,15 @@
 import DashboardEventCard from "@/components/dashboard/DashboardEventCard.vue";
 
 export default {
-  name: "UpcomingEvents",
+  name: "DashboardEventView",
   components: {
     DashboardEventCard
   },
   props: {
-    upcomingEvents: Array
+    events: {
+      type: Array,
+      required: true
+    }
   }
 };
 </script>

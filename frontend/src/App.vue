@@ -5,6 +5,7 @@
 </template>
 
 <script>
+// TODO: import fetchAPI in App.vue instead?
 import auth from "@/mixins/auth.js"
 
 export default {

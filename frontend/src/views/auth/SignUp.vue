@@ -57,8 +57,6 @@ import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import InputPassword from "@/components/input/InputPassword.vue";
 
-// TODO: zID should really be its own component as well as password since they are used more than once.
-
 export default {
   name: "SignUp",
   components: {
