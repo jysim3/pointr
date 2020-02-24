@@ -1,6 +1,7 @@
 drop TABLE IF EXISTS users cascade;
 CREATE TABLE IF NOT EXISTS users (
     zid TEXT NOT NULL,
+    name TEXT NOT NULL,
     password TEXT NOT NULL,
     isArc BOOLEAN NOT NULL,
     activationLink TEXT,
@@ -12,6 +13,7 @@ CREATE TABLE IF NOT EXISTS events (
     eventID TEXT NOT NULL,
     name TEXT NOT NULL,
     eventdate date NOT NULL,
+    endTime time,
 	eventWeek TEXT NOT NULL,
     owner TEXT NOT NULL REFERENCES users(zid),
     qrCode boolean,
@@ -48,7 +50,7 @@ CREATE TABLE IF NOT EXISTS socstaff (
     primary key (society, zid)
 );
 drop TABLE IF EXISTS encrypt;
-CREATE TABLE IF NOT EXISTS emailEncrypt (
+CREATE TABLE IF NOT EXISTS encrypt (
     password TEXT primary key
 );
 

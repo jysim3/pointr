@@ -3,7 +3,7 @@ import hashlib
 
 # Creating a user 
 # 8/1/2020: TODO: To implement the login system, we need to store hashed passwords
-def createUser(zID, password, isArc = False):
+def createUser(zID, name, password, isArc = True):
     if (checkUser(zID) != False):
         return "Failed"
     password = str(password).encode('UTF-8')
@@ -11,7 +11,11 @@ def createUser(zID, password, isArc = False):
 
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("INSERT INTO users(zid, password, isArc, activationStatus) values((%s), (%s), (%s), False);", (zID, pwHash, isArc,))
+    try:
+        curs.execute("INSERT INTO users(zid, name, password, isArc, activationStatus) values((%s), (%s), (%s), (%s), False);", (zID, name, pwHash, isArc,))
+    except Exception as e:
+        print(e)
+        return "Failed"
     conn.commit()
     conn.close()
     return "Success"
@@ -74,8 +78,6 @@ def getPersonEventsForSoc(zID, societyID):
     if (socName is None):
         return None
 
-    # TODO: Debug this query below
-    #curs.execute("select * from events join host join participation on events.eventID = host.eventID and events.eventID = participation.eventID and society = (%s) and participation.zid = (%s);", (societyID, zID,))
     curs.execute("select * from events join host on (events.eventID = host.eventID) join participation on (events.eventID = participation.eventID) where society = (%s) and participation.zid = (%s);", (societyID, zID,))
     events = curs.fetchall()
     conn.close()

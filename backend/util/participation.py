@@ -3,6 +3,7 @@ import sys
 sys.path.append('../')
 from util.utilFunctions import createConnection, checkUser, checkEvent
 from util.users import checkArc
+from util.events import getEndTime
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import csv
@@ -26,6 +27,10 @@ def register(zID, eventID, time = None):
     conn = createConnection()
     curs = conn.cursor()
     # NOTE: DEFAULTS TO THE CURRENT TIME, unless a time argument has been provided
+    endTime = getEndTime(eventID)
+    if (endTime != None):
+        if (datetime.now().time() > endTime):
+            return "Event closed already"
     try:
         curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, datetime.now() if time == None else time))
     except Exception as e:
@@ -72,7 +77,7 @@ def checkParticipation(zID, eventID):
 
     rows = curs.fetchall()
     conn.close()
-    return False if rows is None else True
+    return False if rows == [] else True
 
 # Get the attendance information of one particular event
 # return a list of attendees in the form of: [(points, isArcMember, name, zid), (...)]
@@ -106,9 +111,8 @@ def getAttendanceCSV(eventID):
         return "failed"
     conn = createConnection()
     curs = conn.cursor()
-    #curs.execute("COPY (SELECT isArcMember, zID, time FROM participation JOIN EVENTS ON (participation.eventID = events.eventID) WHERE events.eventID = (%s)) TO '/mnt/c/Users/Shen/COMP/HallHackathon/backend/test.csv' DELIMITER ',' CSV HEADER;", (eventID, ))
     try:
-        curs.execute("SELECT isArcMember, zID, time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) WHERE events.eventID = (%s);", (eventID,))
+        curs.execute("SELECT isArcMember, users.zID, users.name, time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) JOIN USERS ON (PARTICIPATION.ZID = USERS.zID) WHERE events.eventID = (%s);", (eventID,))
     except Exception as e:
         return "failed"
     results = curs.fetchall()
@@ -119,11 +123,10 @@ def getAttendanceCSV(eventID):
     import os
     path = os.getcwd()
     path += f'/csvFiles/{eventID}.csv'
-    print(path)
     try:
         with open(path, 'w', newline='') as file:
-            file.write("isArcMember|zID|time\n")
-            writer = csv.writer(file, delimiter='|')
+            file.write("isArcMember,zID,name,time\n")
+            writer = csv.writer(file, delimiter=',')
             writer.writerows(results)
     except Exception as e:
         print(e)
