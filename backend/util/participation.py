@@ -111,9 +111,8 @@ def getAttendanceCSV(eventID):
         return "failed"
     conn = createConnection()
     curs = conn.cursor()
-    #curs.execute("COPY (SELECT isArcMember, zID, time FROM participation JOIN EVENTS ON (participation.eventID = events.eventID) WHERE events.eventID = (%s)) TO '/mnt/c/Users/Shen/COMP/HallHackathon/backend/test.csv' DELIMITER ',' CSV HEADER;", (eventID, ))
     try:
-        curs.execute("SELECT isArcMember, zID, time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) WHERE events.eventID = (%s);", (eventID,))
+        curs.execute("SELECT isArcMember, users.zID, users.name, time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) JOIN USERS ON (PARTICIPATION.ZID = USERS.zID) WHERE events.eventID = (%s);", (eventID,))
     except Exception as e:
         return "failed"
     results = curs.fetchall()
@@ -124,11 +123,10 @@ def getAttendanceCSV(eventID):
     import os
     path = os.getcwd()
     path += f'/csvFiles/{eventID}.csv'
-    print(path)
     try:
         with open(path, 'w', newline='') as file:
-            file.write("isArcMember|zID|time\n")
-            writer = csv.writer(file, delimiter='|')
+            file.write("isArcMember,zID,name,time\n")
+            writer = csv.writer(file, delimiter=',')
             writer.writerows(results)
     except Exception as e:
         print(e)

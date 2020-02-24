@@ -8,19 +8,24 @@ from schemata.auth_schemata import TokenSchema, AuthSchema
 from marshmallow import ValidationError
 from util.validation_services import validate_args_with
 import pprint
+import os, sys
 
 # Expiration time on tokens - 60 minutes #FIXME
 token_exp = 1000*60
 activationTokenTimeout = 1000*60
-users = {}
 ADMIN = 'Admin'
 USER = 'User'
+
+if (os.environ.get('POINTR_SERVER_SECRET') == None):
+    print("Missing environment secret key for email address. Set env variable POINT_EMAIL_PASSWORD to the password.")
+    sys.exit()
+jwt_secret = os.environ.get('POINTR_SERVER_SECRET')
 
 def authorize_token(token, permission):
     try:
         token_data = jwt.decode(
             token,
-            'secret',
+            jwt_secret,
             algorithms='HS256'
         )
         global ADMIN, USER
@@ -46,7 +51,7 @@ def authorize(token, permission):
     try:
         token_data = jwt.decode(
             token,
-            'secret',
+            jwt_secret,
             algorithms='HS256'
         )
         global ADMIN, USER
@@ -83,7 +88,7 @@ def login(zID, password):
                 'zID': zID,
                 'permission': 1 # TODO Make it so admins and users can be created
             }, 
-            'secret', algorithm='HS256' # TODO ensure secret is secret
+            jwt_secret, algorithm='HS256' # TODO ensure secret is secret
         ) 
         return token.decode("utf-8")
     return None
@@ -97,7 +102,7 @@ def generateActivationToken(zID):
             'zID': zID,
             'permission': 0
         }, 
-        'secret', algorithm='HS256' # TODO ensure secret is secret
+        jwt_secret, algorithm='HS256' # TODO ensure secret is secret
     ) 
     return token.decode("utf-8")
 
@@ -105,7 +110,7 @@ def authorizeActivationToken(token):
     try:
         token_data = jwt.decode(
             token,
-            'secret',
+            jwt_secret,
             algorithms='HS256'
         )
         return {"valid": True, "token_data": token_data}
@@ -132,8 +137,8 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                                 
                 # Decode token
                 token_data = jwt.decode(
-                    args_data['token'],
-                    'secret',
+                    data['token'],
+                    jwt_secret,
                     algorithms='HS256'
                 )
                 

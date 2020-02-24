@@ -1,6 +1,7 @@
 drop TABLE IF EXISTS users cascade;
 CREATE TABLE IF NOT EXISTS users (
     zid TEXT NOT NULL,
+    name TEXT NOT NULL,
     password TEXT NOT NULL,
     isArc BOOLEAN NOT NULL,
     activationLink TEXT,
