@@ -84,7 +84,21 @@ class User(Resource):
         else:
             return jsonify(authorized)
         abort(400, 'Malformed Request')
-        
+
+@api.route('/info')
+@api.param('token', description='Users Token', type='String', required='True')
+class info(Resource):
+    
+    @auth_services.check_authorization(activationRequired=False, level=0)
+    def post(self, token_data):
+
+        zID = token_data('zID')
+        results = users.getUserInfo(zID)
+
+        if (results == 'failed'):
+            abort(400, 'Something went wrong')
+        return jsonify({"msg": results})
+
 @api.route('/points')
 class Points(Resource):
     

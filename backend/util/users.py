@@ -20,6 +20,35 @@ def createUser(zID, name, password, isArc = True):
     conn.close()
     return "Success"
 
+def getUserInfo(zID):
+    conn = createConnection()
+    curs = conn.cursor()
+    try:
+        curs.execute("SELECT name FROM users WHERE zID = (%s);", (zID,))
+    except Exception as e:
+        conn.close()
+        return "failed"
+    name = curs.fetchone()[0]
+    try:
+        curs.execute("SELECT * FROM userParticipatedEvents WHERE zID = (%s);", (zID,))
+    except Exception as e:
+        conn.close()
+        return "failed"
+    results = curs.fetchall()
+    payload = {}
+    payload['name'] = name
+    payload['events'] = []
+    for result in results:
+        eventJSON = {}
+        eventJSON['eventID'] = result[0]
+        eventJSON['name'] = result[1]
+        eventJSON['eventDate'] = result[2]
+        eventJSON['location'] = result[3]
+        eventJSON['societyName'] = result[4]
+        eventJSON['societyID'] = result[5]
+        payload['events'].append(eventJSON)
+    return payload
+
 def checkUserInfo(zID, password):
     password = hashlib.sha256(password.encode(encoding="utf-8")).hexdigest()
 
