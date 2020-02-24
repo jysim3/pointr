@@ -204,12 +204,9 @@ def getAdminsForSoc(socID, userType = "admin"):
         conn.close()
         return "failed"
 
-    payload = []
+    payload = {}
     for result in curs.fetchall():
-        personJSON = {}
-        personJSON['zID'] = result[1]
-        personJSON['role'] = "admin" if result[2] == 1 else "basic"
-        payload.append(personJSON)
+        payload[result[1]] = "admin" if result[2] == 1 else "basic"
     
     return payload
 

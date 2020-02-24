@@ -13,6 +13,7 @@ class TokenSchema(Schema):
     token = common_schemata.token
     
 class AuthSchema(Schema):
-    token = common_schemata.token
+    token = common_schemata.tokenRequired
     eventID = common_schemata.eventID
     societyID = common_schemata.societyID
+    zID = common_schemata.zid

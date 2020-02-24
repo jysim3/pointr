@@ -78,3 +78,35 @@ class Authorize(Resource):
     @auth_services.check_authorization(activationRequired=False, level=0)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
+
+# Validation functions
+@api.route('/validateSelf')
+@api.param('token', description='User Token', type='String', required='True')
+class Authorize(Resource):
+
+    @api.response(400, 'Malformed Request')
+    @auth_services.check_authorization(activationRequired=False, level=5, allowSelf=True)
+    def post(self, token_data):
+        return jsonify({"valid" : "true"})
+        
+# TODO validate activated
+
+@api.route('/validateSocietyAdmin')
+@api.param('token', description='User Token', type='String', required='True')
+@api.param('societyID', description='Society ID', type='String', required='True')
+class Authorize(Resource):
+
+    @api.response(400, 'Malformed Request')
+    @auth_services.check_authorization(activationRequired=False, level=5, allowSocStaff=True)
+    def post(self, token_data):
+        return jsonify({"valid" : "true"})
+        
+@api.route('/validateEventAdmin')
+@api.param('token', description='User Token', type='String', required='True')
+@api.param('eventID', description='Event ID', type='String', required='True')
+class Authorize(Resource):
+
+    @api.response(400, 'Malformed Request')
+    @auth_services.check_authorization(activationRequired=False, level=5, allowSocStaff=True)
+    def post(self, token_data):
+        return jsonify({"valid" : "true"})

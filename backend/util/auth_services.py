@@ -1,10 +1,13 @@
 import jwt
 from datetime import datetime, date, time, timedelta
 from util.users import checkUserInfo, checkUser, createUser
+from util.societies import getSocIDFromEventID, getAdminsForSoc
 from flask_restx import abort
 from flask import request
 from schemata.auth_schemata import TokenSchema, AuthSchema
 from marshmallow import ValidationError
+from util.validation_services import validate_args_with
+import pprint
 
 # Expiration time on tokens - 60 minutes #FIXME
 token_exp = 1000*60
@@ -126,7 +129,7 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     args_data = AuthSchema().load(request.args)
                 except ValidationError as err:
                     abort(400, err.messages)
-                
+                                
                 # Decode token
                 token_data = jwt.decode(
                     args_data['token'],
@@ -134,17 +137,24 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     algorithms='HS256'
                 )
                 
-                # if ('eventID' in args_data):
-                    
                 # Check if eventID exists in query
-                # if so then check society of event
-                # check this zID is an admin of this society
-                # if so allow
+                if (allowSocStaff and 'eventID' in args_data):
+                    # if so then get society of event
+                    societyID = getSocIDFromEventID(args_data['societyID'])
+                    # check this zID is an admin of this society
+                    admins = getAdminsForSoc(societyID)
+                    if (token_data['zID'] in admins):
+                        # if so allow
+                        return func(token_data=token_data, *args, **kwargs)
                 
-                # if societyID exists
-                # check if zID is admin of society
-                # if so allow
-                
+                # if societyID exists in query
+                if (allowSocStaff and 'societyID' in args_data):
+                    # check if zID is admin of society
+                    admins = getAdminsForSoc(args_data['societyID'])
+                    if (token_data['zID'] in admins):
+                        # if so allow
+                        return func(token_data=token_data, *args, **kwargs)
+                                        
                 # Check permissions on token
                 if (int(token_data['permission']) >= level):
                     return func(token_data=token_data, *args, **kwargs)
