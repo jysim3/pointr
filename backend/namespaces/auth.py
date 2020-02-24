@@ -10,8 +10,6 @@ import pprint
 import uuid
 
 api = Namespace('auth', description='Authentication & Authorization Services')
-    
-@api.route('/')
 
 @api.route('/register')
 class Register(Resource):
