@@ -134,7 +134,6 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     args_data = AuthSchema().load(request.args)
                 except ValidationError as err:
                     abort(400, err.messages)
-                                
                 # Decode token
                 token_data = jwt.decode(
                     args_data['token'],

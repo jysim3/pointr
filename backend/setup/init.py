@@ -27,11 +27,11 @@ def initDatabase():
 
     # NOTE: Defaults to UNSW Hall (for the society field right now)
     createSingleEvent("z5161631", "1239", "Hackathon", "2020-11-19", True, findSocID("CSESoc"), None, None)
-    createSingleEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2020-09-09", True, findSocID("UNSW Hall"), None, None, datetime.strptime("23:30:00", "%H:%M:%S"))
+    createSingleEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2020-09-09", True, findSocID("Manchester United FC"), None, None, datetime.strptime("23:30:00", "%H:%M:%S"))
     createSingleEvent("z5222222", "KSJAM", "Test Event", "2020-02-23", False, findSocID("UNSW Hall"), None, None)
-    createSingleEvent("z5111111", "1234", "LoL Appreciation", "2020-09-08", True, findSocID("UNSW Hall"))
+    createSingleEvent("z5444444", "1234", "LoL Appreciation", "2020-09-08", True, findSocID("Exotic Beer Society"))
 
-    createRecurrentEvent("z5161616", "ASDZX", "Coffee Night", "2020-02-26", "2021-01-01", 7, "day", False, "UNSW Hall", findSocID("UNSW Hall"), "Weekly Wednesday gathering for UNSW Hall")
+    createRecurrentEvent("z5222222", "ASDZX", "Coffee Night", "2020-02-26", "2021-01-01", 7, "day", False, "UNSW Hall", findSocID("UNSW Hall"), "Weekly Wednesday gathering for UNSW Hall")
 
     # register users:
     #   for Hackathon

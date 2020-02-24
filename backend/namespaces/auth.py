@@ -27,19 +27,18 @@ class Register(Resource):
         token = auth_services.generateActivationToken(data['zID'])
         
         # At this point, the user is created, we now send the activation email
-        # FIXME: Change this to pointr.live when in production
+        # FIXME: Change this to pointr.live (in frontend) when in production
         sendActivationEmail(f"127.0.0.1:5000/api/auth/activation?token={token}", f"{data['zID']}@student.unsw.edu.au")
-        
+
         return jsonify({"status": "success"})
 
 # NOTE: FIXME: TODO: FOR TESTING ONLY, DO NOT USE IN PRODUCTION
-
 @api.route('/sendActivationEmail')
 class activationEmail(Resource):
     def post(self):
         data = request.get_json()
         activationLink = str(uuid.uuid4().hex).upper()
-        sendActivationEmail(f"127.0.0.1/api/user/activation?zID={data['username']}&activation={activationLink}", f"{data['username']}@student.unsw.edu.au")
+        sendActivationEmail(f"127.0.0.1/api/user/activation?zID={data['username']}&activate={activationLink}", f"{data['username']}@student.unsw.edu.au")
 
 @api.route('/activate')
 @api.param('token', description='Users Token', type='String', required='True')

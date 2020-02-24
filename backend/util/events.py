@@ -47,7 +47,7 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID, loc
     else:
         curs.execute("SELECT * FROM socStaff WHERE society = (%s) AND zid = (%s) AND role = 1;", (societyID, zID,))
         results = curs.fetchone()
-        if (results == []):
+        if (results is None):
             return "not an admin"
 
     if (checkEvent(eventID) != False):
@@ -87,7 +87,7 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
     else:
         curs.execute("SELECT * FROM socStaff WHERE society = (%s) AND zid = (%s) AND role = 1;", (societyID, zID,))
         results = curs.fetchone()
-        if (results == []):
+        if (results is None):
             conn.close()
             return "not an adminsuch user"
 
