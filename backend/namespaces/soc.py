@@ -1,7 +1,10 @@
 from flask import request, jsonify
 from flask_restx import Namespace, Resource, abort, reqparse
 from util.sanitisation_services import sanitize
-from util import societies, utilFunctions
+from util import societies, utilFunctions, auth_services
+from util.validation_services import validate_args_with, validate_with
+from schemata.soc_schemata import SocietyIDAndZIDSchema, SocietyIDSchema
+import pprint
 
 api = Namespace('soc', description='Society Attendance Services')
 
@@ -58,11 +61,34 @@ class Join(Resource):
         if result == 'failed':
             abort(400, "Bad arguments")
         return jsonify({"status": "success"})
+        
+#Example society BCEB9
 
-@api.route('/makeStaff')
-class MakeStaff(Resource):
-    def post(self):
-        data = request.get_json()
-        if ('zID' not in data or 'socID' not in data):
-            abort(400, "Malformed Request")
-        # TODO: Complete This
+@api.route('/staff')
+class Staff(Resource):
+    
+    @api.doc(description='''
+        Make a zID a staff member of this society
+    ''')
+    #FIXME change back auth level
+    @auth_services.check_authorization(level=1, allowSocStaff=True)
+    @validate_args_with(SocietyIDAndZIDSchema)
+    def post(self, token_data, args_data):
+        return societies.makeAdmin(args_data['zID'], args_data['societyID'])
+    
+    @api.doc(description='''
+        Get all staff members of this society
+    ''')
+    @auth_services.check_authorization(level=2, allowSocStaff=True)
+    @validate_args_with(SocietyIDSchema)
+    def get(self, token_data, args_data):
+        status = societies.getAdminsForSoc(args_data['societyID'])
+        return jsonify(status)
+    
+    @api.doc(description='''
+        Remove staff member
+    ''')
+    @auth_services.check_authorization(level=2, allowSocStaff=True)
+    def delete(self):
+        #TODO
+        pass

@@ -137,7 +137,7 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                                 
                 # Decode token
                 token_data = jwt.decode(
-                    data['token'],
+                    args_data['token'],
                     jwt_secret,
                     algorithms='HS256'
                 )
@@ -151,11 +151,14 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     if (token_data['zID'] in admins):
                         # if so allow
                         return func(token_data=token_data, *args, **kwargs)
-                
+                print("1")
                 # if societyID exists in query
                 if (allowSocStaff and 'societyID' in args_data):
+                    print("2")
                     # check if zID is admin of society
                     admins = getAdminsForSoc(args_data['societyID'])
+                    
+                    pprint.pprint(admins)
                     if (token_data['zID'] in admins):
                         # if so allow
                         return func(token_data=token_data, *args, **kwargs)
@@ -180,3 +183,8 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
             abort(400, 'Malformed Request')
         return wrapper
     return decorator
+ 
+# Low   
+# eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1ODI2MDI1MzgsImlhdCI6MTU4MjU0MjUzOCwieklEIjoiejUyMTQ4MDgiLCJwZXJtaXNzaW9uIjoxfQ.eOIssA0CfC_aKM14qZBe9T-SHXBkwkAKLkG7VJxbBt4
+
+# High
