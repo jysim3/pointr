@@ -1,4 +1,4 @@
-from util.utilFunctions import createConnection
+from util.utilFunctions import createConnection, checkUser
 import random
 import string
 
@@ -124,6 +124,26 @@ def getAllSocs():
         payload.append(currSoc)
     return payload
 
+# Make this zID the admin of EVERY SOC IN OUR DB
+def makeSuperAdmin(zID):
+    if (checkUser(zID) == False):
+        return "no such user"
+    conn = createConnection()
+    curs = conn.cursor()
+
+    allSocs = getAllSocs()
+    for result in allSocs:
+        try:
+            curs.execute("INSERT INTO SOCSTAFF(society, zid, role) VALUES ((%s), (%s), (%s));", (result['societyID'], zID, 5))
+        except Exception as e:
+            conn.commit()
+            conn.close()
+            return "failed"
+
+    conn.commit()
+    return "success"
+
+# Making this particular zID into a normal member
 def joinSoc(zID, socID):
     conn = createConnection()
     curs = conn.cursor()
@@ -138,3 +158,71 @@ def joinSoc(zID, socID):
 
     conn.close()
     return "success"
+
+# Base user: socStaff -> Role -> 0, admin 1
+def makeAdmin(zID, socID):
+    conn = createConnection()
+    curs = conn.cursor()
+
+    try:
+        curs.execute("INSERT INTO SOCSTAFF(society, zid, role) VALUES ((%s), (%s), (%s));", (socID, zID, 1,))
+        conn.commit()
+    except Exception as e:
+        conn.close()
+        return "failed"
+
+    conn.close()
+    return "success"
+
+# Check if a user is in a society, return True/False
+def checkUserInSoc(zID, socID):
+    conn = createConnection()
+    curs = conn.cursor()
+
+    try:
+        curs.execute("SELECT * FROM SOCSTAFF WHERE society = (%s) and zid = (%s);", (socID, zID,))
+    except Exception as e:
+        conn.close()
+        return False
+
+    results = curs.fetchone()
+    return True if results == [] else False
+
+# NOTE: Accepts a socID and a userType, returns a list of users or admins, accepts ["admin", "user"]
+def getAdminsForSoc(socID, userType = "admin"):
+    if (userType == "admin"):
+        userType = 1
+    else:
+        userType = 0
+    conn = createConnection()
+    curs = conn.cursor()
+
+    try:
+        curs.execute("SELECT * FROM SOCSTAFF WHERE society = (%s) and role >= (%s) and role < 5;", (socID, userType,))
+    except Exception as e:
+        print(e)
+        conn.close()
+        return "failed"
+
+    payload = []
+    for result in curs.fetchall():
+        personJSON = {}
+        personJSON['zID'] = result[1]
+        personJSON['role'] = "admin" if result[2] == 1 else "basic"
+        payload.append(personJSON)
+    
+    return payload
+
+# Returns either None (in case event doesn't exist), "Failed"(in case anything's fucked with the table) or socID(on success)
+def getSocIDFromEventID(eventID):
+    conn = createConnection()
+    curs = conn.cursor()
+
+    try:
+        curs.execute("SELECT society FROM host WHERE eventID = (%s);", ((eventID,)))
+    except Exception as e:
+        conn.close()
+        return "Failed"
+
+    results = curs.fetchone()
+    return None if results is None else results[0]

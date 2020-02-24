@@ -2,6 +2,9 @@ import jwt
 from datetime import datetime, date, time, timedelta
 from util.users import checkUserInfo, checkUser, createUser
 from flask_restx import abort
+from flask import request
+from schemata.auth_schemata import TokenSchema
+from marshmallow import ValidationError
 
 # Expiration time on tokens - 60 minutes #FIXME
 token_exp = 1000*60
@@ -23,7 +26,8 @@ def authorize_token(token, permission):
         elif (token_data['permission'] == ADMIN and permission == USER):
             return {"valid": True, "data": token_data}
         else:
-            return {"valid": False, "reason": "Permission denied"}
+            return {"valid": True, "data": token_data}
+            # return {"valid": False, "reason": "Permission denied"}
     except jwt.InvalidSignatureError:
         print("Received invalid token signature")
         return {"valid": False, "reason": "Invalid token"}
@@ -74,7 +78,7 @@ def login(zID, password):
                 'exp': datetime.utcnow() + timedelta(seconds=token_exp),
                 'iat': datetime.utcnow(),
                 'zID': zID,
-                'permission': USER # TODO Make it so admins and users can be created
+                'permission': 1 # TODO Make it so admins and users can be created
             }, 
             'secret', algorithm='HS256' # TODO ensure secret is secret
         ) 
@@ -112,3 +116,39 @@ def authorizeActivationToken(token):
         print("Received invalid token data")
         abort(403, 'Invalid Credentials')
     abort(400, 'Malformed Request')
+
+def check_authorization(activationRequired=True, level=0):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            try:
+                # Validate token
+                try:
+                    data = TokenSchema().load({"token": request.args.get("token")})
+                except ValidationError as err:
+                    abort(400, err.messages)
+                
+                # Decode token
+                token_data = jwt.decode(
+                    data['token'],
+                    'secret',
+                    algorithms='HS256'
+                )
+                
+                # Check permissions on token
+                if (int(token_data['permission']) >= level):
+                    # TODO Also check if admin of specific club
+                    return func(token_data=token_data, *args, **kwargs)
+                else:
+                    abort(401, "Permission Denied")
+            except jwt.InvalidSignatureError:
+                print("Received invalid token signature")
+                abort(403, 'Invalid Credentials')
+            except jwt.ExpiredSignatureError:
+                print("Received expired token")
+                abort(401, 'Expired Token')
+            except jwt.DecodeError:
+                print("Received invalid token data")
+                abort(403, 'Invalid Credentials')
+            abort(400, 'Malformed Request')
+        return wrapper
+    return decorator

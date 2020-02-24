@@ -1,7 +1,7 @@
 from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort, reqparse
 from schemata import event_schemata
-from util import events, participation, utilFunctions
+from util import events, participation, utilFunctions, auth_services
 from util.sanitisation_services import sanitize
 from datetime import datetime
 import uuid
@@ -58,12 +58,14 @@ class Event(Resource):
         hasQR = str(data['hasQR'])
         societyID = str(data['socID']) if 'socID' in data else None
         isRecur = str(data['isRecur']) if 'isRecur' in data and data['isRecur'] == 1 else False
+        description = str(data['description']) if 'description' in data else None
+        endTime = str(data['endTime']) if 'endTime' in data else None
 
         results = None
         if isRecur is not False:
-            results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID)
+            results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description, endTime)
         else:
-            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID)
+            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID, description, endTime)
 
         if (isinstance(results, tuple) == False):
             return jsonify({"status": "failed", "msg": results})
@@ -119,12 +121,12 @@ class Attend(Resource):
     # /api/attend
     # Takes: 
     # {'zID': z5214808, 'eventID': "12332", 'time': "2020-04-04 11:55:59 (i.e. YYYY-MM-DD HH:MM:DD)"}
-    # TODO Take Token instead of ZID
     @api.response(400, "Malformed Request")
     def post(self):
         data = request.get_json()
         payload = {}
 
+        '''
         time = None
         if 'time' in data:
             try:
@@ -133,7 +135,10 @@ class Attend(Resource):
                 print(e)
                 abort(400, "Malformed Request")
         else:
-            time = datetime.now()
+        '''
+        if ('zID' not in data or 'eventID' not in data):
+            abort(400, "Malformed Request")
+        time = datetime.now().date()
         payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), time)
         return jsonify(payload)
 

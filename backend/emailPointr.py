@@ -11,9 +11,9 @@ def getPassword():
 port = 465  # For SSL
 smtp_server = "smtp.gmail.com"
 sender_email = "pointr.help@gmail.com"
-password = getPassword()
+#password = getPassword()
 # FIXME: Move this line below into the database then delete it
-#password = "!4wKrKwAp&WfU"
+password = "!4wKrKwAp&WfU"
 context = ssl.create_default_context()
 server = smtplib.SMTP_SSL(smtp_server, port, context=context)
 server.login(sender_email, password)

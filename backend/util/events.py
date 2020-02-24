@@ -38,7 +38,7 @@ def findWeek(date: datetime):
 
 
 # Creting an event (single instance events)
-def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID, location = None, description = None):
+def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID, location = None, description = None, endTime = None):
     conn = createConnection()
     curs = conn.cursor()
 
@@ -61,7 +61,7 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID, loc
     if (week == None):
         return "Not a valid date for events"
 
-    curs.execute("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s));", (eventID, eventName, zID, eventDate, week, qrFlag, description,))
+    curs.execute("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, endTime) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", (eventID, eventName, zID, eventDate, week, qrFlag, description, endTime,))
 
     # NOTE: Currently, location defaults to UNSW Hall if one isnt provided
     curs.execute("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
@@ -77,7 +77,7 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID, loc
     # Example: startDate = 2020-01-30, endDate = 2020-05-30, recurType = "day", recurInterval = 14 
     # Example Cont.: The above indicates this event occurs every fortnightly starting with 30/1/2020 to 30/5/2020
 '''
-def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag = None, location = None, societyID = None, description = None):
+def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag = None, location = None, societyID = None, description = None, endTime = None):
     conn = createConnection()
     curs = conn.cursor()
 
@@ -113,22 +113,28 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
     eventEndDate = datetime.strptime(eventEndDate, "%Y-%m-%d").date()
     counter = 0
     eventIDLists = []
+    previousWeek = None
     while eventStartDate < eventEndDate:
         currEventID = eventID + f"{counter:05d}"
         week = findWeek(eventStartDate)
-        
+        if (week is None):
+            break
+        elif (previousWeek == week):
+            eventStartDate += interval
+            continue
 
         try:
-            curs.execute("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s));", (currEventID, eventName, zID, eventStartDate, week, qrFlag, description,))
+            curs.execute("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, endTime) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", (currEventID, eventName, zID, eventStartDate, week, qrFlag, description, endTime,))
 
             curs.execute("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, currEventID,))
 
             eventIDLists.append({"date": str(eventStartDate), "eventID": currEventID})
         except Exception as e:
-            print(e)
+            conn.commit()
             return "Error encountered"
         eventStartDate += interval
         counter += 1
+        previousWeek = week
     conn.commit()
     conn.close()
 
@@ -157,4 +163,14 @@ def fetchRecur(eventID):
     conn.close()
     return payload
 
-#def getAttendance
+def getEndTime(eventID):
+    conn = createConnection()
+    curs = conn.cursor()
+
+    try:
+        curs.execute("SELECT endTime FROM EVENTS WHERE EVENTID = (%s);", (eventID,))
+    except Exception as e:
+        return None
+
+    result = curs.fetchone()[0]
+    return result
