@@ -1,10 +1,13 @@
 import jwt
 from datetime import datetime, date, time, timedelta
 from util.users import checkUserInfo, checkUser, createUser
+from util.societies import getSocIDFromEventID, getAdminsForSoc
 from flask_restx import abort
 from flask import request
-from schemata.auth_schemata import TokenSchema
+from schemata.auth_schemata import TokenSchema, AuthSchema
 from marshmallow import ValidationError
+from util.validation_services import validate_args_with
+import pprint
 import os, sys
 
 # Expiration time on tokens - 60 minutes #FIXME
@@ -122,26 +125,49 @@ def authorizeActivationToken(token):
         abort(403, 'Invalid Credentials')
     abort(400, 'Malformed Request')
 
-def check_authorization(activationRequired=True, level=0):
+def check_authorization(activationRequired=True, level=0, allowSelf=False, allowSocStaff=False):
     def decorator(func):
         def wrapper(*args, **kwargs):
             try:
                 # Validate token
                 try:
-                    data = TokenSchema().load({"token": request.args.get("token")})
+                    args_data = AuthSchema().load(request.args)
                 except ValidationError as err:
                     abort(400, err.messages)
-                
+                                
                 # Decode token
                 token_data = jwt.decode(
-                    data['token'],
+                    args_data['token'],
                     jwt_secret,
                     algorithms='HS256'
                 )
                 
+                # Check if eventID exists in query
+                if (allowSocStaff and 'eventID' in args_data):
+                    # if so then get society of event
+                    societyID = getSocIDFromEventID(args_data['societyID'])
+                    # check this zID is an admin of this society
+                    admins = getAdminsForSoc(societyID)
+                    if (token_data['zID'] in admins):
+                        # if so allow
+                        return func(token_data=token_data, *args, **kwargs)
+                print("1")
+                # if societyID exists in query
+                if (allowSocStaff and 'societyID' in args_data):
+                    print("2")
+                    # check if zID is admin of society
+                    admins = getAdminsForSoc(args_data['societyID'])
+                    
+                    pprint.pprint(admins)
+                    if (token_data['zID'] in admins):
+                        # if so allow
+                        return func(token_data=token_data, *args, **kwargs)
+                                        
                 # Check permissions on token
                 if (int(token_data['permission']) >= level):
-                    # TODO Also check if admin of specific club
+                    return func(token_data=token_data, *args, **kwargs)
+                    # Allow a token of a zID access data pertaining to that zID
+                elif (allowSelf and 'zID' in args_data and token_data['zID'] == args_data['zID']):
                     return func(token_data=token_data, *args, **kwargs)
                 else:
                     abort(401, "Permission Denied")
@@ -157,3 +183,8 @@ def check_authorization(activationRequired=True, level=0):
             abort(400, 'Malformed Request')
         return wrapper
     return decorator
+ 
+# Low   
+# eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1ODI2MDI1MzgsImlhdCI6MTU4MjU0MjUzOCwieklEIjoiejUyMTQ4MDgiLCJwZXJtaXNzaW9uIjoxfQ.eOIssA0CfC_aKM14qZBe9T-SHXBkwkAKLkG7VJxbBt4
+
+# High

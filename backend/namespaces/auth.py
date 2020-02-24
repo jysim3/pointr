@@ -5,13 +5,11 @@ from util.auth_services import ADMIN, USER
 from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema
 from marshmallow import Schema, fields, ValidationError, validates, validate
 from emailPointr import sendActivationEmail
-from util.validation_services import validate_with
+from util.validation_services import validate_with, validate_args_with
 import pprint
 import uuid
 
 api = Namespace('auth', description='Authentication & Authorization Services')
-    
-@api.route('/')
 
 @api.route('/register')
 class Register(Resource):
@@ -76,5 +74,37 @@ class Authorize(Resource):
 
     @api.response(400, 'Malformed Request')
     @auth_services.check_authorization(activationRequired=False, level=0)
+    def post(self, token_data):
+        return jsonify({"valid" : "true"})
+
+# Validation functions
+@api.route('/validateSelf')
+@api.param('token', description='User Token', type='String', required='True')
+class Authorize(Resource):
+
+    @api.response(400, 'Malformed Request')
+    @auth_services.check_authorization(activationRequired=False, level=5, allowSelf=True)
+    def post(self, token_data):
+        return jsonify({"valid" : "true"})
+        
+# TODO validate activated
+
+@api.route('/validateSocietyAdmin')
+@api.param('token', description='User Token', type='String', required='True')
+@api.param('societyID', description='Society ID', type='String', required='True')
+class Authorize(Resource):
+
+    @api.response(400, 'Malformed Request')
+    @auth_services.check_authorization(activationRequired=False, level=5, allowSocStaff=True)
+    def post(self, token_data):
+        return jsonify({"valid" : "true"})
+        
+@api.route('/validateEventAdmin')
+@api.param('token', description='User Token', type='String', required='True')
+@api.param('eventID', description='Event ID', type='String', required='True')
+class Authorize(Resource):
+
+    @api.response(400, 'Malformed Request')
+    @auth_services.check_authorization(activationRequired=False, level=5, allowSocStaff=True)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
