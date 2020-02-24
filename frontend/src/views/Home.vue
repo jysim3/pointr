@@ -1,6 +1,6 @@
 <template>
   <div>
-    <LandingPage v-if="!isAuthenticated"></LandingPage>
+    <LandingPage v-if="!isAuthenticatedBool"></LandingPage>
     <Dashboard v-else></Dashboard>
   </div>
 
@@ -12,7 +12,8 @@
 
 <script>
 import LandingPage from "@/components/LandingPage.vue";
-import Dashboard from "@/components/dashboard/Dashboard.vue"
+import Dashboard from "@/components/dashboard/Dashboard.vue";
+// import { isAuthenticated } from "@/util.js";
 
 export default {
   name: "Home",
@@ -20,6 +21,11 @@ export default {
     LandingPage,
     Dashboard
   },
+  computed: {
+    isAuthenticatedBool() {
+      return false
+    }
+  }
 };
 </script>
 

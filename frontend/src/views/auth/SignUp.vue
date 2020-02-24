@@ -3,14 +3,8 @@
     <form @submit.prevent="submitSignUpForm" class="form">
       <h2>Join Pointr</h2>
       <FormError v-if="formErrorMessage" :msg="formErrorMessage" />
-      <div class="label-input-div">
-        <label class="label">zID</label>
-        <input class="input" type="text" required />
-      </div>
-      <div class="label-input-div">
-        <label class="label">Password</label>
-        <input v-model="password" class="input" type="password" required />
-      </div>
+      <InputZID v-model="zID" :zID="zID" />
+      <InputPassword v-model="password" :password="password" />
       <div class="label-input-div">
         <label class="label">Repeat password</label>
         <input
@@ -60,11 +54,15 @@
 <script>
 import { fetchAPI } from "@/util.js";
 import FormError from "@/components/FormError.vue";
+import InputZID from "@/components/input/InputZID.vue";
+import InputPassword from "@/components/input/InputPassword.vue";
 
 export default {
   name: "SignUp",
   components: {
-    FormError
+    FormError,
+    InputZID,
+    InputPassword
   },
   data() {
     return {
@@ -119,7 +117,7 @@ export default {
         } else {
           // In the case of a successful response, want to store token and redirect to home
           localStorage.setItem("token", r.token);
-          this.$route.push({ name: 'home' });
+          this.$route.push({ name: "home" });
           console.log("r is ", r); //eslint-disable-line
         }
       });

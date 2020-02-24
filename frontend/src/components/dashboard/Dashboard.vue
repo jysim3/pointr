@@ -1,34 +1,34 @@
 <template>
   <div>
-    <button @click="eventCreate" class="btn btn-primary">Create an event</button>
+    <!-- <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link> -->
     <!-- <button @click="joinSociety" class="btn btn-primary">Join a society</button> -->
-    <DashboardJoinSociety />
-    <DashboardUpcomingEvents :upcomingEvents="upcomingEvents" />
+    <DashboardNavigation />
+    <DashboardEventVue :events="upcomingEvents" />
+    <DashboardEventVue :events="recentlyAttendedEvents" />
   </div>
 </template>
 
 <script>
-import jwt from "jsonwebtoken";
 import { fetchAPI } from "@/util.js";
-import DashboardJoinSociety from "@/components/dashboard/DashboardJoinSociety.vue";
-import DashboardUpcomingEvents from "@/components/dashboard/DashboardUpcomingEvents.vue";
+import DashboardNavigation from "@/components/dashboard/DashboardNavigation.vue";
+import DashboardEventVue from "@/components/dashboard/DashboardEventVue.vue";
 
 export default {
   name: "Dashboard",
   components: {
-    DashboardJoinSociety,
-    DashboardUpcomingEvents
+    DashboardNavigation,
+    DashboardEventVue
   },
   data() {
     return {
       showJoinSociety: false,
-      upcomingEvents: []
+      upcomingEvents: [],
+      recentlyAttendedEvents: []
     };
   },
   created() {
     // Decoding token from tokenCheck mixin
-    const zID = jwt.decode(this.token)
-    fetchAPI(`/api/user/getAllSocieties?zID=${zID}`).then(r => {
+    fetchAPI(`/api/user/getAllSocieties?zID=${this.getZID()}`).then(r => {
       // TODO: think about performance, should we be requesting all of the events from server?
       // Now we have a list of events that are upcoming for the user
       // TODO: FORMAT: [{'society': 'UNSW Hall', 'events': [{}]}]
@@ -37,12 +37,11 @@ export default {
       // Currently this will get the next five upcoming events.
       this.upcomingEvents = r.message.slice(0, 5);
     });
-  },
-  methods: {
-    eventCreate() {
-      // TODO: this is a common method - repetitive code
-      this.$route.push({ name: "create" });
-    }
+
+    fetchAPI(`/api/user/`, "GET")
+    .then(j => {
+      this.recentlyAttendedEvents = j.events.slice(0, 5);
+    })
   }
 };
 </script>

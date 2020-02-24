@@ -9,6 +9,7 @@ import User from '@/views/User.vue';
 import MarkAttendance from '@/views/MarkAttendance.vue';
 import SignIn from '@/views/auth/SignIn.vue';
 import SignUp from '@/views/auth/SignUp.vue';
+import SocietyJoin from "@/views/SocietyJoin.vue";
 
 Vue.use(VueRouter);
 
@@ -71,6 +72,14 @@ const routes = [
     path: '/signup',
     name: 'signUp',
     component: SignUp
+  },
+  {
+    path: '/joinsociety',
+    name: 'joinSociety',
+    component: SocietyJoin,
+    meta: {
+      requiresAuth: true
+    }
   }
 ];
 

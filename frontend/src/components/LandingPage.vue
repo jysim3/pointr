@@ -9,7 +9,7 @@
     <div id="admin">
       <a href id="admin-link">I’m administration</a>
     </div>
-    <router-link tag="button" to="/signin" class="btn btn-primary" @click="signIn">Sign In</router-link>
+    <router-link tag="button" to="/signin" class="btn btn-primary">Sign In</router-link>
   </div>
 </template>
 
