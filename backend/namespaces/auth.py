@@ -21,7 +21,7 @@ class Register(Resource):
     def post(self, data):
             
         # Attempt to create a new user with the username and password
-        if not auth_services.register_user(data['zID'], data['password']):
+        if not auth_services.register_user(data['zID'], data['password'], data['name'] if 'name' in data else "FIXME"):
             abort(409, 'Username Taken')
         
         token = auth_services.generateActivationToken(data['zID'])

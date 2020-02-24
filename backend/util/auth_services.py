@@ -72,9 +72,9 @@ def authorize(token, permission):
         abort(403, 'Invalid Credentials')
     abort(400, 'Malformed Request')
 
-def register_user(zID, password, isArc=True):
+def register_user(zID, name, password, isArc=True):
     if (checkUser(zID) == False): #TODO fixe isArc
-        return True if createUser(zID, password, isArc) == "Success" else False
+        return True if createUser(zID, name, password, isArc) == "Success" else False
     return False
 
 def login(zID, password):
