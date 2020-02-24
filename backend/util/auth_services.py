@@ -3,7 +3,7 @@ from datetime import datetime, date, time, timedelta
 from util.users import checkUserInfo, checkUser, createUser
 from flask_restx import abort
 from flask import request
-from schemata.auth_schemata import TokenSchema
+from schemata.auth_schemata import TokenSchema, AuthSchema
 from marshmallow import ValidationError
 
 # Expiration time on tokens - 60 minutes #FIXME
@@ -117,26 +117,39 @@ def authorizeActivationToken(token):
         abort(403, 'Invalid Credentials')
     abort(400, 'Malformed Request')
 
-def check_authorization(activationRequired=True, level=0, allowSelf=False):
+def check_authorization(activationRequired=True, level=0, allowSelf=False, allowSocStaff=False):
     def decorator(func):
         def wrapper(*args, **kwargs):
             try:
                 # Validate token
                 try:
-                    data = TokenSchema().load({"token": request.args.get("token")})
+                    args_data = AuthSchema().load(request.args)
                 except ValidationError as err:
                     abort(400, err.messages)
                 
                 # Decode token
                 token_data = jwt.decode(
-                    data['token'],
+                    args_data['token'],
                     'secret',
                     algorithms='HS256'
                 )
                 
+                # if ('eventID' in args_data):
+                    
+                # Check if eventID exists in query
+                # if so then check society of event
+                # check this zID is an admin of this society
+                # if so allow
+                
+                # if societyID exists
+                # check if zID is admin of society
+                # if so allow
+                
                 # Check permissions on token
                 if (int(token_data['permission']) >= level):
-                    # TODO Also check if admin of specific club
+                    return func(token_data=token_data, *args, **kwargs)
+                    # Allow a token of a zID access data pertaining to that zID
+                elif (allowSelf and 'zID' in args_data and token_data['zID'] == args_data['zID']):
                     return func(token_data=token_data, *args, **kwargs)
                 else:
                     abort(401, "Permission Denied")

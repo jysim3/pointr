@@ -5,7 +5,7 @@ from util.auth_services import ADMIN, USER
 from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema
 from marshmallow import Schema, fields, ValidationError, validates, validate
 from emailPointr import sendActivationEmail
-from util.validation_services import validate_with
+from util.validation_services import validate_with, validate_args_with
 import pprint
 import uuid
 

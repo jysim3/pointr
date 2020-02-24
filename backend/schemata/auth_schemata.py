@@ -11,3 +11,8 @@ class LoginDetailsSchema(Schema):
 
 class TokenSchema(Schema):
     token = common_schemata.token
+    
+class AuthSchema(Schema):
+    token = common_schemata.token
+    eventID = common_schemata.eventID
+    societyID = common_schemata.societyID

@@ -16,3 +16,15 @@ def validate_with(schema):
             return func(data=data, *args, **kwargs)
         return wrapper
     return decorator
+    
+def validate_args_with(schema):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            # Validate data
+            try:
+                data = schema().load(request.args)
+            except ValidationError as err:
+                abort(400, err.messages)
+            return func(args_data=data, *args, **kwargs)
+        return wrapper
+    return decorator

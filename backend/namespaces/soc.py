@@ -6,8 +6,12 @@ from util import societies, utilFunctions
 api = Namespace('soc', description='Society Attendance Services')
 
 # Get all the events hosted by a society
-@api.route('/eventsHosted')
-class EventsHosted(Resource):
+@api.route('/')
+class Society(Resource):
+    @api.doc(description='''
+        Get all of the events hosted by a society
+    ''')
+    @api.param('societyID', description='ID of the queried society', type='String', required='True')
     def get(self):
         societyID = request.args.get('societyID')
         if (societyID is None):
@@ -27,12 +31,10 @@ class EventsHosted(Resource):
             eventJSON['eventDate'] = str(event[2])
             payload['events'].append(eventJSON)
         return jsonify(payload)
-
-# TODO: Implement society related flask routings
-# Creates a society
-# Returns the societyID as part of the result JSON in the "msg" field
-@api.route('/create')
-class Create(Resource):
+    
+    @api.doc(description='''
+        Create a new society
+    ''')
     def post(self):
         data = request.get_json()
         
@@ -47,7 +49,7 @@ class GetSocs(Resource):
         return jsonify(societies.getAllSocs())
 
 @api.route('/join')
-class JoinSoc(Resource):
+class Join(Resource):
     def post(self):
         data = request.get_json()
         if ('zID' not in data or 'socID' not in data):
