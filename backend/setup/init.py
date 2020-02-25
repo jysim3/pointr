@@ -12,12 +12,12 @@ def initDatabase():
     # Moving this section to init.py in the next patch lmao
     # add users
     #createUser("z5161616", "Steven Shen", "123456")
-    createUser("z5161631", "Junyang Sim", "123456")
-    createUser("z5111111", "Wayne Rooney", "123456")
-    createUser("z5222222", "Ivan", "123456")
-    createUser("z5333333", "Harrison", "123456")
-    createUser("z5444444", "Memer", "123456")
-    createUser("z5555555", "Oltan", "123456")
+    createUser("z5161631", "Junyang Sim", "12345678")
+    createUser("z5111111", "Wayne Rooney", "12345678")
+    createUser("z5222222", "Ivan", "12345678")
+    createUser("z5333333", "Harrison", "12345678")
+    createUser("z5444444", "Memer", "12345678")
+    createUser("z5555555", "Oltan", "12345678")
     #createUser("z5161616", "Da Captain", "123123")
 
     createSociety("z5111111", "CSESoc")
