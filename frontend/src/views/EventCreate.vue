@@ -9,8 +9,25 @@
           <input class="input" v-model="title" type="text" required />
         </div>
         <div class="label-input-div">
+          <label class="label" for>Location</label>
+          <input class="input" v-model="location" type="text" required />
+        </div>
+        <div class="label-input-div">
           <label class="label" for>Society</label>
           <input class="input" v-model="society" type="text" required />
+        </div>
+        <div class="label-input-div">
+          <label class="label" for>Date</label>
+          <input class="input" v-model="date" type="date" required />
+        </div>
+        <div class="label-input-div">
+          <label class="label" for>Repeat</label>
+          <select class="input" v-model="repeat">
+            <option value="">No Repeat</option>
+            <option value="day">Every Day</option>
+            <option value="week">Every Week</option>
+            <option value="month">Every Month</option>
+          </select>
         </div>
         <div class="label-input-div">
           <label class="label" for>Set default points</label>
@@ -38,7 +55,11 @@ export default {
   data() {
     return {
       title: "",
+      location: "",
       society: "",
+      date: "",
+      endDate: "",
+      repeat: "",
       point: 1,
       userSocieties: []
     };
@@ -46,15 +67,34 @@ export default {
   methods: {
     submitEventForm() {
       // TODO: clean this up
+      /*
       const data = {
+        zID: "z5214808", 
         name: this.title,
-        owner: "Ivan",
-        defaultPoints: this.point,
-        zID: "adsfh",
-        location: 'Test location',
-        eventDate: "19700201"
-      };
-      fetchAPI("/api/event", "POST", data).then(j => {
+        location: this.location, 
+        eventDate: this.date, 
+      }
+      if (this.repeat !== "") {
+          data.endDate= "2020-04-04" ;
+          data.recurType= "day";
+          data.recurInterval= 6;
+          data.socID  = "CSESoc";
+          data.isRecur = "True";
+      }
+      */
+     
+ const data = { 
+ zID: "z5111111", 
+ name: "Coffee Night", 
+ location: "CSESoc", 
+ eventDate: "2020-01-01", 
+ endDate: "2020-04-04", 
+ recurType: "day", 
+ recurInterval: 6, 
+ "socID": "8EF48", 
+ "isRecur": "True"
+ }
+      fetchAPI("/api/event/", "POST", data).then(j => {
         console.log(j); //eslint-disable-line
         this.$route.push({ name: "event", params: { eid: j.eventID } });
       });
