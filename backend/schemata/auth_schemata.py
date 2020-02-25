@@ -6,6 +6,9 @@ class RegisterDetailsSchema(Schema):
     password = common_schemata.password
     name = common_schemata.name
     isArc = common_schemata.isArc
+    commencementYear = common_schemata.commencementYear
+    studentType = common_schemata.registrationType
+    degreeType = common_schemata.registrationType
 
 class LoginDetailsSchema(Schema):
     zID = common_schemata.zid

@@ -29,7 +29,7 @@ class Register(Resource):
         studentType = data['studentType'] if 'studentType' in data else "domestic"
         degreeType = data['degreeType'] if 'degreeType' in data else "undergraduate"
 
-        if not auth_services.register_user(zID, name, password, isArc, commencementYear, studentType, degreeType):
+        if not auth_services.register_user(zID, name, password, isArc, int(commencementYear), studentType, degreeType):
             abort(409, 'Username Taken')
         
         token = auth_services.generateActivationToken(data['zID'])
