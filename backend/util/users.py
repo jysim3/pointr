@@ -155,8 +155,18 @@ def activateAccount(zID):
     conn = createConnection()
     curs = conn.cursor()
     try:
+        curs.execute("SELECT activationStatus FROM users WHERE zID = (%s);", (zID,))
+    except Exception as e:
+        conn.close()
+        return "failed"
+    result = curs.fetchone()
+    if (result[0]) == False:
+        return "already activated"
+
+    try:
         curs.execute("UPDATE users SET activationStatus = True WHERE zID = (%s);", (zID,))
     except Exception as e:
+        conn.close()
         return "failed"
     conn.commit()
     return "success"
