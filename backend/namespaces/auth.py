@@ -36,7 +36,8 @@ class Register(Resource):
 @api.route('/activate')
 @api.param('token', description='Users Token', type='String', required='True')
 class Activate(Resource):
-    
+    @api.response(400, "Malformed Request")
+    @api.response(403, "Already activated")
     @auth_services.check_authorization(activationRequired=False, level=0)
     def post(self, token_data):
 

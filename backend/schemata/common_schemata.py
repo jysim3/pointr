@@ -19,3 +19,5 @@ societyID = fields.Str(error='Malformed societyID')
 societyIDRequired = fields.Str(required=True, error='Malformed societyID')
 
 password = fields.Str(required=True, validate=validate.Length(min=8, max=256), error="Enter a valid Password")
+
+isArc = fields.Bool(required=True, error="Not a boolean")
