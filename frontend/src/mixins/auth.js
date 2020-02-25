@@ -5,11 +5,11 @@ export default {
     data() {
         return {
             token: "",
-            isAuthenticated: false
+            userIsAuthenticated: false
         }
     },
     created() {
-        this.isAuthenticated = isAuthenticated()
+        this.userIsAuthenticated = isAuthenticated()
         this.token = getToken()
     },
     methods: {

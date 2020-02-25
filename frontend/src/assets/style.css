@@ -91,6 +91,8 @@ h4 {
 a {
   transition: box-shadow 0.2s;
   padding-bottom: 0.5rem;
+  text-decoration: none;
+  color: var(--c-secondary-dark);
 }
 
 a:hover {
@@ -222,7 +224,7 @@ input:invalid {
 .btn {
   padding: 0.75em 1.5em;
   transition: box-shadow 0.2s;
-  font-weight: 400;
+  font-weight: 500;
   font-family: var(--font-stack--text);
   font-size: 1rem;
   border-radius: var(--border-radius); /* TODO: should be using px? */

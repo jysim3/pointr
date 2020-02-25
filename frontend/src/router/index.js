@@ -4,8 +4,8 @@ import { isAuthenticated } from "@/util.js";
 import Home from '@/views/Home.vue';
 import EventCreate from '@/views/EventCreate.vue';
 import Event from '@/views/Event.vue';
-import SignEvent from '@/views/SignEvent.vue';
-import User from '@/views/User.vue';
+import EventSignAttendance from '@/views/EventSignAttendance.vue';
+// import User from '@/views/User.vue';
 import MarkAttendance from '@/views/MarkAttendance.vue';
 import SignIn from '@/views/auth/SignIn.vue';
 import SignUp from '@/views/auth/SignUp.vue';
@@ -14,11 +14,12 @@ import SocietyJoin from "@/views/SocietyJoin.vue";
 Vue.use(VueRouter);
 
 const routes = [
+  // mode: 'history',
+  // base: process.env.BASE_URL,
   {
     path: '/',
     name: 'home',
     component: Home
-    // TODO: depending on whether there is token, have profile/dashboard as page
   },
   {
     path: '/mark-attendance',
@@ -36,15 +37,15 @@ const routes = [
       requiresAuth: true
     }
   },
-  {
-    path: '/u/:zid',
-    name: 'user',
-    component: User,
-    props: true,
-    meta: {
-      requiresAuth: true
-    }
-  },
+  // {
+  //   path: '/u/:zid',
+  //   name: 'user',
+  //   component: User,
+  //   props: true,
+  //   meta: {
+  //     requiresAuth: true
+  //   }
+  // },
   {
     path: '/event/:eid',
     name: 'event',
@@ -55,9 +56,9 @@ const routes = [
     }
   },
   {
-    path: '/e/:eid',
-    name: 'signEvent',
-    component: SignEvent,
+    path: '/sign/:eid',
+    name: 'eventSignAttendance',
+    component: EventSignAttendance,
     props: true,
     meta: {
       requiresAuth: true
@@ -91,6 +92,8 @@ const router = new VueRouter({
 // https://www.digitalocean.com/community/tutorials/how-to-set-up-vue-js-authentication-and-route-handling-using-vue-router
 router.beforeEach((to, from, next) => {
   // TODO: clean up the else statements?
+  // TODO: what if user goes sign in -> sign up from link in sign in form, then they may not end up at original, intended path
+  // EXAMPLE: user with no account scans QR code on Event page
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!isAuthenticated()) {
       next({

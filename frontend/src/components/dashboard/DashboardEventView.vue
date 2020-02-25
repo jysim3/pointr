@@ -1,23 +1,24 @@
 <template>
   <div class="event-view">
-      <DashboardEventCard
-        v-for="(event, index) in events"
-        :key="index"
-        :eventData="event"
-      ></DashboardEventCard>
+    <h3>{{ eventViewTitle }}</h3>
+    <EventCard v-for="(event, index) in eventData" :key="index" :eventData="eventData"></EventCard>
   </div>
 </template>
 
 <script>
-import DashboardEventCard from "@/components/dashboard/DashboardEventCard.vue";
+import EventCard from "@/components/EventCard.vue";
 
 export default {
   name: "DashboardEventView",
   components: {
-    DashboardEventCard
+    EventCard
   },
   props: {
-    events: {
+    eventViewTitle: {
+      type: String,
+      required: true
+    },
+    eventData: {
       type: Array,
       required: true
     }
@@ -25,5 +26,5 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 </style>

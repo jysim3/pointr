@@ -1,47 +1,46 @@
 <template>
   <div>
-    <!-- <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link> -->
-    <!-- <button @click="joinSociety" class="btn btn-primary">Join a society</button> -->
     <DashboardNavigation />
-    <DashboardEventVue :events="upcomingEvents" />
-    <DashboardEventVue :events="recentlyAttendedEvents" />
+    <DashboardEventView :eventViewTitle="upcomingEvents.title" :eventData="upcomingEvents.data" />
+    <DashboardEventView :eventViewTitle="attendedEvents.title" :eventData="attendedEvents.data" />
   </div>
 </template>
 
 <script>
 import { fetchAPI } from "@/util.js";
+import auth from "@/mixins/auth";
 import DashboardNavigation from "@/components/dashboard/DashboardNavigation.vue";
-import DashboardEventVue from "@/components/dashboard/DashboardEventVue.vue";
+import DashboardEventView from "@/components/dashboard/DashboardEventView.vue";
 
 export default {
   name: "Dashboard",
+  mixins: [auth],
   components: {
     DashboardNavigation,
-    DashboardEventVue
+    DashboardEventView
   },
   data() {
     return {
       showJoinSociety: false,
-      upcomingEvents: [],
-      recentlyAttendedEvents: []
+      upcomingEvents: {
+        title: 'Upcoming Events',
+        data: []
+      },
+      attendedEvents: {
+        title: 'Attended Events',
+        data: []
+      },
     };
   },
   created() {
-    // Decoding token from tokenCheck mixin
     fetchAPI(`/api/user/getAllSocieties?zID=${this.getZID()}`).then(r => {
-      // TODO: think about performance, should we be requesting all of the events from server?
-      // Now we have a list of events that are upcoming for the user
-      // TODO: FORMAT: [{'society': 'UNSW Hall', 'events': [{}]}]
-      // TODO: shouldn't this route need a token instead of a zID?
-
-      // Currently this will get the next five upcoming events.
-      this.upcomingEvents = r.message.slice(0, 5);
+      this.upcomingEvents = r.msg;
     });
 
-    fetchAPI(`/api/user/`, "GET")
-    .then(j => {
-      this.recentlyAttendedEvents = j.events.slice(0, 5);
-    })
+    // TODO: need to pass token somehow
+    fetchAPI(`/api/user/info`, "POST").then(j => {
+      this.attendedEvents.data = j.msg;
+    });
   }
 };
 </script>

@@ -1,7 +1,6 @@
 <template>
   <div>
     <Logo />
-    <!-- TODO: possible societies depend on USER logged in -->
     <div class="form-container">
       <form id="create-event-form" class="form" @submit.prevent="submitEventForm">
         <h2>Create an event</h2>
@@ -46,6 +45,7 @@ export default {
   },
   methods: {
     submitEventForm() {
+      // TODO: clean this up
       const data = {
         name: this.title,
         owner: "Ivan",

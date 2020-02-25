@@ -6,11 +6,11 @@
 
 <script>
 // TODO: import fetchAPI in App.vue instead?
-import auth from "@/mixins/auth.js"
+// import auth from "@/mixins/auth"
 
 export default {
   name: "app",
-  mixins: [auth]
+  // mixins: [auth]
 };
 </script>
 
