@@ -4,9 +4,9 @@ import { isAuthenticated } from "@/util.js";
 import Home from '@/views/Home.vue';
 import EventCreate from '@/views/EventCreate.vue';
 import Event from '@/views/Event.vue';
-import EventSignAttendance from '@/views/EventSignAttendance.vue';
+import EventSign from '@/views/EventSign.vue';
 // import User from '@/views/User.vue';
-import MarkAttendance from '@/views/MarkAttendance.vue';
+// import MarkAttendance from '@/views/MarkAttendance.vue';
 import SignIn from '@/views/auth/SignIn.vue';
 import SignUp from '@/views/auth/SignUp.vue';
 import SocietyJoin from "@/views/SocietyJoin.vue";
@@ -21,14 +21,14 @@ const routes = [
     name: 'home',
     component: Home
   },
-  {
-    path: '/mark-attendance',
-    name: 'markAttendance',
-    component: MarkAttendance,
-    meta: {
-      requiresAuth: true
-    }
-  },
+  // {
+  //   path: '/mark-attendance',
+  //   name: 'markAttendance',
+  //   component: MarkAttendance,
+  //   meta: {
+  //     requiresAuth: true
+  //   }
+  // },
   {
     path: '/create',
     name: 'create',
@@ -56,9 +56,9 @@ const routes = [
     }
   },
   {
-    path: '/sign/:eid',
-    name: 'eventSignAttendance',
-    component: EventSignAttendance,
+    path: '/sign/:eid?',
+    name: 'eventSign',
+    component: EventSign,
     props: true,
     meta: {
       requiresAuth: true

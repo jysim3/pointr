@@ -1,5 +1,5 @@
 <template>
-  <div class="form-container">
+  <div id="form-container--signup" class="form-container">
     <form @submit.prevent="submitSignUpForm" class="form">
       <h2>Join Pointr</h2>
       <FormError v-if="formErrorMessage" :msg="formErrorMessage" />
@@ -45,7 +45,7 @@
         <input id="international" type="radio" name="student-type" required />
         <label for="international" class="label">International</label>
       </div>
-      <!-- Gender, domestic or international -->
+      <!-- Gender, domestic or international, is arc member -->
       <button type="submit" class="btn btn-primary">Sign Up</button>
     </form>
   </div>
@@ -126,5 +126,8 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+#form-container--signup {
+  margin-top: 3rem;
+}
 </style>
