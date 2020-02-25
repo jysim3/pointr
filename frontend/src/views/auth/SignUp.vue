@@ -4,48 +4,82 @@
       <h2>Join Pointr</h2>
       <FormError v-if="formErrorMessage" :msg="formErrorMessage" />
       <InputZID v-model="zID" :zID="zID" />
+      <label for="name" class="label">Name</label>
+      <input v-model="userInfo.name" class="input" type="text" name="name" />
       <InputPassword v-model="password" :password="password" />
-      <div class="label-input-div">
-        <label class="label">Repeat password</label>
-        <input
-          v-model="repeatPassword"
-          :class="{ 'input--invalid': passwordsNotEqual }"
-          class="input"
-          type="password"
-          required
-        />
-      </div>
-      <div class="label-input-div">
-        <label class="label">Year began study</label>
-        <input
-          v-model.number="queryData.comencmentYear"
-          :max="currentYear"
-          :min="2000"
-          type="number"
-          class="input"
-          :class="comencmentYearValid"
-          required
-        />
-      </div>
+      <InputPassword
+        v-model="repeatPassword"
+        :password="repeatPassword"
+        :label="'Repeat password'"
+        :class="{ 'input--invalid': passwordsNotEqual }"
+      />
+      <!-- TODO: fix :class on repeatPassword input -->
+      <label class="label">Year began study</label>
+      <input
+        v-model.number="userInfo.comencmentYear"
+        :max="currentYear"
+        :min="2000"
+        type="number"
+        class="input"
+        :class="comencmentYearValid"
+        required
+      />
+      <!-- Degree type input -->
       <label for="degree-type" class="label">Degree type</label>
-      <div class="label-input-div radio-div">
-        <input id="undergraduate" type="radio" name="degree-type" required />
+      <div class="radio-input-container">
+        <input
+          v-model="userInfo.degreeType"
+          :value="'undergraduate'"
+          class="input"
+          type="radio"
+          name="degree-type"
+          id="undergraduate"
+          required
+        />
         <label for="undergraduate" class="label">Undergraduate</label>
       </div>
-      <div class="label-input-div radio-div">
-        <input id="postgraduate" type="radio" name="degree-type" required />
+      <div class="radio-input-container">
+        <input
+          v-model="userInfo.degreeType"
+          :value="'postgraduate'"
+          class="input"
+          type="radio"
+          name="degree-type"
+          id="postgraduate"
+          required
+        />
         <label for="postgraduate" class="label">Postgraduate</label>
       </div>
+      <!-- Student type input -->
       <label for="student-type" class="label">Student type</label>
-      <div class="label-input-div radio-div">
-        <input id="domestic" type="radio" name="student-type" required />
+      <div class="radio-input-container">
+        <input
+          v-model="userInfo.studentType"
+          :value="'domestic'"
+          type="radio"
+          name="student-type"
+          id="domestic"
+          required
+        />
         <label for="domestic" class="label">Domestic</label>
       </div>
-      <div class="label-input-div radio-div">
-        <input id="international" type="radio" name="student-type" required />
+      <div class="radio-input-container">
+        <input
+          v-model="userInfo.studentType"
+          :value="'international'"
+          type="radio"
+          name="student-type"
+          id="international"
+          required
+        />
         <label for="international" class="label">International</label>
       </div>
-      <!-- Gender, domestic or international, is arc member -->
+      <!-- Arc member input -->
+      <div class="checkbox-input-container">
+        <label for="arc-member">Are you an arc member?</label>
+        <input v-model="userInfo.isArcMember" type="checkbox" id="arc-member" name="arc-member" required />
+      </div>
+      <!-- TODO: gender input? -->
       <button type="submit" class="btn btn-primary">Sign Up</button>
     </form>
   </div>
@@ -69,16 +103,18 @@ export default {
       zID: "",
       password: "",
       repeatPassword: "",
-      formErrorMessage: "",
-      queryData: {
-        degree: "",
+      userInfo: {
+        name: "",
         comencmentYear: "",
-        degreeType: ""
-      }
+        studentType: "",
+        degreeType: "",
+        isArcMember: false
+      },
+      formErrorMessage: ""
     };
   },
   created() {
-    this.queryData.comencmentYear = this.currentYear;
+    this.userInfo.comencmentYear = this.currentYear;
   },
   computed: {
     passwordsNotEqual() {
@@ -93,7 +129,7 @@ export default {
       return date.getFullYear();
     },
     comencmentYearValid() {
-      const year = this.queryData.comencmentYear;
+      const year = this.userInfo.comencmentYear;
       let isInvalid = year > 2020 || year < 2000;
 
       return { "input--invalid": isInvalid };
@@ -104,7 +140,11 @@ export default {
     submitSignUpForm() {
       fetchAPI("/api/auth/register", "POST", {
         zID: this.zID,
-        password: this.password
+        password: this.password,
+        comencmentYear: this.userInfo.comencmentYear,
+        studentType: this.userInfo.studentType,
+        degreeType: this.userInfo.degreeType,
+        isArcMember: this.userInfo.isArcMember
       }).then(r => {
         if (r.status !== 200) {
           console.log("r is ", r); //eslint-disable-line

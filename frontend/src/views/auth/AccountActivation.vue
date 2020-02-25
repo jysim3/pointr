@@ -50,7 +50,6 @@ export default {
       this.isActivated.msg = r.message;
       console.log("r is" + r); //eslint-disable-line
     });
-    // TODO: Need to check if account has already been activated
   }
 };
 </script>
