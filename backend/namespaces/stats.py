@@ -18,22 +18,10 @@ class UserSocAttendance(Resource):
             return jsonify({"status": "Failed", "msg": "No socID provided"})
 
         eventsAttended = users.getPersonEventsForSoc(zID, socID)
-        if (eventsAttended == "No such user"):
+        if (eventsAttended == "No such user" or eventsAttended == "failed"):
             return jsonify({"status": "Failed", "msg": "No such user"})
 
-        payload = {}
-        payload['userName'] = eventsAttended[1]
-        payload['societyName'] = eventsAttended[2]
-        payload['events'] = []
-        for event in eventsAttended[0]:
-            eventJSON = {}
-            eventJSON['eventID'] = event[0]
-            eventJSON['name'] = event[1]
-            eventJSON['society'] = event[3]
-            eventJSON['eventDate'] = str(event[2])
-            eventJSON['points'] = event[4]
-            payload['events'].append(eventJSON)
-        return jsonify(payload)
+        return jsonify(eventsAttended)
         
 # For getting information on a set of recurrent events
 # Usage:

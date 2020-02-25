@@ -104,8 +104,19 @@ def getEventForSoc(societyID):
         conn.close()
         return "failed"
 
+    payload = {}
+    payload['events'] = []
+    payload['societyName'] = name[0]
+    for event in events:
+        eventJSON = {}
+        eventJSON['eventID'] = event[0]
+        eventJSON['name'] = event[1]
+        eventJSON['society'] = event[3]
+        eventJSON['eventDate'] = str(event[2])
+        payload['events'].append(eventJSON)
+
     conn.close()
-    return events, name[0]
+    return payload
 
 def getAllSocs():
     conn = createConnection()

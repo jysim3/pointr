@@ -102,15 +102,36 @@ def getPersonEventsForSoc(zID, societyID):
     if (name is None):
         return "No such user"
 
-    curs.execute("select societyName from society where societyID = (%s);", (societyID,))
+    try:
+        curs.execute("select societyName from society where societyID = (%s);", (societyID,))
+    except Exception as e:
+        conn.close()
+        return "failed"
     socName = curs.fetchone()
     if (socName is None):
         return None
 
-    curs.execute("select * from events join host on (events.eventID = host.eventID) join participation on (events.eventID = participation.eventID) where society = (%s) and participation.zid = (%s);", (societyID, zID,))
+    try:
+        curs.execute("select * from events join host on (events.eventID = host.eventID) join participation on (events.eventID = participation.eventID) where society = (%s) and participation.zid = (%s);", (societyID, zID,))
+    except Exception as e:
+        conn.close()
+        return "failed"
     events = curs.fetchall()
     conn.close()
-    return events, name[0], socName[0]
+
+    payload = {}
+    payload['userName'] = name
+    payload['societyName'] = socName
+    payload['events'] = []
+    for event in events:
+        eventJSON = {}
+        eventJSON['eventID'] = event[0]
+        eventJSON['name'] = event[1]
+        eventJSON['society'] = event[3]
+        eventJSON['eventDate'] = str(event[2])
+        eventJSON['points'] = event[4]
+        payload['events'].append(eventJSON)
+    return payload
 
 def checkArc(zID):
     conn = createConnection()
