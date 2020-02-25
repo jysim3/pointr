@@ -25,11 +25,11 @@ class Register(Resource):
             abort(409, 'Username Taken')
         
         token = auth_services.generateActivationToken(data['zID'])
-        print(token)
+        #print(token)
 
         # At this point, the user is created, we now send the activation email
         # FIXME: Change this to pointr.live (in frontend) when in production
-        sendActivationEmail(f"127.0.0.1:5000/api/auth/activate?token={token}", f"{data['zID']}@student.unsw.edu.au")
+        sendActivationEmail(f"https://pointer.live/activate/{token}", f"{data['zID']}@student.unsw.edu.au")
 
         return jsonify({"status": "success"})
 
@@ -41,8 +41,10 @@ class Activate(Resource):
     def post(self, token_data):
 
         result = users.activateAccount(token_data['zID'])
-        if (result != 'success'):
-            abort(400, result)
+        if (result == "failed"):
+            abort(400, "Malformed Request")
+        elif (result == "already activated"):
+            abort(403, "Already activated")
         return jsonify({"status": "success"})
 
 @api.route('/login')
