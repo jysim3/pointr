@@ -134,19 +134,19 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     args_data = AuthSchema().load(request.args)
                 except ValidationError as err:
                     abort(400, err.messages)
-                    
+
                 try:
                     token = TokenSchema().load({"token": request.headers.get('Authorization')})
                 except ValidationError as err:
                     abort(400, err.messages)
-                                
+
                 # Decode token
                 token_data = jwt.decode(
                     token['token'],
                     jwt_secret,
                     algorithms='HS256'
                 )
-                
+
                 # Check if eventID exists in query
                 if (allowSocStaff and 'eventID' in args_data):
                     # if so then get society of event

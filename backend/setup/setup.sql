@@ -4,6 +4,9 @@ CREATE TABLE IF NOT EXISTS users (
     name TEXT NOT NULL,
     password TEXT NOT NULL,
     isArc BOOLEAN NOT NULL,
+    commencementYear INTEGER NOT NULL,
+    studentType TEXT NOT NULL,
+    degreeType TEXT NOT NULL,
     activationLink TEXT,
     activationStatus BOOLEAN NOT NULL,
     primary key(zid)

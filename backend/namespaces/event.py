@@ -125,10 +125,11 @@ class Attend(Resource):
                 abort(400, "Malformed Request")
         else:
         '''
-        if ('zID' not in data or 'eventID' not in data):
+        zID = token_data['zID']
+        if ('eventID' not in data):
             abort(400, "Malformed Request")
         time = datetime.now().date()
-        payload['status'] = participation.register(sanitize(data['zID'].lower()), sanitize(data['eventID']), time)
+        payload['status'] = participation.register(zID, sanitize(data['eventID']), time)
         return jsonify(payload)
 
 @api.route('/getAttendance')
