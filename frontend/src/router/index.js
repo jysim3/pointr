@@ -5,12 +5,11 @@ import Home from '@/views/Home.vue';
 import EventCreate from '@/views/EventCreate.vue';
 import Event from '@/views/Event.vue';
 import EventSign from '@/views/EventSign.vue';
-// import User from '@/views/User.vue';
-// import MarkAttendance from '@/views/MarkAttendance.vue';
 import SignIn from '@/views/auth/SignIn.vue';
 import SignUp from '@/views/auth/SignUp.vue';
 import SocietyJoin from "@/views/SocietyJoin.vue";
 import AccountActivation from "@/views/auth/AccountActivation.vue";
+import Contact from "@/views/Contact.vue";
 
 Vue.use(VueRouter);
 
@@ -22,14 +21,6 @@ const routes = [
     name: 'home',
     component: Home
   },
-  // {
-  //   path: '/mark-attendance',
-  //   name: 'markAttendance',
-  //   component: MarkAttendance,
-  //   meta: {
-  //     requiresAuth: true
-  //   }
-  // },
   {
     path: '/create',
     name: 'create',
@@ -38,15 +29,6 @@ const routes = [
       requiresAuth: true
     }
   },
-  // {
-  //   path: '/u/:zid',
-  //   name: 'user',
-  //   component: User,
-  //   props: true,
-  //   meta: {
-  //     requiresAuth: true
-  //   }
-  // },
   {
     path: '/event/:eid',
     name: 'event',
@@ -88,6 +70,10 @@ const routes = [
     name: 'activate',
     component: AccountActivation,
     props: true
+  },
+  {
+    path: '/contact',
+    component: Contact
   }
 ];
 
