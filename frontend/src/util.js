@@ -7,7 +7,7 @@ export function fetchAPI(url, method, data) {
                 method: method, // or 'PUT'
                 body: JSON.stringify(data), // data can be `string` or {object}!
                 headers: {
-                    Authorization: 'Token ' + localStorage.getItem('token'),
+                    Authorization: getToken(),
                     'Content-Type': 'application/json'
                 }
             }).then(response => response.json())

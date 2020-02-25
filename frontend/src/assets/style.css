@@ -111,6 +111,10 @@ a:hover {
   color: var(--c-secondary-dark);
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.05);
   border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .form .btn-primary {
@@ -129,10 +133,6 @@ a:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.form-container .form {
-  display: inline-block;
 }
 
 .label-input-div {
