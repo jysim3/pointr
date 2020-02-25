@@ -71,6 +71,15 @@ class Login(Resource):
         else:
             abort(403, 'Invalid Credentials')
 
+@api.route('/permission')
+class Login(Resource):
+    
+    @api.response(400, 'Malformed Request')
+    @api.response(403, 'Invalid Credentials')
+    @auth_services.authorize_token(activationRequired=False, level=0)
+    def post(self, token_data):
+        return jsonify({"permission": token_data['permission']})
+
 @api.route('/validate')
 @api.param('token', description='User Token', type='String', required='True')
 class Authorize(Resource):
