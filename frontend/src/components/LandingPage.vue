@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Logo />
+    <NavBar />
     <h2 id="heading">The event tracking system for UNSW colleges.</h2>
     <div id="btn-container">
       <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link>
@@ -9,17 +9,18 @@
     <div id="admin">
       <a href id="admin-link">I’m administration</a>
     </div>
-    <router-link tag="button" to="/signin" class="btn btn-primary">Sign In</router-link>
   </div>
 </template>
 
 <script>
-import Logo from "@/components/Logo.vue";
+//import Logo from "@/components/Logo.vue";
+import NavBar from "@/components/NavBar.vue";
 
 export default {
   name: "LandingPage",
   components: {
-    Logo
+    //Logo, 
+    NavBar
   }
 };
 </script>

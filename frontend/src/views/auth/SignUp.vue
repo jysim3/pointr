@@ -140,11 +140,12 @@ export default {
     submitSignUpForm() {
       fetchAPI("/api/auth/register", "POST", {
         zID: this.zID,
+        name: this.userInfo.name,
         password: this.password,
-        comencmentYear: this.userInfo.comencmentYear,
+        commencementYear: this.userInfo.comencmentYear,
         studentType: this.userInfo.studentType,
         degreeType: this.userInfo.degreeType,
-        isArcMember: this.userInfo.isArcMember
+        isArc: this.userInfo.isArcMember
       }).then(r => {
         if (r.status !== 200) {
           console.log("r is ", r); //eslint-disable-line

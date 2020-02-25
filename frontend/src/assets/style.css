@@ -135,7 +135,7 @@ a:hover {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
 }
 
 .form .btn-primary {
@@ -203,6 +203,11 @@ input {
 }
 
 /* Inputs and labels */
+
+.label-input-div {
+  display: flex;
+  flex-direction: column;
+}
 
 .input {
   border: 2px solid #dbdbdb;
