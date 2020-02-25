@@ -78,8 +78,6 @@ class Authorize(Resource):
     @auth_services.check_authorization(activationRequired=False, level=5, allowSelf=True)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
-        
-# TODO validate activated
 
 @api.route('/validateSocietyAdmin')
 @api.param('token', description='User Token', type='String', required='True')

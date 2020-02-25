@@ -134,9 +134,15 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     args_data = AuthSchema().load(request.args)
                 except ValidationError as err:
                     abort(400, err.messages)
+                    
+                try:
+                    token = TokenSchema().load({"token": request.headers.get('Authorization')})
+                except ValidationError as err:
+                    abort(400, err.messages)
+                                
                 # Decode token
                 token_data = jwt.decode(
-                    args_data['token'],
+                    token['token'],
                     jwt_secret,
                     algorithms='HS256'
                 )
@@ -150,10 +156,10 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     if (token_data['zID'] in admins):
                         # if so allow
                         return func(token_data=token_data, *args, **kwargs)
-                print("1")
+
                 # if societyID exists in query
                 if (allowSocStaff and 'societyID' in args_data):
-                    print("2")
+
                     # check if zID is admin of society
                     admins = getAdminsForSoc(args_data['societyID'])
                     
