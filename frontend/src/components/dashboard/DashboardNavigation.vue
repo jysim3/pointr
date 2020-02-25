@@ -7,11 +7,14 @@
 </template>
 
 <script>
+import { removeToken } from "@/util";
+
 export default {
     name: 'DashboardNavigation',
     methods: {
       signOut() {
-        localStorage.removeItem('token')
+        removeToken()
+        // TODO: shouldn't need to push a route, should be automatically done by router
       }
     }
 }

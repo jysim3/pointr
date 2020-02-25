@@ -11,6 +11,8 @@
       </div>
       <button type="submit" class="btn btn-primary">Sign In</button>
       <!-- TODO: add button for sign up -->
+      <p>Need an account?</p>
+      <router-link to="/signup">Sign up</router-link>
     </form>
   </div>
 </template>
@@ -41,7 +43,6 @@ export default {
   },
   methods: {
     submitSignInForm() {
-      // If sign in successfull, push route to profile
       fetchAPI("/api/auth/login", "POST", {
         zID: this.zID,
         password: this.password
@@ -50,12 +51,14 @@ export default {
           if (r.status !== 200) {
             this.error.status = true;
             this.error.msg = "Invalid credentials";
+          } else {
+            this.$router.push({ name: "home" });
           }
         })
-        // .catch(err => {
-        //   this.error.status = true;
-        //   this.error.msg = err;
-        // });
+        .catch(err => {
+          this.error.status = true;
+          this.error.msg = err;
+        });
     }
   }
 };

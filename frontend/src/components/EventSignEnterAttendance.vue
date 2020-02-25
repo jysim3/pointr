@@ -1,18 +1,18 @@
 <template>
   <div>
-    <div class="form-container">
+    <div class="form-container" @submit.prevent="submitEventSignAttendance">
       <div class="form">
         <h2>Sign attendance</h2>
         <EventCard :eventData="eventData" />
         <button
           v-if="!eventSignSuccess"
-          @submit.prevent="submitEventSignAttendance"
           class="btn btn-primary"
+          type="submit"
         >Sign as {{ userName }} ({{ zID }})</button>
         <div v-else>
           <h3 v-if="eventAlreadySigned">Already signed this event!</h3>
           <h3 v-else>Success!</h3>
-          <router-link to="/">Return to home</router-link>
+          <router-link to="/">Go to home</router-link>
         </div>
       </div>
     </div>
