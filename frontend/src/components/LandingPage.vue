@@ -2,28 +2,26 @@
   <div>
     <NavBar />
     <div class="container">
-
       <img src="../assets/stockphoto1.png" />
       <div class="right">
         <h1 id="heading">Welcome to Pointr!</h1>
         <h3 id="sub-heading">The event tracking system for UNSW colleges.</h3>
-      <div id="btn-container">
-        <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link>
-        <router-link tag="button" to="/mark-attendance" class="btn btn-secondary">Mark my attendance</router-link>
-      </div>
+        <div id="btn-container">
+          <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link>
+          <router-link
+            tag="button"
+            to="/mark-attendance"
+            class="btn btn-secondary"
+          >Mark my attendance</router-link>
+        </div>
       </div>
     </div>
-      <div id="admin">
-        <a href id="admin-link">I’m administration</a>
-      </div>
   </div>
 </template>
 
 <script>
-//import Logo from "@/components/Logo.vue";
 import NavBar from "@/components/NavBar.vue";
 
-console.log('hi') //eslint-disable-line
 export default {
   name: "LandingPage",
   components: {
@@ -46,7 +44,8 @@ export default {
 .right {
   min-width: 0;
 }
-#heading, #sub-heading {
+#heading,
+#sub-heading {
   text-align: right;
 }
 
@@ -60,16 +59,5 @@ export default {
   display: flex;
   justify-content: right;
   margin-top: 7rem;
-}
-
-#admin {
-  text-align: center;
-  margin-top: 7rem;
-}
-
-#admin-link, #admin-link:visited {
-  text-decoration: none;
-  color: var(--c-secondary-dark);
-  font-size: 1.5rem;
 }
 </style>

@@ -1,65 +1,71 @@
 
 <template>
-    <div class="nav">
-      <div class="box-container">
-        <div class="logo">
-            <img @click="toHome" class="logo" src="../assets/logo.png" alt="pointr logo" />
-        </div>
-        <div class="links-group">
-          <router-link v-for="(routes, i) in links"
+  <div class="nav">
+    <div class="box-container">
+      <div class="logo">
+        <img @click="toHome" class="logo" src="../assets/logo.png" alt="pointr logo" />
+      </div>
+      <div class="links-group">
+        <router-link
+          v-for="(routes, i) in links"
           :key="i"
           :to="routes.page"
           active-class="active"
           class="link"
-          >
-          {{routes.text}}
-          </router-link>
+        >{{routes.text}}</router-link>
 
-        <button v-if="userIsAuthenticated" @click="signOut" class="btn btn-secondary">Sign out</button>
-        <router-link v-else tag="button" to="/signin" class="btn btn-primary signup-btn">Sign In</router-link>
-        </div>
+        <button @click="authBtnClicked" class="btn btn-primary btn--nav">{{ authBtnText }}</button>
       </div>
     </div>
+  </div>
 </template>
 <script>
-//import Logo from "@/components/Logo.vue";
 import { removeToken } from "@/util";
-import auth from "@/mixins/auth"
+import auth from "@/mixins/auth";
 
 export default {
-name: "NavBar",
-  components: {
-      //Logo
-  },
+  name: "NavBar",
   mixins: [auth],
-
-  methods: {
-      signOut() {
-        removeToken()
-        // TODO: shouldn't need to push a route, should be automatically done by router
-      },
-    toHome() {
-      this.$router.push({ name: 'home' })
-    }
-  },
   data: () => ({
     links: [
       {
-        page: '',
-        text: 'Events'
+        page: "",
+        text: "Events"
       },
       {
-        page: '/contact',
-        text: 'Contact'
-      },
+        page: "/contact",
+        text: "Contact"
+      }
     ]
-  })
-}
+  }),
+  computed: {
+    authBtnText() {
+      if (this.userIsAuthenticated) {
+        return "Sign out"
+      } else {
+        return "Sign in"
+      }
+    }
+  },
+  methods: {
+    authBtnClicked() {
+      if (this.userIsAuthenticated) {
+        removeToken();
+        // TODO: shouldn't need to push a route, should be automatically done by router
+      } else {
+        this.$router.push({ name: 'signIn' })
+      }
+    },
+    toHome() {
+      this.$router.push({ name: "home" });
+    }
+  }
+};
 </script>
 <style scoped>
 .nav {
   width: 100%;
-  box-shadow:   0 1rem 2rem -1rem rgba(0, 0, 0, 0.2); 
+  box-shadow: 0 1rem 2rem -1rem rgba(0, 0, 0, 0.2);
   background: #e3f2fd;
   z-index: 1;
   position: relative;
@@ -78,13 +84,13 @@ name: "NavBar",
   align-items: center;
 }
 .links-group {
-    margin-left: 30px;
-    display: flex;
+  margin-left: 30px;
+  display: flex;
   justify-content: flex-end;
   align-items: center;
 }
 .link {
-    min-width: 100px;
+  min-width: 100px;
   color: black;
   margin: 0 15px;
   text-align: center;
@@ -93,11 +99,11 @@ name: "NavBar",
   color: #311b92;
 }
 .logo {
-    max-width: 200px;
-    flex: 1 2 0;
+  max-width: 200px;
+  flex: 1 2 0;
   cursor: pointer;
 }
-.signup-btn {
-    min-width: 100px;
+.btn--nav {
+  min-width: 100px;
 }
 </style>

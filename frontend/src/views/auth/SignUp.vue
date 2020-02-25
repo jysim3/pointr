@@ -18,12 +18,12 @@
       <!-- TODO: fix :class on repeatPassword input -->
       <label class="label">Year began study</label>
       <input
-        v-model.number="userInfo.comencmentYear"
+        v-model.number="userInfo.commencmentYear"
         :max="currentYear"
         :min="2000"
         type="number"
         class="input"
-        :class="comencmentYearValid"
+        :class="commencmentYearValid"
         required
       />
       <!-- Degree type input -->
@@ -110,7 +110,7 @@ export default {
       repeatPassword: "",
       userInfo: {
         name: "",
-        comencmentYear: "",
+        commencmentYear: "",
         studentType: "",
         degreeType: "",
         isArcMember: false
@@ -119,7 +119,7 @@ export default {
     };
   },
   created() {
-    this.userInfo.comencmentYear = this.currentYear;
+    this.userInfo.commencmentYear = this.currentYear;
   },
   computed: {
     passwordsNotEqual() {
@@ -133,8 +133,8 @@ export default {
       const date = new Date();
       return date.getFullYear();
     },
-    comencmentYearValid() {
-      const year = this.userInfo.comencmentYear;
+    commencmentYearValid() {
+      const year = this.userInfo.commencmentYear;
       let isInvalid = year > 2020 || year < 2000;
 
       return { "input--invalid": isInvalid };
@@ -147,7 +147,7 @@ export default {
         zID: this.zID,
         name: this.userInfo.name,
         password: this.password,
-        commencementYear: this.userInfo.comencmentYear,
+        commencementYear: this.userInfo.commencmentYear,
         studentType: this.userInfo.studentType,
         degreeType: this.userInfo.degreeType,
         isArc: this.userInfo.isArcMember
