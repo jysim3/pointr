@@ -10,6 +10,7 @@ import EventSign from '@/views/EventSign.vue';
 import SignIn from '@/views/auth/SignIn.vue';
 import SignUp from '@/views/auth/SignUp.vue';
 import SocietyJoin from "@/views/SocietyJoin.vue";
+import AccountActivation from "@/views/auth/AccountActivation.vue";
 
 Vue.use(VueRouter);
 
@@ -81,6 +82,12 @@ const routes = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: '/activate/:activateToken',
+    name: 'activate',
+    component: AccountActivation,
+    props: true
   }
 ];
 
