@@ -2,6 +2,10 @@ from marshmallow import Schema, fields, ValidationError, validates, validate, EX
 
 zid = fields.Str(validate=validate.Regexp('^[zZ][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$', error='Malformed ZID'))
 
+commencementYear = fields.Int(validate=validate.Range(min=2000, max=2030), error='Bad Year')
+
+registrationType = fields.Str(required=False, validate=validate.Length(min = 1, max = 25))
+
 zidRequired = fields.Str(required=True, validate=validate.Regexp('^[zZ][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$', error='Malformed ZID'))
 
 token = fields.Str(validate=validate.Regexp('^[a-zA-Z0-9+_]*\.[a-zA-Z0-9+_]*\.[a-zA-Z0-9+_-]*$', error='Malformed Token'))

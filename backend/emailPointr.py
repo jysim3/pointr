@@ -28,6 +28,6 @@ def sendActivationEmail(stringToSend, emailToSend):
     message = f"""\
 Subject: Activate Your Pointr Account
 
-Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nPlease activate your account now: {stringToSend}"""
+Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nHave fun accumulating your room points :).\n\nPlease activate your account now: {stringToSend}"""
 
     server.sendmail(sender_email, receiver_email, message)

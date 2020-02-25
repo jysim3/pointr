@@ -35,7 +35,6 @@ def authorize_token(token, permission):
             return {"valid": True, "data": token_data}
         else:
             return {"valid": True, "data": token_data}
-            # return {"valid": False, "reason": "Permission denied"}
     except jwt.InvalidSignatureError:
         print("Received invalid token signature")
         return {"valid": False, "reason": "Invalid token"}
@@ -72,9 +71,9 @@ def authorize(token, permission):
         abort(403, 'Invalid Credentials')
     abort(400, 'Malformed Request')
 
-def register_user(zID, name, password, isArc=True):
+def register_user(zID, name, password, isArc, commencementYear, studentType, degreeType):
     if (checkUser(zID) == False): #TODO fixe isArc
-        return True if createUser(zID, name, password, isArc) == "Success" else False
+        return True if createUser(zID, name, password, isArc, commencementYear, studentType, degreeType) == "Success" else False
     return False
 
 def login(zID, password):
@@ -134,13 +133,19 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     args_data = AuthSchema().load(request.args)
                 except ValidationError as err:
                     abort(400, err.messages)
+
+                try:
+                    token = TokenSchema().load({"token": request.headers.get('Authorization')})
+                except ValidationError as err:
+                    abort(400, err.messages)
+
                 # Decode token
                 token_data = jwt.decode(
-                    args_data['token'],
+                    token['token'],
                     jwt_secret,
                     algorithms='HS256'
                 )
-                
+
                 # Check if eventID exists in query
                 if (allowSocStaff and 'eventID' in args_data):
                     # if so then get society of event
@@ -150,10 +155,10 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     if (token_data['zID'] in admins):
                         # if so allow
                         return func(token_data=token_data, *args, **kwargs)
-                print("1")
+
                 # if societyID exists in query
                 if (allowSocStaff and 'societyID' in args_data):
-                    print("2")
+
                     # check if zID is admin of society
                     admins = getAdminsForSoc(args_data['societyID'])
                     

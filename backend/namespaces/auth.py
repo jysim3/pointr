@@ -21,7 +21,15 @@ class Register(Resource):
     def post(self, data):
             
         # Attempt to create a new user with the username and password
-        if not auth_services.register_user(data['zID'], data['name'] if 'name' in data else "FIXME", data['password'], data['isArc'] if 'isArc' in data else True):
+        zID = data['zID']
+        password = data['password']
+        name = data['name'] if 'name' in data else "John Doe"
+        isArc = data['isArc'] if 'isArc' in data else True
+        commencementYear = data['commencementYear'] if 'commencementYear' in data else None
+        studentType = data['studentType'] if 'studentType' in data else "domestic"
+        degreeType = data['degreeType'] if 'degreeType' in data else "undergraduate"
+
+        if not auth_services.register_user(zID, name, password, isArc, int(commencementYear), studentType, degreeType):
             abort(409, 'Username Taken')
         
         token = auth_services.generateActivationToken(data['zID'])
@@ -81,8 +89,6 @@ class Authorize(Resource):
     @auth_services.check_authorization(activationRequired=False, level=5, allowSelf=True)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
-        
-# TODO validate activated
 
 @api.route('/validateSocietyAdmin')
 @api.param('token', description='User Token', type='String', required='True')
