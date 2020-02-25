@@ -2,7 +2,7 @@ from marshmallow import Schema, fields, ValidationError, validates, validate, EX
 
 zid = fields.Str(validate=validate.Regexp('^[zZ][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$', error='Malformed ZID'))
 
-commencementYear = fields.Str(validate=validate.Regexp('^20[0-2][0-9]$', error='Bad Year'))
+commencementYear = fields.Int(validate=validate.Range(min=2000, max=2030), error='Bad Year')
 
 registrationType = fields.Str(required=False, validate=validate.Length(min = 1, max = 25))
 

@@ -35,7 +35,6 @@ def authorize_token(token, permission):
             return {"valid": True, "data": token_data}
         else:
             return {"valid": True, "data": token_data}
-            # return {"valid": False, "reason": "Permission denied"}
     except jwt.InvalidSignatureError:
         print("Received invalid token signature")
         return {"valid": False, "reason": "Invalid token"}
