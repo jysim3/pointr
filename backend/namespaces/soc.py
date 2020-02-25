@@ -24,18 +24,8 @@ class Society(Resource):
         
         if (eventsList == "No such society"):
             return jsonify({"status": "Failed", "msg": "No such society"})
-        
-        payload = {}
-        payload['events'] = []
-        payload['societyName'] = eventsList[1]
-        for event in eventsList[0]:
-            eventJSON = {}
-            eventJSON['eventID'] = event[0]
-            eventJSON['name'] = event[1]
-            eventJSON['society'] = event[3]
-            eventJSON['eventDate'] = str(event[2])
-            payload['events'].append(eventJSON)
-        return jsonify(payload)
+
+        return jsonify(eventsList)
     
     @api.doc(description='''
         Create a new society
