@@ -4,7 +4,7 @@ sys.path.append('../')
 from util.events import createSingleEvent, createRecurrentEvent
 from util.users import createUser, getUserAttendance
 from util.participation import register
-from util.societies import createSociety, createSocStaff, findSocID, joinSoc
+from util.societies import createSociety, createSocStaff, findSocID, joinSoc, makeSuperAdmin
 from util.utilFunctions import checkEvent
 from datetime import datetime
 
@@ -18,6 +18,8 @@ def initDatabase():
     createUser("z5333333", "Harrison", "12345678")
     createUser("z5444444", "Memer", "12345678")
     createUser("z5555555", "Oltan", "12345678")
+    createUser("z5000000", "Super Admin Test Account", "gangboss")
+    makeSuperAdmin("z5000000")
     #createUser("z5161616", "Da Captain", "123123")
 
     createSociety("z5111111", "CSESoc")

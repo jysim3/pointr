@@ -58,7 +58,14 @@ def checkUserInfo(zID, password):
     curs = conn.cursor()
     curs.execute("SELECT * FROM users where zid = (%s) AND password = (%s);", (zID, password,))
     result = curs.fetchone()
-    return False if result is None else True
+    if result is None:
+        return False
+    curs.execute("SELECT zid FROM socStaff where role = 5;")
+    superAdmins = curs.fetchall()
+    if superAdmins == []:
+        return 1
+    if zID in superAdmins:
+        return 5
 
 # return a list of events in the form of: [(points, eventID, eventName, date, societyName), (...)]
 # Get all the events attended by the user ever in every society

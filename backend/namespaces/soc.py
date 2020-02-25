@@ -39,6 +39,28 @@ class Society(Resource):
             return jsonify({"status": "Failed", "msg": "A society with this name already exists"})
         return jsonify({"status": "Success", "msg": result})
         
+# Making an account by admin (required Superadmin)
+@api.param('token', description='User Token', type='String', required='True')
+@api.route('/makeAdmin')
+class Society(Resource):
+    @api.doc(description='''
+        Allows an superadmin (i.e. acounts with clearance level >= 2)
+    ''')
+    @auth_services.check_authorization(level=2)
+    #@validate_args_with(SocietyIDAndZIDSchema)
+    @api.param('societyID', description='ID of the queried society', type='String', required='True')
+    @api.param('zID', description='ID of the target account', type='String', required='True')
+
+    def post(self, token_data, args_data):
+        parametres = request.get_json()
+        zID = parametres['zID'] if 'zID' in parametres else abort (400, "Malformed Request")
+        societyID = parametres['societyID'] if 'societyID' in parametres else abort (400, "Malformed Request")
+        result = societies.makeAdmin(zID, societyID)
+
+        if (result == "failed"):
+            abort(403, "zID/societyID not valid")
+        return jsonify({"status": "success"})
+
 @api.param('token', description='User Token', type='String', required='True')
 @api.route('/getAllSocs')
 class GetSocs(Resource):
