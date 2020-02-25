@@ -105,7 +105,7 @@ class Authorize(Resource):
 class Authorize(Resource):
 
     @api.response(400, 'Malformed Request')
-    @auth_services.check_authorization(activationRequired=False, level=5, allowSocStaff=True)
+    @auth_services.check_authorization(level=5, allowSocStaff=True)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
         
@@ -115,6 +115,6 @@ class Authorize(Resource):
 class Authorize(Resource):
 
     @api.response(400, 'Malformed Request')
-    @auth_services.check_authorization(activationRequired=False, level=5, allowSocStaff=True)
+    @auth_services.check_authorization(level=5, allowSocStaff=True)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
