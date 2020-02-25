@@ -192,7 +192,7 @@ input {
 .form .radio-input-container label,
 .form .radio-input-container input {
   display: inline;
-  margin: 0;
+  margin: 0.4rem 0 0 0;
   font-weight: 400;
 }
 
