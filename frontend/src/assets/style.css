@@ -93,6 +93,8 @@ a {
   padding-bottom: 0.5rem;
   text-decoration: none;
   color: var(--c-secondary-dark);
+  font-weight: 500;
+  color: black;
 }
 
 a:hover {
@@ -101,6 +103,24 @@ a:hover {
 
 ::-moz-focus-inner {
   border: 0;
+}
+
+.card {
+  background-color: white;
+  padding: 3rem 6rem;
+  color: var(--c-secondary-dark);
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5rem;
 }
 
 /* Form elements */

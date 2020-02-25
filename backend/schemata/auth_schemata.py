@@ -4,7 +4,9 @@ from schemata import common_schemata
 class RegisterDetailsSchema(Schema):
     zID = common_schemata.zid
     password = common_schemata.password
-    
+    name = common_schemata.name
+    isArc = common_schemata.isArc
+
 class LoginDetailsSchema(Schema):
     zID = common_schemata.zid
     password = common_schemata.password

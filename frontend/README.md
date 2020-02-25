@@ -1,4 +1,6 @@
-# hackathon
+# Working with the frontend
+
+First have [Node.js](https://nodejs.org/en/) installed. You can check this by `node -v`. 
 
 ## Project setup
 ```

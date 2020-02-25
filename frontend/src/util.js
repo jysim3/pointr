@@ -36,8 +36,11 @@ export function fetchAPI(url, method, data) {
 }
 
 export function getToken() {
-    const token = localStorage.getItem('token')
-    return token
+    return localStorage.getItem('token')
+}
+
+export function removeToken() {
+    return localStorage.removeItem('token')
 }
 
 export function isAuthenticated() {
@@ -47,6 +50,8 @@ export function isAuthenticated() {
     // if (!localStorageToken) {
     //     return false
     // }
+
+    // TODO: only authorized when permission is not 0
 
     // return tokenIsValid
     return true // TODO: for debugging purposes user is always authenticated.
