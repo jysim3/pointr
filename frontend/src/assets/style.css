@@ -1,15 +1,16 @@
 /* TODO: change all px and em to rem, in component files as well! */
 /* TODO: favicon */
 /* Global */
-*, html {
-    margin: 0;
+*,
+html {
+  margin: 0;
 }
 
 :root {
-  --c-primary: #2CA0E1;
-  --c-secondary: #F4F4F4;
-  --c-secondary-dark: #4D4D4D;
-  --c-warning: #D45D79;
+  --c-primary: #2ca0e1;
+  --c-secondary: #f4f4f4;
+  --c-secondary-dark: #4d4d4d;
+  --c-warning: #d45d79;
   --font-stack--text: 'SF-Text', Arial, Helvetica, sans-serif;
   --font-stack--display: 'SF-Display', Arial, Helvetica, sans-serif;
   --border-radius: 5px;
@@ -62,15 +63,15 @@ h3 {
   font-weight: 500;
 }
 
-h4, 
-h5, 
+h4,
+h5,
 h6 {
   font-weight: 400;
 }
 
 h1 {
   font-size: 3rem;
-  letter-spacing: 0.05rem;  
+  letter-spacing: 0.05rem;
   text-align: center;
   color: black;
 }
@@ -141,7 +142,7 @@ a:hover {
   display: block;
   margin: 2rem auto 0 auto;
   font-size: 1.25rem;
-  min-width: 70%;
+  /* max-width: 4rem; */
 }
 
 .form h2 {
@@ -155,30 +156,50 @@ a:hover {
   align-items: center;
 }
 
-.label-input-div {
-  margin-top: 1.25rem;
-  /* display: flex;
-  flex-direction: column;
-  justify-content: center; */
-}
-
-.label-input-div .label {
-  display: block;
-}
-
 .radio-div .label {
   display: inline;
   color: black;
   margin-left: 1rem;
 }
 
+label,
+input {
+  display: block;
+}
+
+.form label {
+  align-self: flex-start;
+  margin-top: 1.25rem;
+  font-weight: 500;
+}
+
 /* .label + .radio-div {
   margin: 1rem;
 } */
 
-input[type="radio"] {
-  background-color: var(--c-primary);
-  cursor: pointer;
+.form .radio-input-container,
+.form .checkbox-input-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.checkbox-input-container {
+  margin-top: 1rem;
+}
+
+.form .radio-input-container label,
+.form .radio-input-container input {
+  display: inline;
+  margin: 0;
+  font-weight: 400;
+}
+
+.form .checkbox-input-container label,
+.form .checkbox-input-container input {
+  display: inline;
+  margin: 0;
 }
 
 /* Inputs and labels */
@@ -231,12 +252,8 @@ input:invalid {
   font-size: 1.25rem;
 }
 
-.input[type="checkbox"], .label-input-div .input--checkbox-label {
-  display: inline;
-}
-
-.input[type="checkbox"] {
-  float: right;
+input[type='checkbox'] {
+  cursor: pointer;
 }
 
 /* Buttons */
@@ -261,8 +278,7 @@ input:invalid {
 }
 
 .btn:focus {
-  box-shadow: 
-    0 5px 50px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 5px 50px rgba(0, 0, 0, 0.25);
   outline: 0;
 }
 

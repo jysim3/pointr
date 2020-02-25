@@ -5,14 +5,15 @@
       <FormError v-if="error.status" :msg="error.msg" />
       <InputZID v-model="zID" :zID="zID" />
       <InputPassword v-model="password" :password="password" />
-      <div class="label-input-div">
+      <!-- <div class="label-input-div">
         <label class="label input--checkbox-label">Remember me</label>
         <input v-model="rememberUser" class="input input--checkbox" type="checkbox" />
-      </div>
+      </div>-->
       <button type="submit" class="btn btn-primary">Sign In</button>
-      <!-- TODO: add button for sign up -->
-      <p>Need an account?</p>
-      <router-link to="/signup">Sign up</router-link>
+      <div id="signup-route">
+        <p>Don't have an account?</p>
+        <router-link id="need-account-link" to="/signup">Sign up</router-link>
+      </div>
     </form>
   </div>
 </template>
@@ -68,5 +69,14 @@ export default {
 #sign-in-form-container {
   height: 100vh; /* TODO: TEMPORARY FIX DOES NOT WORK WELL WITH SMALLER SCREENS */
   margin: auto 0;
+}
+
+#signup-route {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+#signup-route p {
+  margin-bottom: 0.5rem;
 }
 </style>

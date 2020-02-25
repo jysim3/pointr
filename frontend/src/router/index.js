@@ -99,6 +99,8 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
+
+  // TODO: if token exists and is valid then don't want to redirect to signIn/signUp
 });
 
 export default router;

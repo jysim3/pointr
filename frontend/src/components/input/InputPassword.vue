@@ -1,6 +1,7 @@
 <template>
   <div class="label-input-div">
-    <label class="label">Password</label>
+    <label v-if="label" class="label">{{ label }}</label>
+    <label v-else class="label">Password</label>
     <input
       class="input"
       :class="{ 'input--invalid': !isPasswordValid }" 
@@ -16,6 +17,10 @@
 export default {
   name: "InputPassword",
   props: {
+    label: {
+      type: String,
+      required: false
+    },
     password: {
       type: String,
       required: true
