@@ -10,7 +10,13 @@ export function fetchAPI(url, method, data) {
                     Authorization: getToken(),
                     'Content-Type': 'application/json'
                 }
-            }).then(response => response.json())
+            })
+            .then(r => {
+                console.log(r)//eslint-disable-line
+                const j = r.json()
+                j.status = r.status
+                return j
+            })
         )
     } else {
 
@@ -24,12 +30,8 @@ export function fetchAPI(url, method, data) {
             })
             .then(r => {
                 console.log(r)//eslint-disable-line
-                return r
-            })
-            .then(response => response.json())
-            .then(r => {
-                console.log(r)//eslint-disable-line
-                return r
+                const j = r.json()
+                return j
             })
         )
     }
@@ -39,17 +41,20 @@ export function getToken() {
     return localStorage.getItem('token')
 }
 
+export function setToken(token) {
+    return localStorage.setItem('token', token)
+}
 export function removeToken() {
     return localStorage.removeItem('token')
 }
 
 export function isAuthenticated() {
-    // const localStorageToken = getToken()
+    const localStorageToken = getToken()
     // const tokenIsValid = false
 
-    // if (!localStorageToken) {
-    //     return false
-    // }
+    if (!localStorageToken) {
+        return false
+    }
 
     // TODO: only authorized when permission is not 0
 

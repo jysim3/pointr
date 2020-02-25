@@ -1,14 +1,21 @@
 <template>
   <div>
     <NavBar />
-    <h2 id="heading">The event tracking system for UNSW colleges.</h2>
-    <div id="btn-container">
-      <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link>
-      <router-link tag="button" to="/mark-attendance" class="btn btn-secondary">Mark my attendance</router-link>
+    <div class="container">
+
+      <img src="../assets/stockphoto1.png" />
+      <div class="right">
+        <h1 id="heading">Welcome to Pointr!</h1>
+        <h3 id="sub-heading">The event tracking system for UNSW colleges.</h3>
+      <div id="btn-container">
+        <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link>
+        <router-link tag="button" to="/mark-attendance" class="btn btn-secondary">Mark my attendance</router-link>
+      </div>
+      </div>
     </div>
-    <div id="admin">
-      <a href id="admin-link">I’m administration</a>
-    </div>
+      <div id="admin">
+        <a href id="admin-link">I’m administration</a>
+      </div>
   </div>
 </template>
 
@@ -16,30 +23,42 @@
 //import Logo from "@/components/Logo.vue";
 import NavBar from "@/components/NavBar.vue";
 
+console.log('hi') //eslint-disable-line
 export default {
   name: "LandingPage",
   components: {
-    //Logo, 
     NavBar
   }
 };
 </script>
 
 <style scoped>
-#heading {
-  text-align: center;
-  margin-top: 2em;
+.container {
+  width: 80%;
+  margin: auto;
+  padding-top: 4rem;
+  display: flex;
+  justify-content: space-between;
+}
+.left {
+  min-width: 0;
+}
+.right {
+  min-width: 0;
+}
+#heading, #sub-heading {
+  text-align: right;
 }
 
 .btn {
   font-size: 1.5rem;
   /* TODO: fix alignment, does not seem quite center? */
-  margin: 0 4rem;
+  margin: 0 1rem;
 }
 
 #btn-container {
   display: flex;
-  justify-content: center;
+  justify-content: right;
   margin-top: 7rem;
 }
 

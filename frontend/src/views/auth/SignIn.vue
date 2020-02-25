@@ -1,4 +1,6 @@
 <template>
+<div>
+  <NavBar />
   <div class="form-container" id="sign-in-form-container">
     <form @submit.prevent="submitSignInForm" class="form">
       <h2>Sign in to Pointr</h2>
@@ -16,20 +18,23 @@
       </div>
     </form>
   </div>
+</div>
 </template>
 
 <script>
-import { fetchAPI } from "@/util.js";
+import { fetchAPI, setToken } from "@/util.js";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import InputPassword from "@/components/input/InputPassword.vue";
+import NavBar from "@/components/NavBar.vue";
 
 export default {
   name: "SignIn",
   components: {
     FormError,
     InputZID,
-    InputPassword
+    InputPassword,
+    NavBar
   },
   data() {
     return {
@@ -49,12 +54,9 @@ export default {
         password: this.password
       })
         .then(r => {
-          if (r.status !== 200) {
-            this.error.status = true;
-            this.error.msg = "Invalid credentials";
-          } else {
-            this.$router.push({ name: "home" });
-          }
+          console.log(r) //eslint-disable-line
+          setToken(r.token)
+          this.$router.push({ name: "home" });
         })
         .catch(err => {
           this.error.status = true;

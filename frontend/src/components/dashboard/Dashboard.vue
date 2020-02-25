@@ -1,5 +1,6 @@
 <template>
   <div>
+    <NavBar />
     <DashboardNavigation />
     <DashboardEventView :eventViewTitle="upcomingEvents.title" :eventData="upcomingEvents.data" />
     <DashboardEventView :eventViewTitle="attendedEvents.title" :eventData="attendedEvents.data" />
@@ -11,13 +12,15 @@ import { fetchAPI } from "@/util.js";
 import auth from "@/mixins/auth";
 import DashboardNavigation from "@/components/dashboard/DashboardNavigation.vue";
 import DashboardEventView from "@/components/dashboard/DashboardEventView.vue";
+import NavBar from "@/components/NavBar.vue";
 
 export default {
   name: "Dashboard",
   mixins: [auth],
   components: {
     DashboardNavigation,
-    DashboardEventView
+    DashboardEventView,
+    NavBar
   },
   data() {
     return {

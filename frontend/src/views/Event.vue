@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Logo />
     <EventCodeDisplay :eid="eid" />
     <h1 id="welcome-header">Welcome to {{ this.name }}</h1>
     <h2 id="mark-attendance-header">Mark your attendance</h2>
@@ -31,6 +32,7 @@
 import EventAttendance from "@/components/EventAttendance.vue";
 import EventQRCode from "@/components/EventQRCode.vue";
 import EventCodeDisplay from "@/components/EventCodeDisplay.vue";
+import Logo from "@/components/Logo.vue"
 import { fetchAPI } from "@/util.js";
 
 export default {
@@ -41,7 +43,8 @@ export default {
   components: {
     EventQRCode,
     EventAttendance,
-    EventCodeDisplay
+    EventCodeDisplay,
+    Logo
   },
   data() {
     return {
