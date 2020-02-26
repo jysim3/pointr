@@ -44,7 +44,7 @@ export default {
     authBtnClicked() {
       if (this.userIsAuthenticated) {
         removeToken();
-        // TODO: shouldn't need to push a route, should be automatically done by router
+        this.$router.go(0)// TODO: shouldn't need to push a route, should be automatically done by router
       } else {
         this.$router.push({ name: "signIn" });
       }
