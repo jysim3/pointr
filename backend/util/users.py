@@ -173,7 +173,7 @@ def activateAccount(zID):
         conn.close()
         return "failed"
     result = curs.fetchone()
-    if (result[0]) == False:
+    if (result[0]) == True:
         return "already activated"
 
     try:

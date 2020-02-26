@@ -7,6 +7,10 @@ from util.participation import register
 from util.societies import createSociety, createSocStaff, findSocID, joinSoc, makeSuperAdmin
 from util.utilFunctions import checkEvent
 from datetime import datetime
+import uuid
+
+def generateID(number = None):
+    return str(uuid.uuid4().hex).upper()[:10]
 
 def initDatabase():
     # Moving this section to init.py in the next patch lmao
@@ -24,9 +28,9 @@ def initDatabase():
     activateAccount("z5444444")
     createUser("z5555555", "Oltan", "12345678")
     activateAccount("z5555555")
-    createUser("z5000000", "Super Admin Test Account", "gangboss")
-    activateAccount("z5000000")
-    makeSuperAdmin("z5000000")
+    createUser("z5event2[0]00", "Super Admin Test Account", "gangboss")
+    activateAccount("z5event2[0]00")
+    makeSuperAdmin("z5event2[0]00")
     #createUser("z5161616", "Da Captain", "123123")
 
     createSociety("z5111111", "CSESoc")
@@ -35,23 +39,26 @@ def initDatabase():
     createSociety("z5444444", "Exotic Beer Society")
 
     # NOTE: Defaults to UNSW Hall (for the society field right now)
-    createSingleEvent("z5161631", "1239", "Hackathon", "2020-11-19", True, findSocID("CSESoc"), None, None)
-    createSingleEvent("z5333333", "0000", "Gamer Juice Winery Tour", "2020-09-09", True, findSocID("Manchester United FC"), None, None, datetime.strptime("23:30:00", "%H:%M:%S"))
-    createSingleEvent("z5222222", "KSJAM", "Test Event", "2020-02-23", False, findSocID("UNSW Hall"), None, None)
-    createSingleEvent("z5444444", "1234", "LoL Appreciation", "2020-09-08", True, findSocID("Exotic Beer Society"))
+    event1 = createSingleEvent("z5161631", generateID(), "Hackathon", "2020-11-19", True, findSocID("CSESoc"), None, None)
+    event2 = createSingleEvent("z5333333", generateID(), "Gamer Juice Winery Tour", "2020-09-09", True, findSocID("Manchester United FC"), None, None, datetime.strptime("23:30:00", "%H:%M:%S"))
+    event3 = createSingleEvent("z5222222", generateID(), "Test Event", "2020-02-23", False, findSocID("UNSW Hall"), None, None)
+    event4 = createSingleEvent("z5444444", generateID(), "LoL Appreciation", "2020-09-08", True, findSocID("Exotic Beer Society"))
 
-    createRecurrentEvent("z5222222", "ASDZX", "Coffee Night", "2020-02-26", "2021-01-01", 7, "day", False, "UNSW Hall", findSocID("UNSW Hall"), "Weekly Wednesday gathering for UNSW Hall")
+    event5 = createRecurrentEvent("z5222222", generateID(), "Coffee Night", "2020-02-26", "2021-01-01", 7, "day", False, "UNSW Hall", findSocID("UNSW Hall"), "Weekly Wednesday gathering for UNSW Hall")
 
     # register users:
     #   for Hackathon
     joinSoc("z5161631", findSocID("CSESoc"))
-    register("z5161631", "1239")
+    register("z5161631", event1[0])
     joinSoc("z5222222", findSocID("CSESoc"))
-    register("z5222222", "1239")
+    register("z5222222", event1[0])
     #   for Gamer Juice Winery Tour
-    register("z5333333", "0000")
-    register("z5555555", "0000")
-    register("z5161631", "0000")
+    joinSoc("z5333333", findSocID("Manchester United FC"))
+    register("z5333333", "event2[0]")
+    joinSoc("z5555555", findSocID("Manchester United FC"))
+    register("z5555555", "event2[0]")
+    joinSoc("z5161631", findSocID("Manchester United FC"))
+    register("z5161631", "event2[0]")
     #   for Coffee Night
     register("z5161631", "1234")
     register("z5111111", "1234")
