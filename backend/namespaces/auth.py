@@ -25,7 +25,7 @@ class Register(Resource):
         password = data['password']
         name = data['name'] if 'name' in data else "John Doe"
         isArc = data['isArc'] if 'isArc' in data else True
-        commencementYear = data['commencementYear'] if 'commencementYear' in data else None
+        commencementYear = data['commencementYear'] if 'commencementYear' in data else 2020
         studentType = data['studentType'] if 'studentType' in data else "domestic"
         degreeType = data['degreeType'] if 'degreeType' in data else "undergraduate"
 
@@ -69,7 +69,7 @@ class Login(Resource):
         if (token):
             return jsonify({"token": token})
         else:
-            abort(403, 'Invalid Credentials')
+            abort(403, 'Invalid Credentials / Account Not Activated')
 
 @api.route('/permission')
 class Login(Resource):
