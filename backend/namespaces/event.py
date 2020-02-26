@@ -36,7 +36,7 @@ class Event(Resource):
     @api.response(200, 'Success')
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
-    @auth_services.check_authorization(level=2, allowSocStaff=True)
+    @auth_services.check_authorization(level=1, allowSocStaff=True)
     def post(self, token_data):
         data = request.get_json()
         eventID = generateID(5).upper()
@@ -71,7 +71,7 @@ class Event(Resource):
         if isRecur is not False:
             results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description, endTime)
         else:
-            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID, description, endTime)
+            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, societyID, location, description, endTime)
 
         if (isinstance(results, tuple) == False):
             return jsonify({"status": "failed", "msg": results})
