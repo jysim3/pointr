@@ -71,6 +71,15 @@ class Login(Resource):
         else:
             abort(403, 'Invalid Credentials')
 
+@api.route('/permission')
+class Login(Resource):
+    
+    @api.response(400, 'Malformed Request')
+    @api.response(403, 'Invalid Credentials')
+    @auth_services.check_authorization(activationRequired=False, level=0)
+    def post(self, token_data):
+        return jsonify({"permission": token_data['permission']})
+
 @api.route('/validate')
 @api.param('token', description='User Token', type='String', required='True')
 class Authorize(Resource):
@@ -96,7 +105,7 @@ class Authorize(Resource):
 class Authorize(Resource):
 
     @api.response(400, 'Malformed Request')
-    @auth_services.check_authorization(activationRequired=False, level=5, allowSocStaff=True)
+    @auth_services.check_authorization(level=5, allowSocStaff=True)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
         
@@ -106,6 +115,6 @@ class Authorize(Resource):
 class Authorize(Resource):
 
     @api.response(400, 'Malformed Request')
-    @auth_services.check_authorization(activationRequired=False, level=5, allowSocStaff=True)
+    @auth_services.check_authorization(level=5, allowSocStaff=True)
     def post(self, token_data):
         return jsonify({"valid" : "true"})

@@ -78,19 +78,19 @@ def register_user(zID, name, password, isArc, commencementYear, studentType, deg
 
 def login(zID, password):
     results = checkUserInfo(zID, password)
-    if (results == True):
-        global token_exp
-        token = jwt.encode(
-            {
-                'exp': datetime.utcnow() + timedelta(seconds=token_exp),
-                'iat': datetime.utcnow(),
-                'zID': zID,
-                'permission': 1 # TODO Make it so admins and users can be created
-            }, 
-            jwt_secret, algorithm='HS256' 
-        ) 
-        return token.decode("utf-8")
-    return None
+    if (results == None):
+        return None
+    global token_exp
+    token = jwt.encode(
+        {
+            'exp': datetime.utcnow() + timedelta(seconds=token_exp),
+            'iat': datetime.utcnow(),
+            'zID': zID,
+            'permission': 1 if results == 1 else 5 
+        }, 
+        jwt_secret, algorithm='HS256' 
+    ) 
+    return token.decode("utf-8")
     
 def generateActivationToken(zID):
     global activationTokenTimeout

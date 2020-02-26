@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS encrypt (
 );
 
 create or replace view hostedEvents 
-as select events.eventID, name, eventdate, location, societyname from events 
+as select events.eventID, name, eventdate, location, societyname, societyID from events 
 join host on events.eventID = host.eventID join society on (society.societyID = host.society);
 
 create or replace view userInSociety 
@@ -66,5 +66,5 @@ as select societyid, societyname, users.zID from society
 join socstaff on society.societyid = socstaff.society join users on socstaff.zid = users.zid and role = 0;
 
 create or replace view userParticipatedEvents 
-as select eventID, name, eventdate, location, hostedevents.societyname, societyid, zid from hostedevents 
-join userinsociety on hostedevents.societyname = userinsociety.societyname;
+as select hostedEvents.eventID, name, eventdate, location, hostedevents.societyname, societyid, zid from hostedEvents
+join participation ON hostedEvents.eventID = participation.eventID;

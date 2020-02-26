@@ -30,7 +30,10 @@ def getUserInfo(zID):
     except Exception as e:
         conn.close()
         return "failed"
-    name = curs.fetchone()[0]
+    name = curs.fetchone()
+    if (name == None):
+        return None
+    name = name[0]
     try:
         curs.execute("SELECT * FROM userParticipatedEvents WHERE zID = (%s);", (zID,))
     except Exception as e:
@@ -58,7 +61,14 @@ def checkUserInfo(zID, password):
     curs = conn.cursor()
     curs.execute("SELECT * FROM users where zid = (%s) AND password = (%s);", (zID, password,))
     result = curs.fetchone()
-    return False if result is None else True
+    if result is None:
+        return False
+    curs.execute("SELECT zid FROM socStaff where role = 5;")
+    superAdmins = curs.fetchall()
+    if superAdmins == []:
+        return 1
+    if zID in superAdmins:
+        return 5
 
 # return a list of events in the form of: [(points, eventID, eventName, date, societyName), (...)]
 # Get all the events attended by the user ever in every society
@@ -156,6 +166,7 @@ def addActivationLink(zID, activationLink):
 def activateAccount(zID):
     conn = createConnection()
     curs = conn.cursor()
+    # TODO: Remove the next 8 lines, already implemented in checkActivation
     try:
         curs.execute("SELECT activationStatus FROM users WHERE zID = (%s);", (zID,))
     except Exception as e:
@@ -172,3 +183,17 @@ def activateAccount(zID):
         return "failed"
     conn.commit()
     return "success"
+
+def checkActivation(zID):
+    conn = createConnection()
+    curs = conn.cursor()
+    try:
+        curs.execute("SELECT activationStatus FROM USERS WHERE zID = (%s);", (zID,))
+    except Exception as e:
+        conn.close()
+        return False
+    
+    result = curs.fetchone()
+    if (result is None):
+        return False
+    return result[0]
