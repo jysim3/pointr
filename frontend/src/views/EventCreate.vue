@@ -108,7 +108,7 @@ export default {
 //  }
       fetchAPI("/api/event/", "POST", data).then(j => {
         console.log(j); //eslint-disable-line
-        this.$route.push({ name: "event", params: { eid: j.eventID } });
+        this.$router.push({ name: "event", params: { eid: j.msg } });
       });
     }
   }
