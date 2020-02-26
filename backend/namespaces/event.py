@@ -148,7 +148,7 @@ class getAttendance(Resource):
         except Exception as e:
             abort(400, "Cannot find file")
 
-@api.route('/getAllEvents')
+@api.route('/getAllEventID')
 class getAllEvents(Resource):
     def get(self):
         result = events.getAllEvents()

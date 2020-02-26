@@ -182,19 +182,15 @@ def getAllEvents():
     currentDate = datetime.now().date()
     currentDate = str(currentDate)
     try:
-        curs.execute("SELECT eventID, name, eventDate FROM events WHERE eventDate > (%s);", (currentDate, ))
+        curs.execute("SELECT eventID FROM events WHERE eventDate > (%s);", (currentDate, ))
     except Exception as e:
         return None
     
     results = curs.fetchall()
     if results == []:
         return None
-
     payload = []
     for result in results:
-        eventJSON = {}
-        eventJSON['eventID'] = result[0]
-        eventJSON['name'] = result[1]
-        eventJSON['eventDate'] = result[2]
-        payload.append(eventJSON)
+        payload.append(result[0])
+
     return payload
