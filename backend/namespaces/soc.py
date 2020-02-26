@@ -78,6 +78,8 @@ class Join(Resource):
         result = societies.joinSoc(token_data['zID'], data['societyID'])
         if result == 'failed':
             abort(400, "Bad arguments")
+        elif result == "Already registered":
+            abort(403, "Already a part of the society")
         return jsonify({"status": "success"})
 
     def delete(self):

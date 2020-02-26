@@ -21,9 +21,11 @@
 <script>
 import { fetchAPI } from "@/util.js";
 import EventCard from "@/components/EventCard.vue";
+import auth from "@/mixins/auth";
 
 export default {
   name: "EventSignEnterAttendance",
+  mixins: [auth],
   props: {
     eid: {
       type: String,
@@ -43,13 +45,15 @@ export default {
     };
   },
   created() {
-    fetchAPI(`/api/event?eventID=${this.eid}`, "GET").then(j => {
-      this.eventData = j.msg;
+    fetchAPI(`/api/event/?eventID=${this.eid}`, "GET").then(j => {
+      this.eventData = j;
+      console.log(j) //eslint-disable-line
     });
 
-    fetchAPI(`/api/user/info`, "GET").then(j => {
+    fetchAPI(`/api/user/info`, "POST").then(j => {
+      console.log(j) //eslint-disable-line
       this.userName = j.msg.name;
-      this.zID = j.msg.zID;
+      this.zID = this.getZID();
       // Checking if this event's ID matches with a user's signed event.
       this.eventAlreadySigned = j.msg.events.some(
         event => event.eventID === this.eventData.eventID

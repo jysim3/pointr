@@ -30,12 +30,14 @@ def generateID(number = None):
 # { status: "success", "msg": [{"date": 2020-04-04, "eventID": "1FAEA00001"}, {...}}
 # or
 # { status: "ERROR MESSAGE"}
+# FIXME: HARRISON FUCKED UP, AND HES TRYING TO JUSTIFY HIS MISTAKE
 @api.route('/')
 class Event(Resource):
     @api.response(200, 'Success')
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
-    def post(self):
+    @auth_services.check_authorization(level=2, allowSocStaff=True)
+    def post(self, token_data):
         data = request.get_json()
         eventID = generateID(5).upper()
         if not 'hasQR' in data:
@@ -83,7 +85,8 @@ class Event(Resource):
     @api.response(200, 'Success')
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
-    def get(self):
+    @auth_services.check_authorization(level=1)
+    def get(self, token_data):
         eventID = request.args.get('eventID')
         attendance = participation.getAttendance(sanitize(eventID))
         if attendance == "failed":
