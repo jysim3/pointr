@@ -166,6 +166,7 @@ def addActivationLink(zID, activationLink):
 def activateAccount(zID):
     conn = createConnection()
     curs = conn.cursor()
+    # TODO: Remove the next 8 lines, already implemented in checkActivation
     try:
         curs.execute("SELECT activationStatus FROM users WHERE zID = (%s);", (zID,))
     except Exception as e:
@@ -182,3 +183,17 @@ def activateAccount(zID):
         return "failed"
     conn.commit()
     return "success"
+
+def checkActivation(zID):
+    conn = createConnection()
+    curs = conn.cursor()
+    try:
+        curs.execute("SELECT activationStatus FROM USERS WHERE zID = (%s);", (zID,))
+    except Exception as e:
+        conn.close()
+        return False
+    
+    result = curs.fetchone()
+    if (result is None):
+        return False
+    return result[0]
