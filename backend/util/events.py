@@ -182,6 +182,33 @@ def getAllEvents():
     currentDate = datetime.now().date()
     currentDate = str(currentDate)
     try:
+        curs.execute("SELECT eventID, name, eventDate, location, societyName, societyID FROM hostedEvents WHERE eventDate > (%s);", (currentDate, ))
+    except Exception as e:
+        return None
+    
+    results = curs.fetchall()
+    if results == []:
+        return None
+
+    payload = []
+    for result in results:
+        eventJSON = {}
+        eventJSON['eventID'] = result[0]
+        eventJSON['name'] = result[1]
+        eventJSON['eventDate'] = result[2]
+        eventJSON['location'] = result[3]
+        eventJSON['societyName'] = result[4]
+        eventJSON['societyID'] = result[5]
+        payload.append(eventJSON)
+    return payload
+
+def getAllEventID():
+    conn = createConnection()
+    curs = conn.cursor()
+
+    currentDate = datetime.now().date()
+    currentDate = str(currentDate)
+    try:
         curs.execute("SELECT eventID FROM events WHERE eventDate > (%s);", (currentDate, ))
     except Exception as e:
         return None
@@ -189,8 +216,8 @@ def getAllEvents():
     results = curs.fetchall()
     if results == []:
         return None
+
     payload = []
     for result in results:
         payload.append(result[0])
-
     return payload

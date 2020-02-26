@@ -1,7 +1,7 @@
 <template>
 <div>
-  <NavBar />
-  <div class="form-container" id="sign-in-form-container">
+  <NavBarDefault />
+  <div class="form-container" id="form-container--signin">
     <form @submit.prevent="submitSignInForm" class="form">
       <h2>Sign in to Pointr</h2>
       <FormError v-if="error.status" :msg="error.msg" />
@@ -26,7 +26,7 @@ import { fetchAPI, setToken } from "@/util.js";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import InputPassword from "@/components/input/InputPassword.vue";
-import NavBar from "@/components/NavBar.vue";
+import NavBarDefault from "@/components/NavBarDefault.vue";
 
 export default {
   name: "SignIn",
@@ -34,7 +34,7 @@ export default {
     FormError,
     InputZID,
     InputPassword,
-    NavBar
+    NavBarDefault
   },
   data() {
     return {
@@ -68,9 +68,8 @@ export default {
 </script>
 
 <style scoped>
-#sign-in-form-container {
-  height: 100vh; /* TODO: TEMPORARY FIX DOES NOT WORK WELL WITH SMALLER SCREENS */
-  margin: auto 0;
+#form-container--signin {
+  margin-top: 2rem;
 }
 
 #signup-route {

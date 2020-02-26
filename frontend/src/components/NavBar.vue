@@ -9,8 +9,8 @@
         <router-link
           v-for="(routes, i) in links"
           :key="i"
-          :to="routes.page"
-          active-class="active"
+          :to="routes.to"
+          active-class="link--active"
           class="link"
         >{{routes.text}}</router-link>
 
@@ -26,24 +26,17 @@ import auth from "@/mixins/auth";
 export default {
   name: "NavBar",
   mixins: [auth],
-  data: () => ({
-    links: [
-      {
-        page: "",
-        text: "Events"
-      },
-      {
-        page: "/contact",
-        text: "Contact"
-      }
-    ]
-  }),
+  props: {
+    links: {
+      type: Array
+    }
+  },
   computed: {
     authBtnText() {
       if (this.userIsAuthenticated) {
-        return "Sign out"
+        return "Sign out";
       } else {
-        return "Sign in"
+        return "Sign in";
       }
     }
   },
@@ -51,9 +44,9 @@ export default {
     authBtnClicked() {
       if (this.userIsAuthenticated) {
         removeToken();
-        // TODO: shouldn't need to push a route, should be automatically done by router
+        this.$router.go(0)// TODO: shouldn't need to push a route, should be automatically done by router
       } else {
-        this.$router.push({ name: 'signIn' })
+        this.$router.push({ name: "signIn" });
       }
     },
     toHome() {
@@ -95,7 +88,7 @@ export default {
   margin: 0 15px;
   text-align: center;
 }
-.active {
+.link--active {
   color: #311b92;
 }
 .logo {

@@ -1,8 +1,10 @@
 <template>
   <div>
-    <div class="form-container">
+    <NavBarDefault />
+    <div id="form-container--entercode" class="form-container">
       <form class="form" @submit.prevent="submitEventCodeForm">
         <h2>Sign event attendance</h2>
+        <FormError v-show="formErrorMessage" :msg="formErrorMessage" />
         <div class="label-input-div">
           <label class="label" for>Event code</label>
           <input class="input" v-model="eid" type="text" required />
@@ -14,21 +16,43 @@
 </template>
 
 <script>
+import { fetchAPI } from "@/util";
+import NavBarDefault from "@/components/NavBarDefault.vue";
+import FormError from "@/components/FormError.vue";
+
 export default {
   name: "EventSignEnterCode",
+  components: {
+    FormError,
+    NavBarDefault
+  },
   data() {
     return {
       eid: "",
+      formErrorMessage: "",
+      allEventID: []
     };
+  },
+  created() {
+    fetchAPI("/api/event/getAllEventID")
+    .then(j => {
+      this.allEventID = j
+    })
   },
   methods: {
     submitEventCodeForm() {
-      // TODO: check that this is an event before pushing
-      this.$router.push({ name: "eventSign", params: { eid: this.eid } });
+      if (this.allEventID.includes(this.eid)) {
+        this.$router.push({ name: "eventSign", params: { eid: this.eid } });
+      } else {
+        this.formErrorMessage = "Looks like we couldn't find that event."
+      }
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
+#form-container--entercode {
+  margin-top: 3rem;
+}
 </style>
