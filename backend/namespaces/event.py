@@ -149,7 +149,17 @@ class getAttendance(Resource):
         except Exception as e:
             abort(400, "Cannot find file")
 
+# This returns all the eventID in place right now (that hasnt happened yet)
 @api.route('/getAllEventID')
+class getAllEventID(Resource):
+    def get(self):
+        result = events.getAllEventID()
+        if (result == None):
+            abort(400, "Something went wrong, no events found")
+        return jsonify(result)
+
+# This returns all the events (including all of their event infomation)
+@api.route('/getAllEvents')
 class getAllEvents(Resource):
     def get(self):
         result = events.getAllEvents()
