@@ -7,6 +7,7 @@
         <FormError v-show="formErrorMessage" :msg="formErrorMessage" />
         <div class="label-input-div">
           <label class="label" for>Event code</label>
+          <!-- TODO: sanitise input, using quotes does not work -->
           <input class="input" v-model="eid" type="text" required />
         </div>
         <button class="btn btn-primary" type="submit">Next</button>

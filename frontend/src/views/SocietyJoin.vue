@@ -20,9 +20,11 @@
 
 <script>
 import { fetchAPI } from "@/util.js";
+import auth from "@/mixins/auth";
 
 export default {
   name: "JoinSociety",
+  mixins: [auth],
   data() {
     return {
       selectedSociety: "",
@@ -33,13 +35,13 @@ export default {
   created() {
     fetchAPI("/api/soc/getAllSocs", "GET")
       .then(j => {
-        this.societies = j;
+        this.allSocieties = j;
       })
       .catch(e => alert(e));
   },
   methods: {
     submitJoinSocietyForm() {
-      fetchAPI("/api/soc/join", "POST", {
+      fetchAPI(`/api/soc/join?token=${this.token}`, "POST", {
         zID: this.getZID(),
         socID: this.selectedSociety.soceityID
       })

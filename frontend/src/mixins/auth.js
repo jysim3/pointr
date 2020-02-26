@@ -14,7 +14,7 @@ export default {
     },
     methods: {
         getZID() {
-            const tokenDecoded = jwt.decode(getToken());
+            const tokenDecoded = jwt.decode(this.token);
             return tokenDecoded['zID']
         }
     }

@@ -95,6 +95,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   // TODO: clean up the else statements?
   // TODO: what if user goes sign in -> sign up from link in sign in form, then they may not end up at original, intended path
+  // TODO: signed in user should not be able to go to sign in or sign up
   // EXAMPLE: user with no account scans QR code on Event page
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!isAuthenticated()) {

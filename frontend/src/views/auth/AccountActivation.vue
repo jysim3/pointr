@@ -42,7 +42,7 @@ export default {
   },
   created() {
     const decodedToken = jwt.decode(this.activateToken);
-    this.name = decodedToken["name"];
+    // this.name = decodedToken["name"]; TODO: need to do an info request
     this.zID = decodedToken["zID"];
 
     fetchAPI(`/api/auth/activate?token=${this.activateToken}`).then(r => {
