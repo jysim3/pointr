@@ -21,7 +21,7 @@ class Register(Resource):
     def post(self, data):
             
         # Attempt to create a new user with the username and password
-        zID = data['zID']
+        zID = data['zID'].lower()
         password = data['password']
         name = data['name'] if 'name' in data else "John Doe"
         isArc = data['isArc'] if 'isArc' in data else True
@@ -32,12 +32,12 @@ class Register(Resource):
         if not auth_services.register_user(zID, name, password, isArc, int(commencementYear), studentType, degreeType):
             abort(409, 'Username Taken')
         
-        token = auth_services.generateActivationToken(data['zID'])
+        token = auth_services.generateActivationToken(zID)
         #print(token)
 
         # At this point, the user is created, we now send the activation email
         # FIXME: Change this to pointr.live (in frontend) when in production
-        sendActivationEmail(f"https://pointer.live/activate/{token}", f"{data['zID']}@student.unsw.edu.au")
+        sendActivationEmail(f"https://pointer.live/activate/{token}", f"{zID}@student.unsw.edu.au")
 
         return jsonify({"status": "success"})
 
@@ -49,7 +49,7 @@ class Activate(Resource):
     @auth_services.check_authorization(activationRequired=False, level=0)
     def post(self, token_data):
 
-        result = users.activateAccount(token_data['zID'])
+        result = users.activateAccount(token_data['zID'].lower())
         if (result == "failed"):
             abort(400, "Malformed Request")
         elif (result == "already activated"):
@@ -65,14 +65,14 @@ class Login(Resource):
     def post(self, data):
         
         # Login and if successful return the token otherwise invalid credentials
-        token = auth_services.login(data['zID'], data['password'])
+        token = auth_services.login(data['zID'].lower(), data['password'])
         if (token):
             return jsonify({"token": token})
         else:
             abort(403, 'Invalid Credentials / Account Not Activated')
 
 @api.route('/permission')
-class Login(Resource):
+class Permission(Resource):
     
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')

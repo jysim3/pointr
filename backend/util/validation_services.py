@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 def validate_with(schema):
     def decorator(func):
         def wrapper(*args, **kwargs):
-            
+
             if not request.json:
                 abort(400, 'Malformed Request')
             
