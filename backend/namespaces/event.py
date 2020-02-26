@@ -53,7 +53,7 @@ class Event(Resource):
         isRecur = str(data['isRecur']) if 'isRecur' in data and data['isRecur'] == 1 else False
 
         # For both single and recurrent event
-        zID = sanitize(str(data['zID']))
+        zID = sanitize(str(token_data['zID']))
         location = sanitize(str(data['location'])).lower() if 'location' in data else None
         startDate = sanitize(str(data['eventDate'])).lower()
         eventName = sanitize(str(data['name']))
@@ -71,7 +71,7 @@ class Event(Resource):
         if isRecur is not False:
             results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description, endTime)
         else:
-            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, location, societyID, description, endTime)
+            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, societyID, location, description, endTime)
 
         if (isinstance(results, tuple) == False):
             return jsonify({"status": "failed", "msg": results})

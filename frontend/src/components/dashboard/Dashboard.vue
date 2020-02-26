@@ -21,7 +21,6 @@ export default {
   },
   data() {
     return {
-      showJoinSociety: false,
       upcomingEvents: {
         title: 'Upcoming Events',
         data: []

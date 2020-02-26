@@ -31,6 +31,9 @@ export function fetchAPI(url, method, data) {
             .then(r => {
                 console.log(r)//eslint-disable-line
                 const j = r.json()
+                if (r.status !== 200) {
+                    throw j
+                }
                 return j
             })
         )
