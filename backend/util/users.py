@@ -63,6 +63,8 @@ def checkUserInfo(zID, password):
     result = curs.fetchone()
     if result is None:
         return False
+    if (checkActivation(zID) == False):
+        return False
     curs.execute("SELECT zid FROM socStaff where role = 5;")
     superAdmins = curs.fetchall()
     if superAdmins == []:
