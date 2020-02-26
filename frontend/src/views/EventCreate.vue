@@ -14,7 +14,12 @@
         </div>
         <div class="label-input-div">
           <label class="label" for>Society</label>
+          <!--
           <input class="input" v-model="society" type="text" required />
+          -->
+          <select class="input" v-model="society">
+            <option v-for="s in userSocieties" :key="s.societyID" :value="s.societyID">{{s.societyName}}</option>
+          </select>
         </div>
         <div class="label-input-div">
           <label class="label" for>Date</label>
@@ -61,39 +66,46 @@ export default {
       endDate: "",
       repeat: "",
       point: 1,
-      userSocieties: []
+      userSocieties: [
+        
+      ]
     };
+  },
+  created() {
+      fetchAPI("/api/soc/getAllSocs", "GET").then(j => {
+        console.log(j); //eslint-disable-line
+        this.userSocieties = j
+      });
+
   },
   methods: {
     submitEventForm() {
       // TODO: clean this up
-      /*
       const data = {
-        zID: "z5214808", 
+        zID: "z5000000", 
         name: this.title,
         location: this.location, 
         eventDate: this.date, 
+        socID  : this.society
       }
       if (this.repeat !== "") {
           data.endDate= "2020-04-04" ;
           data.recurType= "day";
           data.recurInterval= 6;
-          data.socID  = "CSESoc";
           data.isRecur = "True";
       }
-      */
      
- const data = { 
- zID: "z5111111", 
- name: "Coffee Night", 
- location: "CSESoc", 
- eventDate: "2020-01-01", 
- endDate: "2020-04-04", 
- recurType: "day", 
- recurInterval: 6, 
- "socID": "8EF48", 
- "isRecur": "True"
- }
+//  const data = { 
+//  zID: "z5111111", 
+//  name: "Coffee Night", 
+//  location: "CSESoc", 
+//  eventDate: "2020-01-01", 
+//  endDate: "2020-04-04", 
+//  recurType: "day", 
+//  recurInterval: 6, 
+//  "socID": "8EF48", 
+//  "isRecur": "True"
+//  }
       fetchAPI("/api/event/", "POST", data).then(j => {
         console.log(j); //eslint-disable-line
         this.$route.push({ name: "event", params: { eid: j.eventID } });
