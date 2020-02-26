@@ -152,21 +152,21 @@ export default {
         degreeType: this.userInfo.degreeType,
         isArc: this.userInfo.isArcMember
       }).then(r => {
-        if (r.status !== 200) {
+          // In the case of a successful response, want to store token and redirect to home
+          this.$router.push({ name: "home" });
           console.log("r is ", r); //eslint-disable-line
+      })
+      .catch(e => {
+
+          console.log("r is ", e); //eslint-disable-line
           console.log(r.message["zID"]); //eslint-disable-line
-          if (r.message["zID"]) {
+          if (e.message["zID"]) {
             this.formErrorMessage = "Please check your zID";
           } else {
-            this.formErrorMessage = r.message;
+            this.formErrorMessage = e.message;
           }
-        } else {
-          // In the case of a successful response, want to store token and redirect to home
-          localStorage.setItem("token", r.token);
-          this.$route.push({ name: "home" });
-          console.log("r is ", r); //eslint-disable-line
-        }
-      });
+      })
+      ;
     }
   }
 };
