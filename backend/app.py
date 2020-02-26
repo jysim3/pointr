@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_restx import Api
 
 app = Flask(__name__)
-api = Api(app, version='0.02', title='Pointr backend',
+api = Api(app, version='0.04', title='Pointr backend',
     description='Backend for pointr web servers',
 )
 

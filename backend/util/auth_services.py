@@ -1,6 +1,6 @@
 import jwt
 from datetime import datetime, date, time, timedelta
-from util.users import checkUserInfo, checkUser, createUser
+from util.users import checkUserInfo, checkUser, createUser, checkActivation
 from util.societies import getSocIDFromEventID, getAdminsForSoc
 from flask_restx import abort
 from flask import request
@@ -78,7 +78,7 @@ def register_user(zID, name, password, isArc, commencementYear, studentType, deg
 
 def login(zID, password):
     results = checkUserInfo(zID, password)
-    if (results == None):
+    if (results == False):
         return None
     global token_exp
     token = jwt.encode(
@@ -86,7 +86,8 @@ def login(zID, password):
             'exp': datetime.utcnow() + timedelta(seconds=token_exp),
             'iat': datetime.utcnow(),
             'zID': zID,
-            'permission': 1 if results == 1 else 5 
+            'permission': 1 if results == 1 else 5,
+            'activation': checkActivation(zID)
         }, 
         jwt_secret, algorithm='HS256' 
     ) 
@@ -99,7 +100,8 @@ def generateActivationToken(zID):
             'exp': datetime.utcnow() + timedelta(seconds=activationTokenTimeout),
             'iat': datetime.utcnow(),
             'zID': zID,
-            'permission': 0
+            'permission': 0,
+            'activation': 0
         }, 
         jwt_secret, algorithm='HS256' 
     ) 
@@ -145,14 +147,17 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     jwt_secret,
                     algorithms='HS256'
                 )
-
+                
+                if (activationRequired and not token_data['activation']):
+                    abort('403', 'Activation Required')
+                
                 # Check if eventID exists in query
                 if (allowSocStaff and 'eventID' in args_data):
                     # if so then get society of event
                     societyID = getSocIDFromEventID(args_data['societyID'])
                     # check this zID is an admin of this society
                     admins = getAdminsForSoc(societyID)
-                    if (token_data['zID'] in admins):
+                    if (token_data['zID'].lower() in admins):
                         # if so allow
                         return func(token_data=token_data, *args, **kwargs)
 
@@ -163,7 +168,7 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     admins = getAdminsForSoc(args_data['societyID'])
                     
                     pprint.pprint(admins)
-                    if (token_data['zID'] in admins):
+                    if (token_data['zID'].lower() in admins):
                         # if so allow
                         return func(token_data=token_data, *args, **kwargs)
                                         
@@ -171,7 +176,7 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                 if (int(token_data['permission']) >= level):
                     return func(token_data=token_data, *args, **kwargs)
                     # Allow a token of a zID access data pertaining to that zID
-                elif (allowSelf and 'zID' in args_data and token_data['zID'] == args_data['zID']):
+                elif (allowSelf and 'zID' in args_data and token_data['zID'].lower() == args_data['zID'].lower()):
                     return func(token_data=token_data, *args, **kwargs)
                 else:
                     abort(401, "Permission Denied")

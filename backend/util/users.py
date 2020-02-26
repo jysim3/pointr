@@ -63,12 +63,15 @@ def checkUserInfo(zID, password):
     result = curs.fetchone()
     if result is None:
         return False
+    if (checkActivation(zID) == False):
+        return False
     curs.execute("SELECT zid FROM socStaff where role = 5;")
     superAdmins = curs.fetchall()
     if superAdmins == []:
         return 1
     if zID in superAdmins:
         return 5
+    return 1
 
 # return a list of events in the form of: [(points, eventID, eventName, date, societyName), (...)]
 # Get all the events attended by the user ever in every society
