@@ -11,8 +11,8 @@ class RegisterDetailsSchema(Schema):
     degreeType = common_schemata.registrationType
 
 class LoginDetailsSchema(Schema):
-    zID = common_schemata.zid
-    password = common_schemata.password
+    zID = common_schemata.zidRequired
+    password = common_schemata.passwordRequired
 
 class TokenSchema(Schema):
     token = common_schemata.tokenRequired
