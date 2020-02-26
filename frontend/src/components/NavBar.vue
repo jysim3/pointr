@@ -26,24 +26,26 @@ import auth from "@/mixins/auth";
 export default {
   name: "NavBar",
   mixins: [auth],
-  data: () => ({
-    links: [
-      {
-        page: "",
-        text: "Events"
-      },
-      {
-        page: "/contact",
-        text: "Contact"
-      }
-    ]
-  }),
+  data() {
+    return {
+      links: [
+        {
+          page: "",
+          text: "Events"
+        },
+        {
+          page: "/contact",
+          text: "Contact"
+        }
+      ]
+    };
+  },
   computed: {
     authBtnText() {
       if (this.userIsAuthenticated) {
-        return "Sign out"
+        return "Sign out";
       } else {
-        return "Sign in"
+        return "Sign in";
       }
     }
   },
@@ -53,7 +55,7 @@ export default {
         removeToken();
         // TODO: shouldn't need to push a route, should be automatically done by router
       } else {
-        this.$router.push({ name: 'signIn' })
+        this.$router.push({ name: "signIn" });
       }
     },
     toHome() {
