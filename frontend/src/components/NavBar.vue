@@ -9,8 +9,8 @@
         <router-link
           v-for="(routes, i) in links"
           :key="i"
-          :to="routes.page"
-          active-class="active"
+          :to="routes.to"
+          active-class="link--active"
           class="link"
         >{{routes.text}}</router-link>
 
@@ -26,19 +26,10 @@ import auth from "@/mixins/auth";
 export default {
   name: "NavBar",
   mixins: [auth],
-  data() {
-    return {
-      links: [
-        {
-          page: "",
-          text: "Events"
-        },
-        {
-          page: "/contact",
-          text: "Contact"
-        }
-      ]
-    };
+  props: {
+    links: {
+      type: Array
+    }
   },
   computed: {
     authBtnText() {
@@ -97,7 +88,7 @@ export default {
   margin: 0 15px;
   text-align: center;
 }
-.active {
+.link--active {
   color: #311b92;
 }
 .logo {
