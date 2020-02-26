@@ -37,6 +37,7 @@ const routes = [
     meta: {
       requiresAuth: true
     }
+    // TODO: only the creator of the society/event should be able to access this
   },
   {
     path: '/sign/:eid?',
@@ -57,14 +58,14 @@ const routes = [
     name: 'signUp',
     component: SignUp
   },
-  {
-    path: '/signout',
-    name: 'signOut',
-    meta: {
-      requiresAuth: true
-    }
-    // TODO: just remove token from localStorage for now then redirect to home
-  },
+  // {
+  //   path: '/signout',
+  //   name: 'signOut',
+  //   meta: {
+  //     requiresAuth: true
+  //   }
+  //   // TODO: just remove token from localStorage for now then redirect to home
+  // },
   {
     path: '/joinsociety',
     name: 'joinSociety',
