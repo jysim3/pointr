@@ -74,10 +74,7 @@ def initDatabase():
     register("z5555555", event3[0])
 
 def main():
-    # os.system("rm database.db")
-    
     initDatabase()
-    #print(getUserAttendance("z5161631"))
 
 if __name__ == '__main__':
     main()

@@ -69,6 +69,7 @@ def checkUserInfo(zID, password):
         return 1
     if zID in superAdmins:
         return 5
+    return 1
 
 # return a list of events in the form of: [(points, eventID, eventName, date, societyName), (...)]
 # Get all the events attended by the user ever in every society
