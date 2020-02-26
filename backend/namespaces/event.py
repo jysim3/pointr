@@ -31,7 +31,7 @@ def generateID(number = None):
 # or
 # { status: "ERROR MESSAGE"}
 # FIXME: HARRISON FUCKED UP, AND HES TRYING TO JUSTIFY HIS MISTAKE
-@api.route('')
+@api.route('/')
 class Event(Resource):
     @api.response(200, 'Success')
     @api.response(400, 'Malformed Request')
