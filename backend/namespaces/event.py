@@ -36,7 +36,7 @@ class Event(Resource):
     @api.response(200, 'Success')
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
-    @auth_services.check_authorization(level=1, allowSocStaff=True)
+    @auth_services.check_authorization(level=2, allowSocStaff=True)
     def post(self, token_data):
         data = request.get_json()
         eventID = generateID(5).upper()
@@ -53,7 +53,7 @@ class Event(Resource):
         isRecur = str(data['isRecur']) if 'isRecur' in data and data['isRecur'] == 1 else False
 
         # For both single and recurrent event
-        zID = sanitize(str(data['zID']))
+        zID = sanitize(str(token_data['zID']))
         location = sanitize(str(data['location'])).lower() if 'location' in data else None
         startDate = sanitize(str(data['eventDate'])).lower()
         eventName = sanitize(str(data['name']))

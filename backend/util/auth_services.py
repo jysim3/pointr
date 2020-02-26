@@ -147,6 +147,10 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     jwt_secret,
                     algorithms='HS256'
                 )
+
+                arguments = None
+                if request.get_json() != None:
+                    arguments = request.get_json()
                 
                 if (activationRequired and not token_data['activation']):
                     abort('403', 'Activation Required')
@@ -160,6 +164,12 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     if (token_data['zID'].lower() in admins):
                         # if so allow
                         return func(token_data=token_data, *args, **kwargs)
+                elif (allowSocStaff and 'eventID' in arguments):
+                    societyID = getSocIDFromEventID(arguments['societyID'])
+                    admins = getAdminsForSoc(societyID)
+                    if (token_data['zID'].lower() in admins):
+                        return func(token_data=token_data, *args, **kwargs)
+
 
                 # if societyID exists in query
                 if (allowSocStaff and 'societyID' in args_data):
@@ -171,6 +181,11 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     if (token_data['zID'].lower() in admins):
                         # if so allow
                         return func(token_data=token_data, *args, **kwargs)
+                elif (allowSocStaff and 'societyID' in arguments) or (allowSocStaff and 'socID' in arguments):
+                    admins = getAdminsForSoc(arguments['societyID']) if 'societyID' in arguments else getAdminsForSoc(arguments['socID'])
+                    if (token_data['zID'].lower() in admins):
+                        return func(token_data=token_data, *args, **kwargs)
+
                                         
                 # Check permissions on token
                 if (int(token_data['permission']) >= level):
