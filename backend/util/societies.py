@@ -158,6 +158,16 @@ def makeSuperAdmin(zID):
 def joinSoc(zID, socID):
     conn = createConnection()
     curs = conn.cursor()
+    try:
+        curs.execute("SELECT * FROM socStaff WHERE society = (%s) and zID = (%s);", (socID, zID,))
+        conn.commit()
+    except Exception as e:
+        conn.close()
+        print(e)
+        return "failed"
+    result = curs.fetchone()
+    if result is not None:
+        return "Already registered"
 
     try:
         curs.execute("INSERT INTO SOCSTAFF(society, zid, role) VALUES ((%s), (%s), (%s));", (socID, zID, 0,))
