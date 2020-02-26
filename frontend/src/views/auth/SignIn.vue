@@ -1,24 +1,24 @@
 <template>
-<div>
-  <NavBarDefault />
-  <div class="form-container" id="form-container--signin">
-    <form @submit.prevent="submitSignInForm" class="form">
-      <h2>Sign in to Pointr</h2>
-      <FormError v-if="error.status" :msg="error.msg" />
-      <InputZID v-model="zID" :zID="zID" />
-      <InputPassword v-model="password" :password="password" />
-      <!-- <div class="label-input-div">
+  <div>
+    <NavBarDefault />
+    <div class="form-container" id="form-container--signin">
+      <form @submit.prevent="submitSignInForm" class="form">
+        <h2>Sign in to Pointr</h2>
+        <FormError v-if="error.status" :msg="error.msg" />
+        <InputZID v-model="zID" :zID="zID" />
+        <InputPassword v-model="password" :password="password" />
+        <!-- <div class="label-input-div">
         <label class="label input--checkbox-label">Remember me</label>
         <input v-model="rememberUser" class="input input--checkbox" type="checkbox" />
-      </div>-->
-      <button type="submit" class="btn btn-primary">Sign In</button>
-      <div id="signup-route">
-        <p>Don't have an account?</p>
-        <router-link id="need-account-link" to="/signup">Sign up</router-link>
-      </div>
-    </form>
+        </div>-->
+        <button type="submit" class="btn btn-primary">Sign In</button>
+        <div id="signup-route">
+          <p>Don't have an account?</p>
+          <router-link id="need-account-link" to="/signup">Sign up</router-link>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -54,8 +54,8 @@ export default {
         password: this.password
       })
         .then(r => {
-          console.log(r) //eslint-disable-line
-          setToken(r.token)
+          console.log(r); //eslint-disable-line
+          setToken(r.token);
           this.$router.push({ name: "home" });
         })
         .catch(err => {

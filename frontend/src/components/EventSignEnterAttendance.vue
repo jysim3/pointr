@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="form-container" @submit.prevent="submitEventSignAttendance">
+    <form id="form-container--signevent" class="form-container" @submit.prevent="submitEventSignAttendance">
       <div class="form">
         <h2>Sign attendance</h2>
         <EventCard :eventData="eventData" />
@@ -9,13 +9,13 @@
           class="btn btn-primary"
           type="submit"
         >Sign as {{ userName }} ({{ zID }})</button>
-        <div v-else>
+        <div id="submit-message" v-else>
           <h3 v-if="eventAlreadySigned">Already signed this event!</h3>
           <h3 v-else>Success!</h3>
           <router-link to="/">Go to home</router-link>
         </div>
       </div>
-    </div>
+    </form>
   </div>
 </template>
 <script>
@@ -47,11 +47,11 @@ export default {
   created() {
     fetchAPI(`/api/event/?eventID=${this.eid}`, "GET").then(j => {
       this.eventData = j;
-      console.log(j) //eslint-disable-line
+      console.log(j); //eslint-disable-line
     });
 
     fetchAPI(`/api/user/info`, "POST").then(j => {
-      console.log(j) //eslint-disable-line
+      console.log(j); //eslint-disable-line
       this.userName = j.msg.name;
       this.zID = this.getZID();
       // Checking if this event's ID matches with a user's signed event.
@@ -62,21 +62,25 @@ export default {
   },
   methods: {
     submitEventSignAttendance() {
-      const data = {
+      fetchAPI("/api/event/attend", "POST", {
         zID: this.zID,
         eventID: this.eid
-      };
-      fetchAPI("/api/event/attend", "POST", data)
-        .then(r => {
-          if (r.status === 200) {
-            this.eventSignSuccess = true;
-          }
-        })
-        .catch(e => alert(e));
+      })
+        .then((this.eventSignSuccess = true)) //TODO: backend currently does not check if user has already signed?
+        .catch(e => console.log(e)); //eslint-disable-line
     }
   }
 };
 </script>
 
 <style scoped>
+/* TODO: don't want event card to change width on submit */
+#form-container--signevent {
+  margin-top: 3rem;
+}
+
+#submit-message {
+  margin-top: 1rem;
+  text-align: center;
+}
 </style>

@@ -1,15 +1,18 @@
 const apiURL = 'http://localhost:5000';
 
 export function fetchAPI(url, method, data) {
+    const headers = {}
     if (localStorage.getItem('token')) {
+        headers.Authorization = getToken()
+    }
+    if (data) {
+        headers['Content-Type'] = 'application/json'
+    }
         return (
             fetch(apiURL + url, {
                 method: method, // or 'PUT'
                 body: JSON.stringify(data), // data can be `string` or {object}!
-                headers: {
-                    Authorization: getToken(),
-                    'Content-Type': 'application/json'
-                }
+                headers: headers
             })
             .then(r => {
                 console.log(r)//eslint-disable-line
@@ -18,23 +21,6 @@ export function fetchAPI(url, method, data) {
                 return j
             })
         )
-    } else {
-
-        return (
-            fetch(apiURL + url, {
-                method: method, // or 'PUT'
-                body: JSON.stringify(data), // data can be `string` or {object}!
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(r => {
-                console.log(r)//eslint-disable-line
-                const j = r.json()
-                return j
-            })
-        )
-    }
 }
 
 export function getToken() {
