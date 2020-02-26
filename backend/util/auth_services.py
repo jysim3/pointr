@@ -78,7 +78,7 @@ def register_user(zID, name, password, isArc, commencementYear, studentType, deg
 
 def login(zID, password):
     results = checkUserInfo(zID, password)
-    if (results == None):
+    if (results == False):
         return None
     global token_exp
     token = jwt.encode(

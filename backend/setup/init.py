@@ -57,14 +57,20 @@ def initDatabase():
     register("z5333333", "event2[0]")
     joinSoc("z5555555", findSocID("Manchester United FC"))
     register("z5555555", "event2[0]")
-    joinSoc("z5161631", findSocID("Manchester United FC"))
+    #joinSoc("z5161631", findSocID("Manchester United FC"))
     register("z5161631", "event2[0]")
     #   for Coffee Night
+    joinSoc("z5161631", findSocID("UNSW Hall"))
     register("z5161631", "1234")
+    joinSoc("z5111111", findSocID("UNSW Hall"))
     register("z5111111", "1234")
+    joinSoc("z5222222", findSocID("UNSW Hall"))
     register("z5222222", "1234")
+    joinSoc("z5333333", findSocID("UNSW Hall"))
     register("z5333333", "1234")
+    joinSoc("z5444444", findSocID("UNSW Hall"))
     register("z5444444", "1234")
+    joinSoc("z5555555", findSocID("UNSW Hall"))
     register("z5555555", "1234")
 
 def main():
