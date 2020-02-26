@@ -1,6 +1,6 @@
 import jwt
 from datetime import datetime, date, time, timedelta
-from util.users import checkUserInfo, checkUser, createUser
+from util.users import checkUserInfo, checkUser, createUser, checkActivation
 from util.societies import getSocIDFromEventID, getAdminsForSoc
 from flask_restx import abort
 from flask import request
@@ -86,7 +86,8 @@ def login(zID, password):
             'exp': datetime.utcnow() + timedelta(seconds=token_exp),
             'iat': datetime.utcnow(),
             'zID': zID,
-            'permission': 1 if results == 1 else 5 
+            'permission': 1 if results == 1 else 5,
+            'activation': checkActivation(zID)
         }, 
         jwt_secret, algorithm='HS256' 
     ) 
@@ -99,7 +100,8 @@ def generateActivationToken(zID):
             'exp': datetime.utcnow() + timedelta(seconds=activationTokenTimeout),
             'iat': datetime.utcnow(),
             'zID': zID,
-            'permission': 0
+            'permission': 0,
+            'activation': 0
         }, 
         jwt_secret, algorithm='HS256' 
     ) 
@@ -145,7 +147,10 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     jwt_secret,
                     algorithms='HS256'
                 )
-
+                
+                if (activationRequired and not token_data['activation']):
+                    abort('403', 'Activation Required')
+                
                 # Check if eventID exists in query
                 if (allowSocStaff and 'eventID' in args_data):
                     # if so then get society of event

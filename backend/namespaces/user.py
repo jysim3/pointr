@@ -73,7 +73,8 @@ class User(Resource):
             data = UserCreationSchema().load(request.get_json())
         except ValidationError as err:
             abort(400, jsonify(err.messages))
-            
+        
+        # TODO Remove this and use check_authorization
         authorized = auth_services.authorize(data['token'], ADMIN)
         
         if (authorized['valid']):
