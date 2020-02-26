@@ -36,7 +36,8 @@ class Event(Resource):
     @api.response(200, 'Success')
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
-    def post(self):
+    @auth_services.check_authorization(level=2, allowSocStaff=True)
+    def post(self, token_data):
         data = request.get_json()
         eventID = generateID(5).upper()
         if not 'hasQR' in data:
