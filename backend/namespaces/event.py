@@ -9,7 +9,7 @@ import uuid
 api = Namespace('event', description='Event Management Services')
 
 def generateID(number = None):
-    return str(uuid.uuid4().hex)[:10]
+    return str(uuid.uuid4().hex).upper()[:10]
 
 # For creating a recurrent event
 # Usage: 
@@ -32,7 +32,6 @@ def generateID(number = None):
 # { status: "ERROR MESSAGE"}
 @api.route('/')
 class Event(Resource):
-
     @api.response(200, 'Success')
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
