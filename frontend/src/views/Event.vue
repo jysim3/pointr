@@ -55,15 +55,8 @@ export default {
     };
   },
   created() {
-    fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
-      .then(j => {
-        this.name = j.name;
-        this.participants = j.participants;
-      })
-      .catch(e => {
-        console.log(e); // eslint-disable-line
-      });
 
+    this.fetchAttendees();
     setInterval(() => {
       this.fetchAttendees();
     }, 2000);
@@ -84,7 +77,7 @@ export default {
         name: this.uname,
         eventID: this.eid
       };
-      fetchAPI("/api/attend", "POST", data)
+      fetchAPI("/api/event/attend", "POST", data)
         .then(() => {
           this.zID = "";
           this.uname = "";
@@ -93,9 +86,11 @@ export default {
         .catch(e => alert(e));
     },
     fetchAttendees() {
-      fetchAPI(`/api/event?eventID=${this.eid}`, "GET")
+      fetchAPI(`/api/event/?eventID=${this.eid}`, "GET")
         .then(r => {
-          this.participants = r.participants;
+          this.participants = r.attendance;
+          this.name = r.eventName;
+          console.log(r) // eslint-disable-line
         })
         .catch(e => {
           console.log(e); // eslint-disable-line
