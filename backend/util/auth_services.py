@@ -157,7 +157,7 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     societyID = getSocIDFromEventID(args_data['societyID'])
                     # check this zID is an admin of this society
                     admins = getAdminsForSoc(societyID)
-                    if (token_data['zID'] in admins):
+                    if (token_data['zID'].lower() in admins):
                         # if so allow
                         return func(token_data=token_data, *args, **kwargs)
 
@@ -168,7 +168,7 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     admins = getAdminsForSoc(args_data['societyID'])
                     
                     pprint.pprint(admins)
-                    if (token_data['zID'] in admins):
+                    if (token_data['zID'].lower() in admins):
                         # if so allow
                         return func(token_data=token_data, *args, **kwargs)
                                         
@@ -176,7 +176,7 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                 if (int(token_data['permission']) >= level):
                     return func(token_data=token_data, *args, **kwargs)
                     # Allow a token of a zID access data pertaining to that zID
-                elif (allowSelf and 'zID' in args_data and token_data['zID'] == args_data['zID']):
+                elif (allowSelf and 'zID' in args_data and token_data['zID'].lower() == args_data['zID'].lower()):
                     return func(token_data=token_data, *args, **kwargs)
                 else:
                     abort(401, "Permission Denied")

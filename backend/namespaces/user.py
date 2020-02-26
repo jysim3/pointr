@@ -2,12 +2,13 @@ from flask import request, jsonify
 from flask_restx import Namespace, Resource, abort, reqparse
 from util.sanitisation_services import sanitize
 from marshmallow import Schema, fields, ValidationError, validates, validate
-from util import auth_services, users, participation
-from schemata.auth_schemata import TokenSchema
-from schemata.user_schemata import UserCreationSchema, ZIDSchema
+from util import auth_services, users, participation, validation_services
+from schemata.auth_schemata import TokenSchema, AuthSchema
+from schemata.user_schemata import ZIDSchema
 from util.auth_services import ADMIN, USER
 
 api = Namespace('user', description='User Services')
+# /user fails but /use doesnt and /user/ doesnt
 @api.route('/getUpcomingEvents')
 class upcomingEvents(Resource):
     def get(self):
@@ -37,54 +38,11 @@ class User(Resource):
     # Returns:
     # [{"eventID": "1239", "name": "Test Event 0", "society": "UNSW Hall", "eventDate": "2019-11-19"}, {"eventID": "1240", "name": "Coffee Night", "society": "UNSW Hall", "eventDate": "2019-11-20"}]
     @api.response(400, 'Malformed Request')
-    # @api.description('Retrieves data on user')
-    # FIXME: FIXMEMEEJRWKEJRWERBWEJRBKEWJ, HARRISON PLEZZZZZZZZZ
-    def get(self):
-        if not request.json:
-            abort(400, 'Malformed Request')
-        # TODO token here
-        # Validate data
-        try:
-            data = ZIDSchema().load(request.get_json())
-        except ValidationError as err:
-            abort(400, jsonify(err.messages))
-            
-        zID = data['zID']
-        attendance = users.getUserAttendance(sanitize(zID.lower()))
+    @auth_services.check_authorization(level=2, allowSelf=True)
+    @validation_services.validate_args_with(ZIDSchema)
+    def get(self, token_data, args_data):
+        attendance = users.getUserAttendance(args_data['zID'].lower())
         return jsonify(attendance)
-            
-    # For creating a user
-    # Usage: 
-    # POST /api/user
-    # Takes: 
-    # {zID: "z1234567", name: "Harrison Steyn", token: "fdsmksfksefoi3m.sadsad3r.fda"}
-    # Returns: 
-    # {"status": "success"}
-    @api.response(400, 'Malformed Request')
-    @api.response(401, 'Expired Token')
-    @api.response(403, 'Invalid Credentials')
-    # @api.description('Creates a user with given details')
-    def post(self):
-        if not request.json:
-            abort(400, 'Malformed Request')
-        
-        # Validate data
-        try:
-            data = UserCreationSchema().load(request.get_json())
-        except ValidationError as err:
-            abort(400, jsonify(err.messages))
-        
-        # TODO Remove this and use check_authorization
-        authorized = auth_services.authorize(data['token'], ADMIN)
-        
-        if (authorized['valid']):
-            returnVal = users.createUser(sanitize(data['zID'].lower()), sanitize(data['name']))
-            payload = {}
-            payload['status'] = returnVal
-            return jsonify(payload)
-        else:
-            return jsonify(authorized)
-        abort(400, 'Malformed Request')
 
 @api.route('/info')
 @api.param('token', description='Users Token', type='String', required='True')
