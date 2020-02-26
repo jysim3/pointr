@@ -30,7 +30,10 @@ def getUserInfo(zID):
     except Exception as e:
         conn.close()
         return "failed"
-    name = curs.fetchone()[0]
+    name = curs.fetchone()
+    if (name == None):
+        return None
+    name = name[0]
     try:
         curs.execute("SELECT * FROM userParticipatedEvents WHERE zID = (%s);", (zID,))
     except Exception as e:

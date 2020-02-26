@@ -86,7 +86,7 @@ def login(zID, password):
             'exp': datetime.utcnow() + timedelta(seconds=token_exp),
             'iat': datetime.utcnow(),
             'zID': zID,
-            'permission': 1 if results == 1 else 5 # TODO Make it so admins and users can be created
+            'permission': 1 if results == 1 else 5 
         }, 
         jwt_secret, algorithm='HS256' 
     ) 

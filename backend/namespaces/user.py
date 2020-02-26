@@ -92,7 +92,7 @@ class info(Resource):
     @auth_services.check_authorization(activationRequired=False, level=0)
     def post(self, token_data):
 
-        zID = token_data('zID')
+        zID = token_data['zID']
         results = users.getUserInfo(zID)
 
         if (results == 'failed'):
