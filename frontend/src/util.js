@@ -57,6 +57,7 @@ export function isAuthenticated() {
     }
 
     // TODO: only authorized when permission is not 0
+    // TODO: need to check on backend if token is valid as well.
 
     // return tokenIsValid
     return true // TODO: for debugging purposes user is always authenticated.

@@ -58,6 +58,14 @@ const routes = [
     component: SignUp
   },
   {
+    path: '/signout',
+    name: 'signOut',
+    meta: {
+      requiresAuth: true
+    }
+    // TODO: just remove token from localStorage for now then redirect to home
+  },
+  {
     path: '/joinsociety',
     name: 'joinSociety',
     component: SocietyJoin,
