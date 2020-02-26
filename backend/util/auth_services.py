@@ -186,7 +186,6 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     if (token_data['zID'].lower() in admins):
                         return func(token_data=token_data, *args, **kwargs)
 
-                                        
                 # Check permissions on token
                 if (int(token_data['permission']) >= level):
                     return func(token_data=token_data, *args, **kwargs)
