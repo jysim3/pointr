@@ -110,7 +110,7 @@ def getAttendance(eventID):
         return "failed"
     results = curs.fetchall()
     if results == []:
-        return "failed"
+        return payload
     for result in results:
         personJSON = {}
         personJSON['points'] = result[0]

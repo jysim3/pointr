@@ -30,7 +30,8 @@ def generateID(number = None):
 # { status: "success", "msg": [{"date": 2020-04-04, "eventID": "1FAEA00001"}, {...}}
 # or
 # { status: "ERROR MESSAGE"}
-@api.route('/')
+# FIXME: HARRISON FUCKED UP, AND HES TRYING TO JUSTIFY HIS MISTAKE
+@api.route('')
 class Event(Resource):
     @api.response(200, 'Success')
     @api.response(400, 'Malformed Request')
@@ -83,7 +84,8 @@ class Event(Resource):
     @api.response(200, 'Success')
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
-    def get(self):
+    @auth_services.check_authorization(level=1)
+    def get(self, token_data):
         eventID = request.args.get('eventID')
         attendance = participation.getAttendance(sanitize(eventID))
         if attendance == "failed":
