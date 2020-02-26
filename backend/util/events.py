@@ -38,14 +38,15 @@ def findWeek(date: datetime):
 
 
 # Creting an event (single instance events)
-def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID, location = None, description = None, endTime = None):
+def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = "A49C7", location = None, description = None, endTime = None):
     conn = createConnection()
     curs = conn.cursor()
 
     if (checkUser(zID) == False):
         return "no such user"
     else:
-        curs.execute("SELECT * FROM socStaff WHERE society = (%s) AND zid = (%s) AND role = 1;", (societyID, zID,))
+        print(societyID)
+        curs.execute("SELECT * FROM socStaff WHERE society = (%s) AND zid = (%s) AND role >= 1;", (societyID, zID,))
         results = curs.fetchone()
         if (results is None):
             return "not an admin"

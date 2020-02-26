@@ -31,7 +31,6 @@ def initDatabase():
     createUser("z5000000", "Super Admin Test Account", "gangboss")
     activateAccount("z5000000")
     makeSuperAdmin("z5000000")
-    #createUser("z5161616", "Da Captain", "123123")
 
     createSociety("z5111111", "CSESoc")
     createSociety("z5161631", "Manchester United FC")
@@ -57,7 +56,6 @@ def initDatabase():
     register("z5333333", event2[0])
     joinSoc("z5555555", findSocID("Manchester United FC"))
     register("z5555555", event2[0])
-    #joinSoc("z5161631", findSocID("Manchester United FC"))
     register("z5161631", event2[0])
     #   for Coffee Night
     joinSoc("z5161631", findSocID("UNSW Hall"))
