@@ -28,9 +28,9 @@ def initDatabase():
     activateAccount("z5444444")
     createUser("z5555555", "Oltan", "12345678")
     activateAccount("z5555555")
-    createUser("z5event2[0]00", "Super Admin Test Account", "gangboss")
-    activateAccount("z5event2[0]00")
-    makeSuperAdmin("z5event2[0]00")
+    createUser("z5000000", "Super Admin Test Account", "gangboss")
+    activateAccount("z5000000")
+    makeSuperAdmin("z5000000")
     #createUser("z5161616", "Da Captain", "123123")
 
     createSociety("z5111111", "CSESoc")
