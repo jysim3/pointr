@@ -89,7 +89,7 @@ def getAttendance(eventID):
     conn = createConnection()
     curs = conn.cursor()
     try:
-        curs.execute("SELECT name, eventdate, location, societyname, societyID FROM userParticipatedEvents;")
+        curs.execute("SELECT name, eventdate, location, societyname, societyID FROM hostedEvents where eventID = (%s);", (eventID,))
     except Exception as e:
         conn.close()
         return "failed"
@@ -98,7 +98,7 @@ def getAttendance(eventID):
         return "failed"
     payload = {}
     payload['eventName'] = results[0]
-    payload['eventDate'] = results[1]
+    payload['eventDate'] = str(results[1])
     payload['location'] = results[2]
     payload['societyName'] = results[3]
     payload['societyID'] = results[4]
