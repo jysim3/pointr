@@ -48,18 +48,23 @@ class Event(Resource):
         else:
             data['hasQR'] = False
 
+        # To determine if an event is being created as a recurrent event
+        isRecur = str(data['isRecur']) if 'isRecur' in data and data['isRecur'] == 1 else False
+
+        # For both single and recurrent event
+        zID = sanitize(str(data['zID']))
         location = sanitize(str(data['location'])).lower() if 'location' in data else None
         startDate = sanitize(str(data['eventDate'])).lower()
-        endDate = sanitize(str(data['endDate']).lower()) if 'endDate' in data else None
-        recurType = sanitize(str(data['recurType']).lower()) if 'recurType' in data else None
-        recurInterval = sanitize(data['recurInterval']).lower() if 'recurInterval' in data else None
-        zID = sanitize(str(data['zID']))
         eventName = sanitize(str(data['name']))
         hasQR = str(data['hasQR'])
         societyID = str(data['socID']) if 'socID' in data else None
-        isRecur = str(data['isRecur']) if 'isRecur' in data and data['isRecur'] == 1 else False
         description = str(data['description']) if 'description' in data else None
         endTime = str(data['endTime']) if 'endTime' in data else None
+
+        # Only recurrent event does this
+        endDate = sanitize(str(data['endDate']).lower()) if 'endDate' in data else None
+        recurType = sanitize(str(data['recurType']).lower()) if 'recurType' in data else None
+        recurInterval = sanitize(data['recurInterval']).lower() if 'recurInterval' in data else None
 
         results = None
         if isRecur is not False:
@@ -134,7 +139,6 @@ class Attend(Resource):
 
 @api.route('/getAttendance')
 class getAttendance(Resource):
-    
     @api.response(400, "Cannot find file")
     @api.response(400, "Malformed Response")
     @auth_services.check_authorization(level=2)
@@ -143,5 +147,4 @@ class getAttendance(Resource):
         try:
             return send_file(participation.getAttendanceCSV(eventID), as_attachment=True)
         except Exception as e:
-            #print(str(e))
             abort(400, "Cannot find file")

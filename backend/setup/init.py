@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.append('../')
 from util.events import createSingleEvent, createRecurrentEvent
-from util.users import createUser, getUserAttendance
+from util.users import createUser, getUserAttendance, activateAccount
 from util.participation import register
 from util.societies import createSociety, createSocStaff, findSocID, joinSoc, makeSuperAdmin
 from util.utilFunctions import checkEvent
@@ -13,12 +13,19 @@ def initDatabase():
     # add users
     #createUser("z5161616", "Steven Shen", "123456")
     createUser("z5161631", "Junyang Sim", "12345678")
+    activateAccount("z5161631")
     createUser("z5111111", "Wayne Rooney", "12345678")
+    activateAccount("z5111111")
     createUser("z5222222", "Ivan", "12345678")
+    activateAccount("z5222222")
     createUser("z5333333", "Harrison", "12345678")
+    activateAccount("z5333333")
     createUser("z5444444", "Memer", "12345678")
+    activateAccount("z5444444")
     createUser("z5555555", "Oltan", "12345678")
+    activateAccount("z5555555")
     createUser("z5000000", "Super Admin Test Account", "gangboss")
+    activateAccount("z5000000")
     makeSuperAdmin("z5000000")
     #createUser("z5161616", "Da Captain", "123123")
 
