@@ -174,3 +174,27 @@ def getEndTime(eventID):
 
     result = curs.fetchone()[0]
     return result
+
+def getAllEvents():
+    conn = createConnection()
+    curs = conn.cursor()
+
+    currentDate = datetime.now().date()
+    currentDate = str(currentDate)
+    try:
+        curs.execute("SELECT eventID, name, eventDate FROM events WHERE eventDate > (%s);", (currentDate, ))
+    except Exception as e:
+        return None
+    
+    results = curs.fetchall()
+    if results == []:
+        return None
+
+    payload = []
+    for result in results:
+        eventJSON = {}
+        eventJSON['eventID'] = result[0]
+        eventJSON['name'] = result[1]
+        eventJSON['eventDate'] = result[2]
+        payload.append(eventJSON)
+    return payload

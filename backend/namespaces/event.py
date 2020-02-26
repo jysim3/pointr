@@ -147,3 +147,11 @@ class getAttendance(Resource):
             return send_file(participation.getAttendanceCSV(eventID), as_attachment=True)
         except Exception as e:
             abort(400, "Cannot find file")
+
+@api.route('/getAllEvents')
+class getAllEvents(Resource):
+    def get(self):
+        result = events.getAllEvents()
+        if (result == None):
+            abort(400, "Something went wrong, no events found")
+        return jsonify(result)
