@@ -10,7 +10,6 @@
           v-for="(routes, i) in links"
           :key="i"
           :to="routes.to"
-          active-class="link--active"
           class="link"
         >{{routes.text}}</router-link>
 
@@ -89,7 +88,7 @@ export default {
   text-align: center;
 }
 .link--active {
-  color: #311b92;
+  box-shadow: inset 0 -2px 0 0 var(--c-secondary-dark);
 }
 .logo {
   max-width: 200px;
