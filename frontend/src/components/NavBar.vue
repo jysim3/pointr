@@ -30,18 +30,16 @@ export default {
       type: Array,
       required: false,
       default() {
-        return {
-          links: [
-            {
-              to: "/",
-              text: "Events"
-            },
-            {
-              to: "/contact",
-              text: "Contact"
-            }
-          ]
-        };
+        return [
+          {
+            to: "/",
+            text: "Events"
+          },
+          {
+            to: "/contact",
+            text: "Contact"
+          }
+        ];
       }
     }
   },

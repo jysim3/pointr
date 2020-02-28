@@ -9,7 +9,7 @@
 <script>
 import { fetchAPI } from "@/util.js";
 import auth from "@/mixins/auth";
-import NavBar from "@/components/dashboard/NavBar.vue";
+import NavBar from "@/components/NavBar.vue";
 import DashboardEventView from "@/components/dashboard/DashboardEventView.vue";
 
 export default {
