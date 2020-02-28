@@ -8,7 +8,7 @@
         <div class="label-input-div">
           <label class="label" for>Event code</label>
           <!-- TODO: sanitise input, using quotes does not work -->
-          <input class="input" v-model="eid" type="text" required />
+          <input class="input" v-model="eventID" type="text" required />
         </div>
         <button class="btn btn-primary" type="submit">Next</button>
       </form>
@@ -29,7 +29,7 @@ export default {
   },
   data() {
     return {
-      eid: "",
+      eventID: "",
       formErrorMessage: "",
       allEventID: []
     };
@@ -42,8 +42,8 @@ export default {
   },
   methods: {
     submitEventCodeForm() {
-      if (this.allEventID.includes(this.eid)) {
-        this.$router.push({ name: "eventSign", params: { eid: this.eid } });
+      if (this.allEventID.includes(this.eventID)) {
+        this.$router.push({ name: "eventSign", params: { eventID: this.eventID } });
       } else {
         this.formErrorMessage = "Looks like we couldn't find that event."
       }

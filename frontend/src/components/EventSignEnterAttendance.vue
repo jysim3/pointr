@@ -27,7 +27,7 @@ export default {
   name: "EventSignEnterAttendance",
   mixins: [auth],
   props: {
-    eid: {
+    eventID: {
       type: String,
       required: true
     }
@@ -45,7 +45,7 @@ export default {
     };
   },
   created() {
-    fetchAPI(`/api/event/?eventID=${this.eid}`, "GET").then(j => {
+    fetchAPI(`/api/event/?eventID=${this.eventID}`, "GET").then(j => {
       this.eventData = j;
       console.log(j); //eslint-disable-line
     });
@@ -64,7 +64,7 @@ export default {
     submitEventSignAttendance() {
       fetchAPI("/api/event/attend", "POST", {
         zID: this.zID,
-        eventID: this.eid
+        eventID: this.eventID
       })
         .then((this.eventSignSuccess = true)) //TODO: backend currently does not check if user has already signed?
         .catch(e => console.log(e)); //eslint-disable-line

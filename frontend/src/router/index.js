@@ -30,7 +30,7 @@ const routes = [
     }
   },
   {
-    path: '/event/:eid',
+    path: '/event/:eventID',
     name: 'event',
     component: Event,
     props: true,
@@ -40,7 +40,7 @@ const routes = [
     // TODO: only the creator of the society/event should be able to access this
   },
   {
-    path: '/sign/:eid?',
+    path: '/sign/:eventID?',
     name: 'eventSign',
     component: EventSign,
     props: true,
