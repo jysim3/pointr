@@ -15,7 +15,7 @@ export default {
   mounted() {
     // Generating and adding QRCode to canvas
     const canvas = document.getElementById("qr-canvas")
-    const url = `${window.location.host}/#/sign/${this.eventID}`
+    const url = `${window.location.host}/sign/${this.eventID}`
     QRCode.toCanvas(canvas, url);
     canvas.style.height = '20rem'
     canvas.style.width = '20rem'

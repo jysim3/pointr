@@ -14,8 +14,6 @@ import Contact from "@/views/Contact.vue";
 Vue.use(VueRouter);
 
 const routes = [
-  // mode: 'history',
-  // base: process.env.BASE_URL,
   {
     path: '/',
     name: 'home',
@@ -87,6 +85,7 @@ const routes = [
 ];
 
 const router = new VueRouter({
+  mode: 'history',
   routes
 });
 
