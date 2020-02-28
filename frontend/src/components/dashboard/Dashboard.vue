@@ -46,7 +46,6 @@ export default {
       this.upcomingEvents = r.msg;
     });
 
-    // TODO: need to pass token somehow
     fetchAPI(`/api/user/info`, "POST").then(j => {
       this.attendedEvents.data = j.msg;
     });

@@ -10,7 +10,7 @@
           <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link>
           <router-link
             tag="button"
-            to="/mark-attendance"
+            to="/sign"
             class="btn btn-secondary"
           >Mark my attendance</router-link>
         </div>
@@ -51,7 +51,6 @@ export default {
 
 .btn {
   font-size: 1.5rem;
-  /* TODO: fix alignment, does not seem quite center? */
   margin: 0 1rem;
 }
 

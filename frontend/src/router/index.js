@@ -56,14 +56,6 @@ const routes = [
     name: 'signUp',
     component: SignUp
   },
-  // {
-  //   path: '/signout',
-  //   name: 'signOut',
-  //   meta: {
-  //     requiresAuth: true
-  //   }
-  //   // TODO: just remove token from localStorage for now then redirect to home
-  // },
   {
     path: '/joinsociety',
     name: 'joinSociety',
@@ -108,8 +100,6 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
-
-  // TODO: if token exists and is valid then don't want to redirect to signIn/signUp
 });
 
 export default router;
