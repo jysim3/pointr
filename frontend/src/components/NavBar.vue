@@ -27,7 +27,22 @@ export default {
   mixins: [auth],
   props: {
     links: {
-      type: Array
+      type: Array,
+      required: false,
+      default() {
+        return {
+          links: [
+            {
+              to: "/",
+              text: "Events"
+            },
+            {
+              to: "/contact",
+              text: "Contact"
+            }
+          ]
+        };
+      }
     }
   },
   computed: {
@@ -43,7 +58,7 @@ export default {
     authBtnClicked() {
       if (this.userIsAuthenticated) {
         removeToken();
-        this.$router.go(0)// TODO: shouldn't need to push a route, should be automatically done by router
+        this.$router.go(0); // TODO: shouldn't need to push a route, should be automatically done by router
       } else {
         this.$router.push({ name: "signIn" });
       }
