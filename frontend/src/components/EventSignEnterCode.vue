@@ -5,11 +5,9 @@
       <form class="form" @submit.prevent="submitEventCodeForm">
         <h2>Sign event attendance</h2>
         <FormError v-show="formErrorMessage" :msg="formErrorMessage" />
-        <div class="label-input-div">
-          <label class="label" for>Event code</label>
-          <!-- TODO: sanitise input, using quotes does not work -->
-          <input class="input" v-model="eventID" type="text" required />
-        </div>
+        <label class="label" for>Event code</label>
+        <!-- TODO: sanitise input, using quotes does not work -->
+        <input class="input" v-model="eventID" type="text" required />
         <button class="btn btn-primary" type="submit">Next</button>
       </form>
     </div>

@@ -12,7 +12,6 @@
           :to="routes.to"
           class="link"
         >{{routes.text}}</router-link>
-
         <button @click="authBtnClicked" class="btn btn-primary btn--nav">{{ authBtnText }}</button>
       </div>
     </div>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NavBar :links="links" />
+    <NavBar :links="links"/>
     <DashboardEventView :eventViewTitle="upcomingEvents.title" :eventData="upcomingEvents.data" />
     <DashboardEventView :eventViewTitle="attendedEvents.title" :eventData="attendedEvents.data" />
   </div>

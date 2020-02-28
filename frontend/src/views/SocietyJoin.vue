@@ -2,7 +2,6 @@
   <div class="form-container" id="join-society-form-container">
     <form @submit.prevent="submitJoinSocietyForm" class="form">
       <h2>Join a society</h2>
-      <div class="label-input-div">
         <label for="society" class="label">Choose a society</label>
         <!-- TODO: This would need to become searchable in the future.  -->
         <select v-model="selectedSociety" class="input--select" name="society-select">
@@ -12,7 +11,6 @@
             :value="society.societyName"
           >{{ society.societyName }}</option>
         </select>
-      </div>
       <button type="submit" class="btn btn-primary">Join</button>
     </form>
   </div>

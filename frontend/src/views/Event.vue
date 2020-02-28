@@ -9,14 +9,10 @@
       <div id="event-form-container" class="form-container">
         <!-- TODO: Have forms be their own component with slots? -->
         <form id="event-form" class="form" @submit.prevent="submitEventAttendance">
-          <div class="label-input-div">
             <label class="label" for>zID</label>
             <input class="input" v-model="zID" type="text" required />
-          </div>
-          <div class="label-input-div">
             <label class="label" for>Name</label>
             <input class="input" v-model="uname" type="text" required />
-          </div>
           <button type="submit" class="btn btn-primary">Sign attendance</button>
         </form>
       </div>

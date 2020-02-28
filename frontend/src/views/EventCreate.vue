@@ -4,15 +4,10 @@
     <div class="form-container">
       <form id="create-event-form" class="form" @submit.prevent="submitEventForm">
         <h2>Create an event</h2>
-        <div class="label-input-div">
           <label class="label" for>Event title</label>
           <input class="input" v-model="title" type="text" required />
-        </div>
-        <div class="label-input-div">
           <label class="label" for>Location</label>
           <input class="input" v-model="location" type="text" required />
-        </div>
-        <div class="label-input-div">
           <label class="label" for>Society</label>
           <!--
           <input class="input" v-model="society" type="text" required />
@@ -20,12 +15,8 @@
           <select class="input" v-model="society">
             <option v-for="s in userSocieties" :key="s.societyID" :value="s.societyID">{{s.societyName}}</option>
           </select>
-        </div>
-        <div class="label-input-div">
           <label class="label" for>Date</label>
           <input class="input" v-model="date" type="date" required />
-        </div>
-        <div class="label-input-div">
           <label class="label" for>Repeat</label>
           <select class="input" v-model="repeat">
             <option value="">No Repeat</option>
@@ -33,15 +24,10 @@
             <option value="week">Every Week</option>
             <option value="month">Every Month</option>
           </select>
-        </div>
-        <div class="label-input-div">
           <label class="label" for>Set default points</label>
           <input class="input" v-model="point" type="number" min="0" required />
-        </div>
-        <div class="label-input-div">
           <label class="label" for>Show QR Code/Event link</label>
           <input class="input" type="checkbox" checked />
-        </div>
         <button type="submit" class="btn btn-primary">Create Event</button>
       </form>
     </div>
