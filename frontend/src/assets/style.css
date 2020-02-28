@@ -1,6 +1,8 @@
 /* TODO: change all px and em to rem, in component files as well! */
 /* TODO: favicon */
 /* Global */
+@import url('https://fonts.googleapis.com/css?family=Public+Sans:400,500,600');
+
 *,
 html {
   margin: 0;
@@ -11,8 +13,8 @@ html {
   --c-secondary: #f4f4f4;
   --c-secondary-dark: #4d4d4d;
   --c-warning: #d45d79;
-  --font-stack--text: 'SF-Text', Arial, Helvetica, sans-serif;
-  --font-stack--display: 'SF-Display', Arial, Helvetica, sans-serif;
+  --font-stack--text: 'Public Sans', Arial, Helvetica, sans-serif;
+  --font-stack--display: 'Public Sans', Arial, Helvetica, sans-serif;
   --border-radius: 5px;
 }
 
@@ -23,30 +25,6 @@ body {
 }
 
 /* Typography */
-
-@font-face {
-  font-family: 'SF-Text';
-  src: url('./fonts/SF-Pro-Text-Regular.otf');
-  font-weight: 400;
-}
-
-@font-face {
-  font-family: 'SF-Text';
-  src: url('./fonts/SF-Pro-Text-Medium.otf');
-  font-weight: 500;
-}
-
-@font-face {
-  font-family: 'SF-Display';
-  src: url('./fonts/SF-Pro-Display-Regular.otf');
-  font-weight: 400;
-}
-
-@font-face {
-  font-family: 'SF-Display';
-  src: url('./fonts/SF-Pro-Display-Medium.otf');
-  font-weight: 500;
-}
 
 h1,
 h2,
