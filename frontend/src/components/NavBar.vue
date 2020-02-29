@@ -7,7 +7,7 @@
       </div>
       <div class="links">
         <router-link
-          v-for="(routes, i) in links"
+          v-for="(routes, i) in navBarLinks"
           :key="i"
           :to="routes.to"
           class="link"
@@ -24,23 +24,47 @@ import auth from "@/mixins/auth";
 export default {
   name: "NavBar",
   mixins: [auth],
-  props: {
-    links: {
-      type: Array,
-      required: false,
-      default() {
-        return [
-          {
-            to: "/",
-            text: "Events"
-          },
-          {
-            to: "/contact",
-            text: "Contact"
-          }
-        ];
-      }
-    }
+  data() {
+    return {
+      defaultLinks: [
+        {
+          to: "/",
+          text: "Events"
+        },
+        {
+          to: "/contact",
+          text: "Contact"
+        }
+      ],
+      userDashboardLinks: [
+        {
+          to: "/sign",
+          text: "Mark attendance"
+        },
+        {
+          to: "/joinsociety",
+          text: "Join a society"
+        }
+      ],
+      adminDashboardLinks: [
+        {
+          text: "Create an event",
+          to: "/create"
+        },
+        {
+          text: "Join a society",
+          to: "/joinsociety"
+        },
+        {
+          text: "Documentation",
+          to: "/documentation"
+        },
+        {
+          text: "Statistics",
+          to: "/"
+        }
+      ]
+    };
   },
   computed: {
     authBtnText() {
@@ -48,6 +72,17 @@ export default {
         return "Sign out";
       } else {
         return "Sign in";
+      }
+    },
+    navBarLinks() {
+      if (!this.userIsAuthenticated) {
+        return this.defaultLinks
+      }
+
+      if (this.userIsAdmin) {
+        return this.adminDashboardLinks
+      } else {
+        return this.userDashboardLinks
       }
     }
   },

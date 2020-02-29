@@ -30,6 +30,7 @@ export function getToken() {
 export function setToken(token) {
     return localStorage.setItem('token', token)
 }
+
 export function removeToken() {
     return localStorage.removeItem('token')
 }
@@ -37,6 +38,8 @@ export function removeToken() {
 export function isAuthenticated() {
     const localStorageToken = getToken()
     // const tokenIsValid = false
+    // TODO: will need to check if user is authenticated (checking token validity on backend) as well as
+    // their authorization level (another check on the backend). Best to use Promise.all ?
 
     if (!localStorageToken) {
         return false
@@ -47,6 +50,10 @@ export function isAuthenticated() {
 
     // return tokenIsValid
     return true // TODO: for debugging purposes user is always authenticated.
+}
+
+export function isAdmin() {
+    return false
 }
 
 export { apiURL };

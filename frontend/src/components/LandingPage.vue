@@ -1,6 +1,5 @@
 <template>
   <div>
-    <NavBar />
     <div class="container">
       <img src="../assets/stockphoto1.png" />
       <div class="right">
@@ -16,13 +15,8 @@
 </template>
 
 <script>
-import NavBar from "@/components/NavBar.vue";
-
 export default {
-  name: "LandingPage",
-  components: {
-    NavBar
-  }
+  name: "LandingPage"
 };
 </script>
 

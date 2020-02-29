@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <NavBar />
     <transition name="fade" mode="out-in">
       <router-view />
     </transition>
@@ -7,9 +8,13 @@
 </template>
 
 <script>
+import NavBar from "@/components/NavBar.vue";
 
 export default {
-  name: "app"
+  name: "app",
+  components: {
+    NavBar
+  }
 };
 </script>
 

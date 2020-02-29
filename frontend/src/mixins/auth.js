@@ -1,15 +1,17 @@
 import jwt from "jsonwebtoken";
-import { getToken, isAuthenticated } from "@/util.js";
+import { getToken, isAuthenticated, isAdmin } from "@/util.js";
 
 export default {
     data() {
         return {
             token: "",
-            userIsAuthenticated: false
+            userIsAuthenticated: false,
+            userIsAdmin: false
         }
     },
     created() {
         this.userIsAuthenticated = isAuthenticated()
+        this.userIsAdmin = isAdmin()
         this.token = getToken()
     },
     methods: {
