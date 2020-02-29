@@ -1,6 +1,5 @@
 <template>
   <div>
-    <NavBarDefault />
     <div id="form-container--entercode" class="form-container">
       <form class="form" @submit.prevent="submitEventCodeForm">
         <h2>Sign event attendance</h2>
@@ -18,14 +17,12 @@
 
 <script>
 import { fetchAPI } from "@/util";
-import NavBarDefault from "@/components/NavBarDefault.vue";
 import FormError from "@/components/FormError.vue";
 
 export default {
   name: "EventSignEnterCode",
   components: {
     FormError,
-    NavBarDefault
   },
   data() {
     return {
