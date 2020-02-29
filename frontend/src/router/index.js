@@ -35,7 +35,7 @@ const routes = [
     meta: {
       requiresAuth: true
     }
-    // TODO: only the creator of the society/event should be able to access this
+    // TODO: only the creator of the society/event should be able to access this, need to have function that checks they are authorized after we know they are authenticated.
   },
   {
     path: '/sign/:eventID?',

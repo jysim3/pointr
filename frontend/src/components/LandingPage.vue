@@ -8,11 +8,7 @@
         <h3 id="sub-heading">The event tracking system for UNSW colleges.</h3>
         <div id="btn-container">
           <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link>
-          <router-link
-            tag="button"
-            to="/sign"
-            class="btn btn-secondary"
-          >Mark my attendance</router-link>
+          <router-link tag="button" to="/sign" class="btn btn-secondary">Mark my attendance</router-link>
         </div>
       </div>
     </div>

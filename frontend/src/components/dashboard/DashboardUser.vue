@@ -13,7 +13,7 @@ import NavBar from "@/components/NavBar.vue";
 import DashboardEventView from "@/components/dashboard/DashboardEventView.vue";
 
 export default {
-  name: "Dashboard",
+  name: "DashboardUser",
   mixins: [auth],
   components: {
     NavBar,

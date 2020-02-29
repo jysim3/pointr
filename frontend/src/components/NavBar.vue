@@ -11,8 +11,8 @@
           :key="i"
           :to="routes.to"
           class="link"
-        >{{routes.text}}</router-link>
-        <button @click="authBtnClicked" class="btn btn-primary btn--nav">{{ authBtnText }}</button>
+        >{{ routes.text }}</router-link>
+        <a @click="authBtnClicked" class="btn btn-primary btn--nav">{{ authBtnText }}</a>
       </div>
     </div>
   </div>
