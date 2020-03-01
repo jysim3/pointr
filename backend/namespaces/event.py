@@ -1,7 +1,7 @@
 from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort, reqparse
 from schemata import event_schemata
-from util import events, participation, utilFunctions, auth_services, societies
+from util import events, participation, utilFunctions, auth_services, societies, users
 from util.sanitisation_services import sanitize
 from datetime import datetime
 import uuid
@@ -9,7 +9,7 @@ import uuid
 api = Namespace('event', description='Event Management Services')
 
 def generateID(number = None):
-    return str(uuid.uuid4().hex).upper()[:6]
+    return str(uuid.uuid4().hex).upper()[:5]
 
 # For creating a recurrent event
 # Usage: 
@@ -143,6 +143,10 @@ class adminAttendance(Resource):
             abort(403, "Malformed Request, most likely event doesn't exist")
         if societies.checkAdmin(societyID, zID) == False:
             abort(403, "Not signed in as admin")
+
+        result = users.checkUser(data['zID'])
+        if (result == False):
+            abort(403, "This account has not been created")
 
         results = societies.joinSoc(data['zID'], societyID)
         if results != "success":

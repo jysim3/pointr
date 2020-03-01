@@ -94,3 +94,10 @@ class involvedSocs(Resource):
         zID = token_data['zID']
         results = users.getInvolvedSocs(zID)
         return jsonify(results)
+
+@api.route('/checkzID')
+class checkzID(Resource):
+    def get(self):
+        zID = request.args.get('zID')
+        result = users.checkUser(zID)
+        return jsonify({"msg": result})
