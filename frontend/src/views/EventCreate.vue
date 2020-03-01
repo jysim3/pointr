@@ -54,7 +54,7 @@ export default {
   created() {
     fetchAPI("/api/user/involvedSocs", "GET").then(j => {
       console.log(j); //eslint-disable-line
-      this.userSocieties = j.staff;
+      this.userSocieties = j.data.staff;
     });
   },
   methods: {
@@ -87,7 +87,7 @@ export default {
       //  }
       fetchAPI("/api/event/", "POST", data).then(j => {
         console.log(j); //eslint-disable-line
-        this.$router.push({ name: "event", params: { eventID: j.msg } });
+        this.$router.push({ name: "event", params: { eventID: j.data.msg } });
       });
     }
   }

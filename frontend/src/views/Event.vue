@@ -6,7 +6,7 @@
     <h2 id="mark-attendance-header">Sign your attendance</h2>
     <div id="qr-and-form-container">
       <EventQRCode :eventID="this.eventID" />
-      <EventAdminAttendance />
+      <EventAdminAttendance :eventID="this.eventID" />
     </div>
     <div id="event-attendance-container">
       <EventAttendance class="attendee" :eventID="eventID" :attendees="reversedParticipants" />
@@ -56,20 +56,6 @@ export default {
     }
   },
   methods: {
-    submitEventAttendance() {
-      const data = {
-        zID: this.zID,
-        name: this.uname,
-        eventID: this.eventID
-      };
-      fetchAPI("/api/event/attend", "POST", data)
-        .then(() => {
-          this.zID = "";
-          this.uname = "";
-        })
-        .then(() => this.fetchAttendees())
-        .catch(e => alert(e));
-    },
     fetchAttendees() {
       fetchAPI(`/api/event/?eventID=${this.eventID}`)
         .then(r => {

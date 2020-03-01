@@ -15,14 +15,34 @@
     </div>
 </template>
 <script>
+import { fetchAPI } from "@/util";
 export default {
     name:"EventAdminAttendance",
+    props: {
+        eventID: String,
+    },
     data() {
         return ({
         zID: "",
         uname: ""
         })
-    }
+    },
+  methods: {
+    submitEventAttendance() {
+      const data = {
+        zID: this.zID,
+        name: this.uname,
+        eventID: this.eventID
+      };
+      fetchAPI("/api/event/signAttendanceAdmin", "POST", data)
+        .then(() => {
+          this.zID = "";
+          this.uname = "";
+        })
+        .then(() => this.fetchAttendees())
+        .catch(e => alert(e));
+    },
+  }
 }
 </script>
 <style scoped>
