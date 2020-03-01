@@ -150,11 +150,10 @@ class adminAttendance(Resource):
             abort(403, "This account has not been created")
 
         results = societies.joinSoc(data['zID'], societyID)
-        if results != "success":
-            abort(400, "Something fucked up")
+        if (results == "failed"):
+            abort(400, "Database problem, joinSoc not successful")
 
         status = participation.register(data['zID'], data['eventID'], datetime.now())
-        print(status)
         if (status != "success"):
             abort(403, "Attendance registration currently not possible for this event")
         payload['status'] = "success"
