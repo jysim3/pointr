@@ -1,6 +1,6 @@
 <template>
   <div class="attendee">
-    <p class="name">{{ attendee.name }}</p>
+    <h3 class="name">{{ attendee.userName }}</h3>
     <p class="points">{{ pointsString }}</p>
     <div v-if="beingEdited">
       <!-- TODO: proper styling, implement input--number class in style.css -->
@@ -22,7 +22,7 @@ export default {
   name: "EventAttendee",
   props: {
     attendee: Object,
-    eid: String
+    eventID: String
   },
   data() {
     return {
@@ -46,7 +46,7 @@ export default {
     edit() {
       const data = {
         zID: this.attendee.zID,
-        eventID: this.eid,
+        eventID: this.eventID,
         points: parseInt(this.newPoints)
       };
       fetchAPI("/api/points", "POST", data);
@@ -61,7 +61,7 @@ export default {
     del() {
       const data = {
         zID: this.attendee.zID,
-        eventID: this.eid
+        eventID: this.eventID
       };
       fetchAPI("/api/points", "DELETE", data);
     }

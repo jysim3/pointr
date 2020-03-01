@@ -1,8 +1,11 @@
 <template>
   <div class="event-card">
-    <h3>{{ eventData.eventName }}</h3>
-    <p class="event-info">by {{ eventData.societyName }} @ <b>{{ eventData.location }}</b></p>
-    <p class="event-info">On {{ eventData.eventDate }}</p>
+    <!-- TODO: going to an event should only be available to admin? -->
+    <router-link :to="`/event/${eventData.eventID}`">
+      <h3>{{ eventData.eventName }}</h3>
+      <p class="event-info">by {{ eventData.societyName }} @ <b>{{ eventData.location }}</b></p>
+      <p class="event-info">On {{ eventData.eventDate }}</p>
+    </router-link>
   </div>
 </template>
 
@@ -19,8 +22,11 @@ export default {
 </script>
 
 <style scoped>
+a {
+  font-weight: normal;
+}
 .event-card {
-  border: 3px dashed var(--c-primary);
+  border-top: 3px solid var(--c-secondary-dark);
   padding: 1rem;
 }
 

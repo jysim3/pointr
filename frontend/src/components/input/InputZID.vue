@@ -1,5 +1,5 @@
 <template>
-  <div class="label-input-div">
+  <div>
     <label class="label">zID</label>
     <input
       class="input"

@@ -1,7 +1,7 @@
 from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort, reqparse
 from schemata import event_schemata
-from util import events, participation, utilFunctions, auth_services
+from util import events, participation, utilFunctions, auth_services, societies, users
 from util.sanitisation_services import sanitize
 from datetime import datetime
 import uuid
@@ -9,7 +9,7 @@ import uuid
 api = Namespace('event', description='Event Management Services')
 
 def generateID(number = None):
-    return str(uuid.uuid4().hex).upper()[:10]
+    return str(uuid.uuid4().hex).upper()[:5]
 
 # For creating a recurrent event
 # Usage: 
@@ -40,14 +40,6 @@ class Event(Resource):
     def post(self, token_data):
         data = request.get_json()
         eventID = generateID(5).upper()
-        if not 'hasQR' in data:
-            data['hasQR'] = False
-        elif data['hasQR'].lower() == "true":
-            data['hasQR'] = True
-        elif data['hasQR'].lower() == "false":
-            data['hasQR'] = False
-        else:
-            data['hasQR'] = False
 
         # To determine if an event is being created as a recurrent event
         isRecur = str(data['isRecur']) if 'isRecur' in data and data['isRecur'] == 1 else False
@@ -57,9 +49,10 @@ class Event(Resource):
         location = sanitize(str(data['location'])).lower() if 'location' in data else None
         startDate = sanitize(str(data['eventDate'])).lower()
         eventName = sanitize(str(data['name']))
-        hasQR = str(data['hasQR'])
-        societyID = str(data['socID']) if 'socID' in data else None
+        hasQR = str(data['hasQR']) if 'hasQR' in data else False
+        societyID = str(data['socID']) if 'socID' in data else None # FIXME: Coordinate with the frontend to ensure this field is always passed
         description = str(data['description']) if 'description' in data else None
+        startTime = str(data['startTime']) if 'startTime' in data else None
         endTime = str(data['endTime']) if 'endTime' in data else None
 
         # Only recurrent event does this
@@ -69,9 +62,9 @@ class Event(Resource):
 
         results = None
         if isRecur is not False:
-            results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description, endTime)
+            results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description, startTime, endTime)
         else:
-            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, societyID, location, description, endTime)
+            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, societyID, location, description, startTime, endTime)
 
         if (isinstance(results, tuple) == False):
             return jsonify({"status": "failed", "msg": results})
@@ -117,28 +110,58 @@ class Attend(Resource):
     # Takes: 
     # {eventID': "12332", 'time': "2020-04-04 11:55:59 (i.e. YYYY-MM-DD HH:MM:DD)"}
     @api.response(400, "Malformed Request")
+    @api.response(403, "Attendance registration currently not possible for this event")
     @auth_services.check_authorization(level=1)
     def post(self, token_data):
         data = request.get_json()
         payload = {}
 
-        '''
-        time = None
-        if 'time' in data:
-            try:
-                time = datetime.strptime(str(data['time']), "%Y-%m-%d %H:%M:%S")
-            except Exception as e:
-                print(e)
-                abort(400, "Malformed Request")
-        else:
-        '''
         zID = token_data['zID']
         if ('eventID' not in data):
             abort(400, "Malformed Request")
-        time = datetime.now().date()
-        payload['status'] = participation.register(zID, sanitize(data['eventID']), time)
+        time = datetime.now()
+        status = participation.register(zID, sanitize(data['eventID']), time)
+        if (status != "success"):
+            abort(403, "Attendance registration currently not possible for this event")
+        payload['status'] = "success"
+
         return jsonify(payload)
 
+@api.route('/signAttendanceAdmin')
+class adminAttendance(Resource):
+    # Takes:
+    # Requires an society admin token to work
+    # {"eventID": "MEMES", "zID": "z5959595"}
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        data = request.get_json()
+        payload = {}
+
+        zID = token_data['zID']
+        societyID = societies.getSocIDFromEventID(data['eventID'])
+        if (societyID == None):
+            abort(403, "Malformed Request, most likely event doesn't exist")
+        if societies.checkAdmin(societyID, zID) == False:
+            abort(403, "Not signed in as admin")
+
+        # Check whether or not an account exists"
+        result = users.checkUser(data['zID'])
+        if (result == False):
+            abort(403, "This account has not been created")
+
+        results = societies.joinSoc(data['zID'], societyID)
+        if (results == "failed"):
+            abort(400, "Database problem, joinSoc not successful")
+
+        status = participation.register(data['zID'], data['eventID'], datetime.now())
+        if (status != "success"):
+            abort(403, "Attendance registration currently not possible for this event")
+        payload['status'] = "success"
+        return jsonify(payload)
+
+
+# Accepts /api/event/getAttendance?eventID=SOMETHING
+# Returns the CSV file of the attendance info
 @api.route('/getAttendance')
 class getAttendance(Resource):
     @api.response(400, "Cannot find file")

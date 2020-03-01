@@ -1,18 +1,13 @@
 <template>
   <div>
-    <NavBarDefault />
     <div class="container">
-      <img src="../assets/stockphoto1.png" />
+      <img class="left" src="../assets/stockphoto1.png" />
       <div class="right">
-        <h1 id="heading">Welcome to Pointr!</h1>
-        <h3 id="sub-heading">The event tracking system for UNSW colleges.</h3>
-        <div id="btn-container">
+        <h1 class="heading">Welcome to Pointr!</h1>
+        <h3 class="sub-heading">The event tracking system for UNSW colleges.</h3>
+        <div class="btn-container">
           <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link>
-          <router-link
-            tag="button"
-            to="/mark-attendance"
-            class="btn btn-secondary"
-          >Mark my attendance</router-link>
+          <router-link tag="button" to="/sign" class="btn btn-secondary">Mark my attendance</router-link>
         </div>
       </div>
     </div>
@@ -20,13 +15,8 @@
 </template>
 
 <script>
-import NavBarDefault from "@/components/NavBarDefault.vue";
-
 export default {
-  name: "LandingPage",
-  components: {
-    NavBarDefault
-  }
+  name: "LandingPage"
 };
 </script>
 
@@ -44,20 +34,32 @@ export default {
 .right {
   min-width: 0;
 }
-#heading,
-#sub-heading {
+.heading,
+.sub-heading {
   text-align: right;
 }
 
 .btn {
   font-size: 1.5rem;
-  /* TODO: fix alignment, does not seem quite center? */
-  margin: 0 1rem;
+  margin: 1rem;
 }
 
-#btn-container {
+.btn-container {
   display: flex;
   justify-content: right;
   margin-top: 7rem;
+}
+@media only screen and (max-width: 600px) {
+  .left {
+    display: none;
+  }
+  .heading,.sub-heading{
+    text-align: center;
+  }
+  .btn-container {
+    justify-content: center;
+    margin: 3rem;
+    flex-wrap: wrap;
+  }
 }
 </style>

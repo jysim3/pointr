@@ -1,6 +1,8 @@
 /* TODO: change all px and em to rem, in component files as well! */
 /* TODO: favicon */
 /* Global */
+@import url('https://fonts.googleapis.com/css?family=Public+Sans:400,500,600');
+
 *,
 html {
   margin: 0;
@@ -11,52 +13,17 @@ html {
   --c-secondary: #f4f4f4;
   --c-secondary-dark: #4d4d4d;
   --c-warning: #d45d79;
-  --font-stack--text: 'SF-Text', Arial, Helvetica, sans-serif;
-  --font-stack--display: 'SF-Display', Arial, Helvetica, sans-serif;
+  --font-stack: 'Public Sans', Arial, Helvetica, sans-serif;
   --border-radius: 5px;
 }
 
 body {
-  font-family: var(--font-stack--text);
+  font-family: var(--font-stack);
   background-color: var(--c-secondary);
   color: var(--c-secondary-dark);
 }
 
 /* Typography */
-
-@font-face {
-  font-family: 'SF-Text';
-  src: url('./fonts/SF-Pro-Text-Regular.otf');
-  font-weight: 400;
-}
-
-@font-face {
-  font-family: 'SF-Text';
-  src: url('./fonts/SF-Pro-Text-Medium.otf');
-  font-weight: 500;
-}
-
-@font-face {
-  font-family: 'SF-Display';
-  src: url('./fonts/SF-Pro-Display-Regular.otf');
-  font-weight: 400;
-}
-
-@font-face {
-  font-family: 'SF-Display';
-  src: url('./fonts/SF-Pro-Display-Medium.otf');
-  font-weight: 500;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-stack--display);
-}
-
 h1,
 h2,
 h3 {
@@ -261,13 +228,17 @@ input[type='checkbox'] {
   cursor: pointer;
 }
 
+input[type="date"] {
+  font-family: var(--font-stack);
+}
+
 /* Buttons */
 
 .btn {
   padding: 0.75em 1.5em;
   transition: box-shadow 0.2s;
   font-weight: 500;
-  font-family: var(--font-stack--text);
+  font-family: var(--font-stack);
   font-size: 1rem;
   border-radius: var(--border-radius); /* TODO: should be using px? */
   box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.12);

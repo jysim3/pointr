@@ -3,7 +3,7 @@ import sys
 sys.path.append('../')
 from util.utilFunctions import createConnection, checkUser, checkEvent
 from util.users import checkArc
-from util.events import getEndTime
+from util.events import getEventTimes
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import csv
@@ -27,13 +27,20 @@ def register(zID, eventID, time = None):
     conn = createConnection()
     curs = conn.cursor()
     # NOTE: DEFAULTS TO THE CURRENT TIME, unless a time argument has been provided
-    endTime = getEndTime(eventID)
-    if (endTime != None):
-        if (datetime.now().time() > endTime):
-            return "Event closed already"
+    # TODO: FIXME: If this is a multi-day event, we need to consider both eventdate and eventtime
+    eventTimes = getEventTimes(eventID)
+    if (eventTimes != None):
+        startTime, endTime = eventTimes[0], eventTimes[1]
+        if (endTime != None):
+            if (datetime.now().time() > endTime):
+                return "Event closed already"
+        elif (startTime != None):
+            if (datetime.now().time() < startTime):
+                return "Event hasn't started yet"
     try:
         curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, datetime.now() if time == None else time))
     except Exception as e:
+        print(e)
         return "failed"
     conn.commit()
     conn.close()
@@ -177,7 +184,7 @@ def getUserSocieties(zID):
     conn = createConnection()
     curs = conn.cursor()
     try:
-        curs.execute("SELECT * FROM userInSociety where zID = (%s);", (zID,))
+        curs.execute("SELECT societyID, societyName FROM userInSociety where zID = (%s) and role = 0;", (zID,))
     except Exception as e:
         #print(e)
         return "failed"
