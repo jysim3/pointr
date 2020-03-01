@@ -144,22 +144,24 @@ class adminAttendance(Resource):
         if societies.checkAdmin(societyID, zID) == False:
             abort(403, "Not signed in as admin")
 
+        # Check whether or not an account exists"
         result = users.checkUser(data['zID'])
         if (result == False):
             abort(403, "This account has not been created")
 
         results = societies.joinSoc(data['zID'], societyID)
-        if results != "success":
-            abort(400, "Something fucked up")
+        if (results == "failed"):
+            abort(400, "Database problem, joinSoc not successful")
 
         status = participation.register(data['zID'], data['eventID'], datetime.now())
-        print(status)
         if (status != "success"):
             abort(403, "Attendance registration currently not possible for this event")
         payload['status'] = "success"
         return jsonify(payload)
 
 
+# Accepts /api/event/getAttendance?eventID=SOMETHING
+# Returns the CSV file of the attendance info
 @api.route('/getAttendance')
 class getAttendance(Resource):
     @api.response(400, "Cannot find file")
