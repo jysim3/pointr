@@ -114,7 +114,7 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
     eventIDLists = []
     previousWeek = None
     while eventStartDate < eventEndDate:
-        currEventID = eventID + f"{counter:05d}"
+        currEventID = eventID + f"{counter:02d}"
         week = findWeek(eventStartDate)
         if (week is None):
             break

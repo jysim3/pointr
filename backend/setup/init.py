@@ -10,12 +10,11 @@ from datetime import datetime
 import uuid
 
 def generateID(number = None):
-    return str(uuid.uuid4().hex).upper()[:10]
+    return str(uuid.uuid4().hex).upper()[:5]
 
 def initDatabase():
     # Moving this section to init.py in the next patch lmao
     # add users
-    #createUser("z5161616", "Steven Shen", "123456")
     createUser("z5161631", "Junyang Sim", "12345678")
     activateAccount("z5161631")
     createUser("z5111111", "Wayne Rooney", "12345678")
