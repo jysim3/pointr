@@ -51,8 +51,7 @@ export default {
         password: this.password
       })
         .then(r => {
-          console.log(r); //eslint-disable-line
-          setToken(r.token);
+          setToken(r.data.token);
           this.$router.push({ name: "home" });
         })
         .catch(err => {

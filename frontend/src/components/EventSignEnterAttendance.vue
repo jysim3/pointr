@@ -1,6 +1,10 @@
 <template>
   <div>
-    <form id="form-container--signevent" class="form-container" @submit.prevent="submitEventSignAttendance">
+    <form
+      id="form-container--signevent"
+      class="form-container"
+      @submit.prevent="submitEventSignAttendance"
+    >
       <div class="form">
         <h2>Sign attendance</h2>
         <EventCard :eventData="eventData" />
@@ -46,17 +50,15 @@ export default {
     };
   },
   created() {
-    fetchAPI(`/api/event/?eventID=${this.eventID}`, "GET").then(j => {
-      this.eventData = j;
-      console.log(j); //eslint-disable-line
+    fetchAPI(`/api/event/?eventID=${this.eventID}`).then(r => {
+      this.eventData = r.data;
     });
 
-    fetchAPI(`/api/user/info`, "POST").then(j => {
-      console.log(j); //eslint-disable-line
-      this.userName = j.msg.name;
+    fetchAPI(`/api/user/info`, "POST").then(r => {
+      this.userName = r.data.msg.name;
       this.zID = this.getZID();
       // Checking if this event's ID matches with a user's signed event.
-      this.eventAlreadySigned = j.msg.events.some(
+      this.eventAlreadySigned = r.data.msg.events.some(
         event => event.eventID === this.eventData.eventID
       );
     });
@@ -67,7 +69,11 @@ export default {
         zID: this.zID,
         eventID: this.eventID
       })
-        .then((this.eventSignSuccess = true)) //TODO: backend currently does not check if user has already signed?
+        .then(r => {
+          if (r.status === 200) {
+            this.eventSignSuccess = true;
+          }
+        })
         .catch(e => console.log(e)); //eslint-disable-line
     }
   }
