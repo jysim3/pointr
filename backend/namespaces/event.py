@@ -130,6 +130,7 @@ class Attend(Resource):
 @api.route('/signAttendanceAdmin')
 class adminAttendance(Resource):
     # Takes:
+    # Requires an society admin token to work
     # {"eventID": "MEMES", "zID": "z5959595"}
     @auth_services.check_authorization(level=1)
     def post(self, token_data):
@@ -139,7 +140,7 @@ class adminAttendance(Resource):
         zID = token_data['zID']
         societyID = societies.getSocIDFromEventID(data['eventID'])
         if (societyID == None):
-            abort(403, "Malformed Request")
+            abort(403, "Malformed Request, most likely event doesn't exist")
         if societies.checkAdmin(societyID, zID) == False:
             abort(403, "Not signed in as admin")
 
