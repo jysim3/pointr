@@ -61,7 +61,7 @@ export default {
     submitEventForm() {
       // TODO: clean this up
       const data = {
-        zID: "z5000000",
+        zID: "z5111111",
         name: this.title,
         location: this.location,
         eventDate: this.date,

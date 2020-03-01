@@ -1,6 +1,6 @@
 <template>
   <div class="attendee">
-    <p class="name">{{ attendee.name }}</p>
+    <h3 class="name">{{ attendee.userName }}</h3>
     <p class="points">{{ pointsString }}</p>
     <div v-if="beingEdited">
       <!-- TODO: proper styling, implement input--number class in style.css -->

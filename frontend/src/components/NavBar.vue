@@ -111,21 +111,25 @@ export default {
   margin-bottom: 2rem;
   padding: 1.5rem 0 1.5rem 0;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 
+
 .box-container {
   width: 80%;
+  margin: auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .links {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .link {
@@ -143,7 +147,7 @@ export default {
 }
 
 .btn--nav {
-  margin-left: 2rem;
+  margin: 0 2rem 0 2rem;
   font-size: 1.1rem;
 }
 </style>
