@@ -100,6 +100,4 @@ class checkzID(Resource):
     def get(self):
         zID = request.args.get('zID')
         result = users.checkUser(zID)
-        if (result == False):
-            abort(400, "Account not created")
-        return jsonify({"msg": True})
+        return jsonify({"msg": result})
