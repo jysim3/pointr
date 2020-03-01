@@ -135,6 +135,18 @@ def getAllSocs():
         payload.append(currSoc)
     return payload
 
+def checkAdmin(socID, zID):
+    conn = createConnection()
+    curs = conn.cursor()
+    try:
+        curs.execute("SELECT * FROM userInSociety WHERE ZID = (%s) AND role = 1 AND societyID = (%s);", (zID, socID,))
+    except Exception as e:
+        return False
+    results = curs.fetchone()
+    if (results is None):
+        return False
+    return True
+
 # Make this zID the admin of EVERY SOC IN OUR DB
 def makeSuperAdmin(zID):
     if (checkUser(zID) == False):
