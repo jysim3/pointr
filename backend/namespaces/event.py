@@ -144,6 +144,7 @@ class adminAttendance(Resource):
         if societies.checkAdmin(societyID, zID) == False:
             abort(403, "Not signed in as admin")
 
+        # Check whether or not an account exists"
         result = users.checkUser(data['zID'])
         if (result == False):
             abort(403, "This account has not been created")
@@ -160,6 +161,8 @@ class adminAttendance(Resource):
         return jsonify(payload)
 
 
+# Accepts /api/event/getAttendance?eventID=SOMETHING
+# Returns the CSV file of the attendance info
 @api.route('/getAttendance')
 class getAttendance(Resource):
     @api.response(400, "Cannot find file")
