@@ -4,11 +4,9 @@
       <form class="form" @submit.prevent="submitEventCodeForm">
         <h2>Sign event attendance</h2>
         <FormError v-show="formErrorMessage" :msg="formErrorMessage" />
-        <div class="label-input-div">
-          <label class="label" for>Event code</label>
-          <!-- TODO: sanitise input, using quotes does not work -->
-          <input class="input" v-model="eid" type="text" required />
-        </div>
+        <label class="label" for>Event code</label>
+        <!-- TODO: sanitise input, using quotes does not work -->
+        <input class="input" v-model="eventID" type="text" required />
         <button class="btn btn-primary" type="submit">Next</button>
       </form>
     </div>
@@ -26,7 +24,7 @@ export default {
   },
   data() {
     return {
-      eid: "",
+      eventID: "",
       formErrorMessage: "",
       allEventID: []
     };
@@ -39,8 +37,8 @@ export default {
   },
   methods: {
     submitEventCodeForm() {
-      if (this.allEventID.includes(this.eid)) {
-        this.$router.push({ name: "eventSign", params: { eid: this.eid } });
+      if (this.allEventID.includes(this.eventID)) {
+        this.$router.push({ name: "eventSign", params: { eventID: this.eventID } });
       } else {
         this.formErrorMessage = "Looks like we couldn't find that event."
       }

@@ -1,28 +1,24 @@
 <template>
   <div>
-    <Logo />
-    <EventCodeDisplay :eid="eid" />
+    <EventCodeDisplay :eventID="eventID" />
     <h1 id="welcome-header">Welcome to {{ this.name }}</h1>
-    <h2 id="mark-attendance-header">Mark your attendance</h2>
+    <!-- TODO: add more event information here -->
+    <h2 id="mark-attendance-header">Sign your attendance</h2>
     <div id="qr-and-form-container">
-      <EventQRCode :eid="this.eid" />
+      <EventQRCode :eventID="this.eventID" />
       <div id="event-form-container" class="form-container">
         <!-- TODO: Have forms be their own component with slots? -->
         <form id="event-form" class="form" @submit.prevent="submitEventAttendance">
-          <div class="label-input-div">
             <label class="label" for>zID</label>
             <input class="input" v-model="zID" type="text" required />
-          </div>
-          <div class="label-input-div">
             <label class="label" for>Name</label>
             <input class="input" v-model="uname" type="text" required />
-          </div>
           <button type="submit" class="btn btn-primary">Sign attendance</button>
         </form>
       </div>
     </div>
     <div id="event-attendance-container">
-      <EventAttendance class="attendee" :eid="eid" :attendees="reversedParticipants" />
+      <EventAttendance class="attendee" :eventID="eventID" :attendees="reversedParticipants" />
       <!-- TODO: only show last 10 people who have joined? Click 'view all' to show all participants? -->
     </div>
   </div>
@@ -32,19 +28,17 @@
 import EventAttendance from "@/components/EventAttendance.vue";
 import EventQRCode from "@/components/EventQRCode.vue";
 import EventCodeDisplay from "@/components/EventCodeDisplay.vue";
-import Logo from "@/components/Logo.vue"
 import { fetchAPI } from "@/util.js";
 
 export default {
   name: "Event",
   props: {
-    eid: String
+    eventID: String
   },
   components: {
     EventQRCode,
     EventAttendance,
     EventCodeDisplay,
-    Logo
   },
   data() {
     return {
@@ -63,7 +57,7 @@ export default {
   },
   computed: {
     eventURL() {
-      return `${window.location.host}/#/e/${this.eid}`;
+      return `${window.location.host}/#/e/${this.eventID}`;
     },
     reversedParticipants() {
       const participantsCopy = this.participants.slice();
@@ -75,7 +69,7 @@ export default {
       const data = {
         zID: this.zID,
         name: this.uname,
-        eventID: this.eid
+        eventID: this.eventID
       };
       fetchAPI("/api/event/attend", "POST", data)
         .then(() => {
@@ -86,7 +80,7 @@ export default {
         .catch(e => alert(e));
     },
     fetchAttendees() {
-      fetchAPI(`/api/event/?eventID=${this.eid}`, "GET")
+      fetchAPI(`/api/event/?eventID=${this.eventID}`, "GET")
         .then(r => {
           this.participants = r.attendance;
           this.name = r.eventName;

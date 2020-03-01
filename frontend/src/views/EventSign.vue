@@ -1,5 +1,5 @@
 <template>
-  <EventSignEnterAttendance v-if="eid" :eid="eid" />
+  <EventSignEnterAttendance v-if="eventID" :eventID="eventID" />
   <EventSignEnterCode v-else />
 </template>
 
@@ -10,7 +10,7 @@ import EventSignEnterAttendance from "@/components/EventSignEnterAttendance.vue"
 export default {
   name: 'EventSign',
   props: {
-    eid: {
+    eventID: {
       type: String
     }
   },

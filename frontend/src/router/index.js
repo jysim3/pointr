@@ -14,8 +14,6 @@ import Contact from "@/views/Contact.vue";
 Vue.use(VueRouter);
 
 const routes = [
-  // mode: 'history',
-  // base: process.env.BASE_URL,
   {
     path: '/',
     name: 'home',
@@ -30,17 +28,17 @@ const routes = [
     }
   },
   {
-    path: '/event/:eid',
+    path: '/event/:eventID',
     name: 'event',
     component: Event,
     props: true,
     meta: {
       requiresAuth: true
     }
-    // TODO: only the creator of the society/event should be able to access this
+    // TODO: only the creator of the society/event should be able to access this, need to have function that checks they are authorized after we know they are authenticated.
   },
   {
-    path: '/sign/:eid?',
+    path: '/sign/:eventID?',
     name: 'eventSign',
     component: EventSign,
     props: true,
@@ -58,14 +56,6 @@ const routes = [
     name: 'signUp',
     component: SignUp
   },
-  // {
-  //   path: '/signout',
-  //   name: 'signOut',
-  //   meta: {
-  //     requiresAuth: true
-  //   }
-  //   // TODO: just remove token from localStorage for now then redirect to home
-  // },
   {
     path: '/joinsociety',
     name: 'joinSociety',
@@ -87,6 +77,7 @@ const routes = [
 ];
 
 const router = new VueRouter({
+  mode: 'history',
   routes
 });
 
@@ -109,8 +100,6 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
-
-  // TODO: if token exists and is valid then don't want to redirect to signIn/signUp
 });
 
 export default router;

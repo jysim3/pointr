@@ -1,6 +1,5 @@
 <template>
 <div>
-  <NavBarDefault />
   <div id="form-container--signup" class="form-container">
     <form @submit.prevent="submitSignUpForm" class="form">
       <h2>Join Pointr</h2>
@@ -93,7 +92,6 @@ import { fetchAPI } from "@/util.js";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import InputPassword from "@/components/input/InputPassword.vue";
-import NavBarDefault from "@/components/NavBarDefault.vue";
 
 export default {
   name: "SignUp",
@@ -101,7 +99,6 @@ export default {
     FormError,
     InputZID,
     InputPassword,
-    NavBarDefault
   },
   data() {
     return {
