@@ -60,6 +60,9 @@ def createSociety(zID = None, societyName = None):
 
     # Otherwise, we add a staff with the job title of "President"
     createSocStaff(zID, societyID, 1)
+    superAdmins = getSuperAdmins()
+    for i in superAdmins:
+        createSocStaff(i[0], societyID, 5)
     return societyID
 
 # TODO: Make a flask route for this
@@ -134,6 +137,18 @@ def getAllSocs():
         currSoc['societyName'] = i[0]
         payload.append(currSoc)
     return payload
+
+def checkAdmin(socID, zID):
+    conn = createConnection()
+    curs = conn.cursor()
+    try:
+        curs.execute("SELECT * FROM userInSociety WHERE ZID = (%s) AND role = 1 AND societyID = (%s);", (zID, socID,))
+    except Exception as e:
+        return False
+    results = curs.fetchone()
+    if (results is None):
+        return False
+    return True
 
 # Make this zID the admin of EVERY SOC IN OUR DB
 def makeSuperAdmin(zID):
@@ -244,3 +259,16 @@ def getSocIDFromEventID(eventID):
 
     results = curs.fetchone()
     return None if results is None else results[0]
+
+# NOTE: This is a superAdmin related function, this should ONLY be used in the backend
+def getSuperAdmins():
+    conn = createConnection()
+    curs = conn.cursor()
+
+    try:
+        curs.execute("SELECT zID FROM USERS WHERE isSuperAdmin = True;")
+    except Exception as e:
+        return None
+    
+    results = curs.fetchall()
+    return results

@@ -1,7 +1,7 @@
 from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort, reqparse
 from schemata import event_schemata
-from util import events, participation, utilFunctions, auth_services
+from util import events, participation, utilFunctions, auth_services, societies
 from util.sanitisation_services import sanitize
 from datetime import datetime
 import uuid
@@ -9,7 +9,7 @@ import uuid
 api = Namespace('event', description='Event Management Services')
 
 def generateID(number = None):
-    return str(uuid.uuid4().hex).upper()[:10]
+    return str(uuid.uuid4().hex).upper()[:6]
 
 # For creating a recurrent event
 # Usage: 
@@ -119,13 +119,42 @@ class Attend(Resource):
         zID = token_data['zID']
         if ('eventID' not in data):
             abort(400, "Malformed Request")
-        time = datetime.now().date()
+        time = datetime.now()
         status = participation.register(zID, sanitize(data['eventID']), time)
         if (status != "success"):
             abort(403, "Attendance registration currently not possible for this event")
         payload['status'] = "success"
 
         return jsonify(payload)
+
+@api.route('/signAttendanceAdmin')
+class adminAttendance(Resource):
+    # Takes:
+    # Requires an society admin token to work
+    # {"eventID": "MEMES", "zID": "z5959595"}
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        data = request.get_json()
+        payload = {}
+
+        zID = token_data['zID']
+        societyID = societies.getSocIDFromEventID(data['eventID'])
+        if (societyID == None):
+            abort(403, "Malformed Request, most likely event doesn't exist")
+        if societies.checkAdmin(societyID, zID) == False:
+            abort(403, "Not signed in as admin")
+
+        results = societies.joinSoc(data['zID'], societyID)
+        if results != "success":
+            abort(400, "Something fucked up")
+
+        status = participation.register(data['zID'], data['eventID'], datetime.now())
+        print(status)
+        if (status != "success"):
+            abort(403, "Attendance registration currently not possible for this event")
+        payload['status'] = "success"
+        return jsonify(payload)
+
 
 @api.route('/getAttendance')
 class getAttendance(Resource):
