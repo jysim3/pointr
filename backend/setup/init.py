@@ -28,15 +28,17 @@ def initDatabase():
     activateAccount("z5444444")
     createUser("z5555555", "Oltan", "12345678")
     activateAccount("z5555555")
-    createUser("z5000000", "Super Admin Test Account", "gangboss")
+    createUser("z5000000", "Super Admin Test Account", "gangboss", isSuperAdmin=True)
     activateAccount("z5000000")
-    makeSuperAdmin("z5000000")
 
     # TODO: FIXME: When creating societies, add in any existing superAdmins into the newly created socs
     createSociety("z5111111", "CSESoc")
     createSociety("z5161631", "Manchester United FC")
     createSociety("z5222222", "UNSW Hall")
     createSociety("z5444444", "Exotic Beer Society")
+
+    createUser("z5111000", "Test Superadmin 2", "12345678", isSuperAdmin=True)
+    activateAccount("z5111000")
 
     # NOTE: Defaults to UNSW Hall (for the society field right now)
     event1 = createSingleEvent("z5111111", generateID(), "Hackathon", "2020-11-19", True, findSocID("CSESoc"), None, None)

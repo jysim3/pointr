@@ -60,6 +60,9 @@ def createSociety(zID = None, societyName = None):
 
     # Otherwise, we add a staff with the job title of "President"
     createSocStaff(zID, societyID, 1)
+    superAdmins = getSuperAdmins()
+    for i in superAdmins:
+        createSocStaff(i[0], societyID, 5)
     return societyID
 
 # TODO: Make a flask route for this
@@ -256,3 +259,16 @@ def getSocIDFromEventID(eventID):
 
     results = curs.fetchone()
     return None if results is None else results[0]
+
+# NOTE: This is a superAdmin related function, this should ONLY be used in the backend
+def getSuperAdmins():
+    conn = createConnection()
+    curs = conn.cursor()
+
+    try:
+        curs.execute("SELECT zID FROM USERS WHERE isSuperAdmin = True;")
+    except Exception as e:
+        return None
+    
+    results = curs.fetchall()
+    return results

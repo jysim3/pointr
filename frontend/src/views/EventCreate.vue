@@ -52,8 +52,9 @@ export default {
     };
   },
   created() {
-    fetchAPI("/api/soc/getAllSocs").then(j => {
-      this.userSocieties = j.data;
+    fetchAPI("/api/user/involvedSocs", "GET").then(j => {
+      console.log(j); //eslint-disable-line
+      this.userSocieties = j.staff;
     });
   },
   methods: {
