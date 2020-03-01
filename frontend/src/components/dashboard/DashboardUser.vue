@@ -1,6 +1,5 @@
 <template>
   <div>
-    <NavBarDashboard />
     <EventSignEnterCode />
     <hr>
     <div class="event-lists">
@@ -16,14 +15,12 @@
 import { fetchAPI } from "@/util.js";
 import auth from "@/mixins/auth";
 import Loader from "@/components/Loader.vue";
-import NavBarDashboard from "@/components/dashboard/NavBarDashboard.vue";
 import DashboardEventView from "@/components/dashboard/DashboardEventView.vue";
 import EventSignEnterCode from "@/components/EventSignEnterCode.vue"
 export default {
   name: "DashboardUser",
   mixins: [auth],
   components: {
-    NavBarDashboard,
     DashboardEventView,
     Loader,
     EventSignEnterCode 
