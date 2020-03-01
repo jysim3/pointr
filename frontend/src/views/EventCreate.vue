@@ -52,9 +52,9 @@ export default {
     };
   },
   created() {
-    fetchAPI("/api/soc/getAllSocs", "GET").then(j => {
+    fetchAPI("/api/user/involvedSocs", "GET").then(j => {
       console.log(j); //eslint-disable-line
-      this.userSocieties = j;
+      this.userSocieties = j.staff;
     });
   },
   methods: {

@@ -6,16 +6,7 @@
     <h2 id="mark-attendance-header">Sign your attendance</h2>
     <div id="qr-and-form-container">
       <EventQRCode :eventID="this.eventID" />
-      <div id="event-form-container" class="form-container">
-        <!-- TODO: Have forms be their own component with slots? -->
-        <form id="event-form" class="form" @submit.prevent="submitEventAttendance">
-            <label class="label" for>zID</label>
-            <input class="input" v-model="zID" type="text" required />
-            <label class="label" for>Name</label>
-            <input class="input" v-model="uname" type="text" required />
-          <button type="submit" class="btn btn-primary">Sign attendance</button>
-        </form>
-      </div>
+      <EventAdminAttendance />
     </div>
     <div id="event-attendance-container">
       <EventAttendance class="attendee" :eventID="eventID" :attendees="reversedParticipants" />
@@ -28,6 +19,7 @@
 import EventAttendance from "@/components/EventAttendance.vue";
 import EventQRCode from "@/components/EventQRCode.vue";
 import EventCodeDisplay from "@/components/EventCodeDisplay.vue";
+import EventAdminAttendance from "@/components/EventAdminAttendance.vue";
 import { fetchAPI } from "@/util.js";
 
 export default {
@@ -39,13 +31,12 @@ export default {
     EventQRCode,
     EventAttendance,
     EventCodeDisplay,
+    EventAdminAttendance
   },
   data() {
     return {
       name: "",
       participants: [],
-      zID: "",
-      uname: ""
     };
   },
   created() {
@@ -115,8 +106,7 @@ export default {
   box-shadow: none;
 }
 
-#qr-container,
-#event-form-container {
+#qr-container {
   display: inline-block;
 }
 
