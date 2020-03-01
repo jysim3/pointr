@@ -86,3 +86,11 @@ class Points(Resource):
         payload = {}
         payload['status'] = participation.changePoints(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(str(data['points'])))
         return jsonify(payload)
+    
+@api.route('/involvedSocs')
+class involvedSocs(Resource):
+    @auth_services.check_authorization(level=1)
+    def get(self, token_data):
+        zID = token_data['zID']
+        results = users.getInvolvedSocs(zID)
+        return jsonify(results)

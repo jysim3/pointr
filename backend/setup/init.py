@@ -32,6 +32,7 @@ def initDatabase():
     activateAccount("z5000000")
     makeSuperAdmin("z5000000")
 
+    # TODO: FIXME: When creating societies, add in any existing superAdmins into the newly created socs
     createSociety("z5111111", "CSESoc")
     createSociety("z5161631", "Manchester United FC")
     createSociety("z5222222", "UNSW Hall")

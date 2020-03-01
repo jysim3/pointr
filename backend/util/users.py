@@ -198,3 +198,28 @@ def checkActivation(zID):
     if (result is None):
         return False
     return result[0]
+
+def getInvolvedSocs(zID):
+    conn = createConnection()
+    curs = conn.cursor()
+    try:
+        curs.execute("SELECT societyID, societyName, role FROM userInSociety WHERE role = 0 AND zid = (%s);", (zID,))
+        normalMember = curs.fetchall()
+        curs.execute("SELECT societyID, societyName, role FROM userInSociety WHERE role = 1 and zid = (%s);", (zID,))
+        staffMember = curs.fetchall()
+    except Exception as e:
+        return None
+    payload = {}
+    payload['member'] = []
+    for i in normalMember:
+        currI = {}
+        currI['societyID'] = i[0]
+        currI['societyName'] = i[1]
+        payload['member'].append(currI)
+    payload['staff'] = []
+    for i in staffMember:
+        currI = {}
+        currI['societyID'] = i[0]
+        currI['societyName'] = i[1]
+        payload['staff'].append(currI)
+    return payload

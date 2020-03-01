@@ -183,7 +183,7 @@ def getUserSocieties(zID):
     conn = createConnection()
     curs = conn.cursor()
     try:
-        curs.execute("SELECT * FROM userInSociety where zID = (%s);", (zID,))
+        curs.execute("SELECT societyID, societyName FROM userInSociety where zID = (%s) and role = 0;", (zID,))
     except Exception as e:
         #print(e)
         return "failed"
