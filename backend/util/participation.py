@@ -40,6 +40,7 @@ def register(zID, eventID, time = None):
     try:
         curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, datetime.now() if time == None else time))
     except Exception as e:
+        print(e)
         return "failed"
     conn.commit()
     conn.close()
