@@ -1,6 +1,7 @@
 <template>
-  <div class="label-input-div">
-    <label v-if="label" class="label">{{ label }}</label>
+  <div>
+    <!-- Label prop should never change and hence can only be rendered once. -->
+    <label v-if="label" class="label" v-once>{{ label }}</label>
     <label v-else class="label">Password</label>
     <input
       class="input"

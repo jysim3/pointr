@@ -1,6 +1,6 @@
 <template>
   <div class="event-card">
-    <router-link :to="eventData.eventID">
+    <router-link :to="'event/' + eventData.eventID">
       <h3>{{ eventData.name }}</h3>
       <p class="event-info">by {{ eventData.societyName }} @ <b>{{ eventData.location }}</b></p>
       <p class="event-info">On {{ eventData.eventDate }}</p>

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <NavBarDefault />
     <div class="form-container" id="form-container--signin">
       <form @submit.prevent="submitSignInForm" class="form">
         <h2>Sign in to Pointr</h2>
@@ -26,7 +25,6 @@ import { fetchAPI, setToken } from "@/util.js";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import InputPassword from "@/components/input/InputPassword.vue";
-import NavBarDefault from "@/components/NavBarDefault.vue";
 
 export default {
   name: "SignIn",
@@ -34,7 +32,6 @@ export default {
     FormError,
     InputZID,
     InputPassword,
-    NavBarDefault
   },
   data() {
     return {

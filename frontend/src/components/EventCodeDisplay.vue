@@ -2,7 +2,7 @@
   <div class="event-code-display-container">
     <div class="event-code-display">
       <h4 class="header">Event code</h4>
-      <h2 class="code">{{ this.eid }}</h2>
+      <h2 class="code">{{ this.eventID }}</h2>
     </div>
   </div>
 </template>
@@ -11,7 +11,7 @@
 export default {
     name: "EventCodeDispaly",
     props: {
-        eid: String
+        eventID: String
     }
 };
 </script>
