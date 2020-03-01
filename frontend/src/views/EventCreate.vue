@@ -1,6 +1,5 @@
 <template>
   <div>
-    <Logo />
     <div class="form-container">
       <form id="create-event-form" class="form" @submit.prevent="submitEventForm">
         <h2>Create an event</h2>
@@ -37,13 +36,9 @@
 
 <script>
 import { fetchAPI } from "@/util.js";
-import Logo from "@/components/Logo.vue";
 
 export default {
   name: "EventCreate",
-  components: {
-    Logo
-  },
   data() {
     return {
       title: "",

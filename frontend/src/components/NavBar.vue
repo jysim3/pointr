@@ -139,7 +139,6 @@ export default {
 
 .logo {
   max-width: 200px;
-  flex: 1 2 0;
   cursor: pointer;
 }
 

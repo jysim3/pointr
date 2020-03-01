@@ -12,6 +12,7 @@
         <div id="submit-message" v-else>
           <h3 v-if="eventAlreadySigned">Already signed this event!</h3>
           <h3 v-else>Success!</h3>
+          <!-- TODO: need padding/margin on this -->
           <router-link to="/">Go to home</router-link>
         </div>
       </div>
