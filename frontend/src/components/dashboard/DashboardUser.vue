@@ -1,12 +1,11 @@
 <template>
   <div>
-    <NavBarDashboard />
     <EventSignEnterCode />
     <hr>
     <div class="event-lists">
-      <Loader v-if="upcomingEvents.status == 'loading'"/>
+      <Loader v-if="upcomingEvents.isLoading"/>
       <DashboardEventView v-else :eventViewTitle="upcomingEvents.title" :eventData="upcomingEvents.data" />
-      <Loader v-if="allEvents.status == 'loading'"/>
+      <Loader v-if="allEvents.isLoading"/>
       <DashboardEventView v-else :eventViewTitle="allEvents.title" :eventData="allEvents.data" />
     </div>
   </div>
@@ -16,14 +15,12 @@
 import { fetchAPI } from "@/util.js";
 import auth from "@/mixins/auth";
 import Loader from "@/components/Loader.vue";
-import NavBarDashboard from "@/components/dashboard/NavBarDashboard.vue";
 import DashboardEventView from "@/components/dashboard/DashboardEventView.vue";
 import EventSignEnterCode from "@/components/EventSignEnterCode.vue"
 export default {
   name: "DashboardUser",
   mixins: [auth],
   components: {
-    NavBarDashboard,
     DashboardEventView,
     Loader,
     EventSignEnterCode 
@@ -33,12 +30,12 @@ export default {
       upcomingEvents: {
         title: 'Your Events',
         data: [],
-        status: "loading"
+        isLoading: true
       },
       allEvents: {
         title: 'Browse Events',
         data: [],
-        status: "loading",
+        isLoading: true
       },
     };
   },
@@ -46,15 +43,13 @@ export default {
     fetchAPI(`/api/event/getAllEvents`).then(r => {
       console.log(r) // eslint-disable-line
       this.upcomingEvents.data = r;
-      this.upcomingEvents.status = "loaded";
+      this.upcomingEvents.isLoading = false;
     });
     fetchAPI('/api/user/getUpcomingEvents').then(r => {
       console.log(r) // eslint-disable-line
       this.allEvents.data = r.message;
-      this.allEvents.status = "loaded";
+      this.allEvents.isLoading = false;
     });
-
-    this.status = "loaded"
   }
 };
 </script>
