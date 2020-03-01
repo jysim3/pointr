@@ -80,10 +80,10 @@ export default {
         .catch(e => alert(e));
     },
     fetchAttendees() {
-      fetchAPI(`/api/event/?eventID=${this.eventID}`, "GET")
+      fetchAPI(`/api/event/?eventID=${this.eventID}`)
         .then(r => {
-          this.participants = r.attendance;
-          this.name = r.eventName;
+          this.participants = r.data.attendance;
+          this.name = r.data.eventName;
           console.log(r) // eslint-disable-line
         })
         .catch(e => {

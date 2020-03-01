@@ -47,7 +47,7 @@ export default {
 
     fetchAPI(`/api/auth/activate?token=${this.activateToken}`).then(r => {
       this.isActivated.status = r.status;
-      this.isActivated.msg = r.message;
+      this.isActivated.msg = r.data.message;
       console.log("r is" + r); //eslint-disable-line
     });
   }

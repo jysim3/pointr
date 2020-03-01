@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { fetchAPI } from "@/util.js";
+import { fetchAPI, setToken } from "@/util.js";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import InputPassword from "@/components/input/InputPassword.vue";
@@ -150,20 +150,18 @@ export default {
         isArc: this.userInfo.isArcMember
       }).then(r => {
           // In the case of a successful response, want to store token and redirect to home
-          this.$router.push({ name: "home" });
-          console.log("r is ", r); //eslint-disable-line
-      })
-      .catch(e => {
-
-          console.log("r is ", e); //eslint-disable-line
-          console.log(r.message["zID"]); //eslint-disable-line
-          if (e.message["zID"]) {
-            this.formErrorMessage = "Please check your zID";
+          if (r.status === 200) {
+            setToken(r.data.token)
+            this.$router.push({ name: "home" });
           } else {
-            this.formErrorMessage = e.message;
+            if (r.data.message["zID"]) {
+              this.formErrorMessage = "Please check your zID";
+            } else {
+              this.formErrorMessage = r.data.message;
+            }
           }
+
       })
-      ;
     }
   }
 };

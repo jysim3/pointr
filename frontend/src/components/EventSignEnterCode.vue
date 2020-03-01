@@ -7,7 +7,7 @@
         <label class="label" for>Event code</label>
         <!-- TODO: sanitise input, using quotes does not work -->
         <input class="input" v-model="eventID" type="text" required />
-        <button class="btn btn-primary" type="submit">Next</button>
+        <button :to="`/sign/${eventID}`" class="btn btn-primary" type="submit">Next</button>
       </form>
     </div>
   </div>
@@ -31,8 +31,8 @@ export default {
   },
   created() {
     fetchAPI("/api/event/getAllEventID")
-    .then(j => {
-      this.allEventID = j
+    .then(r => {
+      this.allEventID = r.data
     })
   },
   methods: {
