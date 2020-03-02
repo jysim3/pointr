@@ -115,7 +115,6 @@ export default {
   align-items: center;
 }
 
-
 .box-container {
   width: 80%;
   margin: auto;
