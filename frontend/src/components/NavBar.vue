@@ -5,7 +5,7 @@
       <div class="logo">
         <img @click="toHome" class="logo" src="../assets/logo.png" alt="pointr logo" />
       </div>
-      <div class="links">
+      <div v-show="!isLoading" class="links">
         <router-link
           v-for="(routes, i) in navBarLinks"
           :key="i"
@@ -18,12 +18,10 @@
   </div>
 </template>
 <script>
-import { removeToken } from "@/util";
-import auth from "@/mixins/auth";
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: "NavBar",
-  mixins: [auth],
   data() {
     return {
       defaultLinks: [
@@ -67,19 +65,24 @@ export default {
     };
   },
   computed: {
+    ...mapState('user', {
+      isLoading: state => state.isLoading,
+      isAuthenticated: state => state.isAuthenticated,
+      isAdmin: state => state.isAdmin
+    }),
     authBtnText() {
-      if (this.userIsAuthenticated) {
+      if (this.isAuthenticated) {
         return "Sign out";
       } else {
         return "Sign in";
       }
     },
     navBarLinks() {
-      if (!this.userIsAuthenticated) {
+      if (!this.isAuthenticated) {
         return this.defaultLinks
       }
 
-      if (this.userIsAdmin) {
+      if (this.isAdmin) {
         return this.adminDashboardLinks
       } else {
         return this.userDashboardLinks
@@ -87,12 +90,21 @@ export default {
     }
   },
   methods: {
+    ...mapActions('user', [
+      'signOut'
+    ]),
     authBtnClicked() {
-      if (this.userIsAuthenticated) {
-        removeToken();
-        this.$router.go(0); // TODO: shouldn't need to push a route, should be automatically done by router
+      if (this.isAuthenticated) {
+        this.signOut()
+        if (this.$route.name !== 'home') {
+          // TODO: shouldn't need to push a route, should be automatically done by router. Investigate further, happens when eg sign out from /joinsociety
+          this.$router.push({ name: 'home' }); 
+        }
       } else {
-        this.$router.push({ name: "signIn" });
+        // Only want to push if not already on the sign in route.
+        if (this.$route.name !== 'signIn') {
+          this.$router.push({ name: "signIn" });
+        }
       }
     },
     toHome() {
@@ -119,7 +131,7 @@ export default {
   width: 80%;
   margin: auto;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
 }

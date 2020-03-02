@@ -103,7 +103,7 @@ a:hover {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: stretch;
+  align-items: center;
 }
 
 .form .btn-primary {
