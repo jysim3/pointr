@@ -53,17 +53,15 @@ export default {
           password: this.password
         })
 
-        if (response.status === 200) {
-          this.$router.push({ name: 'home' });
-          this.authenticateUser(response.data.token);
-        } else if (response.status === 403) {
+        this.$router.push({ name: 'home' });
+        this.authenticateUser(response.data.token);
+      } catch(error) {
+        const errorResponse = error.response;
+        if (errorResponse.status === 403) {
           this.error = "Please check your sign in credentials"
         } else {
           this.error = "There was an error when trying to sign you in."
         }
-      } catch(error) {
-        this.error = "There was an error when trying to sign you in."
-        console.log(error) //eslint-disable-line
       }
     }
   }
