@@ -151,8 +151,7 @@ export default {
       }).then(r => {
           // In the case of a successful response, want to store token and redirect to home
           if (r.status === 200) {
-            this.$store.dispatch('authenticateUser', r.data.token)
-            this.$router.push({ name: "home" });
+            this.$router.push({ name: "activate" });
             this.$emit('registered', {zid: this.zID, name: this.name})
           } else {
             if (r.data.message["zID"]) {

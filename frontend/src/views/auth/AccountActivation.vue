@@ -1,8 +1,8 @@
 <template>
   <div class="card-container">
     <div class="card">
-      <h1>Hi {{ this.$store.state.user.name }} ({{ this.$store.state.user.zID }})!</h1>
-      <p v-if="!activateToken">Please go to your email to activate your account first.</p>
+      <h1>Hi {{ this.zID }}!</h1>
+      <p v-if="!activateToken">Check your zID email to activate your account!</p>
       <p class="msg" v-if="isActivatedStatus === 200">
         Thanks for activating your account, you may now close this window or
         <router-link to="/signin">sign in</router-link>.
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import jwt from "jsonwebtoken";
 import { fetchAPI } from "@/util";
 
 export default {
@@ -33,14 +34,17 @@ export default {
   data() {
     return {
       zID: "",
-      name: "",
+      // name: "",
       isActivatedStatus: "",
     };
   },
   async created() {
     if (this.activateToken) {
       try {
-        const response = await fetchAPI(`/api/auth/activate?token=${this.activateToken}`, "POST")
+        const decodedToken = jwt.decode(this.activateToken);
+        this.zID = decodedToken['zID'];
+
+        const response = await fetchAPI(`/api/auth/activate?token=${this.activateToken}`)
         this.isActivatedStatus = response.status;
         this.isActivated.msg = response.data.message;
       } catch (error) {
