@@ -38,6 +38,7 @@ export default {
     };
   },
   computed: {
+    // TODO: Move this to store
     ...mapGetters('user', [
       'allSocieties'
     ]),

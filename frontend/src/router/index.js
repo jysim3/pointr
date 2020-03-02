@@ -85,11 +85,12 @@ const router = new VueRouter({
 
 // For more info regarding this visit:
 // https://www.digitalocean.com/community/tutorials/how-to-set-up-vue-js-authentication-and-route-handling-using-vue-router
-router.beforeEach((to, from, next) => {
+router.beforeResolve(async (to, from, next) => {
   // TODO: needs to go over requiresAdmin?
   // TODO: what if user goes sign in -> sign up from link in sign in form, then they may not end up at original, intended path
   // TODO: signed in user should not be able to go to sign in or sign up
   // EXAMPLE: user with no account scans QR code on Event page
+  await store.dispatch('user/initAuth');
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // FIXME: entering a URL like /joinsociety when token is valid causes a redirect to signin
     if (!store.state.user.isAuthenticated) {
@@ -106,6 +107,7 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
+  store.commit('user/setIsLoading', false);
 });
 
 export default router;
