@@ -13,6 +13,7 @@ import os, sys
 # Expiration time on tokens - 60 minutes #FIXME
 token_exp = 1000*60
 activationTokenTimeout = 1000*60
+forgotTokenTimeout = 1000*60
 ADMIN = 'Admin'
 USER = 'User'
 
@@ -87,7 +88,8 @@ def login(zID, password):
             'iat': datetime.utcnow(),
             'zID': zID,
             'permission': 1 if results == 1 else 5,
-            'activation': checkActivation(zID)
+            'activation': checkActivation(zID),
+            'type': 'normal'
         }, 
         jwt_secret, algorithm='HS256' 
     ) 
@@ -101,13 +103,29 @@ def generateActivationToken(zID):
             'iat': datetime.utcnow(),
             'zID': zID,
             'permission': 0,
-            'activation': 0
+            'activation': 0,
+            'type': 'activation'
         }, 
         jwt_secret, algorithm='HS256' 
     ) 
     return token.decode("utf-8")
 
-def authorizeActivationToken(token):
+def generateForgotToken(zID):
+    global forgotTokenTimeout
+    token = jwt.encode(
+        {
+            'exp': datetime.utcnow() + timedelta(seconds=forgotTokenTimeout),
+            'iat': datetime.utcnow(),
+            'zID': zID,
+            'permission': 0,
+            'activation': 0,
+            'type': 'forgot'
+        }, 
+        jwt_secret, algorithm='HS256' 
+    ) 
+    return token.decode("utf-8")
+
+def authorizeOneTimeToken(token):
     try:
         token_data = jwt.decode(
             token,

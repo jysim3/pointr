@@ -2,7 +2,7 @@ from flask import request, jsonify, request
 from flask_restx import Namespace, Resource, abort, reqparse
 from util import auth_services, users
 from util.auth_services import ADMIN, USER
-from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema
+from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema, ZIDDetailsSchema, PasswordSchema
 from marshmallow import Schema, fields, ValidationError, validates, validate
 from emailPointr import sendActivationEmail
 from util.validation_services import validate_with, validate_args_with
@@ -70,7 +70,35 @@ class Login(Resource):
             return jsonify({"token": token})
         else:
             abort(403, 'Invalid Credentials / Account Not Activated')
-
+            
+@api.route('/forgot')
+class Forgot(Resource):
+    
+    @api.response(400, 'Malformed Request')
+    @api.response(403, 'Invalid Credentials')
+    @validate_with(ZIDDetailsSchema)
+    def post(self, data):
+        
+        # Login and if successful return the token otherwise invalid credentials
+        token = auth_services.generateForgotToken(data['zID'])
+        
+        sendForgotEmail(f"https://pointer.live/reset/{token}", zID, f"{zID}@student.unsw.edu.au")  
+        
+@api.route('/reset')
+class Reset(Resource):
+    
+    @api.response(400, 'Malformed Request')
+    @api.response(403, 'Invalid Credentials')
+    @auth_services.check_authorization(level=0, activationRequired=False)
+    @validate_with(PasswordSchema)
+    def post(self, token_data):
+        if (not token_data['type'] == 'forgot'):
+            abort('403', 'Invalid Credentials')
+            
+        
+        
+        
+        
 @api.route('/permission')
 class Permission(Resource):
     
