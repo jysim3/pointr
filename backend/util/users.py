@@ -229,3 +229,19 @@ def getInvolvedSocs(zID):
         currI['societyName'] = i[1]
         payload['staff'].append(currI)
     return payload
+
+def changePassword(zID, password):
+    conn = createConnection()
+    curs = conn.cursor()
+
+    password = str(password).encode('UTF-8')
+    pwHash = hashlib.sha256(password).hexdigest()
+    try:
+        curs.execute("UPDATE users SET password = (%s) WHERE zID = (%s);", (pwHash, zID,))
+        conn.commit()
+    except Exception as e:
+        conn.close()
+        return "failed"
+
+    conn.close()
+    return "success"
