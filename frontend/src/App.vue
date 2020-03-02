@@ -24,7 +24,7 @@ export default {
   },
   async created() {
     if (this.$store.state.user.authToken) {
-      //FIXME: Currently this causes the normal unauthenticated app to load before the checks for token validity are done.
+      //FIXME: Currently this causes the normal NavBar to load before the checks for token validity are done.
       const response = await fetchAPI("/api/auth/validate", "POST");
       // FIXME: backend returns 'true', this is possibly bad for future.
       if (response.status === 200 && response.data.valid === "true") {

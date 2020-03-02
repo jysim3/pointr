@@ -15,7 +15,8 @@ const state = {
       staff: []
     }
     // TODO: make sure everything that will be mutated is already here.
-  }
+  },
+  isLoading: true
 };
 
 const getters = {
@@ -56,6 +57,9 @@ const mutations = {
   },
   setIsAuthenticated(state) {
     state.isAuthenticated = true;
+  },
+  setIsLoading(state, isLoading) {
+    state.isLoading = isLoading;
   }
 };
 
@@ -63,9 +67,10 @@ const actions = {
   async authenticateUser({ dispatch, commit }, authToken) {
     // Currently, this action should only be called if we know that the token is valid.
     commit('authToken', authToken);
-    await dispatch('userInfo');
     commit('setIsAuthenticated');
+    await dispatch('userInfo');
     commit('setIsAdmin', getters.isSocietyAdmin);
+    commit('setIsLoading', false);
   },
   async userInfo({ commit }) {
     try {

@@ -1,29 +1,35 @@
 <template>
   <div>
-    <DashboardUser v-if="isAuthenticated"></DashboardUser>
-    <DashboardAdmin v-else-if="isAdmin"></DashboardAdmin>
-    <LandingPage v-else></LandingPage>
+    <div v-show="!isLoading">
+      <DashboardUser v-if="isAuthenticated"></DashboardUser>
+      <DashboardAdmin v-else-if="isAdmin"></DashboardAdmin>
+      <LandingPage v-else></LandingPage>
+    </div>
+    <Loader v-show="isLoading" />
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from "vuex";
 import LandingPage from "@/components/LandingPage.vue";
 import DashboardUser from "@/components/dashboard/DashboardUser.vue";
 import DashboardAdmin from "@/components/dashboard/DashboardAdmin.vue";
+import Loader from "@/components/Loader.vue";
 
 export default {
   name: "Home",
   components: {
     LandingPage,
     DashboardUser,
-    DashboardAdmin
+    DashboardAdmin,
+    Loader
   },
   computed: {
-    ...mapState('user', {
+    ...mapState("user", {
+      isLoading: state => state.isLoading,
       isAuthenticated: state => state.isAuthenticated,
       isAdmin: state => state.isAdmin
-    }),
+    })
   }
 };
 </script>
