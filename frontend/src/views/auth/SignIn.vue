@@ -3,7 +3,7 @@
     <div class="form-container" id="form-container--signin">
       <form @submit.prevent="submitSignInForm" class="form">
         <h2>Sign in to Pointr</h2>
-        <FormError v-if="error.status" :msg="error.msg" />
+        <FormError v-if="error" :msg="error" />
         <InputZID v-model="zID" :zID="zID" />
         <InputPassword v-model="password" :password="password" />
         <!-- <div class="label-input-div">
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { fetchAPI, setToken } from "@/util.js";
+import { fetchAPI } from "@/util.js";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import InputPassword from "@/components/input/InputPassword.vue";
@@ -38,26 +38,29 @@ export default {
       zID: "",
       password: "",
       rememberUser: false,
-      error: {
-        status: false,
-        msg: ""
-      }
+      error: ""
     };
   },
   methods: {
-    submitSignInForm() {
-      fetchAPI("/api/auth/login", "POST", {
-        zID: this.zID,
-        password: this.password
-      })
-        .then(r => {
-          setToken(r.data.token);
-          this.$router.push({ name: "home" });
+    async submitSignInForm() {
+      try {
+        const response = await fetchAPI("/api/auth/login", "POST", {
+          zID: this.zID,
+          password: this.password
         })
-        .catch(err => {
-          this.error.status = true;
-          this.error.msg = err;
-        });
+
+        if (response.status === 200) {
+          this.$store.user.dispatch('authenticateUser', response.data.token);
+          this.$router.push({ name: 'home' });
+        } else if (response.status === 403) {
+          this.error = "Please check your sign in credentials"
+        } else {
+          this.error = "There was an error when trying to sign you in."
+        }
+      } catch(error) {
+        this.error.status = true;
+        this.error.msg = error;
+      }
     }
   }
 };

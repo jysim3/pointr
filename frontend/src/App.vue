@@ -9,12 +9,23 @@
 </template>
 
 <script>
+import { fetchAPI } from "@/util";
 import NavBar from "@/components/NavBar.vue";
 
 export default {
   name: "app",
   components: {
     NavBar
+  },
+  async created() {
+    if (this.$store.user.authToken) {
+      const response = await fetchAPI("/api/auth/validate");
+      // FIXME: backend returns 'true' don't know if below will ever evaluate.
+      if (response.status === 200 && response.data.valid === true) {
+        // Now that we now the token is valid we can authenticate the user and validate them
+        this.$store.user.dispatch('authenticateUser', this.$store.user.authToken)
+      }
+    }
   }
 };
 </script>

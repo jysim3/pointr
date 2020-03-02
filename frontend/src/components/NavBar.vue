@@ -18,12 +18,8 @@
   </div>
 </template>
 <script>
-import { removeToken } from "@/util";
-import auth from "@/mixins/auth";
-
 export default {
   name: "NavBar",
-  mixins: [auth],
   data() {
     return {
       defaultLinks: [
@@ -68,18 +64,18 @@ export default {
   },
   computed: {
     authBtnText() {
-      if (this.userIsAuthenticated) {
+      if (this.$store.user.isAuthenticated) {
         return "Sign out";
       } else {
         return "Sign in";
       }
     },
     navBarLinks() {
-      if (!this.userIsAuthenticated) {
+      if (this.$store.user.isAuthenticated) {
         return this.defaultLinks
       }
 
-      if (this.userIsAdmin) {
+      if (this.$store.user.isAdmin) {
         return this.adminDashboardLinks
       } else {
         return this.userDashboardLinks
@@ -89,8 +85,8 @@ export default {
   methods: {
     authBtnClicked() {
       if (this.userIsAuthenticated) {
-        removeToken();
-        this.$router.go(0); // TODO: shouldn't need to push a route, should be automatically done by router
+        this.$store.user.dispatch('signOut')
+        //this.$router.go(0); // TODO: shouldn't need to push a route, should be automatically done by router
       } else {
         this.$router.push({ name: "signIn" });
       }

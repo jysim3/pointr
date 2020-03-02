@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { fetchAPI, setToken } from "@/util.js";
+import { fetchAPI } from "@/util.js";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import InputPassword from "@/components/input/InputPassword.vue";
@@ -151,7 +151,7 @@ export default {
       }).then(r => {
           // In the case of a successful response, want to store token and redirect to home
           if (r.status === 200) {
-            setToken(r.data.token)
+            this.$store.dispatch('authenticateUser', r.data.token)
             this.$router.push({ name: "home" });
           } else {
             if (r.data.message["zID"]) {
@@ -160,7 +160,6 @@ export default {
               this.formErrorMessage = r.data.message;
             }
           }
-
       })
     }
   }

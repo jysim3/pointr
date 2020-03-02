@@ -17,13 +17,11 @@
 
 <script>
 import { fetchAPI } from "@/util.js";
-import auth from "@/mixins/auth";
 import Loader from "@/components/Loader.vue";
 import DashboardEventView from "@/components/dashboard/DashboardEventView.vue";
 import EventSignEnterCode from "@/components/EventSignEnterCode.vue";
 export default {
   name: "DashboardUser",
-  mixins: [auth],
   components: {
     DashboardEventView,
     Loader,

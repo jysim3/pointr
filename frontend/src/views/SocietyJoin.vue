@@ -18,13 +18,11 @@
 </template>
 
 <script>
-import { fetchAPI } from "@/util.js";
-import auth from "@/mixins/auth";
+import { fetchAPI } from "@/util";
 import FormError from "@/components/FormError.vue";
 
 export default {
   name: "SocietyJoin",
-  mixins: [auth],
   components: {
     FormError
   },
@@ -41,7 +39,7 @@ export default {
   },
   async created() {
     const response = await fetchAPI("/api/soc/getAllSocs")
-    // TODO: allSocieties should only contain ones user has not alreaedy joined, this data should be in the vuex store.
+    // FIXME: allSocieties should only contain ones user has not alreaedy joined, this data should be in the vuex store.
     this.allSocieties = response.data;
   },
   methods: {

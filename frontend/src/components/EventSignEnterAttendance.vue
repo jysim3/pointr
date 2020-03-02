@@ -1,7 +1,11 @@
 <template>
   <div>
-    <form id="form-container--signevent" class="form-container" @submit.prevent="submitEventSignAttendance">
-      <Loader v-if="loading"/>
+    <form
+      id="form-container--signevent"
+      class="form-container"
+      @submit.prevent="submitEventSignAttendance"
+    >
+      <Loader v-if="loading" />
       <div v-else class="form">
         <h2>Sign attendance</h2>
         <EventCard :eventData="eventData" />
@@ -9,7 +13,7 @@
           v-if="!eventSignSuccess"
           class="btn btn-primary"
           type="submit"
-        >Sign as {{ userName }} ({{ zID }})</button>
+        >Sign as {{ this.$store.user.info.name }} ({{ this.$store.user.info.zID }})</button>
         <div id="submit-message" v-else>
           <h3 v-if="eventAlreadySigned">Already signed this event!</h3>
           <h3 v-else>Success!</h3>
@@ -24,11 +28,9 @@
 import { fetchAPI } from "@/util.js";
 import EventCard from "@/components/EventCard.vue";
 import Loader from "@/components/Loader.vue";
-import auth from "@/mixins/auth";
 
 export default {
   name: "EventSignEnterAttendance",
-  mixins: [auth],
   props: {
     eventID: {
       type: String,
@@ -42,8 +44,6 @@ export default {
   data() {
     return {
       loading: true,
-      zID: "",
-      userName: "",
       eventData: {
         eventID: this.eventID
       },
@@ -57,17 +57,13 @@ export default {
       this.eventData.eventName = j.data.eventName;
       this.eventData.location = j.data.location;
       this.eventData.societyName = j.data.societyName;
-      this.loading = false
+      this.loading = false;
     });
 
-    fetchAPI(`/api/user/info`, "POST").then(r => {
-      this.userName = r.data.msg.name;
-      this.zID = this.getZID();
-      // Checking if this event's ID matches with a user's signed event.
-      this.eventAlreadySigned = r.data.msg.events.some(
-        event => event.eventID === this.eventData.eventID
-      );
-    });
+    // Checking if this event's ID matches with an event the user is already a part of.
+    this.eventAlreadySigned = this.$store.user.getters.allEvents.some(
+      event => event.eventID === this.eventData.eventID
+    );
   },
   methods: {
     submitEventSignAttendance() {

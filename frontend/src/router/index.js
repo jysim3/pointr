@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import { isAuthenticated } from "@/util.js";
+import store from '@/store/index';
 import Home from '@/views/Home.vue';
 import EventCreate from '@/views/EventCreate.vue';
 import Event from '@/views/Event.vue';
@@ -24,7 +24,8 @@ const routes = [
     name: 'create',
     component: EventCreate,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      requiresAdmin: true
     }
   },
   {
@@ -33,7 +34,8 @@ const routes = [
     component: Event,
     props: true,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      requiresAdmin: true
     }
     // TODO: only the creator of the society/event should be able to access this, need to have function that checks they are authorized after we know they are authenticated.
   },
@@ -43,7 +45,7 @@ const routes = [
     component: EventSign,
     props: true,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
     }
   },
   {
@@ -65,7 +67,7 @@ const routes = [
     }
   },
   {
-    path: '/activate/:activateToken',
+    path: '/activate/:activateToken?',
     name: 'activate',
     component: AccountActivation,
     props: true
@@ -84,18 +86,21 @@ const router = new VueRouter({
 // For more info regarding this visit: 
 // https://www.digitalocean.com/community/tutorials/how-to-set-up-vue-js-authentication-and-route-handling-using-vue-router
 router.beforeEach((to, from, next) => {
-  // TODO: clean up the else statements?
+  // TODO: needs to go over requiresAdmin?
   // TODO: what if user goes sign in -> sign up from link in sign in form, then they may not end up at original, intended path
   // TODO: signed in user should not be able to go to sign in or sign up
   // EXAMPLE: user with no account scans QR code on Event page
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!isAuthenticated()) {
+    if (!store.user.isAuthenticated) {
       next({
         path: '/signin',
-        params: { nextUrl: to.fullPath }
+        params: { nextUrl: to.fullPath } //FIXME: needs to actually work
       });
+    } else if (store.user.info.permission < 1) {
+      // If user is not activated yet ask them to activate account
+      next({ path: '/activate' })
     } else {
-      next();
+      next()
     }
   } else {
     next();
