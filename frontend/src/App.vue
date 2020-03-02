@@ -18,7 +18,7 @@ export default {
     NavBar
   },
   async created() {
-    if (this.$store.user.authToken) {
+    if (this.$store.state.user.authToken) {
       const response = await fetchAPI("/api/auth/validate");
       // FIXME: backend returns 'true' don't know if below will ever evaluate.
       if (response.status === 200 && response.data.valid === true) {

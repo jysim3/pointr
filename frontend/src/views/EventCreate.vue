@@ -52,6 +52,7 @@ export default {
     };
   },
   created() {
+    //FIXME: use vuex store
     fetchAPI("/api/user/involvedSocs", "GET").then(j => {
       console.log(j); //eslint-disable-line
       this.userSocieties = j.data.staff;

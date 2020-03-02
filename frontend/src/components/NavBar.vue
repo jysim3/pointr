@@ -18,6 +18,8 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: "NavBar",
   data() {
@@ -63,19 +65,23 @@ export default {
     };
   },
   computed: {
+    ...mapState('user', {
+      isAuthenticated: state => state.isAuthenticated,
+      isAdmin: state => state.isAdmin
+    }),
     authBtnText() {
-      if (this.$store.user.isAuthenticated) {
+      if (this.isAuthenticated) {
         return "Sign out";
       } else {
         return "Sign in";
       }
     },
     navBarLinks() {
-      if (this.$store.user.isAuthenticated) {
+      if (this.isAuthenticated) {
         return this.defaultLinks
       }
 
-      if (this.$store.user.isAdmin) {
+      if (this.isAdmin) {
         return this.adminDashboardLinks
       } else {
         return this.userDashboardLinks
@@ -84,11 +90,14 @@ export default {
   },
   methods: {
     authBtnClicked() {
-      if (this.userIsAuthenticated) {
+      if (this.isAuthenticated) {
         this.$store.user.dispatch('signOut')
         //this.$router.go(0); // TODO: shouldn't need to push a route, should be automatically done by router
       } else {
-        this.$router.push({ name: "signIn" });
+        // Only want to push if not already on the sign in route.
+        if (this.$route.name !== 'signIn') {
+          this.$router.push({ name: "signIn" });
+        }
       }
     },
     toHome() {

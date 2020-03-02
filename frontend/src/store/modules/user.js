@@ -7,18 +7,32 @@ const state = {
   authToken: localStorage.getItem('token') || '',
   isAuthenticated: false,
   isAdmin: false,
-  info: {}
+  info: {
+    zID: '',
+    name: '',
+    societies: {
+      member: [],
+      staff: []
+    }
+    // TODO: make sure everything that will be mutated is already here.
+  }
 };
 
 const getters = {
-  allEvents(state) {
-    const memberEvents = state.user.info.events.member;
-    const staffEvents = state.user.info.events.staff;
-
-    return [...memberEvents, ...staffEvents];
+  memberSocieties(state) {
+    return state.info.societies.member;
+  },
+  staffSocieties(state) {
+    return state.info.societies.staff;
+  },
+  allSocieties(state) {
+    return [...state.getters.memberSocieties, ...state.getters.staffSocieties];
   },
   isSocietyAdmin(state) {
     return state.info.societies.staff.length > 0;
+  },
+  allEvents() {
+    return;
   }
 };
 

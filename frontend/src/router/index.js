@@ -7,9 +7,9 @@ import Event from '@/views/Event.vue';
 import EventSign from '@/views/EventSign.vue';
 import SignIn from '@/views/auth/SignIn.vue';
 import SignUp from '@/views/auth/SignUp.vue';
-import SocietyJoin from "@/views/SocietyJoin.vue";
-import AccountActivation from "@/views/auth/AccountActivation.vue";
-import Contact from "@/views/Contact.vue";
+import SocietyJoin from '@/views/SocietyJoin.vue';
+import AccountActivation from '@/views/auth/AccountActivation.vue';
+import Contact from '@/views/Contact.vue';
 
 Vue.use(VueRouter);
 
@@ -45,7 +45,7 @@ const routes = [
     component: EventSign,
     props: true,
     meta: {
-      requiresAuth: true,
+      requiresAuth: true
     }
   },
   {
@@ -83,7 +83,7 @@ const router = new VueRouter({
   routes
 });
 
-// For more info regarding this visit: 
+// For more info regarding this visit:
 // https://www.digitalocean.com/community/tutorials/how-to-set-up-vue-js-authentication-and-route-handling-using-vue-router
 router.beforeEach((to, from, next) => {
   // TODO: needs to go over requiresAdmin?
@@ -91,16 +91,16 @@ router.beforeEach((to, from, next) => {
   // TODO: signed in user should not be able to go to sign in or sign up
   // EXAMPLE: user with no account scans QR code on Event page
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!store.user.isAuthenticated) {
+    if (!store.state.user.isAuthenticated) {
       next({
         path: '/signin',
         params: { nextUrl: to.fullPath } //FIXME: needs to actually work
       });
-    } else if (store.user.info.permission < 1) {
+    } else if (store.state.user.info.permission < 1) {
       // If user is not activated yet ask them to activate account
-      next({ path: '/activate' })
+      next({ path: '/activate' });
     } else {
-      next()
+      next();
     }
   } else {
     next();
