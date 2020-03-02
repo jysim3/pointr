@@ -91,11 +91,12 @@ class Reset(Resource):
     @api.response(403, 'Invalid Credentials')
     @auth_services.check_authorization(level=0, activationRequired=False)
     @validate_with(PasswordSchema)
-    def post(self, token_data):
+    def post(self, token_data, data):
         if (not token_data['type'] == 'forgot'):
             abort('403', 'Invalid Credentials')
-            
-        
+        if (users.changePassword(token_data['zID'], data['password']) == 'failed'):
+            abort('400', "Invalid")
+        return jsonify({"status": "success"})
         
         
         
