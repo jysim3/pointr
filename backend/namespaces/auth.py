@@ -47,7 +47,7 @@ class Activate(Resource):
     @api.response(400, "Malformed Request")
     @api.response(403, "Already activated")
     @auth_services.check_authorization(activationRequired=False, level=0)
-    def post(self, token_data):
+    def get(self, token_data):
 
         result = users.activateAccount(token_data['zID'].lower())
         if (result == "failed"):
