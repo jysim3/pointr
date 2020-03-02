@@ -63,6 +63,7 @@ a {
   color: var(--c-secondary-dark);
   font-weight: 500;
   color: black;
+  cursor: pointer;
 }
 
 a:hover {

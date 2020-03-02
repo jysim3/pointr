@@ -56,7 +56,8 @@ class info(Resource):
 
         if (results == 'failed'):
             abort(400, 'Something went wrong')
-        return jsonify({"msg": results})
+        results['zID'] = token_data['zID']
+        return jsonify(results)
 
 @api.route('/points')
 class Points(Resource):

@@ -153,6 +153,7 @@ export default {
           if (r.status === 200) {
             this.$store.dispatch('authenticateUser', r.data.token)
             this.$router.push({ name: "home" });
+            this.$emit('registered', {zid: this.zID, name: this.name})
           } else {
             if (r.data.message["zID"]) {
               this.formErrorMessage = "Please check your zID";
@@ -167,7 +168,4 @@ export default {
 </script>
 
 <style scoped>
-#form-container--signup {
-  margin: 3rem 0;
-}
 </style>
