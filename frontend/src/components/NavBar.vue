@@ -5,7 +5,7 @@
       <div class="logo">
         <img @click="toHome" class="logo" src="../assets/logo.png" alt="pointr logo" />
       </div>
-      <div class="links">
+      <div v-show="!isLoading" class="links">
         <router-link
           v-for="(routes, i) in navBarLinks"
           :key="i"
@@ -66,6 +66,7 @@ export default {
   },
   computed: {
     ...mapState('user', {
+      isLoading: state => state.isLoading,
       isAuthenticated: state => state.isAuthenticated,
       isAdmin: state => state.isAdmin
     }),
@@ -95,7 +96,10 @@ export default {
     authBtnClicked() {
       if (this.isAuthenticated) {
         this.signOut()
-        //this.$router.go(0); // TODO: shouldn't need to push a route, should be automatically done by router
+        if (this.$route.name !== 'home') {
+          // TODO: shouldn't need to push a route, should be automatically done by router. Investigate further, happens when eg sign out from /joinsociety
+          this.$router.push({ name: 'home' }); 
+        }
       } else {
         // Only want to push if not already on the sign in route.
         if (this.$route.name !== 'signIn') {
@@ -127,7 +131,7 @@ export default {
   width: 80%;
   margin: auto;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
 }

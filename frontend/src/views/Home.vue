@@ -1,9 +1,9 @@
 <template>
   <div>
     <div v-show="!isLoading">
-      <DashboardUser v-if="isAuthenticated"></DashboardUser>
+      <LandingPage v-if="!isAuthenticated"></LandingPage>
       <DashboardAdmin v-else-if="isAdmin"></DashboardAdmin>
-      <LandingPage v-else></LandingPage>
+      <DashboardUser v-else></DashboardUser>
     </div>
     <Loader v-show="isLoading" />
   </div>

@@ -91,6 +91,7 @@ router.beforeEach((to, from, next) => {
   // TODO: signed in user should not be able to go to sign in or sign up
   // EXAMPLE: user with no account scans QR code on Event page
   if (to.matched.some(record => record.meta.requiresAuth)) {
+    // FIXME: entering a URL like /joinsociety when token is valid causes a redirect to signin
     if (!store.state.user.isAuthenticated) {
       next({
         path: '/signin',

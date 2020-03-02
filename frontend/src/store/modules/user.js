@@ -7,16 +7,19 @@ const state = {
   authToken: localStorage.getItem('authToken') || '',
   isAuthenticated: false,
   isAdmin: false,
-  info: {
-    zID: '',
-    name: '',
-    societies: {
-      member: [],
-      staff: []
-    }
+  // info: {
+  //   zID: "",
+  //   name: "",
+  //   events: [],
+  //   societies: {
+  //     member: [],
+  //     staff: []
+  //   },
+  //   permission: 0
+  // },
+  info: {},
     // TODO: make sure everything that will be mutated is already here.
-  },
-  isLoading: true
+  isLoading: true //TODO: move this into a global store
 };
 
 const getters = {
@@ -26,8 +29,8 @@ const getters = {
   staffSocieties(state) {
     return state.info.societies.staff;
   },
-  allSocieties(state, getters) {
-    return [...getters.memberSocieties, ...getters.staffSocieties];
+  allSocieties(state) {
+    return state.info.societies.member.concat(state.info.societies.staff);
   },
   isSocietyAdmin(state) {
     return state.info.societies.staff.length > 0;
@@ -42,8 +45,14 @@ const mutations = {
     localStorage.setItem('authToken', authToken);
     state.authToken = authToken;
   },
-  info(state, info) {
-    state.info = info;
+  info(state, infoPayload) {
+    // state.info.zID = info.zID,
+    // state.info.name = info.name,
+    // state.info.events = info.events,
+    // state.info.societies.member = info.societies.member,
+    // state.info.societies.staff = info.societies.staff
+    // state.info.permission = info.permission
+    state.info = { ...infoPayload }
   },
   resetState(state) {
     localStorage.removeItem('authToken');
@@ -74,24 +83,48 @@ const actions = {
   },
   async userInfo({ commit }) {
     try {
-      const routes = [
-        '/api/user/info',
-        '/api/user/involvedSocs',
-        '/api/user/permission'
+      const requests = [
+        {
+          url: '/api/user/info',
+          method: 'POST'
+        },
+        {
+          url: '/api/user/involvedSocs',
+          method: 'GET'
+        },
+        {
+          url: '/api/auth/permission',
+          method: 'POST'
+        }
       ];
       const [
         infoResponse,
         involvedSocsResponse,
         permissionResponse
-      ] = await Promise.all(routes.map(route => fetchAPI(route)));
+      ] = await Promise.all(requests.map(r => fetchAPI(r.url, r.method)));
 
-      commit('info', {
+      // TODO: this is messy, should rather be defining in initial state or backend should not be returning undefined
+      let societies;
+      if (!involvedSocsResponse.data) {
+        societies = {
+          member: [],
+          staff: []
+        }
+      } else {
+        societies = {
+          member: involvedSocsResponse.data.member,
+          staff: involvedSocsResponse.data.staff
+        }
+      }
+
+      const infoPayload = {
         ...infoResponse.data,
-        societies: involvedSocsResponse.data,
-        permission: permissionResponse.data.permission
-      });
+        ...permissionResponse.data,
+        societies
+      }
+      commit('info', infoPayload);
     } catch (error) {
-      console.log(error); //eslint-disable-line
+      console.log(error.response); //eslint-disable-line
     }
   },
   signOut({ commit }) {

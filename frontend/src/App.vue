@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapMutations, mapActions } from "vuex";
 import { fetchAPI } from "@/util";
 import NavBar from "@/components/NavBar.vue";
 
@@ -20,6 +20,9 @@ export default {
   methods: {
     ...mapActions('user' ,[
       'authenticateUser'
+    ]),
+    ...mapMutations('user', [
+      'setIsLoading'
     ])
   },
   async created() {
@@ -31,6 +34,8 @@ export default {
         // Now that we now the token is valid we can authenticate the user and validate them
         this.authenticateUser(this.$store.state.user.authToken)
       }
+    } else {
+      this.setIsLoading(false)
     }
   }
 };
