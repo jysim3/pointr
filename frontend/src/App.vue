@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <!-- FIXME: NavBar does not update until reload -->
     <NavBar />
     <transition name="fade" mode="out-in">
       <router-view />
@@ -9,6 +8,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import { fetchAPI } from "@/util";
 import NavBar from "@/components/NavBar.vue";
 
@@ -17,13 +17,19 @@ export default {
   components: {
     NavBar
   },
+  methods: {
+    ...mapActions('user' ,[
+      'authenticateUser'
+    ])
+  },
   async created() {
     if (this.$store.state.user.authToken) {
-      const response = await fetchAPI("/api/auth/validate");
-      // FIXME: backend returns 'true' don't know if below will ever evaluate.
-      if (response.status === 200 && response.data.valid === true) {
+      //FIXME: Currently this causes the normal unauthenticated app to load before the checks for token validity are done.
+      const response = await fetchAPI("/api/auth/validate", "POST");
+      // FIXME: backend returns 'true', this is possibly bad for future.
+      if (response.status === 200 && response.data.valid === "true") {
         // Now that we now the token is valid we can authenticate the user and validate them
-        this.$store.user.dispatch('authenticateUser', this.$store.user.authToken)
+        this.authenticateUser(this.$store.state.user.authToken)
       }
     }
   }

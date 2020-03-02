@@ -1,8 +1,8 @@
 <template>
   <div>
-    <LandingPage v-if="!isAuthenticated"></LandingPage>
+    <DashboardUser v-if="isAuthenticated"></DashboardUser>
     <DashboardAdmin v-else-if="isAdmin"></DashboardAdmin>
-    <DashboardUser v-else></DashboardUser>
+    <LandingPage v-else></LandingPage>
   </div>
 </template>
 

@@ -4,7 +4,7 @@ import { fetchAPI } from '@/util';
 // this is to prevent a lot of requests to the backend.
 
 const state = {
-  authToken: localStorage.getItem('token') || '',
+  authToken: localStorage.getItem('authToken') || '',
   isAuthenticated: false,
   isAdmin: false,
   info: {
@@ -25,8 +25,8 @@ const getters = {
   staffSocieties(state) {
     return state.info.societies.staff;
   },
-  allSocieties(state) {
-    return [...state.getters.memberSocieties, ...state.getters.staffSocieties];
+  allSocieties(state, getters) {
+    return [...getters.memberSocieties, ...getters.staffSocieties];
   },
   isSocietyAdmin(state) {
     return state.info.societies.staff.length > 0;
@@ -63,8 +63,8 @@ const actions = {
   async authenticateUser({ dispatch, commit }, authToken) {
     // Currently, this action should only be called if we know that the token is valid.
     commit('authToken', authToken);
-    commit('setIsAuthenticated');
     await dispatch('userInfo');
+    commit('setIsAuthenticated');
     commit('setIsAdmin', getters.isSocietyAdmin);
   },
   async userInfo({ commit }) {

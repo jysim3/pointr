@@ -21,7 +21,8 @@
 </template>
 
 <script>
-import { fetchAPI } from "@/util.js";
+import { mapActions } from 'vuex';
+import { fetchAPI } from "@/util";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import InputPassword from "@/components/input/InputPassword.vue";
@@ -37,11 +38,14 @@ export default {
     return {
       zID: "",
       password: "",
-      rememberUser: false,
+      // rememberUser: false,
       error: ""
     };
   },
   methods: {
+    ...mapActions('user', [
+      'authenticateUser'
+    ]),
     async submitSignInForm() {
       try {
         const response = await fetchAPI("/api/auth/login", "POST", {
@@ -50,16 +54,16 @@ export default {
         })
 
         if (response.status === 200) {
-          this.$store.user.dispatch('authenticateUser', response.data.token);
           this.$router.push({ name: 'home' });
+          this.authenticateUser(response.data.token);
         } else if (response.status === 403) {
           this.error = "Please check your sign in credentials"
         } else {
           this.error = "There was an error when trying to sign you in."
         }
       } catch(error) {
-        this.error.status = true;
-        this.error.msg = error;
+        this.error = "There was an error when trying to sign you in."
+        console.log(error) //eslint-disable-line
       }
     }
   }

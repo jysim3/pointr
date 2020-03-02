@@ -13,7 +13,7 @@
           v-if="!eventSignSuccess"
           class="btn btn-primary"
           type="submit"
-        >Sign as {{ this.$store.user.info.name }} ({{ this.$store.user.info.zID }})</button>
+        >Sign as {{ this.$store.state.user.info.name }} ({{ this.$store.state.user.info.zID }})</button>
         <div id="submit-message" v-else>
           <h3 v-if="eventAlreadySigned">Already signed this event!</h3>
           <h3 v-else>Success!</h3>
@@ -61,7 +61,7 @@ export default {
     });
 
     // Checking if this event's ID matches with an event the user is already a part of.
-    this.eventAlreadySigned = this.$store.user.getters.allEvents.some(
+    this.eventAlreadySigned = this.$store.state.user.getters.allEvents.some(
       event => event.eventID === this.eventData.eventID
     );
   },

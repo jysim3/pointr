@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: "NavBar",
@@ -77,7 +77,7 @@ export default {
       }
     },
     navBarLinks() {
-      if (this.isAuthenticated) {
+      if (!this.isAuthenticated) {
         return this.defaultLinks
       }
 
@@ -89,9 +89,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions('user', [
+      'signOut'
+    ]),
     authBtnClicked() {
       if (this.isAuthenticated) {
-        this.$store.user.dispatch('signOut')
+        this.signOut()
         //this.$router.go(0); // TODO: shouldn't need to push a route, should be automatically done by router
       } else {
         // Only want to push if not already on the sign in route.

@@ -5,7 +5,7 @@ const apiURL = 'http://localhost:5000';
 
 export async function fetchAPI(url, method, data) {
     const headers = {}
-    const authToken = store.user.authToken
+    const authToken = store.state.user.authToken
     if (authToken) {
         headers.Authorization = authToken;
     }
