@@ -2,7 +2,7 @@
 
 A point/attendance system for colleges - winner of the 2019 UNSW Inter-College Hackathon. Currently hosted on https://pointr.live.
 
-Created by: [JunYang Sim](https://github.com/jysim3), [Harrison Steyn](https://github.com/martejj), [Ivan Velickovic](https://github.com/Ivan-Velickovic), [Steven Shen](https://github.com/StevenShen1999), [William de Dassel](https://github.com/wdedassel), and [Oltan Sevic](https://github.com/OltanS)
+Created by: [Ivan Velickovic](https://github.com/Ivan-Velickovic), [Harrison Steyn](https://github.com/martejj), [JunYang Sim](https://github.com/jysim3), [Oltan Sevic](https://github.com/OltanS), [Steven Shen](https://github.com/StevenShen1999) and [William de Dassel](https://github.com/wdedassel). (From left to right)
 
 ![The team](pointr_team.png)
 
