@@ -53,7 +53,7 @@ export default {
           password: this.password
         })
 
-        this.$router.push({ name: 'home' });
+        this.$router.push(this.$route.query.redirect || { name: 'home' });
         this.authenticateUser(response.data.token);
       } catch(error) {
         const errorResponse = error.response;
