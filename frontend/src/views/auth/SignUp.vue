@@ -162,7 +162,7 @@ export default {
             if (this.isPage) {
               this.$router.push({ name: "activate" , params: {zID: this.zID, name: this.name}});
             } else {
-              this.$emit('registered', {zid: this.zID, name: this.name})
+              this.$emit('registered', {zID: this.zID, name: this.userInfo.name})
             }
           } else {
             if (r.data.message["zID"]) {

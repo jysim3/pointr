@@ -46,7 +46,7 @@ export default {
     ]),
     availableSocieties() {
       // TODO: rename allSocieties getter to something better
-      return this.allSocietiesData.filter(s => !this.allSocieties.includes(s))
+      return this.allSocieties.filter(s => !this.allSocieties.includes(s))
     }
   }
 };
