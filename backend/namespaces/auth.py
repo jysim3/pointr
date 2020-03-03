@@ -57,7 +57,7 @@ class Activate(Resource):
     @api.response(403, "Already activated")
     @api.doc(responses={})
     @auth_services.check_authorization(activationRequired=False, level=0)
-    def poast(self, token_data):
+    def post(self, token_data):
 
         result = users.activateAccount(token_data['zID'].lower())
         if (result == "failed"):
