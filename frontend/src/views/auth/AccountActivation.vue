@@ -21,7 +21,7 @@
 
 <script>
 import jwt from "jsonwebtoken";
-import { fetchAPI } from "@/util";
+import axios from "axios";
 
 export default {
   name: "AccountActivation",
@@ -44,7 +44,14 @@ export default {
         const decodedToken = jwt.decode(this.activateToken);
         this.zID = decodedToken['zID'];
 
-        const response = await fetchAPI(`/api/auth/activate?token=${this.activateToken}`)
+        // FIXME: VERY HACKY
+        const response = await axios({
+          url: `/api/auth/activate?token=${this.activateToken}`,
+          method: "POST",
+          headers: {
+            Authorization: this.activateToken
+          }
+        })
         this.isActivatedStatus = response.status;
         this.isActivated.msg = response.data.message;
       } catch (error) {

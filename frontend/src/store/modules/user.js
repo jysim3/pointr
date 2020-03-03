@@ -142,7 +142,6 @@ const actions = {
       } catch (error) {
         console.log(error.response) //eslint-disable-line
       }
-
     }
     commit('setIsLoading', false);
   },
