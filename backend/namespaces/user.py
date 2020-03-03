@@ -17,7 +17,7 @@ class upcomingEvents(Resource):
         results = participation.getUpcomingEvents(zID)
         if (isinstance(results, str) == True):
             abort(400, "Malformed Request")
-        return jsonify({"status": "success", "message": results})
+        return jsonify(results)
 
 # FIXME: Note that the JSON returned from this was changed
 @api.route('/getAllSocieties')
