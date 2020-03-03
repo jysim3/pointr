@@ -86,11 +86,21 @@ const router = new VueRouter({
 // For more info regarding this visit:
 // https://www.digitalocean.com/community/tutorials/how-to-set-up-vue-js-authentication-and-route-handling-using-vue-router
 router.beforeResolve(async (to, from, next) => {
-  // TODO: needs to go over requiresAdmin?
   // TODO: what if user goes sign in -> sign up from link in sign in form, then they may not end up at original, intended path
   // TODO: signed in user should not be able to go to sign in or sign up
   // EXAMPLE: user with no account scans QR code on Event page
   await store.dispatch('user/initAuth');
+  
+  // Prevents normal users going on prevent page etc.
+  // TODO: need to decide how to handle requiresAdmin for event pages
+  if (to.matched.some(record => record.meta.requiresAdmin)) {
+    if (!store.state.user.isAdmin) {
+      next({ name: 'home' })
+    } else {
+      next()
+    }
+  }
+
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.state.user.isAuthenticated) {
       next({
