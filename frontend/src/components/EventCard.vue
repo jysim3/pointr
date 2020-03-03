@@ -7,7 +7,8 @@
       <p class="event-info">On {{ eventData.eventDate }}</p>
     </router-link> -->
     <!-- TODO: check backend, eventName/name doesn't seem to be consistent depending on request -->
-    <div class="when-where-div">
+    <!-- TODO: if  -->
+    <div @click="goToEvent" :class="{ 'event-card-clickable': isAdminOfEvent }" class="when-where-div">
       <p class="when">{{ eventData.eventDate }}</p>
       <p class="where">@ {{ eventData.location }}</p>
     </div>
@@ -23,6 +24,20 @@ export default {
     eventData: {
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    isAdminOfEvent() {
+      // TODO: actually check based on event, this depends on whether dashboard shows events attended by an admin
+      return this.$store.state.user.isAdmin;
+    }
+  },
+  methods: {
+    goToEvent() {
+      if (this.isAdminOfEvent) {
+        const eventID = this.eventData.eventID;
+        this.$router.push({ name: 'event', params: { eventID } });
+      }
     }
   }
 };
@@ -72,5 +87,9 @@ export default {
 
 .society {
   font-size: 1.1rem;
+}
+
+.event-card-clickable {
+  cursor: pointr;
 }
 </style>
