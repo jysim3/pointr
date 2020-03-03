@@ -58,12 +58,18 @@ export default {
 } */
 .event-card {
   border: 3px solid var(--c-secondary-dark);
-  margin: 1rem;
+  margin: 1rem 0;
   padding: 1rem 1rem 1.25rem 1rem;
   border-radius: var(--border-radius);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  transition: 0.2s box-shadow;
+  background: white;
+}
+
+.event-card:hover {
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .when-where-div {
