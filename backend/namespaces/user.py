@@ -2,9 +2,9 @@ from flask import request, jsonify
 from flask_restx import Namespace, Resource, abort, reqparse
 from util.sanitisation_services import sanitize
 from marshmallow import Schema, fields, ValidationError, validates, validate
-from util import auth_services, users, participation, validation_services
+from util import auth_services, users, participation, validation_services, validation_services
 from schemata.auth_schemata import TokenSchema, AuthSchema
-from schemata.user_schemata import ZIDSchema
+from schemata.user_schemata import ZIDSchema, PostPointsSchema
 from util.auth_services import ADMIN, USER
 
 api = Namespace('user', description='User Services')
@@ -69,11 +69,12 @@ class Points(Resource):
     # {zID: "z5214808", eventID: "13287"}
     # Returns: 
     # {"status": "success"}
-    def delete(self):
-        data = request.get_json()
-        payload = {}
-        payload['status'] = participation.deleteUserAttendance(sanitize(data['zID'].lower()), sanitize(data['eventID']))
-        return jsonify(payload)
+    #@auth_services.check_authorization(level=2, allowSelf=True, allowSocStaff=True)
+    #@validate_args_with()
+    #def delete(self, token_data):
+    #    payload = {}
+    #    payload['status'] = participation.deleteUserAttendance(sanitize(data['zID'].lower()), sanitize(data['eventID']))
+    #    return jsonify(payload)
         
     # Update user attendance
     # Usage: 
@@ -82,10 +83,11 @@ class Points(Resource):
     # {zID: "z5214808", eventID: "13287", points: "10"}
     # Returns: 
     # {"status": "success"}  "points": 1000
-    def post(self):
-        data = request.get_json()
+    @auth_services.check_authorization(level=2, allowSocStaff=True)
+    @validation_services.validate_with(PostPointsSchema)
+    def post(self, data):
         payload = {}
-        payload['status'] = participation.changePoints(sanitize(data['zID'].lower()), sanitize(data['eventID']), sanitize(str(data['points'])))
+        payload['status'] = participation.changePoints(data['zID'], data['eventID'], data['points'])
         return jsonify(payload)
     
 @api.route('/involvedSocs')

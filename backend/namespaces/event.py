@@ -1,7 +1,7 @@
 from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort, reqparse
-from schemata import event_schemata
-from util import events, participation, utilFunctions, auth_services, societies, users
+from schemata.event_schemata import AttendSchema
+from util import events, participation, utilFunctions, auth_services, societies, users, validation_services
 from util.sanitisation_services import sanitize
 from datetime import datetime
 import uuid
@@ -125,6 +125,17 @@ class Attend(Resource):
             abort(403, "Attendance registration currently not possible for this event")
         payload['status'] = "success"
 
+        return jsonify(payload)
+        
+    @auth_services.check_authorization(level=2, allowSelf=True, allowSocStaff=True)
+    @validation_services.validate_args_with(AttendSchema)
+    @api.doc(description="If no zID given in query then will default to attending the token's owner. If zID given in query then will only let that person attend if token owner is that zID or if that zID is an admin of the society")
+    def delete(self, token_data, args_data):
+        payload = {}
+        if ('zID' in args_data):
+            payload['status'] = participation.deleteUserAttendance(args_data['zID'], args_data['eventID'])
+        else:
+            payload['status'] = participation.deleteUserAttendance(token_data['zID'], args_data['eventID'])
         return jsonify(payload)
 
 @api.route('/signAttendanceAdmin')
