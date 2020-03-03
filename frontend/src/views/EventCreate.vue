@@ -52,13 +52,13 @@ export default {
     };
   },
   created() {
-    this.userSocieties = this.$store.state.user.info.staff;
+    this.userSocieties = this.$store.getters['user/allSocieties'];
   },
   methods: {
-    submitEventForm() {
+    async submitEventForm() {
       // TODO: clean this up
       const data = {
-        zID: "z5111111",
+        zID: this.$store.state.user.info.zID,
         name: this.title,
         location: this.location,
         eventDate: this.date,
@@ -82,10 +82,13 @@ export default {
       //  "socID": "8EF48",
       //  "isRecur": "True"
       //  }
-      fetchAPI("/api/event/", "POST", data).then(j => {
-        console.log(j); //eslint-disable-line
-        this.$router.push({ name: "event", params: { eventID: j.data.msg } });
-      });
+
+      try {
+        const response = await fetchAPI("/api/event/", "POST", data);
+        this.$router.push({ name: "event", params: { eventID: response.data.msg } });
+      } catch (error) {
+        console.log(error.response) //eslint-disable-line
+      }
     }
   }
 };
