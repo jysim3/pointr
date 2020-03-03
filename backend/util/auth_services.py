@@ -157,10 +157,6 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                 except ValidationError as err:
                     abort(400, err.messages)
                 
-                try:
-                    data = AuthSchema().load(request.get_json())
-                except ValidationError as err:
-                    abort(400, err.messages)
                 
                 try:
                     token = TokenSchema().load({"token": request.headers.get('Authorization')})
@@ -173,6 +169,10 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     jwt_secret,
                     algorithms='HS256'
                 )
+                
+                data = None
+                if request.get_json() != None:
+                    data = request.get_json()
                 
                 if (activationRequired and not token_data['activation']):
                     abort('403', 'Activation Required')
