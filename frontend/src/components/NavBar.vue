@@ -5,48 +5,106 @@
       <div class="logo">
         <img @click="toHome" class="logo" src="../assets/logo.png" alt="pointr logo" />
       </div>
-      <div class="links-group">
+      <div v-show="!isLoading" class="links">
         <router-link
-          v-for="(routes, i) in links"
+          v-for="(routes, i) in navBarLinks"
           :key="i"
           :to="routes.to"
-          active-class="link--active"
           class="link"
-        >{{routes.text}}</router-link>
-
-        <button @click="authBtnClicked" class="btn btn-primary btn--nav">{{ authBtnText }}</button>
+        >{{ routes.text }}</router-link>
+        <a @click="authBtnClicked" class="btn btn-primary btn--nav">{{ authBtnText }}</a>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { removeToken } from "@/util";
-import auth from "@/mixins/auth";
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: "NavBar",
-  mixins: [auth],
-  props: {
-    links: {
-      type: Array
-    }
+  data() {
+    return {
+      defaultLinks: [
+        {
+          to: "/",
+          text: "Events"
+        },
+        {
+          to: "/contact",
+          text: "Contact"
+        }
+      ],
+      userDashboardLinks: [
+        {
+          to: "/sign",
+          text: "Mark attendance"
+        },
+        {
+          to: "/joinsociety",
+          text: "Join a society"
+        }
+      ],
+      adminDashboardLinks: [
+        {
+          text: "Create an event",
+          to: "/create"
+        },
+        {
+          text: "Join a society",
+          to: "/joinsociety"
+        },
+        {
+          text: "Documentation",
+          to: "/documentation"
+        },
+        {
+          text: "Statistics",
+          to: "/"
+        }
+      ]
+    };
   },
   computed: {
+    ...mapState('user', {
+      isLoading: state => state.isLoading,
+      isAuthenticated: state => state.isAuthenticated,
+      isAdmin: state => state.isAdmin
+    }),
     authBtnText() {
-      if (this.userIsAuthenticated) {
+      if (this.isAuthenticated) {
         return "Sign out";
       } else {
         return "Sign in";
       }
+    },
+    navBarLinks() {
+      if (!this.isAuthenticated) {
+        return this.defaultLinks
+      }
+
+      if (this.isAdmin) {
+        return this.adminDashboardLinks
+      } else {
+        return this.userDashboardLinks
+      }
     }
   },
   methods: {
+    ...mapActions('user', [
+      'signOut'
+    ]),
     authBtnClicked() {
-      if (this.userIsAuthenticated) {
-        removeToken();
-        this.$router.go(0)// TODO: shouldn't need to push a route, should be automatically done by router
+      if (this.isAuthenticated) {
+        this.signOut()
+        if (this.$route.name !== 'home') {
+          // TODO: shouldn't need to push a route, should be automatically done by router. Investigate further, happens when eg sign out from /joinsociety
+          this.$router.push({ name: 'home' }); 
+        }
       } else {
-        this.$router.push({ name: "signIn" });
+        // Only want to push if not already on the sign in route.
+        if (this.$route.name !== 'signIn') {
+          this.$router.push({ name: "signIn" });
+        }
       }
     },
     toHome() {
@@ -63,40 +121,44 @@ export default {
   z-index: 1;
   position: relative;
   margin-bottom: 2rem;
-  padding-top: 20px;
-  padding-bottom: 10px;
+  padding: 1.5rem 0 1.5rem 0;
   display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.box-container {
-  width: 80%;
-  display: flex;
-  position: relative;
   justify-content: space-between;
   align-items: center;
 }
-.links-group {
-  margin-left: 30px;
+
+.box-container {
+  width: 80%;
+  margin: auto;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
+
+.links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .link {
-  min-width: 100px;
-  color: black;
-  margin: 0 15px;
-  text-align: center;
+  margin: 0.5rem 2rem 0 2rem;
+  font-size: 1.1rem;
 }
+
 .link--active {
-  color: #311b92;
+  box-shadow: inset 0 -2px 0 0 var(--c-secondary-dark);
 }
+
 .logo {
   max-width: 200px;
-  flex: 1 2 0;
   cursor: pointer;
 }
+
 .btn--nav {
-  min-width: 100px;
+  margin: 0 2rem 0 2rem;
+  font-size: 1.1rem;
 }
 </style>

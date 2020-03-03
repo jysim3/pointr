@@ -10,12 +10,11 @@ from datetime import datetime
 import uuid
 
 def generateID(number = None):
-    return str(uuid.uuid4().hex).upper()[:10]
+    return str(uuid.uuid4().hex).upper()[:5]
 
 def initDatabase():
     # Moving this section to init.py in the next patch lmao
     # add users
-    #createUser("z5161616", "Steven Shen", "123456")
     createUser("z5161631", "Junyang Sim", "12345678")
     activateAccount("z5161631")
     createUser("z5111111", "Wayne Rooney", "12345678")
@@ -28,14 +27,16 @@ def initDatabase():
     activateAccount("z5444444")
     createUser("z5555555", "Oltan", "12345678")
     activateAccount("z5555555")
-    createUser("z5000000", "Super Admin Test Account", "gangboss")
+    createUser("z5000000", "Super Admin Test Account", "gangboss", isSuperAdmin=True)
     activateAccount("z5000000")
-    makeSuperAdmin("z5000000")
 
     createSociety("z5111111", "Goldstein")
     createSociety("z5161631", "Phillip Baxter")
     createSociety("z5222222", "UNSW Hall")
     createSociety("z5444444", "Fig Tree")
+
+    createUser("z5111000", "Test Superadmin 2", "12345678", isSuperAdmin=True)
+    activateAccount("z5111000")
 
     # NOTE: Defaults to UNSW Hall (for the society field right now)
     event1 = createSingleEvent("z5111111", generateID(), "Hackathon", "2020-11-19", True, findSocID("Goldstein"), None, None)

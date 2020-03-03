@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-
+    <NavBar />
     <transition name="fade" mode="out-in">
       <router-view />
     </transition>
@@ -8,19 +8,21 @@
 </template>
 
 <script>
-// TODO: import fetchAPI in App.vue instead?
-// import auth from "@/mixins/auth"
+import NavBar from "@/components/NavBar.vue";
 
 export default {
   name: "app",
-  // mixins: [auth]
+  components: {
+    NavBar
+  }
 };
 </script>
 
 <style>
 @import "./assets/style.css";
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .3s;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;

@@ -1,10 +1,9 @@
 <template>
   <div>
-    <NavBarDefault />
     <div class="form-container" id="form-container--signin">
       <form @submit.prevent="submitSignInForm" class="form">
         <h2>Sign in to Pointr</h2>
-        <FormError v-if="error.status" :msg="error.msg" />
+        <FormError v-if="error" :msg="error" />
         <InputZID v-model="zID" :zID="zID" />
         <InputPassword v-model="password" :password="password" />
         <!-- <div class="label-input-div">
@@ -22,11 +21,11 @@
 </template>
 
 <script>
-import { fetchAPI, setToken } from "@/util.js";
+import { mapActions } from 'vuex';
+import { fetchAPI } from "@/util";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import InputPassword from "@/components/input/InputPassword.vue";
-import NavBarDefault from "@/components/NavBarDefault.vue";
 
 export default {
   name: "SignIn",
@@ -34,34 +33,36 @@ export default {
     FormError,
     InputZID,
     InputPassword,
-    NavBarDefault
   },
   data() {
     return {
       zID: "",
       password: "",
-      rememberUser: false,
-      error: {
-        status: false,
-        msg: ""
-      }
+      // rememberUser: false,
+      error: ""
     };
   },
   methods: {
-    submitSignInForm() {
-      fetchAPI("/api/auth/login", "POST", {
-        zID: this.zID,
-        password: this.password
-      })
-        .then(r => {
-          console.log(r); //eslint-disable-line
-          setToken(r.token);
-          this.$router.push({ name: "home" });
+    ...mapActions('user', [
+      'authenticateUser'
+    ]),
+    async submitSignInForm() {
+      try {
+        const response = await fetchAPI("/api/auth/login", "POST", {
+          zID: this.zID,
+          password: this.password
         })
-        .catch(err => {
-          this.error.status = true;
-          this.error.msg = err;
-        });
+
+        this.$router.push({ name: 'home' });
+        this.authenticateUser(response.data.token);
+      } catch(error) {
+        const errorResponse = error.response;
+        if (errorResponse.status === 403) {
+          this.error = "Please check your sign in credentials"
+        } else {
+          this.error = "There was an error when trying to sign you in."
+        }
+      }
     }
   }
 };

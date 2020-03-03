@@ -31,3 +31,12 @@ Subject: Activate Your Pointr Account
 Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nHave fun accumulating your room points :).\n\nPlease activate your account now: {stringToSend}"""
 
     server.sendmail(sender_email, receiver_email, message)
+    
+def sendForgotEmail(link, zID, emailToSend):
+    receiver_email = emailToSend
+    message = f"""\
+Subject: Password Reset Request 
+
+Hi,{zID}\nYou have requested to reset your password.\nFollow this link to reset your password: {link}"""
+
+    server.sendmail(sender_email, receiver_email, message)

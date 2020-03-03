@@ -1,18 +1,24 @@
 <template>
   <div>
-    <form id="form-container--signevent" class="form-container" @submit.prevent="submitEventSignAttendance">
-      <div class="form">
+    <form
+      id="form-container--signevent"
+      class="form-container"
+      @submit.prevent="submitEventSignAttendance"
+    >
+      <Loader v-if="loading" />
+      <div v-else class="form">
         <h2>Sign attendance</h2>
         <EventCard :eventData="eventData" />
         <button
           v-if="!eventSignSuccess"
           class="btn btn-primary"
           type="submit"
-        >Sign as {{ userName }} ({{ zID }})</button>
+        >Sign as {{ this.$store.state.user.info.name }} ({{ this.$store.state.user.info.zID }})</button>
         <div id="submit-message" v-else>
           <h3 v-if="eventAlreadySigned">Already signed this event!</h3>
           <h3 v-else>Success!</h3>
-          <router-link to="/">Go to home</router-link>
+          <!-- TODO: need padding/margin on this -->
+          <router-link id="link--home" to="/">Go to home</router-link>
         </div>
       </div>
     </form>
@@ -21,52 +27,55 @@
 <script>
 import { fetchAPI } from "@/util.js";
 import EventCard from "@/components/EventCard.vue";
-import auth from "@/mixins/auth";
+import Loader from "@/components/Loader.vue";
 
 export default {
   name: "EventSignEnterAttendance",
-  mixins: [auth],
   props: {
-    eid: {
+    eventID: {
       type: String,
       required: true
     }
   },
   components: {
-    EventCard
+    EventCard,
+    Loader
   },
   data() {
     return {
-      zID: "",
-      userName: "",
-      eventData: {},
+      loading: true,
+      eventData: {
+        eventID: this.eventID
+      },
       eventSignSuccess: false,
       eventAlreadySigned: false
     };
   },
   created() {
-    fetchAPI(`/api/event/?eventID=${this.eid}`, "GET").then(j => {
-      this.eventData = j;
-      console.log(j); //eslint-disable-line
+    fetchAPI(`/api/event/?eventID=${this.eventID}`, "GET").then(j => {
+      this.eventData.eventDate = j.data.eventDate;
+      this.eventData.name = j.data.eventName;
+      this.eventData.location = j.data.location;
+      this.eventData.societyName = j.data.societyName;
+      this.loading = false;
     });
 
-    fetchAPI(`/api/user/info`, "POST").then(j => {
-      console.log(j); //eslint-disable-line
-      this.userName = j.msg.name;
-      this.zID = this.getZID();
-      // Checking if this event's ID matches with a user's signed event.
-      this.eventAlreadySigned = j.msg.events.some(
-        event => event.eventID === this.eventData.eventID
-      );
-    });
+    // Checking if this event's ID matches with an event the user is already a part of.
+    this.eventAlreadySigned = this.$store.getters['user/allEvents'].some(
+      event => event.eventID === this.eventData.eventID
+    );
   },
   methods: {
     submitEventSignAttendance() {
       fetchAPI("/api/event/attend", "POST", {
         zID: this.zID,
-        eventID: this.eid
+        eventID: this.eventID
       })
-        .then((this.eventSignSuccess = true)) //TODO: backend currently does not check if user has already signed?
+        .then(r => {
+          if (r.status === 200) {
+            this.eventSignSuccess = true;
+          }
+        })
         .catch(e => console.log(e)); //eslint-disable-line
     }
   }
@@ -75,8 +84,13 @@ export default {
 
 <style scoped>
 /* TODO: don't want event card to change width on submit */
+/* TODO: clean up this CSS */
 #form-container--signevent {
   margin-top: 3rem;
+}
+
+#form-container--signevent .event-card {
+  align-self: stretch;
 }
 
 #submit-message {

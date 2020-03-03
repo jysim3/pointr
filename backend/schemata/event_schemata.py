@@ -19,3 +19,7 @@ class RecurringEventSchema(Schema):
 
 class EventIDSchema(Schema):
     eventID = common_schemata.eventID
+    
+class AttendSchema(Schema):
+    eventID = common_schemata.eventIDRequired
+    zID = common_schemata.zid

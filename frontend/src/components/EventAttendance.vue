@@ -6,7 +6,7 @@
       <EventAttendee
         v-for="(attendee, index) in attendees"
         :key="index"
-        :eid="eid"
+        :eventID="eventID"
         :attendee="attendee"
         class="attendee"
       />
@@ -25,7 +25,7 @@ export default {
     EventAttendee
   },
   props: {
-    eid: String,
+    eventID: String,
     attendees: Array
   }
 };

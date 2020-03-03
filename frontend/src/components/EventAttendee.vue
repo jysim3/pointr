@@ -1,6 +1,6 @@
 <template>
   <div class="attendee">
-    <p class="name">{{ attendee.name }}</p>
+    <h3 class="name">{{ attendee.userName }}</h3>
     <p class="points">{{ pointsString }}</p>
     <div v-if="beingEdited">
       <!-- TODO: proper styling, implement input--number class in style.css -->
@@ -10,7 +10,7 @@
     </div>
     <div class="icons">
       <i @click="changeBeingEdited" class="material-icons">edit</i>
-      <i @click="del" class="material-icons">close</i>
+      <i @click="del" class="material-icons">delete</i>
     </div>
   </div>
 </template>
@@ -22,7 +22,7 @@ export default {
   name: "EventAttendee",
   props: {
     attendee: Object,
-    eid: String
+    eventID: String
   },
   data() {
     return {
@@ -46,24 +46,19 @@ export default {
     edit() {
       const data = {
         zID: this.attendee.zID,
-        eventID: this.eid,
+        eventID: this.eventID,
         points: parseInt(this.newPoints)
       };
-      fetchAPI("/api/points", "POST", data);
+      fetchAPI("/api/user/points", "POST", data);
       this.changeBeingEdited();
-      // .then(r => r.json())
-      // .then(r => {
-      //   if (r['status'] == "success") {
-      //     attendee.points += 1
-      //   }
-      // })
+      // TODO: error handling, improve delay by sending another request after edited?
     },
     del() {
       const data = {
         zID: this.attendee.zID,
-        eventID: this.eid
+        eventID: this.eventID
       };
-      fetchAPI("/api/points", "DELETE", data);
+      fetchAPI(`/api/event/attend?zID=${this.attendee.zID}&eventID=${this.eventID}`, "DELETE", data);
     }
   }
 };

@@ -40,6 +40,7 @@ def register(zID, eventID, time = None):
     try:
         curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, datetime.now() if time == None else time))
     except Exception as e:
+        print(e)
         return "failed"
     conn.commit()
     conn.close()
@@ -53,10 +54,7 @@ def changePoints(zID, eventID, newPoints):
     except Exception as e:
         return "failed"
     conn.commit()
-    error = curs.fetchone()
     conn.close()
-    if error is None:
-        return "failed"
     return "success"
 
 def deleteUserAttendance(zID, eventID):
@@ -183,7 +181,7 @@ def getUserSocieties(zID):
     conn = createConnection()
     curs = conn.cursor()
     try:
-        curs.execute("SELECT * FROM userInSociety where zID = (%s);", (zID,))
+        curs.execute("SELECT societyID, societyName FROM userInSociety where zID = (%s) and role = 0;", (zID,))
     except Exception as e:
         #print(e)
         return "failed"

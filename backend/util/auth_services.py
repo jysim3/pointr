@@ -13,6 +13,7 @@ import os, sys
 # Expiration time on tokens - 60 minutes #FIXME
 token_exp = 1000*60
 activationTokenTimeout = 1000*60
+forgotTokenTimeout = 1000*60
 ADMIN = 'Admin'
 USER = 'User'
 
@@ -87,7 +88,8 @@ def login(zID, password):
             'iat': datetime.utcnow(),
             'zID': zID,
             'permission': 1 if results == 1 else 5,
-            'activation': checkActivation(zID)
+            'activation': checkActivation(zID),
+            'type': 'normal'
         }, 
         jwt_secret, algorithm='HS256' 
     ) 
@@ -101,13 +103,29 @@ def generateActivationToken(zID):
             'iat': datetime.utcnow(),
             'zID': zID,
             'permission': 0,
-            'activation': 0
+            'activation': 0,
+            'type': 'activation'
         }, 
         jwt_secret, algorithm='HS256' 
     ) 
     return token.decode("utf-8")
 
-def authorizeActivationToken(token):
+def generateForgotToken(zID):
+    global forgotTokenTimeout
+    token = jwt.encode(
+        {
+            'exp': datetime.utcnow() + timedelta(seconds=forgotTokenTimeout),
+            'iat': datetime.utcnow(),
+            'zID': zID,
+            'permission': 0,
+            'activation': 0,
+            'type': 'forgot'
+        }, 
+        jwt_secret, algorithm='HS256' 
+    ) 
+    return token.decode("utf-8")
+
+def authorizeOneTimeToken(token):
     try:
         token_data = jwt.decode(
             token,
@@ -131,11 +149,15 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
         def wrapper(*args, **kwargs):
             try:
                 # Validate token
+                args_data = {}
+                data = {}
+                
                 try:
                     args_data = AuthSchema().load(request.args)
                 except ValidationError as err:
                     abort(400, err.messages)
-
+                
+                
                 try:
                     token = TokenSchema().load({"token": request.headers.get('Authorization')})
                 except ValidationError as err:
@@ -147,10 +169,10 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     jwt_secret,
                     algorithms='HS256'
                 )
-
-                arguments = None
+                
+                data = None
                 if request.get_json() != None:
-                    arguments = request.get_json()
+                    data = request.get_json()
                 
                 if (activationRequired and not token_data['activation']):
                     abort('403', 'Activation Required')
@@ -164,8 +186,8 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     if (token_data['zID'].lower() in admins):
                         # if so allow
                         return func(token_data=token_data, *args, **kwargs)
-                elif (allowSocStaff and 'eventID' in arguments):
-                    societyID = getSocIDFromEventID(arguments['societyID'])
+                elif (allowSocStaff and 'eventID' in data):
+                    societyID = getSocIDFromEventID(data['societyID'])
                     admins = getAdminsForSoc(societyID)
                     if (token_data['zID'].lower() in admins):
                         return func(token_data=token_data, *args, **kwargs)
@@ -181,8 +203,8 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     if (token_data['zID'].lower() in admins):
                         # if so allow
                         return func(token_data=token_data, *args, **kwargs)
-                elif (allowSocStaff and 'societyID' in arguments) or (allowSocStaff and 'socID' in arguments):
-                    admins = getAdminsForSoc(arguments['societyID']) if 'societyID' in arguments else getAdminsForSoc(arguments['socID'])
+                elif (allowSocStaff and 'societyID' in data) or (allowSocStaff and 'socID' in data):
+                    admins = getAdminsForSoc(data['societyID']) if 'societyID' in data else getAdminsForSoc(data['socID'])
                     if (token_data['zID'].lower() in admins):
                         return func(token_data=token_data, *args, **kwargs)
 

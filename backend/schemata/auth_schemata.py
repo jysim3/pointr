@@ -13,6 +13,12 @@ class RegisterDetailsSchema(Schema):
 class LoginDetailsSchema(Schema):
     zID = common_schemata.zidRequired
     password = common_schemata.passwordRequired
+    
+class ZIDDetailsSchema(Schema):
+    zID = common_schemata.zidRequired
+
+class PasswordSchema(Schema):
+    password = common_schemata.passwordRequired
 
 class TokenSchema(Schema):
     token = common_schemata.tokenRequired

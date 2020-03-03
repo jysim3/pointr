@@ -2,7 +2,7 @@ from flask import request, jsonify, request
 from flask_restx import Namespace, Resource, abort, reqparse
 from util import auth_services, users
 from util.auth_services import ADMIN, USER
-from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema
+from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema, ZIDDetailsSchema, PasswordSchema
 from marshmallow import Schema, fields, ValidationError, validates, validate
 from emailPointr import sendActivationEmail
 from util.validation_services import validate_with, validate_args_with
@@ -42,12 +42,13 @@ class Register(Resource):
         return jsonify({"status": "success"})
 
 @api.route('/activate')
-@api.param('token', description='Users Token', type='String', required='True')
 class Activate(Resource):
+    @api.header('Authorization', description='Activation token sent to email after call to /api/auth/register', type='String', required=True)
     @api.response(400, "Malformed Request")
     @api.response(403, "Already activated")
+    @api.doc(responses={})
     @auth_services.check_authorization(activationRequired=False, level=0)
-    def post(self, token_data):
+    def get(self, token_data):
 
         result = users.activateAccount(token_data['zID'].lower())
         if (result == "failed"):
@@ -70,6 +71,35 @@ class Login(Resource):
             return jsonify({"token": token})
         else:
             abort(403, 'Invalid Credentials / Account Not Activated')
+            
+@api.route('/forgot')
+class Forgot(Resource):
+    
+    @api.response(400, 'Malformed Request')
+    @api.response(403, 'Invalid Credentials')
+    @validate_with(ZIDDetailsSchema)
+    def post(self, data):
+        
+        # Login and if successful return the token otherwise invalid credentials
+        token = auth_services.generateForgotToken(data['zID'])
+        
+        sendForgotEmail(f"https://pointer.live/reset/{token}", zID, f"{zID}@student.unsw.edu.au")  
+        
+@api.route('/reset')
+class Reset(Resource):
+    
+    @api.response(400, 'Malformed Request')
+    @api.response(403, 'Invalid Credentials')
+    @auth_services.check_authorization(level=0, activationRequired=False)
+    @validate_with(PasswordSchema)
+    @api.doc(description="When given a password in body and a token created through /api/auth/forgot and retrived through emails in the Authorization header, this endpoint will update the password of the token's owner")
+    def post(self, token_data, data):
+        # TODO make check_authorization also take in type
+        if (not token_data['type'] == 'forgot'):
+            abort('403', 'Invalid Credentials')
+        if (users.changePassword(token_data['zID'], data['password']) == 'failed'):
+            abort('400', "Invalid")
+        return jsonify({"status": "success"})
 
 @api.route('/permission')
 class Permission(Resource):
