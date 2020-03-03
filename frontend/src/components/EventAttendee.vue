@@ -58,7 +58,7 @@ export default {
         zID: this.attendee.zID,
         eventID: this.eventID
       };
-      fetchAPI("/api/user/points", "DELETE", data);
+      fetchAPI(`/api/event/attend?zID=${this.attendee.zID}&eventID=${this.eventID}`, "DELETE", data);
     }
   }
 };

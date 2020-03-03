@@ -129,16 +129,20 @@ const actions = {
   },
   async initAuth({ state, commit, dispatch }) {
     if (state.authToken) {
-      //FIXME: Currently this causes the normal NavBar to load before the checks for token validity are done.
-      const response = await fetchAPI("/api/auth/validate", "POST");
-      // FIXME: backend returns 'true', this is possibly bad for future.
-      if (response.status === 200 && response.data.valid === "true") {
-        // Now that we now the token is valid we can authenticate the user and validate them.
-        // However, we only want to do this if they aren't already authenticated. This is to prevent many requests from going out unnecessarily.
-        if (!state.isAuthenticated) {
-          await dispatch('authenticateUser', state.authToken);
+      try {
+        const response = await fetchAPI("/api/auth/validate", "POST");
+        // FIXME: backend returns 'true', this is possibly bad for future.
+        if (response.data.valid === "true") {
+          // Now that we now the token is valid we can authenticate the user and validate them.
+          // However, we only want to do this if they aren't already authenticated. This is to prevent many requests from going out unnecessarily.
+          if (!state.isAuthenticated) {
+            await dispatch('authenticateUser', state.authToken);
+          }
         }
+      } catch (error) {
+        console.log(error.response) //eslint-disable-line
       }
+
     }
     commit('setIsLoading', false);
   },
