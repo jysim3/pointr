@@ -42,10 +42,11 @@ class Register(Resource):
         return jsonify({"status": "success"})
 
 @api.route('/activate')
-@api.param('token', description='Users Token', type='String', required='True')
 class Activate(Resource):
+    @api.header('Authorization', description='Activation token sent to email after call to /api/auth/register', type='String', required=True)
     @api.response(400, "Malformed Request")
     @api.response(403, "Already activated")
+    @api.doc(responses={})
     @auth_services.check_authorization(activationRequired=False, level=0)
     def get(self, token_data):
 
@@ -91,15 +92,15 @@ class Reset(Resource):
     @api.response(403, 'Invalid Credentials')
     @auth_services.check_authorization(level=0, activationRequired=False)
     @validate_with(PasswordSchema)
+    @api.doc(description="When given a password in body and a token created through /api/auth/forgot and retrived through emails in the Authorization header, this endpoint will update the password of the token's owner")
     def post(self, token_data, data):
+        # TODO make check_authorization also take in type
         if (not token_data['type'] == 'forgot'):
             abort('403', 'Invalid Credentials')
         if (users.changePassword(token_data['zID'], data['password']) == 'failed'):
             abort('400', "Invalid")
         return jsonify({"status": "success"})
-        
-        
-        
+
 @api.route('/permission')
 class Permission(Resource):
     

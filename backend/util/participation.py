@@ -54,10 +54,7 @@ def changePoints(zID, eventID, newPoints):
     except Exception as e:
         return "failed"
     conn.commit()
-    error = curs.fetchone()
     conn.close()
-    if error is None:
-        return "failed"
     return "success"
 
 def deleteUserAttendance(zID, eventID):

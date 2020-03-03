@@ -245,3 +245,17 @@ def changePassword(zID, password):
 
     conn.close()
     return "success"
+
+def deleteAccount(zID):
+    conn = createConnection()
+    curs = conn.cursor()
+
+    try:
+        curs.execute("DELETE FROM users WHERE zID = (%s);", (zID,))
+        conn.commit()
+    except Exception as e:
+        conn.close()
+        return "failed"
+
+    conn.close()
+    return "success"
