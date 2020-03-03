@@ -37,7 +37,7 @@ class Register(Resource):
 
         # At this point, the user is created, we now send the activation email
         # FIXME: Change this to pointr.live (in frontend) when in production
-        sendActivationEmail(f"https://pointr.live/activate/{token}", f"{zID}@student.unsw.edu.au")
+        sendActivationEmail(f"https://pointer.live/activate/{token}", f"{zID}@student.unsw.edu.au")
 
         return jsonify({"status": "success"})
 
