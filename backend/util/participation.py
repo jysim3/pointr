@@ -176,7 +176,7 @@ def getUpcomingEvents(zID):
             eventJSON = {}
             eventJSON['eventID'] = i[0]
             eventJSON['name'] = i[1]
-            eventJSON['date'] = str(i[2])
+            eventJSON['eventDate'] = i[2]
             eventJSON['location'] = i[3]
             eventJSON['societyID'] = soc['societyID']
             eventJSON['societyName'] = soc['societyName']
