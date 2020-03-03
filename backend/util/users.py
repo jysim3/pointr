@@ -6,9 +6,9 @@ import hashlib
 # 8/1/2020: TODO: To implement the login system, we need to store hashed passwords
 # if not auth_services.register_user(zID, password, name, isArc, commencementYear, studentType, degreeType):
         
+# Potential returns:
+# 1. "Failed" on any psql error or if the user exists already
 def createUser(zID, name, password, isArc = True, commencementYear = 2020, studentType = "domestic", degreeType = "undergraduate", isSuperAdmin = False):
-    if (checkUser(zID) != False):
-        return "Failed"
     password = str(password).encode('UTF-8')
     pwHash = hashlib.sha256(password).hexdigest()
 
@@ -19,14 +19,14 @@ def createUser(zID, name, password, isArc = True, commencementYear = 2020, stude
         curs.execute("INSERT INTO users(zid, name, password, isArc, commencementYear, studentType, degreeType, isSuperAdmin, activationStatus) values((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), False);", (zID, name, pwHash, isArc, commencementYear, studentType, degreeType, isSuperAdmin))
     except Exception as e:
         print(e)
-        return "Failed"
+        return "failed"
 
     conn.commit()
     conn.close()
 
     if (isSuperAdmin == True):
         makeSuperAdmin(zID)
-    return "Success"
+    return "success"
 
 def getUserInfo(zID):
     conn = createConnection()
