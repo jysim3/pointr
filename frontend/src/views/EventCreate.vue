@@ -10,7 +10,7 @@
         <label class="label" for>Society</label>
         <select class="input" v-model="society">
           <option
-            v-for="s in userSocieties"
+            v-for="s in availableSocieties"
             :key="s.societyID"
             :value="s.societyID"
           >{{s.societyName}}</option>
@@ -48,11 +48,11 @@ export default {
       endDate: "",
       repeat: "",
       point: 1,
-      userSocieties: []
+      availableSocieties: []
     };
   },
   created() {
-    this.userSocieties = this.$store.getters['user/allSocieties'];
+    this.availableSocieties = this.$store.getters['user/staffSocieties'];
   },
   methods: {
     async submitEventForm() {
