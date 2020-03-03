@@ -28,6 +28,7 @@ class userSocieties(Resource):
             abort(400, "Malformed Request")
         return jsonify({"status": "success", "message": results})
 
+# NOTE: OUTPUT CHANGED
 @api.route('/')
 class User(Resource):
     # Returns a list of events this person has attended
@@ -44,6 +45,7 @@ class User(Resource):
         attendance = users.getUserAttendance(args_data['zID'].lower())
         return jsonify(attendance)
 
+# NOTE: OUTPUT VALUE CHANGED
 @api.route('/info')
 @api.param('token', description='Users Token', type='String', required='True')
 class info(Resource):

@@ -20,11 +20,12 @@ class Register(Resource):
     @api.response(409, 'Username Taken')
     @validate_with(RegisterDetailsSchema)
     def post(self, data):
-            
+
         # Attempt to create a new user with the username and password
         zID = data['zID'].lower()
         password = data['password']
-        name = data['name'] if 'name' in data else "John Doe"
+        firstName = data['firstName'] if 'firstName' in data else "John"
+        lastName = data['lastName'] if 'lastName' in data else "Doe"
         isArc = data['isArc'] if 'isArc' in data else True
         commencementYear = data['commencementYear'] if 'commencementYear' in data else 2020
         studentType = data['studentType'] if 'studentType' in data else "domestic"
@@ -44,7 +45,7 @@ class Register(Resource):
             abort(400, "Email failed")
 
         # Step 3, inject the user into the database
-        results = users.createUser(zID, name, password, isArc, int(commencementYear), studentType, degreeType)
+        results = users.createUser(zID, firstName, lastName, password, isArc, int(commencementYear), studentType, degreeType)
         if results != "success":
             abort(403, results)
 

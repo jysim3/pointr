@@ -1,7 +1,8 @@
 -- drop TABLE IF EXISTS users CASCADE;
 CREATE TABLE IF NOT EXISTS users (
     zid TEXT NOT NULL,
-    name TEXT NOT NULL,
+    firstName TEXT NOT NULL,
+    lastName TEXT NOT NULL,
     password TEXT NOT NULL,
     isArc BOOLEAN NOT NULL,
     commencementYear INTEGER,
@@ -24,7 +25,7 @@ CREATE TABLE IF NOT EXISTS events (
     owner TEXT NOT NULL REFERENCES users(zid) ON DELETE CASCADE,
     qrCode boolean,
     description TEXT,
- primary key(eventID)
+    primary key(eventID)
 );
 -- drop TABLE IF EXISTS participation CASCADE;
 CREATE TABLE IF NOT EXISTS participation (
