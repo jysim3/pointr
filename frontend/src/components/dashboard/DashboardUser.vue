@@ -1,7 +1,6 @@
 <template>
   <div>
     <EventSignEnterCode />
-    <hr />
     <div class="event-lists">
       <Loader v-if="upcomingEvents.isLoading" />
       <DashboardEventView
@@ -30,12 +29,12 @@ export default {
   data() {
     return {
       upcomingEvents: {
-        title: "Your Events",
+        title: "Upcoming events",
         data: [],
         isLoading: true
       },
       allEvents: {
-        title: "Browse Events",
+        title: "Browse events",
         data: [],
         isLoading: true
       }
@@ -63,9 +62,9 @@ export default {
   justify-content: center;
   align-items: flex-start;
 }
-hr {
+/* hr {
   margin-top: 40px;
   margin: 40px;
   border-top: 3px solid #bbb;
-}
+} */
 </style>

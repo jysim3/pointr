@@ -36,8 +36,9 @@ export default {
 
 .event-view-title {
   margin-top: 4rem;
-  max-width: 500px;
-  box-shadow: rgba(59, 59, 95, 0.3) 0px 0px 2rem 0px;
+  /* max-width: 500px; */
+  display: inline-block;
+  /* box-shadow: rgba(59, 59, 95, 0.3) 0px 0px 2rem 0px; */
   padding: 10px;
   border-radius: 10px;
   margin: 10px;

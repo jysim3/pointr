@@ -18,7 +18,7 @@
           <h3 v-if="eventAlreadySigned">Already signed this event!</h3>
           <h3 v-else>Success!</h3>
           <!-- TODO: need padding/margin on this -->
-          <router-link to="/">Go to home</router-link>
+          <router-link id="link--home" to="/">Go to home</router-link>
         </div>
       </div>
     </form>
@@ -54,14 +54,14 @@ export default {
   created() {
     fetchAPI(`/api/event/?eventID=${this.eventID}`, "GET").then(j => {
       this.eventData.eventDate = j.data.eventDate;
-      this.eventData.eventName = j.data.eventName;
+      this.eventData.name = j.data.eventName;
       this.eventData.location = j.data.location;
       this.eventData.societyName = j.data.societyName;
       this.loading = false;
     });
 
     // Checking if this event's ID matches with an event the user is already a part of.
-    this.eventAlreadySigned = this.$store.state.user.getters.allEvents.some(
+    this.eventAlreadySigned = this.$store.getters['user/allEvents'].some(
       event => event.eventID === this.eventData.eventID
     );
   },
@@ -84,8 +84,13 @@ export default {
 
 <style scoped>
 /* TODO: don't want event card to change width on submit */
+/* TODO: clean up this CSS */
 #form-container--signevent {
   margin-top: 3rem;
+}
+
+#form-container--signevent .event-card {
+  align-self: stretch;
 }
 
 #submit-message {
