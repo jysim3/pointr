@@ -131,7 +131,7 @@ def getAttendanceCSV(eventID):
     conn = createConnection()
     curs = conn.cursor()
     try:
-        curs.execute("SELECT isArcMember, users.zID, users.name, time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) JOIN USERS ON (PARTICIPATION.ZID = USERS.zID) WHERE events.eventID = (%s);", (eventID,))
+        curs.execute("SELECT isArcMember, users.zID, users.firstName, users.lastName, time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) JOIN USERS ON (PARTICIPATION.ZID = USERS.zID) WHERE events.eventID = (%s);", (eventID,))
     except Exception as e:
         return "failed"
     results = curs.fetchall()
@@ -144,7 +144,7 @@ def getAttendanceCSV(eventID):
     path += f'/csvFiles/{eventID}.csv'
     try:
         with open(path, 'w', newline='') as file:
-            file.write("isArcMember,zID,name,time\n")
+            file.write("IsArcMember,zID,FirstName,LastName,Time(AEST)\n")
             writer = csv.writer(file, delimiter=',')
             writer.writerows(results)
     except Exception as e:
@@ -157,24 +157,31 @@ def getAttendanceCSV(eventID):
 def getUpcomingEvents(zID):
     conn = createConnection()
     curs = conn.cursor()
-    try:
-        curs.execute("SELECT * FROM userparticipatedEvents where zID = (%s) order by eventDate;", (zID,))
-    except Exception as e:
-        return "failed"
-    results = curs.fetchall()
+    results = getUserSocieties(zID)
 
     payload = []
-    for event in results:
-        eventJSON = {}
-        eventJSON['eventID'] = event[0]
-        eventJSON['name'] = event[1]
-        eventJSON['date'] = str(event[2])
-        eventJSON['location'] = event[3]
-        eventJSON['societyName'] = event[4]
-        eventJSON['societyID'] = event[5]
+    if results == []:
+        conn.close()
+        return payload
 
-        payload.append(eventJSON)
+    today = str(datetime.now().date())
+    for soc in results:
+        curs.execute("SELECT eventid, name, eventdate, location FROM hostedEvents WHERE societyid = (%s) AND eventDate > (%s);", (soc['societyID'], today,))
+        result = curs.fetchall()
 
+        if result == []:
+            continue
+
+        for i in result:
+            eventJSON = {}
+            eventJSON['eventID'] = i[0]
+            eventJSON['name'] = i[1]
+            eventJSON['eventDate'] = i[2]
+            eventJSON['location'] = i[3]
+            eventJSON['societyID'] = soc['societyID']
+            eventJSON['societyName'] = soc['societyName']
+            payload.append(eventJSON)
+    
     return payload
 
 def getUserSocieties(zID):
@@ -190,7 +197,7 @@ def getUserSocieties(zID):
     payload = []
     for society in results:
         societyJSON = {}
-        societyJSON['societID'] = society[0]
+        societyJSON['societyID'] = society[0]
         societyJSON['societyName'] = society[1]
         payload.append(societyJSON)
 

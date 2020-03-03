@@ -8,7 +8,7 @@ import hashlib
         
 # Potential returns:
 # 1. "Failed" on any psql error or if the user exists already
-def createUser(zID, name, password, isArc = True, commencementYear = 2020, studentType = "domestic", degreeType = "undergraduate", isSuperAdmin = False):
+def createUser(zID, firstName, lastName, password, isArc = True, commencementYear = 2020, studentType = "domestic", degreeType = "undergraduate", isSuperAdmin = False):
     password = str(password).encode('UTF-8')
     pwHash = hashlib.sha256(password).hexdigest()
 
@@ -16,7 +16,7 @@ def createUser(zID, name, password, isArc = True, commencementYear = 2020, stude
     curs = conn.cursor()
 
     try:
-        curs.execute("INSERT INTO users(zid, name, password, isArc, commencementYear, studentType, degreeType, isSuperAdmin, activationStatus) values((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), False);", (zID, name, pwHash, isArc, commencementYear, studentType, degreeType, isSuperAdmin))
+        curs.execute("INSERT INTO users(zid, firstName, lastName, password, isArc, commencementYear, studentType, degreeType, isSuperAdmin, activationStatus) values((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), False);", (zID, firstName, lastName, pwHash, isArc, commencementYear, studentType, degreeType, isSuperAdmin))
     except Exception as e:
         print(e)
         return "failed"
@@ -32,14 +32,15 @@ def getUserInfo(zID):
     conn = createConnection()
     curs = conn.cursor()
     try:
-        curs.execute("SELECT name FROM users WHERE zID = (%s);", (zID,))
+        curs.execute("SELECT firstName, lastName FROM users WHERE zID = (%s);", (zID,))
     except Exception as e:
         conn.close()
         return "failed"
     name = curs.fetchone()
-    if (name == None):
+    if (name is None):
         return None
-    name = name[0]
+    firstName = name[0]
+    lastName = name[1]
     try:
         curs.execute("SELECT * FROM userParticipatedEvents WHERE zID = (%s);", (zID,))
     except Exception as e:
@@ -47,7 +48,9 @@ def getUserInfo(zID):
         return "failed"
     results = curs.fetchall()
     payload = {}
-    payload['name'] = name
+    payload['zID'] = zID
+    payload['firstName'] = firstName
+    payload['lastName'] = lastName
     payload['events'] = []
     for result in results:
         eventJSON = {}
@@ -88,15 +91,18 @@ def getUserAttendance(zid):
     curs.execute("select points, events.eventid, name, eventdate, isarcmember, societyName from events join participation on (events.eventid = participation.eventid) join host on (events.eventid = host.eventid) join society on (society.societyID = host.society) where participation.zid = (%s);", (zid,))
     results = curs.fetchall()
 
-    curs.execute("select name from users where users.zid = (%s);", (zid,))
-    name = curs.fetchone()[0]
+    curs.execute("select firstName, lastName from users where zid = (%s);", (zid,))
+    result = curs.fetchone()
+    firstName = result[0]
+    lastName = result[1]
 
     conn.close()
 
     payload = {}
     payload['events'] = []
     payload['zID'] = zid.lower()
-    payload['name'] = name
+    payload['firstName'] = firstName
+    payload['lastName'] = lastName
     for event in results:
         eventJSON = {}
         eventJSON['eventID'] = event[1]
@@ -106,20 +112,19 @@ def getUserAttendance(zid):
         eventJSON['points'] = event[0]
         eventJSON['isArc'] = event[4]
         payload['events'].append(eventJSON)
-    
 
     return payload
 
 # Get all the events in a society attended by a particular person
 def getPersonEventsForSoc(zID, societyID):
-    # 9/1/2020: TODO: Flask routing for this function
-    # 9/1/2020: FIXME: Change the line below to select only the stuff that's required
+    if (checkUser(zID) == False):
+        return "no such user"
     conn = createConnection()
     curs = conn.cursor()
-    curs.execute("select name from users where zid = (%s);", (zID,))
+    curs.execute("select firstName, lastName from users where zid = (%s);", (zID,))
     name = curs.fetchone()
-    if (name is None):
-        return "No such user"
+    firstName = name[0]
+    lastName = name[1]
 
     try:
         curs.execute("select societyName from society where societyID = (%s);", (societyID,))
@@ -139,7 +144,8 @@ def getPersonEventsForSoc(zID, societyID):
     conn.close()
 
     payload = {}
-    payload['userName'] = name
+    payload['firstName'] = firstName
+    payload['lastName'] = lastName
     payload['societyName'] = socName
     payload['events'] = []
     for event in events:

@@ -15,19 +15,19 @@ def generateID(number = None):
 def initDatabase():
     # Moving this section to init.py in the next patch lmao
     # add users
-    createUser("z5161631", "Junyang Sim", "12345678")
+    createUser("z5161631", "Junyang", "Sim", "12345678")
     activateAccount("z5161631")
-    createUser("z5111111", "Wayne Rooney", "12345678")
+    createUser("z5111111", "Wayne", "Rooney", "12345678")
     activateAccount("z5111111")
-    createUser("z5222222", "Ivan", "12345678")
+    createUser("z5222222", "Ivan", "V", "12345678")
     activateAccount("z5222222")
-    createUser("z5333333", "Harrison", "12345678")
+    createUser("z5333333", "Harrison", "Memelord", "12345678")
     activateAccount("z5333333")
-    createUser("z5444444", "Memer", "12345678")
+    createUser("z5444444", "Memer", "Gate", "12345678")
     activateAccount("z5444444")
-    createUser("z5555555", "Oltan", "12345678")
+    createUser("z5555555", "Oltan", "Turk", "12345678")
     activateAccount("z5555555")
-    createUser("z5000000", "Super Admin Test Account", "gangboss", isSuperAdmin=True)
+    createUser("z5000000", "Super Admin Test Account", "0", "gangboss", isSuperAdmin=True)
     activateAccount("z5000000")
 
     createSociety("z5111111", "Goldstein")
@@ -35,7 +35,7 @@ def initDatabase():
     createSociety("z5222222", "UNSW Hall")
     createSociety("z5444444", "Fig Tree")
 
-    createUser("z5111000", "Test Superadmin 2", "12345678", isSuperAdmin=True)
+    createUser("z5111000", "Super Admin Test Account", "1", "12345678", isSuperAdmin=True)
     activateAccount("z5111000")
 
     # NOTE: Defaults to UNSW Hall (for the society field right now)
@@ -45,11 +45,12 @@ def initDatabase():
     event4 = createSingleEvent("z5444444", generateID(), "LoL Appreciation", "2020-09-08", True, findSocID("Fig Tree"))
     event5 = createSingleEvent("z5222222", generateID(), "Assassin's week", "2020-03-01", True, findSocID("UNSW Hall"), "UNSW Hall", None, "12:30", "20:30")
 
-    event5 = createRecurrentEvent("z5222222", generateID(), "Coffee Night", "2020-02-26", "2021-01-01", 7, "day", False, "UNSW Hall", findSocID("UNSW Hall"), "Weekly Wednesday gathering for UNSW Hall")
+    event5 = createRecurrentEvent("z5222222", generateID(), "Coffee Night", "2020-02-26", "2020-04-20", 7, "day", False, "UNSW Hall", findSocID("UNSW Hall"), "Weekly Wednesday gathering for UNSW Hall")
 
     # register users:
     #   for Hackathon
     joinSoc("z5161631", findSocID("Goldstein"))
+    joinSoc("z5111111", findSocID("Fig Tree"))
     register("z5161631", event1[0])
     joinSoc("z5222222", findSocID("Goldstein"))
     register("z5222222", event1[0])

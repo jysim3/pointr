@@ -2,6 +2,7 @@ import smtplib, ssl
 import os
 import sys
 from util.utilFunctions import createConnection
+import time
 
 if (os.environ.get('POINTR_EMAIL_PASSWORD') == None):
     print("Missing environment secret key for email address. Set env variable POINT_EMAIL_PASSWORD to the password.")
@@ -30,6 +31,21 @@ Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\
 
 
 def sendForgotEmail(link, zID, emailToSend):
+    port = 465  # For SSL
+    smtp_server = "smtp.gmail.com"
+    sender_email = "burnerpointr@gmail.com"
+
+    '''
+    if (os.environ.get('POINTR_EMAIL_PASSWORD') == None):
+        print("Missing environment secret key for email address. Set env variable POINT_EMAIL_PASSWORD to the password.")
+        sys.exit()
+
+    password = os.environ.get('POINTR_EMAIL_PASSWORD')
+    '''
+    password = "990928ss"
+    context = ssl.create_default_context()
+    server = smtplib.SMTP_SSL(smtp_server, port, context=context)
+    server.login(sender_email, password)
     receiver_email = emailToSend
     message = f"""\
 Subject: Password Reset Request 
@@ -37,3 +53,17 @@ Subject: Password Reset Request
 Hi,{zID}\nYou have requested to reset your password.\nFollow this link to reset your password: {link}"""
 
     server.sendmail(sender_email, receiver_email, message)
+
+
+'''
+def main():
+
+    for i in range(0, 100):
+        receiverEmail = f"z5{i:06d}@unsw.edu.au"
+        sendActivationEmail("Yo wassup", receiverEmail)
+
+        print(receiverEmail)
+
+if __name__ == "__main__":
+    main()
+'''

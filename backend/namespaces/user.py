@@ -11,13 +11,15 @@ api = Namespace('user', description='User Services')
 # /user fails but /use doesnt and /user/ doesnt
 @api.route('/getUpcomingEvents')
 class upcomingEvents(Resource):
-    def get(self):
-        zID = request.args.get('zID')
+    @auth_services.check_authorization(level=0)
+    def get(self, token_data):
+        zID = token_data['zID']
         results = participation.getUpcomingEvents(zID)
         if (isinstance(results, str) == True):
             abort(400, "Malformed Request")
-        return jsonify({"status": "success", "message": results})
+        return jsonify(results)
 
+# FIXME: Note that the JSON returned from this was changed
 @api.route('/getAllSocieties')
 class userSocieties(Resource):
     def get(self):
@@ -28,6 +30,7 @@ class userSocieties(Resource):
             abort(400, "Malformed Request")
         return jsonify({"status": "success", "message": results})
 
+# NOTE: OUTPUT CHANGED
 @api.route('/')
 class User(Resource):
     # Returns a list of events this person has attended
@@ -44,6 +47,7 @@ class User(Resource):
         attendance = users.getUserAttendance(args_data['zID'].lower())
         return jsonify(attendance)
 
+# NOTE: OUTPUT VALUE CHANGED
 @api.route('/info')
 @api.param('token', description='Users Token', type='String', required='True')
 class info(Resource):

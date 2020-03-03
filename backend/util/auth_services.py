@@ -175,14 +175,14 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                 # Check if eventID exists in query
                 if (allowSocStaff and 'eventID' in args_data):
                     # if so then get society of event
-                    societyID = getSocIDFromEventID(args_data['societyID'])
+                    societyID = getSocIDFromEventID(args_data['eventID'])
                     # check this zID is an admin of this society
                     admins = getAdminsForSoc(societyID)
                     if (token_data['zID'].lower() in admins):
                         # if so allow
                         return func(token_data=token_data, *args, **kwargs)
                 elif (allowSocStaff and 'eventID' in data):
-                    societyID = getSocIDFromEventID(data['societyID'])
+                    societyID = getSocIDFromEventID(data['eventID'])
                     admins = getAdminsForSoc(societyID)
                     if (token_data['zID'].lower() in admins):
                         return func(token_data=token_data, *args, **kwargs)
