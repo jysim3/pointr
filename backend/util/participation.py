@@ -108,7 +108,7 @@ def getAttendance(eventID):
     payload['societyID'] = results[4]
     payload['attendance'] = []
     try:
-        curs.execute("SELECT points, isArcMember, users.name, users.zID, participation.time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) JOIN USERS ON (PARTICIPATION.ZID = USERS.zID) WHERE events.eventID = (%s);", (eventID,))
+        curs.execute("SELECT points, isArcMember, users.firstName,users.lastName, users.zID, participation.time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) JOIN USERS ON (PARTICIPATION.ZID = USERS.zID) WHERE events.eventID = (%s);", (eventID,))
     except Exception as e:
         conn.close()
         return "failed"
