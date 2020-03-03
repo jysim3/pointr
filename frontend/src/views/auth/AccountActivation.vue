@@ -46,7 +46,7 @@ export default {
 
         // FIXME: VERY HACKY
         const response = await axios({
-          url: `/api/auth/activate?token=${this.activateToken}`,
+          url: `/api/auth/activate`,
           method: "POST",
           headers: {
             Authorization: this.activateToken
