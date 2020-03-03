@@ -10,6 +10,7 @@
     </div>
     <div id="event-attendance-container">
       <EventAttendance class="attendee" :eventID="eventID" :attendees="reversedParticipants" />
+      <FormError v-show="error" :msg="error" />
       <!-- TODO: only show last 10 people who have joined? Click 'view all' to show all participants? -->
     </div>
   </div>
@@ -20,6 +21,7 @@ import EventAttendance from "@/components/EventAttendance.vue";
 import EventQRCode from "@/components/EventQRCode.vue";
 import EventCodeDisplay from "@/components/EventCodeDisplay.vue";
 import EventAdminAttendance from "@/components/EventAdminAttendance.vue";
+import FormError from "@/components/FormError.vue";
 import { fetchAPI } from "@/util.js";
 
 export default {
@@ -31,16 +33,17 @@ export default {
     EventQRCode,
     EventAttendance,
     EventCodeDisplay,
-    EventAdminAttendance
+    EventAdminAttendance,
+    FormError
   },
   data() {
     return {
       name: "",
       participants: [],
+      error: ""
     };
   },
   created() {
-
     this.fetchAttendees();
     setInterval(() => {
       this.fetchAttendees();
@@ -48,7 +51,7 @@ export default {
   },
   computed: {
     eventURL() {
-      return `${window.location.host}/#/e/${this.eventID}`;
+      return `${window.location.host}/sign/${this.eventID}`;
     },
     reversedParticipants() {
       const participantsCopy = this.participants.slice();
@@ -56,16 +59,15 @@ export default {
     }
   },
   methods: {
-    fetchAttendees() {
-      fetchAPI(`/api/event/?eventID=${this.eventID}`)
-        .then(r => {
-          this.participants = r.data.attendance;
-          this.name = r.data.eventName;
-          console.log(r) // eslint-disable-line
-        })
-        .catch(e => {
-          console.log(e); // eslint-disable-line
-        });
+    async fetchAttendees() {
+      try {
+        const response = await fetchAPI(`/api/event/?eventID=${this.eventID}`);
+        this.participants = response.data.attendance;
+        this.name = response.data.eventName;
+
+      } catch (error) {
+        console.log(error.response) //eslint-disable-line
+      }
     }
   }
 };

@@ -10,7 +10,7 @@
     </div>
     <div class="icons">
       <i @click="changeBeingEdited" class="material-icons">edit</i>
-      <i @click="del" class="material-icons">close</i>
+      <i @click="del" class="material-icons">delete</i>
     </div>
   </div>
 </template>
@@ -49,21 +49,16 @@ export default {
         eventID: this.eventID,
         points: parseInt(this.newPoints)
       };
-      fetchAPI("/api/points", "POST", data);
+      fetchAPI("/api/user/points", "POST", data);
       this.changeBeingEdited();
-      // .then(r => r.json())
-      // .then(r => {
-      //   if (r['status'] == "success") {
-      //     attendee.points += 1
-      //   }
-      // })
+      // TODO: error handling, improve delay by sending another request after edited?
     },
     del() {
       const data = {
         zID: this.attendee.zID,
         eventID: this.eventID
       };
-      fetchAPI("/api/points", "DELETE", data);
+      fetchAPI("/api/user/points", "DELETE", data);
     }
   }
 };

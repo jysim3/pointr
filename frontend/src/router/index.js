@@ -92,7 +92,6 @@ router.beforeResolve(async (to, from, next) => {
   // EXAMPLE: user with no account scans QR code on Event page
   await store.dispatch('user/initAuth');
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    // FIXME: entering a URL like /joinsociety when token is valid causes a redirect to signin
     if (!store.state.user.isAuthenticated) {
       next({
         path: '/signin',
