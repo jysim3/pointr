@@ -4,7 +4,7 @@ A point/attendance system for colleges - winner of the 2019 UNSW Inter-College H
 
 Created by: [JunYang Sim](https://github.com/jysim3), [Harrison Steyn](https://github.com/martejj), [Ivan Velickovic](https://github.com/Ivan-Velickovic), [Steven Shen](https://github.com/StevenShen1999), [William de Dassel](https://github.com/wdedassel), and [Oltan Sevic](https://github.com/OltanS)
 
-![The team](https://scontent-syd2-1.xx.fbcdn.net/v/t1.0-9/73495328_980841482250944_6461906355576897536_o.jpg?_nc_cat=107&_nc_oc=AQminp_Ph0oJakSi91IvWeUzgjffrfeBy3-89iynbWcqiSFAK-vb_Eqo7IDMivmUEBg&_nc_ht=scontent-syd2-1.xx&oh=56b07bbdb23aa82682d3abcb68163ee0&oe=5E18279F)
+![The team](pointr_team.png)
 
 ## Uses
 

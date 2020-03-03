@@ -39,6 +39,7 @@ export default {
   },
   computed: {
     // TODO: Move this to store
+    // TODO: availableSocieties needs to be fixed
     ...mapGetters('user', [
       'allSocieties'
     ]),

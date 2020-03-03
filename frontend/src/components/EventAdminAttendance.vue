@@ -6,7 +6,7 @@
         
         <div id="event-form" >
             <div v-if="signup">
-                <Signup @registered="registered"/>
+                <Signup @registered="registered" :isPage="false"/>
 
                 <div id="signup-route">
                 <p>Have an account?</p>
@@ -58,9 +58,11 @@ export default {
     },
   methods: {
     registered(value) {
+        console.log(value) //eslint-disable-line
         this.zID = value.zID
         this.uname = value.name
         this.submitEventAttendance()
+        this.signup = false
     },
     submitEventAttendance() {
       const data = {
