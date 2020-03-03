@@ -1,6 +1,6 @@
 from flask import request, jsonify, request
 from flask_restx import Namespace, Resource, abort, reqparse
-from util import auth_services, users
+from util import auth_services, users, utilFunctions
 from util.auth_services import ADMIN, USER
 from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema, ZIDDetailsSchema, PasswordSchema
 from marshmallow import Schema, fields, ValidationError, validates, validate
@@ -8,6 +8,7 @@ from emailPointr import sendActivationEmail
 from util.validation_services import validate_with, validate_args_with
 import pprint
 import uuid
+from smtplib import SMTPConnectError, SMTPServerDisconnected
 
 api = Namespace('auth', description='Authentication & Authorization Services')
 
@@ -29,15 +30,23 @@ class Register(Resource):
         studentType = data['studentType'] if 'studentType' in data else "domestic"
         degreeType = data['degreeType'] if 'degreeType' in data else "undergraduate"
 
-        if not auth_services.register_user(zID, name, password, isArc, int(commencementYear), studentType, degreeType):
-            abort(409, 'Username Taken')
-        
-        token = auth_services.generateActivationToken(zID)
-        #print(token)
+        # Step 1, check for validity of the zID
+        if (utilFunctions.checkUser(zID) == True):
+            abort(409, "username taken") 
 
-        # At this point, the user is created, we now send the activation email
-        # FIXME: Change this to pointr.live (in frontend) when in production
-        sendActivationEmail(f"https://pointr.live/activate/{token}", f"{zID}@student.unsw.edu.au")
+        # Step 2, try sending an email, if error occurs, abort
+        try:
+            token = auth_services.generateActivationToken(zID)
+            sendActivationEmail(f"https://pointr.live/activate/{token}", f"{zID}@student.unsw.edu.au")
+        except SMTPServerDisconnected as e:
+            abort(400, "Sending email not successful")
+        except SMTPConnectError as e:
+            abort(400, "Email failed")
+
+        # Step 3, inject the user into the database
+        results = users.createUser(zID, name, password, isArc, int(commencementYear), studentType, degreeType)
+        if results != "success":
+            abort(403, results)
 
         return jsonify({"status": "success"})
 
