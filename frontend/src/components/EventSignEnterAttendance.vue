@@ -60,10 +60,12 @@ export default {
       this.loading = false;
     });
 
+    /* TODO: deleting this check to make sure it's smoother
     // Checking if this event's ID matches with an event the user is already a part of.
     this.eventAlreadySigned = this.$store.getters['user/allEvents'].some(
       event => event.eventID === this.eventData.eventID
     );
+    */
   },
   methods: {
     submitEventSignAttendance() {
