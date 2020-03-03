@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS events (
     startTime time,
     endTime time,
 	eventWeek TEXT NOT NULL,
-    owner TEXT NOT NULL REFERENCES users(zid),
+    owner TEXT NOT NULL REFERENCES users(zid) ON DELETE CASCADE,
     qrCode boolean,
     description TEXT,
  primary key(eventID)
@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS events (
 CREATE TABLE IF NOT EXISTS participation (
     points TEXT NOT NULL,
     isArcMember boolean NOT NULL,
-    zid TEXT NOT NULL REFERENCES users(zid),
-    eventID TEXT NOT NULL REFERENCES events(eventID),
+    zid TEXT NOT NULL REFERENCES users(zid) ON DELETE CASCADE,
+    eventID TEXT NOT NULL REFERENCES events(eventID) ON DELETE CASCADE,
     time timestamp NOT NULL,
     primary key (zid, eventID)
 );
@@ -44,14 +44,14 @@ CREATE TABLE IF NOT EXISTS society (
 -- drop TABLE IF EXISTS host CASCADE;
 CREATE TABLE IF NOT EXISTS host (
     location TEXT,
-    society TEXT REFERENCES society(societyID),
-    eventID TEXT NOT NULL REFERENCES events(eventID),
+    society TEXT REFERENCES society(societyID) ON DELETE CASCADE,
+    eventID TEXT NOT NULL REFERENCES events(eventID) ON DELETE CASCADE,
     primary key (society, eventID)
 );
 -- drop TABLE IF EXISTS socstaff CASCADE;
 CREATE TABLE IF NOT EXISTS socstaff (
-    society TEXT REFERENCES society(societyID),
-    zid TEXT REFERENCES users(zid),
+    society TEXT REFERENCES society(societyID) ON DELETE CASCADE,
+    zid TEXT REFERENCES users(zid) ON DELETE CASCADE,
     role INTEGER NOT NULL,
     primary key (society, zid)
 );
