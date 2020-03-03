@@ -32,9 +32,6 @@ const getters = {
   allSocieties(state) {
     return state.info.societies.member.concat(state.info.societies.staff);
   },
-  isSocietyAdmin(state) {
-    return state.info.societies.staff.length > 0;
-  },
   allEvents() {
     return;
   }
@@ -61,8 +58,12 @@ const mutations = {
     state.isAdmin = false;
     state.info = {};
   },
-  setIsAdmin(state, adminState) {
-    state.isAdmin = adminState;
+  setIsAdmin(state) {
+    if (state.info.societies.staff.length > 0) {
+      state.isAdmin = true;
+    } else {
+      state.isAdmin = false;
+    }
   },
   setIsAuthenticated(state) {
     state.isAuthenticated = true;
@@ -78,7 +79,7 @@ const actions = {
     commit('authToken', authToken);
     commit('setIsAuthenticated');
     await dispatch('userInfo');
-    commit('setIsAdmin', getters.isSocietyAdmin);
+    commit('setIsAdmin');
   },
   async userInfo({ commit }) {
     try {
