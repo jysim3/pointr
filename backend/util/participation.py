@@ -164,16 +164,15 @@ def getUpcomingEvents(zID):
         conn.close()
         return payload
 
+    today = str(datetime.now().date())
     for soc in results:
-        curs.execute("SELECT eventid, name, eventdate, location FROM hostedEvents WHERE societyid = (%s);", (soc['societyID'],))
+        curs.execute("SELECT eventid, name, eventdate, location FROM hostedEvents WHERE societyid = (%s) AND eventDate > (%s);", (soc['societyID'], today,))
         result = curs.fetchall()
 
         if result == []:
             continue
         currPayload = {}
-        currPayload['societyID'] = soc['societyID']
-        currPayload['societyName'] = soc['societyName']
-        currPayload['events'] = []
+
 
         for i in result:
             eventJSON = {}
@@ -181,8 +180,9 @@ def getUpcomingEvents(zID):
             eventJSON['name'] = i[1]
             eventJSON['date'] = str(i[2])
             eventJSON['location'] = i[3]
-            currPayload['events'].append(eventJSON)
-        payload.append(currPayload)
+            eventJSON['societyID'] = soc['societyID']
+            eventJSON['societyName'] = soc['societyName']
+            payload.append(eventJSON)
     
     return payload
 
