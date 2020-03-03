@@ -52,10 +52,7 @@ export default {
     };
   },
   created() {
-    fetchAPI("/api/user/involvedSocs", "GET").then(j => {
-      console.log(j); //eslint-disable-line
-      this.userSocieties = j.data.staff;
-    });
+    this.userSocieties = this.$store.state.user.info.staff;
   },
   methods: {
     submitEventForm() {

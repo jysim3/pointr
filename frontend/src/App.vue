@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <!-- FIXME: NavBar does not update until reload -->
     <NavBar />
     <transition name="fade" mode="out-in">
       <router-view />

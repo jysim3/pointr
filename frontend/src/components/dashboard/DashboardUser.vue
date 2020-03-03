@@ -1,7 +1,6 @@
 <template>
   <div>
     <EventSignEnterCode />
-    <hr />
     <div class="event-lists">
       <Loader v-if="upcomingEvents.isLoading" />
       <DashboardEventView
@@ -17,13 +16,11 @@
 
 <script>
 import { fetchAPI } from "@/util.js";
-import auth from "@/mixins/auth";
 import Loader from "@/components/Loader.vue";
 import DashboardEventView from "@/components/dashboard/DashboardEventView.vue";
 import EventSignEnterCode from "@/components/EventSignEnterCode.vue";
 export default {
   name: "DashboardUser",
-  mixins: [auth],
   components: {
     DashboardEventView,
     Loader,
@@ -32,12 +29,12 @@ export default {
   data() {
     return {
       upcomingEvents: {
-        title: "Your Events",
+        title: "Upcoming events",
         data: [],
         isLoading: true
       },
       allEvents: {
-        title: "Browse Events",
+        title: "Browse events",
         data: [],
         isLoading: true
       }
@@ -65,9 +62,9 @@ export default {
   justify-content: center;
   align-items: flex-start;
 }
-hr {
+/* hr {
   margin-top: 40px;
   margin: 40px;
   border-top: 3px solid #bbb;
-}
+} */
 </style>
