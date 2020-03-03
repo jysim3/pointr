@@ -177,8 +177,8 @@ class adminAttendance(Resource):
 class getAttendance(Resource):
     @api.response(400, "Cannot find file")
     @api.response(400, "Malformed Response")
-    @auth_services.check_authorization(level=2)
-    def get(self):
+    @auth_services.check_authorization(level=1, allowSocStaff=True)
+    def get(self, token_data):
         eventID = request.args.get('eventID')
         try:
             return send_file(participation.getAttendanceCSV(eventID), as_attachment=True)

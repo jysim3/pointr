@@ -144,7 +144,7 @@ def getAttendanceCSV(eventID):
     path += f'/csvFiles/{eventID}.csv'
     try:
         with open(path, 'w', newline='') as file:
-            file.write("isArcMember,zID,name,time\n")
+            file.write("IsArcMember,zID,FirstName,LastName,Time(AEST)\n")
             writer = csv.writer(file, delimiter=',')
             writer.writerows(results)
     except Exception as e:
@@ -171,8 +171,6 @@ def getUpcomingEvents(zID):
 
         if result == []:
             continue
-        currPayload = {}
-
 
         for i in result:
             eventJSON = {}

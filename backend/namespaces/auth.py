@@ -1,6 +1,6 @@
 from flask import request, jsonify, request
 from flask_restx import Namespace, Resource, abort, reqparse
-from util import auth_services, users, utilFunctions
+from util import auth_services, users, utilFunctions, societies
 from util.auth_services import ADMIN, USER
 from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema, ZIDDetailsSchema, PasswordSchema
 from marshmallow import Schema, fields, ValidationError, validates, validate
@@ -9,6 +9,20 @@ from util.validation_services import validate_with, validate_args_with
 import pprint
 import uuid
 from smtplib import SMTPConnectError, SMTPServerDisconnected
+
+# FIXME: Delete this after the first time we need to sign users on
+import csv
+zIDList = []
+with open('zIDList.txt') as hallList:
+    csv_reader = csv.reader(hallList, delimiter=',')
+    line_count = 0
+    for row in csv_reader:
+        if line_count == 0:
+            line_count += 1
+            continue
+        zIDList.append(row[0])
+print("this was called")
+
 
 api = Namespace('auth', description='Authentication & Authorization Services')
 
@@ -48,6 +62,13 @@ class Register(Resource):
         results = users.createUser(zID, firstName, lastName, password, isArc, int(commencementYear), studentType, degreeType)
         if results != "success":
             abort(403, results)
+
+        # FIXME: PLEASE REMOVE ME AFTER THE FIRST TIME WE HAVE TO SIGN THE USERS ON
+        global zIDList
+        if (zID in zIDList):
+            results = societies.joinSoc(zID, societies.findSocID("UNSW Hall"))
+            if results != "success":
+                return jsonify({"status": "kind of success", "msg": "Account created but could not join UNSW Hall"})
 
         return jsonify({"status": "success"})
 
