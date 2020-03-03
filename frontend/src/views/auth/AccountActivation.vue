@@ -2,8 +2,8 @@
   <div class="card-container">
     <div class="card">
       <h1>Hi {{ this.zID }}!</h1>
-      <p v-if="!activateToken">Check your zID email to activate your account!</p>
-      <p class="msg" v-if="isActivatedStatus === 200">
+      <p class="msg" v-if="!activateToken">Check your zID email to activate your account!</p>
+      <p class="msg" v-else-if="isActivatedStatus === 200">
         Thanks for activating your account, you may now close this window or
         <router-link to="/signin">sign in</router-link>.
       </p>
@@ -26,6 +26,10 @@ import axios from "axios";
 export default {
   name: "AccountActivation",
   props: {
+    zID: {
+      type: String,
+      default: ''
+    },
     activateToken: {
       type: String,
       required: false
@@ -33,7 +37,6 @@ export default {
   },
   data() {
     return {
-      zID: "",
       // name: "",
       isActivatedStatus: "",
     };

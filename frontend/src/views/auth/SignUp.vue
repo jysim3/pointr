@@ -100,6 +100,13 @@ export default {
     InputZID,
     InputPassword,
   },
+  props: {
+    isPage: {
+      type: Boolean,
+      default: true
+    },
+  },
+  // TODO: signup page vs event page sign up HACK
   data() {
     return {
       zID: "",
@@ -112,7 +119,7 @@ export default {
         degreeType: "",
         isArcMember: false
       },
-      formErrorMessage: ""
+      formErrorMessage: "",
     };
   },
   created() {
@@ -151,8 +158,12 @@ export default {
       }).then(r => {
           // In the case of a successful response, want to store token and redirect to home
           if (r.status === 200) {
-            this.$router.push({ name: "activate" });
-            this.$emit('registered', {zid: this.zID, name: this.name})
+            // TODO: signup page vs event page sign up HACK
+            if (this.isPage) {
+              this.$router.push({ name: "activate" , params: {zID: this.zID, name: this.name}});
+            } else {
+              this.$emit('registered', {zid: this.zID, name: this.name})
+            }
           } else {
             if (r.data.message["zID"]) {
               this.formErrorMessage = "Please check your zID";

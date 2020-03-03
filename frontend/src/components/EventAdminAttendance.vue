@@ -6,7 +6,7 @@
         
         <div id="event-form" >
             <div v-if="signup">
-                <Signup @registered="registered"/>
+                <Signup @registered="registered" :isPage="true"/>
 
                 <div id="signup-route">
                 <p>Have an account?</p>
