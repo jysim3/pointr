@@ -81,7 +81,7 @@ class Login(Resource):
             return jsonify({"token": token})
         else:
             abort(403, 'Invalid Credentials / Account Not Activated')
-            
+
 @api.route('/forgot')
 class Forgot(Resource):
     

@@ -45,11 +45,12 @@ def initDatabase():
     event4 = createSingleEvent("z5444444", generateID(), "LoL Appreciation", "2020-09-08", True, findSocID("Fig Tree"))
     event5 = createSingleEvent("z5222222", generateID(), "Assassin's week", "2020-03-01", True, findSocID("UNSW Hall"), "UNSW Hall", None, "12:30", "20:30")
 
-    event5 = createRecurrentEvent("z5222222", generateID(), "Coffee Night", "2020-02-26", "2021-01-01", 7, "day", False, "UNSW Hall", findSocID("UNSW Hall"), "Weekly Wednesday gathering for UNSW Hall")
+    event5 = createRecurrentEvent("z5222222", generateID(), "Coffee Night", "2020-02-26", "2020-04-20", 7, "day", False, "UNSW Hall", findSocID("UNSW Hall"), "Weekly Wednesday gathering for UNSW Hall")
 
     # register users:
     #   for Hackathon
     joinSoc("z5161631", findSocID("Goldstein"))
+    joinSoc("z5111111", findSocID("Fig Tree"))
     register("z5161631", event1[0])
     joinSoc("z5222222", findSocID("Goldstein"))
     register("z5222222", event1[0])
