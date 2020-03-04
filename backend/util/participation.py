@@ -166,7 +166,7 @@ def getUpcomingEvents(zID):
 
     today = str(datetime.now().date())
     for soc in results:
-        curs.execute("SELECT eventid, name, eventdate, location FROM hostedEvents WHERE societyid = (%s) AND eventDate > (%s);", (soc['societyID'], today,))
+        curs.execute("SELECT eventid, name, eventdate, location FROM hostedEvents WHERE societyid = (%s) AND eventDate >= (%s);", (soc['societyID'], today,))
         result = curs.fetchall()
 
         if result == []:
