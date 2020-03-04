@@ -47,7 +47,8 @@ export default {
       this.upcomingEvents.isLoading = false;
     });
     fetchAPI("/api/user/getUpcomingEvents").then(r => {
-      console.log("BROWSE EVENTS R IS " + r.data); //eslint-disable-line
+      console.log("BROWSE EVENTS R IS "); //eslint-disable-line
+      console.log(r.data) //eslint-disable-line
       console.log("Length of browse events " + r.data.length); //eslint-disable-line
       this.allEvents.data = r.data;
       this.allEvents.isLoading = false;

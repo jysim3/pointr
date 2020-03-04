@@ -105,6 +105,7 @@ router.beforeResolve(async (to, from, next) => {
     if (!store.state.user.isAuthenticated) {
       next({
         path: '/signin',
+        query: {redirect: to.fullPath}, // https://stackoverflow.com/questions/45856929/redirect-to-requested-page-after-login-using-vue-router
         params: { nextUrl: to.fullPath } //FIXME: needs to actually work
       });
     } else if (store.state.user.info.permission < 1) {

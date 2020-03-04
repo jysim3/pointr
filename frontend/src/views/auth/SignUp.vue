@@ -5,8 +5,10 @@
       <h2>Join Pointr</h2>
       <FormError v-if="formErrorMessage" :msg="formErrorMessage" />
       <InputZID v-model="zID" :zID="zID" />
-      <label for="name" class="label">Name</label>
-      <input v-model="userInfo.name" class="input" type="text" name="name" />
+      <label for="firstName" class="label">First Name</label>
+      <input v-model="userInfo.firstName" class="input" type="text" name="firstName" />
+      <label for="lastName" class="label">Last Name</label>
+      <input v-model="userInfo.lastName" class="input" type="text" name="lastName" />
       <InputPassword v-model="password" :password="password" />
       <InputPassword
         v-model="repeatPassword"
@@ -113,7 +115,8 @@ export default {
       password: "",
       repeatPassword: "",
       userInfo: {
-        name: "",
+        firstName: "",
+        lastName: "",
         commencmentYear: "",
         studentType: "",
         degreeType: "",
@@ -149,7 +152,8 @@ export default {
     submitSignUpForm() {
       fetchAPI("/api/auth/register", "POST", {
         zID: this.zID,
-        name: this.userInfo.name,
+        firstName: this.userInfo.firstName,
+        lastName: this.userInfo.lastName,
         password: this.password,
         commencementYear: this.userInfo.commencmentYear,
         studentType: this.userInfo.studentType,

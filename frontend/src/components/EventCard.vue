@@ -1,5 +1,5 @@
 <template>
-  <div class="event-card">
+  <div @click="goToEvent" :class="{ 'event-card-clickable': isAdminOfEvent }" class="event-card">
     <!-- TODO: going to an event should only be available to admin? -->
     <!-- <router-link :to="`/event/${eventData.eventID}`">
       <h3>{{ eventData.eventName }}</h3>
@@ -8,7 +8,7 @@
     </router-link> -->
     <!-- TODO: check backend, eventName/name doesn't seem to be consistent depending on request -->
     <!-- TODO: if  -->
-    <div @click="goToEvent" :class="{ 'event-card-clickable': isAdminOfEvent }" class="when-where-div">
+    <div  class="when-where-div">
       <p class="when">{{ eventData.eventDate }}</p>
       <p class="where">@ {{ eventData.location }}</p>
     </div>
@@ -96,6 +96,6 @@ export default {
 }
 
 .event-card-clickable {
-  cursor: pointr;
+  cursor: pointer;
 }
 </style>
