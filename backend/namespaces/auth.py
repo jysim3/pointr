@@ -4,7 +4,7 @@ from util import auth_services, users, utilFunctions, societies
 from util.auth_services import ADMIN, USER
 from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema, ZIDDetailsSchema, PasswordSchema
 from marshmallow import Schema, fields, ValidationError, validates, validate
-from emailPointr import sendActivationEmail
+from emailPointr import sendActivationEmail, sendForgotEmail
 from util.validation_services import validate_with, validate_args_with
 import pprint
 import uuid
@@ -115,7 +115,7 @@ class Forgot(Resource):
         # Login and if successful return the token otherwise invalid credentials
         token = auth_services.generateForgotToken(data['zID'])
         
-        sendForgotEmail(f"https://pointer.live/reset/{token}", zID, f"{zID}@student.unsw.edu.au")  
+        sendForgotEmail(f"https://pointer.live/reset/{token}", data['zID'], f"{data['zID']}@student.unsw.edu.au")  
         
 @api.route('/reset')
 class Reset(Resource):
