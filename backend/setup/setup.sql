@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     commencementYear INTEGER,
     studentType TEXT,
     degreeType TEXT,
+    floorGroup TEXT,
     isSuperAdmin BOOLEAN NOT NULL,
     activationStatus BOOLEAN NOT NULL,
     primary key(zid)

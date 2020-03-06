@@ -44,6 +44,7 @@ class Register(Resource):
         commencementYear = data['commencementYear'] if 'commencementYear' in data else 2020
         studentType = data['studentType'] if 'studentType' in data else "domestic"
         degreeType = data['degreeType'] if 'degreeType' in data else "undergraduate"
+        floorGroup = data['floorGroup'] if 'floorGroup' in data else "unspecified"
 
         # Step 1, check for validity of the zID
         if (utilFunctions.checkUser(zID) == True):
@@ -59,7 +60,7 @@ class Register(Resource):
             abort(400, "Email failed")
 
         # Step 3, inject the user into the database
-        results = users.createUser(zID, firstName, lastName, password, isArc, int(commencementYear), studentType, degreeType)
+        results = users.createUser(zID, firstName, lastName, password, isArc, int(commencementYear), studentType, degreeType, floorGroup=floorGroup)
         if results != "success":
             abort(403, results)
 
