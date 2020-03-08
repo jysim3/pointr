@@ -218,16 +218,32 @@ def joinSoc(zID, socID):
     return "success"
 
 # Base user: socStaff -> Role -> 0, admin 1
+# FIXME: Check for if zID is already in socStaff table, if so update the table rather than insert
 def makeAdmin(zID, socID):
     conn = createConnection()
     curs = conn.cursor()
 
     try:
-        curs.execute("INSERT INTO SOCSTAFF(society, zid, role) VALUES ((%s), (%s), (%s));", (socID, zID, 1,))
-        conn.commit()
+        curs.execute("SELECT * FROM SOCSTAFF WHERE zID = (%s) AND society = (%s);", (zID, socID,))
     except Exception as e:
         conn.close()
         return "failed"
+    result = curs.fetchone()
+    if (result is not None):
+        try:
+            curs.execute("UPDATE SOCSTAFF SET ROLE = 1 WHERE zID = (%s) AND society = (%s);", (zID, socID,))
+            conn.commit()
+        except Exception as e:
+            conn.close()
+            return "failed"
+    else:
+        try:
+            curs.execute("INSERT INTO SOCSTAFF(society, zid, role) VALUES ((%s), (%s), (%s));", (socID, zID, 1,))
+            conn.commit()
+        except Exception as e:
+            print(e)
+            conn.close()
+            return "failed"
 
     conn.close()
     return "success"

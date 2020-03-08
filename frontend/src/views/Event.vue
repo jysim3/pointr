@@ -5,7 +5,13 @@
     <!-- TODO: add more event information here -->
     <h2 id="mark-attendance-header">Sign your attendance</h2>
     <div id="qr-and-form-container">
+      <div style="display:flex;flex-direction:column;">
       <EventQRCode :eventID="this.eventID" />
+        <button
+          class="btn btn-primary"
+          @click="downloadCsv"
+        >Download csv</button>
+      </div>
       <EventAdminAttendance :eventID="this.eventID" />
     </div>
     <div id="event-attendance-container">
@@ -17,10 +23,10 @@
 </template>
 
 <script>
-import EventAttendance from "@/components/EventAttendance.vue";
-import EventQRCode from "@/components/EventQRCode.vue";
-import EventCodeDisplay from "@/components/EventCodeDisplay.vue";
-import EventAdminAttendance from "@/components/EventAdminAttendance.vue";
+import EventAttendance from "@/components/event/EventAttendance.vue";
+import EventQRCode from "@/components/event/EventQRCode.vue";
+import EventCodeDisplay from "@/components/event/EventCodeDisplay.vue";
+import EventAdminAttendance from "@/components/event/EventAdminAttendance.vue";
 import FormError from "@/components/FormError.vue";
 import { fetchAPI } from "@/util.js";
 
@@ -59,6 +65,17 @@ export default {
     }
   },
   methods: {
+    downloadCsv() {
+      fetchAPI(`/api/event/getAttendance?eventID=${this.eventID}`)
+      .then(r => {
+        var fileURL = window.URL.createObjectURL(new Blob([r.data]));
+        var fileLink = document.createElement('a');
+        fileLink.href = fileURL;
+        fileLink.setAttribute('download', `${this.name}.csv`);
+        document.body.appendChild(fileLink);
+        fileLink.click();
+      })
+    },
     async fetchAttendees() {
       try {
         const response = await fetchAPI(`/api/event/?eventID=${this.eventID}`);
@@ -112,5 +129,8 @@ export default {
   display: flex;
   justify-content: center;
   font-size: 1.5rem;
+}
+.btn-primary {
+  margin-right: 2rem;
 }
 </style>
