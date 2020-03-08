@@ -68,12 +68,12 @@ class Register(Resource):
         if (zID in zIDList):
             socID = societies.findSocID("UNSW Hall")
             results = societies.joinSoc(zID, socID)
-            resultsForJoin = None
+            resultsForJoin = "success" # TODO: FIXME WHEN THE FLOORGROUP LIST IS UPLOADED
             isCol = societies.isCollege(socID)
             if (isCol == True):
                 # TODO: Check for floorgroups of the zID
-                resultsForJoin = None
-                resultsForJoin = societies.joinCollege(zID, socID) # TODO: Doesn't work right now, add in floorgroup check
+                resultsForJoin = "success"
+                #resultsForJoin = societies.joinCollege(zID, socID) # TODO: Doesn't work right now, add in floorgroup check
             if results != "success" or resultsForJoin != "success":
                 return jsonify({"status": "kind of success", "msg": "Account created but could not join UNSW Hall"})
 
