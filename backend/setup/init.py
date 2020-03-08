@@ -30,24 +30,27 @@ def initDatabase():
     createUser("z5000000", "Super Admin Test Account", "0", "gangboss", isSuperAdmin=True)
     activateAccount("z5000000")
 
-    createSociety("z5111111", "Goldstein")
-    createSociety("z5161631", "Phillip Baxter")
-    createSociety("z5222222", "UNSW Hall")
-    createSociety("z5444444", "Fig Tree")
+    #createSociety("z5111111", "Goldstein")
+    #createSociety("z5161631", "Phillip Baxter")
+    createSociety("z5222222", "UNSW Hall", True)
+    #createSociety("z5444444", "Fig Tree")
 
-    createUser("z5111000", "Super Admin Test Account", "1", "12345678", isSuperAdmin=True)
-    activateAccount("z5111000")
+    #createUser("z5111000", "Super Admin Test Account", "1", "12345678", isSuperAdmin=True)
+    #activateAccount("z5111000")
 
     # NOTE: Defaults to UNSW Hall (for the society field right now)
+    '''
     event1 = createSingleEvent("z5111111", generateID(), "Hackathon", "2020-11-19", True, findSocID("Goldstein"), None, None)
     event2 = createSingleEvent("z5161631", generateID(), "Gamer Juice Winery Tour", "2020-09-09", True, findSocID("Phillip Baxter"), None, None, None, datetime.strptime("23:30:00", "%H:%M:%S"))
     event3 = createSingleEvent("z5222222", generateID(), "Test Event", "2020-02-23", False, findSocID("UNSW Hall"), None, None)
     event4 = createSingleEvent("z5444444", generateID(), "LoL Appreciation", "2020-09-08", True, findSocID("Fig Tree"))
     event5 = createSingleEvent("z5222222", generateID(), "Assassin's week", "2020-03-01", True, findSocID("UNSW Hall"), "UNSW Hall", None, "12:30", "20:30")
+    '''
 
-    event5 = createRecurrentEvent("z5222222", generateID(), "Coffee Night", "2020-02-26", "2020-04-20", 7, "day", False, "UNSW Hall", findSocID("UNSW Hall"), "Weekly Wednesday gathering for UNSW Hall")
+    event5 = createRecurrentEvent("z5222222", generateID(), "Coffee Night", "2020-03-11", "2020-04-20", 7, "day", False, "UNSW Hall", findSocID("UNSW Hall"), "Weekly Wednesday gathering for UNSW Hall")
 
     # register users:
+    '''
     #   for Hackathon
     joinSoc("z5161631", findSocID("Goldstein"))
     joinSoc("z5111111", findSocID("Fig Tree"))
@@ -73,6 +76,7 @@ def initDatabase():
     register("z5444444", event3[0])
     joinSoc("z5555555", findSocID("UNSW Hall"))
     register("z5555555", event3[0])
+    '''
 
 def main():
     initDatabase()

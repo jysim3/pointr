@@ -43,6 +43,12 @@ def checkEvent(eventID):
     conn.close()
     return False if rows == [] else True
 
+def makeConnection(func):
+    def wrapper(*args, **kwargs):
+        conn = createConnection()
+        curs = conn.cursor()
+        return func(conn=conn, curs=curs, *args, *kwargs)
+    return wrapper
 
 # General utilities functions
 # Accepts either a date in the form of "YYYY-MM-DD", or a week in the form of "T[1-3]W[1-10]", or a month in the range of [1-12]

@@ -23,7 +23,6 @@ with open('zIDList.txt') as hallList:
         zIDList.append(row[0])
 print("this was called")
 
-
 api = Namespace('auth', description='Authentication & Authorization Services')
 
 @api.route('/register')
@@ -44,7 +43,7 @@ class Register(Resource):
         commencementYear = data['commencementYear'] if 'commencementYear' in data else 2020
         studentType = data['studentType'] if 'studentType' in data else "domestic"
         degreeType = data['degreeType'] if 'degreeType' in data else "undergraduate"
-        floorGroup = data['floorGroup'] if 'floorGroup' in data else "unspecified"
+        #floorGroup = data['floorGroup'] if 'floorGroup' in data else "unspecified"
 
         # Step 1, check for validity of the zID
         if (utilFunctions.checkUser(zID) == True):
@@ -60,15 +59,22 @@ class Register(Resource):
             abort(400, "Email failed")
 
         # Step 3, inject the user into the database
-        results = users.createUser(zID, firstName, lastName, password, isArc, int(commencementYear), studentType, degreeType, floorGroup=floorGroup)
+        results = users.createUser(zID, firstName, lastName, password, isArc, int(commencementYear), studentType, degreeType)
         if results != "success":
             abort(403, results)
 
         # FIXME: PLEASE REMOVE ME AFTER THE FIRST TIME WE HAVE TO SIGN THE USERS ON
         global zIDList
         if (zID in zIDList):
-            results = societies.joinSoc(zID, societies.findSocID("UNSW Hall"))
-            if results != "success":
+            socID = societies.findSocID("UNSW Hall")
+            results = societies.joinSoc(zID, socID)
+            resultsForJoin = None
+            isCol = societies.isCollege(socID)
+            if (isCol == True):
+                # TODO: Check for floorgroups of the zID
+                resultsForJoin = None
+                resultsForJoin = societies.joinCollege(zID, socID) # TODO: Doesn't work right now, add in floorgroup check
+            if results != "success" or resultsForJoin != "success":
                 return jsonify({"status": "kind of success", "msg": "Account created but could not join UNSW Hall"})
 
         return jsonify({"status": "success"})

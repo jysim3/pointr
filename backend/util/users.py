@@ -8,7 +8,7 @@ import hashlib
         
 # Potential returns:
 # 1. "Failed" on any psql error or if the user exists already
-def createUser(zID, firstName, lastName, password, isArc = True, commencementYear = 2020, studentType = "domestic", degreeType = "undergraduate", isSuperAdmin = False, floorGroup = "unspecified"):
+def createUser(zID, firstName, lastName, password, isArc = True, commencementYear = 2020, studentType = "domestic", degreeType = "undergraduate", isSuperAdmin = False):
     password = str(password).encode('UTF-8')
     pwHash = hashlib.sha256(password).hexdigest()
 
@@ -16,7 +16,7 @@ def createUser(zID, firstName, lastName, password, isArc = True, commencementYea
     curs = conn.cursor()
 
     try:
-        curs.execute("INSERT INTO users(zid, firstName, lastName, password, isArc, commencementYear, studentType, degreeType, floorGroup, isSuperAdmin, activationStatus) values((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), False);", (zID, firstName, lastName, pwHash, isArc, commencementYear, studentType, degreeType, floorGroup, isSuperAdmin))
+        curs.execute("INSERT INTO users(zid, firstName, lastName, password, isArc, commencementYear, studentType, degreeType, isSuperAdmin, activationStatus) values((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), False);", (zID, firstName, lastName, pwHash, isArc, commencementYear, studentType, degreeType, isSuperAdmin))
     except Exception as e:
         print(e)
         return "failed"

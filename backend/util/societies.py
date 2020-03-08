@@ -33,8 +33,7 @@ def createSocStaff(zID, societyID, role = 0):
     conn.close()
     return "success"
 
-def createSociety(zID = None, societyName = None):
-    # 20/19/2019: FIXME Change the function below to the UUID generator
+def createSociety(zID = None, societyName = None, isCollege = False):
     societyID = generateID(5).upper()
     conn = createConnection()
     curs = conn.cursor()
@@ -48,7 +47,7 @@ def createSociety(zID = None, societyName = None):
         return "exists already"
 
     try:
-        curs.execute("INSERT INTO society(societyID, societyName) VALUES ((%s), (%s));", (societyID, societyName,))
+        curs.execute("INSERT INTO society(societyID, societyName, isCollege) VALUES ((%s), (%s), (%s));", (societyID, societyName, isCollege,))
     except Exception as e:
         return "failed"
     conn.commit()
@@ -64,6 +63,29 @@ def createSociety(zID = None, societyName = None):
     for i in superAdmins:
         createSocStaff(i[0], societyID, 5)
     return societyID
+
+def isCollege(societyID):
+    conn = createConnection()
+    curs = conn.cursor()
+    try:
+        curs.execute("SELECT isCollege FROM society WHERE societyID = (%s);", (societyID,))
+    except Exception as e:
+        return "failed"
+    result = curs.fetchone()
+    return False if result is None else True
+
+def joinCollege(zID, societyID, floorGroup):
+    conn = createConnection()
+    curs = conn.cursor()
+    try:
+        curs.execute("INSERT INTO collegeUsers(societyID, zID, floorGroup) VALUES ((%s), (%s), (%s));", (societyID, zID, floorGroup))
+    except Exception as e:
+        conn.close()
+        return "failed"
+    conn.commit()
+    conn.close()
+    return "success"
+
 
 # TODO: Make a flask route for this
 def registerToSoc(zID, societyID):
