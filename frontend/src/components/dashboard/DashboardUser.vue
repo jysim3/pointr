@@ -18,7 +18,7 @@
 import { fetchAPI } from "@/util.js";
 import Loader from "@/components/Loader.vue";
 import DashboardEventView from "@/components/dashboard/DashboardEventView.vue";
-import EventSignEnterCode from "@/components/EventSignEnterCode.vue";
+import EventSignEnterCode from "@/components/eventSign/EventSignEnterCode.vue";
 export default {
   name: "DashboardUser",
   components: {
