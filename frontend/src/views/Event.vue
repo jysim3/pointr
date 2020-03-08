@@ -17,10 +17,10 @@
 </template>
 
 <script>
-import EventAttendance from "@/components/EventAttendance.vue";
-import EventQRCode from "@/components/EventQRCode.vue";
-import EventCodeDisplay from "@/components/EventCodeDisplay.vue";
-import EventAdminAttendance from "@/components/EventAdminAttendance.vue";
+import EventAttendance from "@/components/event/EventAttendance.vue";
+import EventQRCode from "@/components/event/EventQRCode.vue";
+import EventCodeDisplay from "@/components/event/EventCodeDisplay.vue";
+import EventAdminAttendance from "@/components/event/EventAdminAttendance.vue";
 import FormError from "@/components/FormError.vue";
 import { fetchAPI } from "@/util.js";
 

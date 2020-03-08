@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import EventAttendee from "@/components/EventAttendee.vue";
+import EventAttendee from "@/components/event/EventAttendee.vue";
 
 export default {
   name: "EventAttendance",
