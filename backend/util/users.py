@@ -1,19 +1,17 @@
-from util.utilFunctions import checkUser, createConnection
+from util.utilFunctions import checkUser, makeConnection
 from util.societies import makeSuperAdmin
 import hashlib
 
 # Creating a user 
 # 8/1/2020: TODO: To implement the login system, we need to store hashed passwords
 # if not auth_services.register_user(zID, password, name, isArc, commencementYear, studentType, degreeType):
-        
+
 # Potential returns:
 # 1. "Failed" on any psql error or if the user exists already
-def createUser(zID, firstName, lastName, password, isArc = True, commencementYear = 2020, studentType = "domestic", degreeType = "undergraduate", isSuperAdmin = False):
+@makeConnection
+def createUser(zID, firstName, lastName, password, isArc = True, commencementYear = 2020, studentType = "domestic", degreeType = "undergraduate", isSuperAdmin = False, conn = None, curs = None):
     password = str(password).encode('UTF-8')
     pwHash = hashlib.sha256(password).hexdigest()
-
-    conn = createConnection()
-    curs = conn.cursor()
 
     try:
         curs.execute("INSERT INTO users(zid, firstName, lastName, password, isArc, commencementYear, studentType, degreeType, isSuperAdmin, activationStatus) values((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), False);", (zID, firstName, lastName, pwHash, isArc, commencementYear, studentType, degreeType, isSuperAdmin))
@@ -28,9 +26,8 @@ def createUser(zID, firstName, lastName, password, isArc = True, commencementYea
         makeSuperAdmin(zID)
     return "success"
 
-def getUserInfo(zID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def getUserInfo(zID, conn = None, curs = None):
     try:
         curs.execute("SELECT firstName, lastName FROM users WHERE zID = (%s);", (zID,))
     except Exception as e:
@@ -63,11 +60,10 @@ def getUserInfo(zID):
         payload['events'].append(eventJSON)
     return payload
 
-def checkUserInfo(zID, password):
+@makeConnection
+def checkUserInfo(zID, password, conn = None, curs = None):
     password = hashlib.sha256(password.encode(encoding="utf-8")).hexdigest()
 
-    conn = createConnection()
-    curs = conn.cursor()
     curs.execute("SELECT * FROM users where zid = (%s) AND password = (%s);", (zID, password,))
     result = curs.fetchone()
     if result is None:
@@ -82,11 +78,10 @@ def checkUserInfo(zID, password):
 
 # return a list of events in the form of: [(points, eventID, eventName, date, societyName), (...)]
 # Get all the events attended by the user ever in every society
-def getUserAttendance(zid):
+@makeConnection
+def getUserAttendance(zid, conn = None, curs = None):
     if (checkUser(zid) == False):
         return {"status": "Failed"}
-    conn = createConnection()
-    curs = conn.cursor()
 
     curs.execute("select points, events.eventid, name, eventdate, isarcmember, societyName from events join participation on (events.eventid = participation.eventid) join host on (events.eventid = host.eventid) join society on (society.societyID = host.society) where participation.zid = (%s);", (zid,))
     results = curs.fetchall()
@@ -116,11 +111,11 @@ def getUserAttendance(zid):
     return payload
 
 # Get all the events in a society attended by a particular person
-def getPersonEventsForSoc(zID, societyID):
+@makeConnection
+def getPersonEventsForSoc(zID, societyID, conn = None, curs = None):
     if (checkUser(zID) == False):
         return "no such user"
-    conn = createConnection()
-    curs = conn.cursor()
+
     curs.execute("select firstName, lastName from users where zid = (%s);", (zID,))
     name = curs.fetchone()
     firstName = name[0]
@@ -158,16 +153,14 @@ def getPersonEventsForSoc(zID, societyID):
         payload['events'].append(eventJSON)
     return payload
 
-def checkArc(zID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def checkArc(zID, conn = None, curs = None):
     curs.execute("SELECT isArc FROM USERS WHERE zid = (%s);", (zID,))
     name = curs.fetchone()
     return True if name != [] else False
 
-def addActivationLink(zID, activationLink):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def addActivationLink(zID, activationLink, conn = None, curs = None):
     try:
         curs.execute("UPDATE users SET activationLink = (%s) WHERE zID = (%s);", (activationLink, zID,))
         conn.commit()
@@ -176,9 +169,8 @@ def addActivationLink(zID, activationLink):
         return "failed"
     return "success"
 
-def activateAccount(zID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def activateAccount(zID, conn = None, curs = None):
     # TODO: Remove the next 8 lines, already implemented in checkActivation
     try:
         curs.execute("SELECT activationStatus FROM users WHERE zID = (%s);", (zID,))
@@ -197,9 +189,8 @@ def activateAccount(zID):
     conn.commit()
     return "success"
 
-def checkActivation(zID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def checkActivation(zID, conn = None, curs = None):
     try:
         curs.execute("SELECT activationStatus FROM USERS WHERE zID = (%s);", (zID,))
     except Exception as e:
@@ -211,9 +202,8 @@ def checkActivation(zID):
         return False
     return result[0]
 
-def getInvolvedSocs(zID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def getInvolvedSocs(zID, conn = None, curs = None):
     try:
         curs.execute("SELECT societyID, societyName, role FROM userInSociety WHERE role = 0 AND zid = (%s);", (zID,))
         normalMember = curs.fetchall()
@@ -236,9 +226,8 @@ def getInvolvedSocs(zID):
         payload['staff'].append(currI)
     return payload
 
-def changePassword(zID, password):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def changePassword(zID, password, conn = None, curs = None):
 
     password = str(password).encode('UTF-8')
     pwHash = hashlib.sha256(password).hexdigest()
@@ -252,9 +241,8 @@ def changePassword(zID, password):
     conn.close()
     return "success"
 
-def deleteAccount(zID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def deleteAccount(zID, conn = None, curs = None):
 
     try:
         curs.execute("DELETE FROM users WHERE zID = (%s);", (zID,))

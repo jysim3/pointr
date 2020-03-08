@@ -28,10 +28,6 @@ Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\
     server.sendmail(sender_email, receiver_email, message)
 
 
-
-
-
-
 def sendForgotEmail(link, zID, emailToSend):
     port = 465  # For SSL
     smtp_server = "smtp.gmail.com"

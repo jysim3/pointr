@@ -1,7 +1,7 @@
 # Comment out the two lines below in production
 import sys
 sys.path.append('../')
-from util.utilFunctions import createConnection, checkUser, checkEvent
+from util.utilFunctions import checkUser, checkEvent, makeConnection
 from util.users import checkArc
 from util.events import getEventTimes
 from datetime import datetime
@@ -15,7 +15,8 @@ for counter in range(0, 12):
     weekDate[f'T1W{str(counter)}'] = str(week)
     week += relativedelta(days=7)
 
-def register(zID, eventID, time = None):
+@makeConnection
+def register(zID, eventID, time = None, conn = None, curs = None):
     if checkEvent(eventID) == False:
         return "Event does not exist"
 
@@ -24,9 +25,7 @@ def register(zID, eventID, time = None):
 
     isArc = checkArc(zID)
 
-    conn = createConnection()
-    curs = conn.cursor()
-    # NOTE: DEFAULTS TO THE CURRENT TIME, unless a time argument has been provided
+    # NOTE: @makeConnectiondefAULTS TO THE CURRENT TIME, unless a time argument has been provided
     # TODO: FIXME: If this is a multi-day event, we need to consider both eventdate and eventtime
     eventTimes = getEventTimes(eventID)
     if (eventTimes != None):
@@ -46,9 +45,9 @@ def register(zID, eventID, time = None):
     conn.close()
     return "success"
 
-def changePoints(zID, eventID, newPoints):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def changePoints(zID, eventID, newPoints, conn = None, curs = None):
+
     try:
         curs.execute("update participation set points=(%s) WHERE eventID=(%s) and zid=(%s)", (newPoints, eventID, zID,))
     except Exception as e:
@@ -57,9 +56,9 @@ def changePoints(zID, eventID, newPoints):
     conn.close()
     return "success"
 
-def deleteUserAttendance(zID, eventID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def deleteUserAttendance(zID, eventID, conn = None, curs = None):
+
     try:
         curs.execute("DELETE FROM participation WHERE zid=(%s) and eventid=(%s)", (zID, eventID,))
     except Exception as e:
@@ -71,9 +70,9 @@ def deleteUserAttendance(zID, eventID):
         return "failed"
     return "success"
 
-def checkParticipation(zID, eventID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def checkParticipation(zID, eventID, conn = None, curs = None):
+
     try:
         curs.execute("SELECT * FROM participation WHERE zid=(%s) and eventid=(%s)", (zID, eventID,))
     except Exception as e:
@@ -87,11 +86,11 @@ def checkParticipation(zID, eventID):
 # return a list of attendees in the form of: [(points, isArcMember, name, zid, time), (...)]
 # NOTE: isArcMember is bool, 0 == False, 1 == True
 # NOTE: Potentially we dont need to return the name of the user here
-def getAttendance(eventID):
+@makeConnection
+def getAttendance(eventID, conn = None, curs = None):
     if (checkEvent(eventID) == False):
         return "failed"
-    conn = createConnection()
-    curs = conn.cursor()
+
     try:
         curs.execute("SELECT name, eventdate, location, societyname, societyID FROM hostedEvents where eventID = (%s);", (eventID,))
     except Exception as e:
@@ -125,11 +124,11 @@ def getAttendance(eventID):
         payload['attendance'].append(personJSON)
     return payload
 
-def getAttendanceCSV(eventID):
+@makeConnection
+def getAttendanceCSV(eventID, conn = None, curs = None):
     if (checkEvent(eventID) == False):
         return "failed"
-    conn = createConnection()
-    curs = conn.cursor()
+
     try:
         curs.execute("SELECT isArcMember, users.zID, users.firstName, users.lastName, time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) JOIN USERS ON (PARTICIPATION.ZID = USERS.zID) WHERE events.eventID = (%s);", (eventID,))
     except Exception as e:
@@ -154,9 +153,9 @@ def getAttendanceCSV(eventID):
     conn.close()
     return path
 
-def getUpcomingEvents(zID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def getUpcomingEvents(zID, conn = None, curs = None):
+
     results = getUserSocieties(zID)
 
     payload = []
@@ -184,9 +183,9 @@ def getUpcomingEvents(zID):
     
     return payload
 
-def getUserSocieties(zID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def getUserSocieties(zID, conn = None, curs = None):
+
     try:
         curs.execute("SELECT societyID, societyName FROM userInSociety where zID = (%s) and role = 0;", (zID,))
     except Exception as e:
@@ -207,9 +206,8 @@ def getUserSocieties(zID):
 
 # TODO: Average Monthly/Weekly Attendance info (for one society)
 # NOTE: Accept two arguments, dataType must be in ['week', 'month'], inputting either will display the results of the calendar year 2020
-def averageAttendance(dateType, socID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def averageAttendance(dateType, socID, conn = None, curs = None):
 
     payload = {}
     for i in range(0, len(weekDate) - 1):
@@ -234,8 +232,10 @@ def averageAttendance(dateType, socID):
     return payload
     
 # TODO: Average Monthly/Weekly Attendance info (for one user)
-def main():
+'''
+@makeConnectiondef main():
     print(averageAttendance('week', '74DF2'))
 
 if __name__ == '__main__':
     main()
+'''

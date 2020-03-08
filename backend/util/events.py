@@ -1,4 +1,4 @@
-from util.utilFunctions import createConnection, checkUser, checkEvent, makeConnection
+from util.utilFunctions import checkUser, checkEvent, makeConnection
 from util.societies import findSocID
 from util.users import createUser
 from datetime import datetime
