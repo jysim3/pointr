@@ -1,4 +1,4 @@
-from util.utilFunctions import createConnection, checkUser
+from util.utilFunctions import checkUser, makeConnection
 import random
 import string
 
@@ -8,9 +8,8 @@ def generateID(number):
         id += random.choice(string.hexdigits)
     return id
 
-def findSocID(socName):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def findSocID(socName, conn, curs):
     try:
         curs.execute("SELECT societyID FROM society WHERE societyName = (%s);", (socName,))
     except Exception as e:
@@ -19,12 +18,11 @@ def findSocID(socName):
 
     return societyID
 
-def createSocStaff(zID, societyID, role = 0):
+@makeConnection
+def createSocStaff(zID, societyID, role = 0, conn = None, curs = None):
     if (zID == None or societyID == None):
         return "failed, insufficient inputs"
     # TODO: Check for society and zID existance
-    conn = createConnection()
-    curs = conn.cursor()
     try:
         curs.execute("INSERT INTO socstaff(society, zid, role) VALUES ((%s), (%s), (%s));", (societyID, zID, role,))
     except Exception as e:
@@ -33,11 +31,9 @@ def createSocStaff(zID, societyID, role = 0):
     conn.close()
     return "success"
 
-def createSociety(zID = None, societyName = None):
-    # 20/19/2019: FIXME Change the function below to the UUID generator
+@makeConnection
+def createSociety(zID = None, societyName = None, isCollege = False, conn = None, curs = None):
     societyID = generateID(5).upper()
-    conn = createConnection()
-    curs = conn.cursor()
     try:
         curs.execute("SELECT * FROM society WHERE societyName = (%s);", (societyName,))
     except Exception as e:
@@ -48,7 +44,7 @@ def createSociety(zID = None, societyName = None):
         return "exists already"
 
     try:
-        curs.execute("INSERT INTO society(societyID, societyName) VALUES ((%s), (%s));", (societyID, societyName,))
+        curs.execute("INSERT INTO society(societyID, societyName, isCollege) VALUES ((%s), (%s), (%s));", (societyID, societyName, isCollege,))
     except Exception as e:
         return "failed"
     conn.commit()
@@ -65,10 +61,30 @@ def createSociety(zID = None, societyName = None):
         createSocStaff(i[0], societyID, 5)
     return societyID
 
+@makeConnection
+def isCollege(societyID, conn, curs):
+    try:
+        curs.execute("SELECT isCollege FROM society WHERE societyID = (%s);", (societyID,))
+    except Exception as e:
+        return "failed"
+    result = curs.fetchone()
+    return False if result is None else True
+
+@makeConnection
+def joinCollege(zID, societyID, floorGroup, conn, curs):
+    try:
+        curs.execute("INSERT INTO collegeUsers(societyID, zID, floorGroup) VALUES ((%s), (%s), (%s));", (societyID, zID, floorGroup))
+    except Exception as e:
+        conn.close()
+        return "failed"
+    conn.commit()
+    conn.close()
+    return "success"
+
+
 # TODO: Make a flask route for this
-def registerToSoc(zID, societyID):
-    conn = createConnection()
-    curs = conn.cusor()
+@makeConnection
+def registerToSoc(zID, societyID, conn, curs):
     try:
         curs.execute("INSERT INTO socStaff(society, zid, role) VALUES (%s, %s, %s);", (societyID, zID, 0))
     except Exception as e:
@@ -76,9 +92,8 @@ def registerToSoc(zID, societyID):
     conn.commit()
     conn.close()
 
-def changeRole(zID, societyID, role):
-    conn = createConnection()
-    curs = conn.cusor()
+@makeConnection
+def changeRole(zID, societyID, role, conn, curs):
     try:
         curs.execute("update socstaff set role = (%s) WHERE society = (%s) and zid = (%s);", (role, societyID, zID,))
         conn.commit()
@@ -89,11 +104,9 @@ def changeRole(zID, societyID, role):
 
 # BELOW ARE ALL THE QUERY FUNCTIONS
 # Get all the events hosted by a society
-def getEventForSoc(societyID):
+@makeConnection
+def getEventForSoc(societyID, conn, curs):
     # 9/1/2020: TODO: Flask routing for this function
-    conn = createConnection()
-    curs = conn.cursor()
-
     try:
         curs.execute("SELECT societyName FROM society WHERE societyID = (%s);", (societyID,))
         name = curs.fetchone()
@@ -121,10 +134,8 @@ def getEventForSoc(societyID):
     conn.close()
     return payload
 
-def getAllSocs():
-    conn = createConnection()
-    curs = conn.cursor()
-
+@makeConnection
+def getAllSocs(conn, curs):
     try:
         curs.execute("SELECT societyName, societyID FROM society;")
     except Exception as e:
@@ -138,9 +149,8 @@ def getAllSocs():
         payload.append(currSoc)
     return payload
 
-def checkAdmin(socID, zID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def checkAdmin(socID, zID, conn, curs):
     try:
         curs.execute("SELECT * FROM userInSociety WHERE ZID = (%s) AND role = 1 AND societyID = (%s);", (zID, socID,))
     except Exception as e:
@@ -151,11 +161,10 @@ def checkAdmin(socID, zID):
     return True
 
 # Make this zID the admin of EVERY SOC IN OUR DB
-def makeSuperAdmin(zID):
+@makeConnection
+def makeSuperAdmin(zID, conn, curs):
     if (checkUser(zID) == False):
         return "no such user"
-    conn = createConnection()
-    curs = conn.cursor()
 
     allSocs = getAllSocs()
     for result in allSocs:
@@ -170,9 +179,8 @@ def makeSuperAdmin(zID):
     return "success"
 
 # Making this particular zID into a normal member
-def joinSoc(zID, socID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def joinSoc(zID, socID, conn, curs):
     try:
         curs.execute("SELECT * FROM socStaff WHERE society = (%s) and zID = (%s);", (socID, zID,))
         conn.commit()
@@ -197,10 +205,8 @@ def joinSoc(zID, socID):
 
 # Base user: socStaff -> Role -> 0, admin 1
 # FIXME: Check for if zID is already in socStaff table, if so update the table rather than insert
-def makeAdmin(zID, socID):
-    conn = createConnection()
-    curs = conn.cursor()
-
+@makeConnection
+def makeAdmin(zID, socID, conn, curs):
     try:
         curs.execute("SELECT * FROM SOCSTAFF WHERE zID = (%s) AND society = (%s);", (zID, socID,))
     except Exception as e:
@@ -227,9 +233,8 @@ def makeAdmin(zID, socID):
     return "success"
 
 # Check if a user is in a society, return True/False
-def checkUserInSoc(zID, socID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def checkUserInSoc(zID, socID, conn, curs):
 
     try:
         curs.execute("SELECT * FROM SOCSTAFF WHERE society = (%s) and zid = (%s);", (socID, zID,))
@@ -241,13 +246,12 @@ def checkUserInSoc(zID, socID):
     return True if results == [] else False
 
 # NOTE: Accepts a socID and a userType, returns a list of users or admins, accepts ["admin", "user"]
-def getAdminsForSoc(socID, userType = "admin"):
+@makeConnection
+def getAdminsForSoc(socID, userType = "admin", conn = None, curs = None):
     if (userType == "admin"):
         userType = 1
     else:
         userType = 0
-    conn = createConnection()
-    curs = conn.cursor()
 
     try:
         curs.execute("SELECT * FROM SOCSTAFF WHERE society = (%s) and role >= (%s) and role < 5;", (socID, userType,))
@@ -263,10 +267,8 @@ def getAdminsForSoc(socID, userType = "admin"):
     return payload
 
 # Returns either None (in case event doesn't exist), "Failed"(in case anything's fucked with the table) or socID(on success)
-def getSocIDFromEventID(eventID):
-    conn = createConnection()
-    curs = conn.cursor()
-
+@makeConnection
+def getSocIDFromEventID(eventID, conn, curs):
     try:
         curs.execute("SELECT society FROM host WHERE eventID = (%s);", ((eventID,)))
     except Exception as e:
@@ -277,10 +279,8 @@ def getSocIDFromEventID(eventID):
     return None if results is None else results[0]
 
 # NOTE: This is a superAdmin related function, this should ONLY be used in the backend
-def getSuperAdmins():
-    conn = createConnection()
-    curs = conn.cursor()
-
+@makeConnection
+def getSuperAdmins(conn, curs):
     try:
         curs.execute("SELECT zID FROM USERS WHERE isSuperAdmin = True;")
     except Exception as e:

@@ -8,9 +8,9 @@ CREATE TABLE IF NOT EXISTS users (
     commencementYear INTEGER,
     studentType TEXT,
     degreeType TEXT,
-    floorGroup TEXT,
     isSuperAdmin BOOLEAN NOT NULL,
     activationStatus BOOLEAN NOT NULL,
+    additionalInfomation JSON,
     primary key(zid)
 );
 -- drop TABLE IF EXISTS events CASCADE;
@@ -41,8 +41,10 @@ CREATE TABLE IF NOT EXISTS participation (
 CREATE TABLE IF NOT EXISTS society (
     societyID TEXT,
     societyName TEXT NOT NULL unique,
+    isCollege BOOLEAN NOT NULL,
     primary key (societyID)
 );
+-- NOTE: Perhaps we can add an additional collegeSocs field here for more college specific fields
 -- drop TABLE IF EXISTS host CASCADE;
 CREATE TABLE IF NOT EXISTS host (
     location TEXT,
@@ -56,6 +58,13 @@ CREATE TABLE IF NOT EXISTS socstaff (
     zid TEXT REFERENCES users(zid) ON DELETE CASCADE,
     role INTEGER NOT NULL,
     primary key (society, zid)
+);
+-- DROP TABLE IF EXISTS collegeUsers CASCADE;
+CREATE TABLE IF NOT EXISTS collegeUsers (
+    societyID TEXT REFERENCES society(societyID) ON DELETE CASCADE,
+    zID TEXT REFERENCES users(zID) ON DELETE CASCADE,
+    floorGroup TEXT NOT NULL,
+    primary key (societyID, zID)
 );
 
 create or replace view hostedEvents 

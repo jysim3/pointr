@@ -1,4 +1,4 @@
-from util.utilFunctions import createConnection, checkUser, checkEvent
+from util.utilFunctions import checkUser, checkEvent, makeConnection
 from util.societies import findSocID
 from util.users import createUser
 from datetime import datetime
@@ -38,9 +38,8 @@ def findWeek(date: datetime):
 
 
 # Creting an event (single instance events)
-def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = "A49C7", location = None, description = None, startTime = None, endTime = None):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = "A49C7", location = None, description = None, startTime = None, endTime = None, conn = None, curs = None):
 
     if (checkUser(zID) == False):
         return "no such user"
@@ -76,10 +75,8 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = "A
     # Example: startDate = 2020-01-30, endDate = 2020-05-30, recurType = "day", recurInterval = 14 
     # Example Cont.: The above indicates this event occurs every fortnightly starting with 30/1/2020 to 30/5/2020
 '''
-def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag = None, location = None, societyID = None, description = None, startTime = None, endTime = None):
-    conn = createConnection()
-    curs = conn.cursor()
-
+@makeConnection
+def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag = None, location = None, societyID = None, description = None, startTime = None, endTime = None, conn = None, curs = None):
     if (checkUser(zID) == False):
         conn.close()
         return "no such user"
@@ -140,12 +137,11 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
     return eventIDLists, True
 
 # Returns a set of attendance numbers for each events
-def fetchRecur(eventID):
+@makeConnection
+def fetchRecur(eventID, conn, curs):
     baseID = eventID[:5]
     print(baseID)
 
-    conn = createConnection()
-    curs = conn.cursor()
     curs.execute(f"select * from events where eventID like '{baseID}%';")
     results = curs.fetchall()
     payload = []
@@ -162,9 +158,8 @@ def fetchRecur(eventID):
     conn.close()
     return payload
 
-def getEventTimes(eventID):
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def getEventTimes(eventID, conn, curs):
 
     try:
         curs.execute("SELECT startTime, endTime FROM EVENTS WHERE EVENTID = (%s);", (eventID,))
@@ -174,9 +169,8 @@ def getEventTimes(eventID):
     result = curs.fetchall() 
     return result[0] if result != [] else None
 
-def getAllEvents():
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def getAllEvents(conn, curs):
 
     currentDate = datetime.now().date()
     currentDate = str(currentDate)
@@ -201,9 +195,8 @@ def getAllEvents():
         payload.append(eventJSON)
     return payload
 
-def getAllEventID():
-    conn = createConnection()
-    curs = conn.cursor()
+@makeConnection
+def getAllEventID(conn, curs):
 
     currentDate = datetime.now().date()
     currentDate = str(currentDate)
