@@ -27,7 +27,7 @@ def initDatabase():
     activateAccount("z5444444")
     createUser("z5555555", "Oltan", "Turk", "12345678")
     activateAccount("z5555555")
-    createUser("z5000000", "Super Admin Test Account", "0", "gangboss", True, 2017, "domestic", "undergraduate", True)
+    createUser("z5000000", "Super Admin Test Account", "0", "gangboss", isSuperAdmin=True)
     activateAccount("z5000000")
 
     #createSociety("z5111111", "Goldstein")

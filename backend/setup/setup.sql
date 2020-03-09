@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS collegeUsers (
     zID TEXT REFERENCES users(zID) ON DELETE CASCADE,
     floorGroup TEXT NOT NULL,
     primary key (societyID, zID)
-);
+)
 
 create or replace view hostedEvents 
 as select events.eventID, name, eventdate, location, societyname, societyID from events 
