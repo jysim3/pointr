@@ -13,18 +13,21 @@ from smtplib import SMTPConnectError, SMTPServerDisconnected
 # FIXME: Note that this file only exists on the server
 import csv
 zIDList = {}
-with open('../../hallZIDList.csv') as hallList:
-    csv_reader = csv.reader(hallList, delimiter=',')
-    line_count = 0
-    for row in csv_reader:
-        if line_count == 0:
-            line_count += 1
-            continue
-        name = row[0].strip()
-        floorGroup = row[1].strip()
-        if name == '':
-            continue
-        zIDList[name] = floorGroup
+try:
+    with open('zIDList.csv') as hallList:
+        csv_reader = csv.reader(hallList, delimiter=',')
+        line_count = 0
+        for row in csv_reader:
+            if line_count == 0:
+                line_count += 1
+                continue
+            name = row[0].strip()
+            floorGroup = row[1].strip()
+            if name == '':
+                continue
+            zIDList[name] = floorGroup
+except IOError:
+    print("This file is no longer avaliable on the repo, only server side")
 
 api = Namespace('auth', description='Authentication & Authorization Services')
 
