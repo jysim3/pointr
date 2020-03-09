@@ -150,6 +150,10 @@ export default {
   },
   methods: {
     submitSignUpForm() {
+      if (this.passwordsNotEqual) {
+        this.formErrorMessage = "Please check your entered password";
+        return
+      }
       fetchAPI("/api/auth/register", "POST", {
         zID: this.zID,
         firstName: this.userInfo.firstName,
@@ -168,13 +172,14 @@ export default {
             } else {
               this.$emit('registered', {zID: this.zID, name: this.userInfo.name})
             }
-          } else {
-            if (r.data.message["zID"]) {
+          } 
+      }).catch(r => {
+            console.log(r.response) //eslint-disable-line
+            if (r.response.data.message["zID"]) {
               this.formErrorMessage = "Please check your zID";
             } else {
               this.formErrorMessage = r.data.message;
             }
-          }
       })
     }
   }
