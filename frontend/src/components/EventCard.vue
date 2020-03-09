@@ -58,14 +58,21 @@ export default {
 } */
 .event-card {
   border: 3px solid var(--c-secondary-dark);
-  margin: 1rem 0;
+  margin: 1rem 0.5rem ;
   padding: 1rem 1rem 1.25rem 1rem;
   border-radius: var(--border-radius);
-  display: flex;
+  display: flexbox;
   flex-direction: column;
   align-items: flex-start;
   transition: 0.2s box-shadow;
   background: white;
+
+
+  flex: 0 0 auto;
+  white-space: nowrap;
+  max-width: 250px;
+  height: 100px;
+  overflow: hidden;
 }
 
 .event-card:hover {
