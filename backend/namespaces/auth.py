@@ -10,10 +10,10 @@ import pprint
 import uuid
 from smtplib import SMTPConnectError, SMTPServerDisconnected
 
-# FIXME: Delete this after the first time we need to sign users on
+# FIXME: Note that this file only exists on the server
 import csv
 zIDList = {}
-with open('zIDList.txt') as hallList:
+with open('../../hallZIDList.csv') as hallList:
     csv_reader = csv.reader(hallList, delimiter=',')
     line_count = 0
     for row in csv_reader:
