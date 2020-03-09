@@ -12,7 +12,7 @@ from smtplib import SMTPConnectError, SMTPServerDisconnected
 
 # FIXME: Delete this after the first time we need to sign users on
 import csv
-zIDList = []
+zIDList = {}
 with open('zIDList.txt') as hallList:
     csv_reader = csv.reader(hallList, delimiter=',')
     line_count = 0
@@ -20,8 +20,9 @@ with open('zIDList.txt') as hallList:
         if line_count == 0:
             line_count += 1
             continue
-        zIDList.append(row[0])
-print("this was called")
+        if row[0] == None:
+            continue
+        zIDList[row[0]] = row[1]
 
 api = Namespace('auth', description='Authentication & Authorization Services')
 
@@ -68,12 +69,11 @@ class Register(Resource):
         if (zID in zIDList):
             socID = societies.findSocID("UNSW Hall")
             results = societies.joinSoc(zID, socID)
-            resultsForJoin = "success" # TODO: FIXME WHEN THE FLOORGROUP LIST IS UPLOADED
+            resultsForJoin = "success" 
             isCol = societies.isCollege(socID)
             if (isCol == True):
-                # TODO: Check for floorgroups of the zID
-                resultsForJoin = "success"
-                #resultsForJoin = societies.joinCollege(zID, socID) # TODO: Doesn't work right now, add in floorgroup check
+                floorGroup = zIDList[zID]
+                resultsForJoin = societies.joinCollege(zID, socID, floorGroup) 
             if results != "success" or resultsForJoin != "success":
                 return jsonify({"status": "kind of success", "msg": "Account created but could not join UNSW Hall"})
 
