@@ -20,9 +20,11 @@ with open('zIDList.txt') as hallList:
         if line_count == 0:
             line_count += 1
             continue
-        if row[0] == None:
+        name = row[0].strip()
+        floorGroup = row[1].strip()
+        if name == '':
             continue
-        zIDList[row[0]] = row[1]
+        zIDList[name] = floorGroup
 
 api = Namespace('auth', description='Authentication & Authorization Services')
 
