@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS society (
     societyID TEXT,
     societyName TEXT NOT NULL unique,
     isCollege BOOLEAN NOT NULL,
+    additionalInfomation JSON,
     primary key (societyID)
 );
 -- NOTE: Perhaps we can add an additional collegeSocs field here for more college specific fields
@@ -65,7 +66,7 @@ CREATE TABLE IF NOT EXISTS collegeUsers (
     zID TEXT REFERENCES users(zID) ON DELETE CASCADE,
     floorGroup TEXT NOT NULL,
     primary key (societyID, zID)
-)
+);
 
 create or replace view hostedEvents 
 as select events.eventID, name, eventdate, location, societyname, societyID from events 
