@@ -9,6 +9,7 @@
       :value="password"
       @input="$emit('input', $event.target.value)"
       type="password"
+      :validity="isPasswordValid"
       required
     />
   </div>
@@ -25,16 +26,29 @@ export default {
     password: {
       type: String,
       required: true
+    },
+    repeatPassword: {
+      type: String,
+      required: false
     }
   },
   computed: {
     isPasswordValid() {
+      if (this.repeatPassword){
+        console.log(this.repeatPassword) //eslint-disable-line
+        console.log(this.repeatPassword !== this.password) //eslint-disable-line
+
+      }
       // If nothing in input then don't make it invalid
       if (this.password.length === 0) {
         return true;
       }
       // Current requirements is at least 8 characters. Must be less than 256 characters.
-      if (this.password.legnth < 8 || this.password.length > 256) {
+      if (
+        this.password.length < 8 || 
+        this.password.length > 256 ||
+        (this.repeatPassword && 
+        this.repeatPassword !== this.password)) {
         return false;
       }
 
