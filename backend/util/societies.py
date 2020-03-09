@@ -225,7 +225,6 @@ def makeAdmin(zID, socID, conn, curs):
             curs.execute("INSERT INTO SOCSTAFF(society, zid, role) VALUES ((%s), (%s), (%s));", (socID, zID, 1,))
             conn.commit()
         except Exception as e:
-            print(e)
             conn.close()
             return "failed"
 
