@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="dashboard-wrapper">
     <div id="upcoming-events-filter">
       <h2>Upcoming events for </h2>
       <select class="input--select select--admin" v-model="selectedUpcomingEventsSociety" name="society-select">
