@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
     degreeType TEXT,
     isSuperAdmin BOOLEAN NOT NULL,
     activationStatus BOOLEAN NOT NULL,
+    additionalInfomation JSON,
     primary key(zid)
 );
 -- drop TABLE IF EXISTS events CASCADE;
