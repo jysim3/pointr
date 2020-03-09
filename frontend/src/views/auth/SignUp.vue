@@ -13,8 +13,8 @@
       <InputPassword
         v-model="repeatPassword"
         :password="repeatPassword"
+        :repeatPassword="password"
         :label="'Repeat password'"
-        :class="{ 'input--invalid': passwordsNotEqual }"
       />
       <!-- TODO: fix :class on repeatPassword input -->
       <label class="label">Year began study</label>
