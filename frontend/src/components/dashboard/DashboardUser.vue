@@ -1,7 +1,7 @@
 <template>
   <div>
     <EventSignEnterCode />
-    <div class="event-lists">
+    <div id="dashboard-wrapper">
       <Loader v-if="upcomingEvents.isLoading" />
       <DashboardEventView
         v-else
@@ -58,11 +58,6 @@ export default {
 </script>
 
 <style>
-.event-lists {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
 /* hr {
   margin-top: 40px;
   margin: 40px;
