@@ -1,10 +1,11 @@
 __pycache__
-*.db
 *.swp
-test.py
 */__pycache__
 env
 venv
 node_modules
 filesChanged
 UNSW-Hall_zID.csv
+zIDList.csv
+csvFiles
+test.py

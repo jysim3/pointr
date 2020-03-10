@@ -47,7 +47,7 @@ def initDatabase():
     event5 = createSingleEvent("z5222222", generateID(), "Assassin's week", "2020-03-01", True, findSocID("UNSW Hall"), "UNSW Hall", None, "12:30", "20:30")
     '''
 
-    event5 = createRecurrentEvent("z5222222", generateID(), "Coffee Night", "2020-03-11", "2020-04-20", 7, "day", False, "UNSW Hall", findSocID("UNSW Hall"), "Weekly Wednesday gathering for UNSW Hall")
+    event5 = createRecurrentEvent("z5222222", generateID(), "Coffee Night", "2020-03-11", "2020-04-20", 7, "day", False, "UNSW Hall T4 Ground Floor Commo", findSocID("UNSW Hall"), "Weekly Wednesday gathering for UNSW Hall", "19:30")
 
     # register users:
     '''

@@ -10,7 +10,7 @@ import pprint
 import uuid
 from smtplib import SMTPConnectError, SMTPServerDisconnected
 
-# FIXME: Note that this file only exists on the server
+# NOTE: Note that this file only exists on the server
 import csv
 zIDList = {}
 try:
