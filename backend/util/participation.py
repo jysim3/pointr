@@ -187,7 +187,7 @@ def getUpcomingEvents(zID, conn = None, curs = None):
 def getUserSocieties(zID, conn = None, curs = None):
 
     try:
-        curs.execute("SELECT societyID, societyName FROM userInSociety where zID = (%s) and role = 0;", (zID,))
+        curs.execute("SELECT societyID, societyName FROM userInSociety where zID = (%s);", (zID,))
     except Exception as e:
         #print(e)
         return "failed"
