@@ -211,6 +211,7 @@ def makeAdmin(zID, socID, conn, curs):
         curs.execute("SELECT * FROM SOCSTAFF WHERE zID = (%s) AND society = (%s);", (zID, socID,))
     except Exception as e:
         conn.close()
+        print(e)
         return "failed"
     result = curs.fetchone()
     if (result is not None):
@@ -218,6 +219,7 @@ def makeAdmin(zID, socID, conn, curs):
             curs.execute("UPDATE SOCSTAFF SET ROLE = 1 WHERE zID = (%s) AND society = (%s);", (zID, socID,))
             conn.commit()
         except Exception as e:
+            print(e)
             conn.close()
             return "failed"
     else:
@@ -226,6 +228,7 @@ def makeAdmin(zID, socID, conn, curs):
             conn.commit()
         except Exception as e:
             conn.close()
+            print(e)
             return "failed"
 
     conn.close()
