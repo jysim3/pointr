@@ -175,10 +175,10 @@ def getAllEvents(conn, curs):
     currentDate = datetime.now().date()
     currentDate = str(currentDate)
     try:
-        curs.execute("SELECT eventID, name, eventDate, location, societyName, societyID, startTime FROM hostedEvents WHERE eventDate >= (%s) ORDER BY eventDate;", (currentDate, ))
+        curs.execute("SELECT eventID, name, eventDate, location, societyName, societyID FROM hostedEvents WHERE eventDate >= (%s) ORDER BY eventDate;", (currentDate, ))
     except Exception as e:
         return None
-    
+
     results = curs.fetchall()
     if results == []:
         return None
@@ -192,7 +192,6 @@ def getAllEvents(conn, curs):
         eventJSON['location'] = result[3]
         eventJSON['societyName'] = result[4]
         eventJSON['societyID'] = result[5]
-        eventJSON['startTime'] = result[6]
         payload.append(eventJSON)
     return payload
 
