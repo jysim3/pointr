@@ -134,7 +134,7 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
     conn.commit()
     conn.close()
 
-    return eventIDLists, True
+    return eventIDLists[0]["eventID"], True
 
 # Returns a set of attendance numbers for each events
 @makeConnection

@@ -196,7 +196,7 @@ def checkActivation(zID, conn = None, curs = None):
     except Exception as e:
         conn.close()
         return False
-    
+
     result = curs.fetchone()
     if (result is None):
         return False
