@@ -120,7 +120,8 @@ class Attend(Resource):
         zID = token_data['zID']
         if ('eventID' not in data):
             abort(400, "Malformed Request")
-        time = utilFunctions.getAESTTime()
+        #time = utilFunctions.getAESTTime()
+        time = datetime.now()
         status = participation.register(zID, sanitize(data['eventID']), time)
         if (status != "success"):
             abort(403, "Attendance registration currently not possible for this event")
