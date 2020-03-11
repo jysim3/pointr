@@ -175,7 +175,7 @@ def getAllEvents(conn, curs):
     currentDate = datetime.now().date()
     currentDate = str(currentDate)
     try:
-        curs.execute("SELECT eventID, name, eventDate, location, societyName, societyID FROM hostedEvents WHERE eventDate >= (%s);", (currentDate, ))
+        curs.execute("SELECT eventID, name, eventDate, location, societyName, societyID FROM hostedEvents WHERE eventDate >= (%s) ORDER BY eventDate;", (currentDate, ))
     except Exception as e:
         return None
     
