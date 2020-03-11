@@ -37,11 +37,7 @@ export default {
   },
   methods: {
     submitEventCodeForm() {
-      if (this.allEventID.includes(this.eventID)) {
-        this.$router.push({ name: "eventSign", params: { eventID: this.eventID } });
-      } else {
-        this.formErrorMessage = "Looks like we couldn't find that event."
-      }
+      this.$router.push({ name: "eventSign", params: { eventID: this.eventID } });
     }
   }
 };
