@@ -24,6 +24,9 @@
           <option value="week">Every Week</option>
           <option value="month">Every Month</option>
         </select>
+        
+        <label class="label" v-if="repeat" for>End Date</label>
+        <input class="input" v-if="repeat" v-model="endDate" type="date" required />
         <label class="label" for>Set default points</label>
         <input class="input" v-model="point" type="number" min="0" required />
         <label class="label" for>Show QR Code/Event link</label>
@@ -65,10 +68,12 @@ export default {
         socID: this.society
       };
       if (this.repeat !== "") {
-        data.endDate = "2020-04-04";
-        data.recurType = "day";
+        data.endDate = this.endDate;
+        data.recurType = this.repeat;
         data.recurInterval = 6;
-        data.isRecur = "True";
+        data.isRecur = 1;
+      } else {
+        data.isRecur = 0;
       }
 
       //  const data = {
