@@ -211,7 +211,7 @@ def averageAttendance(dateType, socID, conn = None, curs = None):
 
     payload = {}
     for i in range(0, len(weekDate) - 1):
-        curs.execute("SELECT * FROM events JOIN host ON (host.eventID = events.eventID) WHERE eventDate > (%s) and eventDate < (%s) and society = (%s);", (weekDate[f'T1W{str(i)}'], weekDate[f'T1W{str(i + 1)}'], socID,))
+        curs.execute("SELECT * FROM events JOIN host ON (host.eventID = events.eventID) WHERE eventDate >= (%s) and eventDate < (%s) and society = (%s);", (weekDate[f'T1W{str(i)}'], weekDate[f'T1W{str(i + 1)}'], socID,))
         #conn.commit()
         results = curs.fetchall()
         currPayload = []

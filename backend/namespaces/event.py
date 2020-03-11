@@ -5,6 +5,7 @@ from util import events, participation, utilFunctions, auth_services, societies,
 from util.sanitisation_services import sanitize
 from datetime import datetime
 import uuid
+from dateutil import tz
 
 api = Namespace('event', description='Event Management Services')
 
@@ -120,6 +121,10 @@ class Attend(Resource):
         if ('eventID' not in data):
             abort(400, "Malformed Request")
         time = datetime.now()
+        fromZone = tz.gettz('UTC')
+        toZone = tz.gettz('Australia/Sydney')
+        time = time.replace(tzinfo=fromZone)
+        time = time.astimezone(toZone)
         status = participation.register(zID, sanitize(data['eventID']), time)
         if (status != "success"):
             abort(403, "Attendance registration currently not possible for this event")
