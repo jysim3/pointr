@@ -16,7 +16,7 @@ for counter in range(0, 12):
     week += relativedelta(days=7)
 
 @makeConnection
-def register(zID, eventID, time = None, conn = None, curs = None):
+def register(zID, eventID, time, conn = None, curs = None):
     if checkEvent(eventID) == False:
         return "Event does not exist"
 
@@ -27,6 +27,7 @@ def register(zID, eventID, time = None, conn = None, curs = None):
 
     # NOTE: @makeConnectiondefAULTS TO THE CURRENT TIME, unless a time argument has been provided
     # TODO: FIXME: If this is a multi-day event, we need to consider both eventdate and eventtime
+    '''
     eventTimes = getEventTimes(eventID)
     if (eventTimes != None):
         startTime, endTime = eventTimes[0], eventTimes[1]
@@ -36,8 +37,9 @@ def register(zID, eventID, time = None, conn = None, curs = None):
         elif (startTime != None):
             if (datetime.now().time() < startTime):
                 return "Event hasn't started yet"
+    '''
     try:
-        curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, datetime.now() if time == None else time))
+        curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, time,))
     except Exception as e:
         print(e)
         return "failed"
