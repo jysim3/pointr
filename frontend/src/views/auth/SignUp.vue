@@ -129,6 +129,9 @@ export default {
     this.userInfo.commencmentYear = this.currentYear;
   },
   computed: {
+    passwordTooShort() {
+      return this.password.length < 8
+    },
     passwordsNotEqual() {
       // Only want to make input invalid after user has started typing
       if (!this.repeatPassword) {
@@ -150,7 +153,10 @@ export default {
   },
   methods: {
     submitSignUpForm() {
-      if (this.passwordsNotEqual) {
+      if (this.passwordTooShort) {
+
+        this.formErrorMessage = "Entered password must be eight characters.";
+      } else if (this.passwordsNotEqual) {
         this.formErrorMessage = "Please check your entered password";
         return
       }
