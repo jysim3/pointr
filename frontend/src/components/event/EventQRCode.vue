@@ -10,16 +10,19 @@ import QRCode from "qrcode";
 export default {
   name: "EventQRCode",
   props: {
-    eventID: String
+    eventID: {
+      type: String,
+      required: true
+    }
   },
   mounted() {
     // Generating and adding QRCode to canvas
     const canvas = document.getElementById("qr-canvas")
-    const url = `${window.location.host}/sign/${this.eventID}`
+    const url = window.location.href;
+    
     QRCode.toCanvas(canvas, url);
     canvas.style.height = '20rem'
     canvas.style.width = '20rem'
-    // console.log(url) //eslint-disable-line
   }
 };
 </script>
