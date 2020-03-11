@@ -120,11 +120,12 @@ class Attend(Resource):
         zID = token_data['zID']
         if ('eventID' not in data):
             abort(400, "Malformed Request")
-        time = datetime.now()
         fromZone = tz.gettz('UTC')
+        time = datetime.now(tz=fromZone)
+        #print(time)
         toZone = tz.gettz('Australia/Sydney')
-        time = time.replace(tzinfo=fromZone)
         time = time.astimezone(toZone)
+        #print(time)
         status = participation.register(zID, sanitize(data['eventID']), time)
         if (status != "success"):
             abort(403, "Attendance registration currently not possible for this event")
