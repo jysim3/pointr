@@ -177,7 +177,7 @@ def getUpcomingEvents(zID, conn = None, curs = None):
             eventJSON = {}
             eventJSON['eventID'] = i[0]
             eventJSON['name'] = i[1]
-            eventJSON['eventDate'] = i[2]
+            eventJSON['eventDate'] = str(i[2])
             eventJSON['location'] = i[3]
             eventJSON['societyID'] = soc['societyID']
             eventJSON['societyName'] = soc['societyName']
@@ -192,6 +192,7 @@ def getUserSocieties(zID, conn = None, curs = None):
         curs.execute("SELECT societyID, societyName FROM userInSociety where zID = (%s);", (zID,))
     except Exception as e:
         #print(e)
+        conn.close()
         return "failed"
     results = curs.fetchall()
 
@@ -202,6 +203,33 @@ def getUserSocieties(zID, conn = None, curs = None):
         societyJSON['societyName'] = society[1]
         payload.append(societyJSON)
 
+    return payload
+
+@makeConnection
+def getUserParticipation(zID, socID = None, conn = None, curs = None):
+    try:
+        if socID == None:
+            curs.execute("SELECT eventID, name, eventDate, location, societyName, societyID FROM userParticipatedEvents WHERE zid = (%s) ORDER BY eventDate DESC;", (zID,))
+        else:
+            curs.execute("SELECT eventID, name, eventDate, location, societyName, societyID FROM userParticipatedEvents WHERE zid = (%s) AND societyID = (%s) ORDER BY eventDate DESC;", (zID, socID,))
+    except Exception as e:
+        conn.close()
+        return None
+
+    results = curs.fetchall()
+    if (results == []):
+        return None
+
+    payload = []
+    for event in results:
+        eventJSON = {}
+        eventJSON['eventID'] = event[0]
+        eventJSON['name'] = event[1]
+        eventJSON['eventDate'] = str(event[2])
+        eventJSON['location'] = event[3]
+        eventJSON['societyName'] = event[4]
+        eventJSON['societyID'] = event[5]
+        payload.append(eventJSON)
     return payload
 
 # TODO: Average Monthly/Weekly Attendance info (for recurring events)

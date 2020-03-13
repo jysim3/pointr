@@ -188,7 +188,7 @@ def getAllEvents(conn, curs):
         eventJSON = {}
         eventJSON['eventID'] = result[0]
         eventJSON['name'] = result[1]
-        eventJSON['eventDate'] = result[2]
+        eventJSON['eventDate'] = str(result[2])
         eventJSON['location'] = result[3]
         eventJSON['societyName'] = result[4]
         eventJSON['societyID'] = result[5]
@@ -219,7 +219,7 @@ def getPastEvents(socID, conn, curs):
     currentDate = datetime.now().date()
     currentDate = str(currentDate)
     try:
-        curs.execute("SELECT eventID, name, eventDate, location, societyName, societyID FROM hostedEvents WHERE eventdate < (%s) AND societyID = (%s);", (currentDate, socID,))
+        curs.execute("SELECT eventID, name, eventDate, location, societyName, societyID FROM hostedEvents WHERE eventdate < (%s) AND societyID = (%s) ORDER BY eventDate DESC;", (currentDate, socID,))
     except Exception as e:
         return None
 
@@ -232,7 +232,7 @@ def getPastEvents(socID, conn, curs):
         eventJSON = {}
         eventJSON['eventID'] = result[0]
         eventJSON['name'] = result[1]
-        eventJSON['eventDate'] = result[2]
+        eventJSON['eventDate'] = str(result[2])
         eventJSON['location'] = result[3]
         eventJSON['societyName'] = result[4]
         eventJSON['societyID'] = result[5]

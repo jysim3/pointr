@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from flask_restx import Namespace, Resource, abort, reqparse
 from util.sanitisation_services import sanitize
-from util import societies, utilFunctions, auth_services
+from util import societies, utilFunctions, auth_services, events
 from util.validation_services import validate_args_with, validate_with
 from schemata.soc_schemata import SocietyIDAndZIDSchema, SocietyIDSchema
 import pprint
@@ -46,15 +46,20 @@ class Society(Resource):
     @api.doc(description='''
         Allows an superadmin (i.e. acounts with clearance level >= 2)
     ''')
-    @auth_services.check_authorization(level=2)
+    @auth_services.check_authorization(level=1)
     #@validate_args_with(SocietyIDAndZIDSchema)
     @api.param('societyID', description='ID of the queried society', type='String', required='True')
     @api.param('zID', description='ID of the target account', type='String', required='True')
 
-    def post(self, token_data, args_data):
+    def post(self, token_data):
+        authorzID = token_data['zID']
         parametres = request.get_json()
         zID = parametres['zID'] if 'zID' in parametres else abort (400, "Malformed Request")
         societyID = parametres['societyID'] if 'societyID' in parametres else abort (400, "Malformed Request")
+        # First check if the token zid is an admin of the soc
+        isAdmin = societies.checkAdmin(societyID, zID)
+        if isAdmin == False:
+            abort(405, "Not an admin for this particular society, unable to process request")
         result = societies.makeAdmin(zID, societyID)
 
         if (result == "failed"):
@@ -121,3 +126,12 @@ class Staff(Resource):
     def delete(self):
         #TODO
         pass
+
+@api.route("/getPastEvents")
+class getPast(Resource):
+    def get(self):
+        socID = request.args.get('socID')
+        if socID == None:
+            abort(400, "Can't find socID")
+        results = events.getPastEvents(socID)
+        return jsonify(results)
