@@ -11,3 +11,16 @@ api | file | details
 --- | ---- | ---
 POST `/api/soc/makeAdmin` | namespaces/soc.py | now accepts a level 1 authorisation token instead of a superadmin token, changed possible error codes)
 `check_authorization()` | util/validation_services.py | no longer tries to load request.args into the AuthSchema and attempt validation
+
+## 15/03/2020
+### Changed
+
+api | file | details
+--- | ---- | ---
+GET `/api/soc` | namespaces/soc.py | Changed output JSON format to match the rest of the events API output format (i.e. eventID, name, eventDate, location, societyID, societyName)
+
+### In-Progress
+
+api | file | details
+--- | ---- | ---
+    | APIDOC.md   | Started work on an API documentation file

@@ -25,7 +25,6 @@ class userSocieties(Resource):
     def get(self):
         zID = request.args.get('zID')
         results = participation.getUserSocieties(zID)
-        print(results)
         if (isinstance(results, str) == True):
             abort(400, "Malformed Request")
         return jsonify({"status": "success", "message": results})

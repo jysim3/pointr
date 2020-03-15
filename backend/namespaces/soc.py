@@ -16,11 +16,12 @@ class Society(Resource):
         Get all of the events hosted by a society
     ''')
     @auth_services.check_authorization(level=1)
-    @validate_args_with(SocietyIDSchema)
     @api.param('societyID', description='ID of the queried society', type='String', required='True')
-    def get(self, token_data, args_data):
+    def get(self, token_data):
+        societyID = request.args.get("societyID")
+        if societyID == None: abort(400, "Malformed Request")
                 
-        eventsList = societies.getEventForSoc(args_data['societyID'])
+        eventsList = societies.getEventForSoc(societyID)
         
         if (eventsList == "No such society"):
             return jsonify({"status": "Failed", "msg": "No such society"})

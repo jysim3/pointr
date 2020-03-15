@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS socstaff (
     society TEXT REFERENCES society(societyID) ON DELETE CASCADE,
     zid TEXT REFERENCES users(zid) ON DELETE CASCADE,
     role INTEGER NOT NULL,
+    additionalInfomation JSON,
     primary key (society, zid)
 );
 -- DROP TABLE IF EXISTS collegeUsers CASCADE;
