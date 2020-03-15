@@ -1,26 +1,31 @@
 <template>
   <div class="event-view">
-    <!-- It is possible that EventCard might be updated without a reload, 
-    it's much more likely that the eventViewTitle will not change, just the data being passed to it. -->
-    <div class="event-view-title">
-      <h2 class="event-view-title-text" v-once>{{ eventViewTitle }}</h2>
-      <a class="event-view-more" @click="viewAllData = !viewAllData"
-        >View {{viewAllData ? 'less' : 'more'}}</a>
+    <div v-if="eventData">
+      <!-- It is possible that EventCard might be updated without a reload, 
+      it's much more likely that the eventViewTitle will not change, just the data being passed to it. -->
+      <div class="event-view-title">
+        <h2 class="event-view-title-text" v-once>{{ eventViewTitle }}</h2>
+        <a class="event-view-more" @click="viewAllData = !viewAllData"
+          >View {{viewAllData ? 'less' : 'more'}}</a>
+      </div>
+      <div class="event-cards " :class="viewAllData ? 'viewAllCards' : ''">
+        <EventCard v-for="(event, index) in showEventData" :key="index" :eventData="event"></EventCard>
+        
+      </div>
     </div>
-    <div class="event-cards " :class="viewAllData ? 'viewAllCards' : ''">
-      <EventCard v-for="(event, index) in showEventData" :key="index" :eventData="event"></EventCard>
+    <FormError v-else msg="Seems like there is no events at the moment"/> 
       
-    </div>
   </div>
 </template>
 
 <script>
 import EventCard from "@/components/EventCard.vue";
+import FormError from "@/components/FormError.vue";
 
 export default {
   name: "DashboardEventView",
   components: {
-    EventCard
+    EventCard, FormError
   },
   props: {
     eventViewTitle: {
@@ -29,7 +34,6 @@ export default {
     },
     eventData: {
       type: Array,
-      required: true
     }
   },
   data() {
@@ -39,6 +43,9 @@ export default {
   },
   computed: {
     showEventData() {
+      if (!this.eventData) {
+        return []
+      }
       if (this.viewAllData) {
         return this.eventData
       } else {
@@ -55,6 +62,7 @@ export default {
 .event-view {
   width: 80%;
   margin: auto;
+  padding-top: 4rem;
 }
 .event-cards {
 
@@ -72,11 +80,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-
 }
 .event-view-title-text {
-  margin-top: 4rem;
+  margin-top: 0;
 }
 .viewAllCards{
 
