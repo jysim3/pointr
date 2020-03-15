@@ -167,7 +167,8 @@ def getUpcomingEvents(zID, conn = None, curs = None):
 
     today = str(datetime.now().date())
     for soc in results:
-        curs.execute("SELECT eventid, name, eventdate, location FROM hostedEvents WHERE societyid = (%s) AND eventDate >= (%s) ORDER BY eventDATE;", (soc[0], today,))
+        print(soc)
+        curs.execute("SELECT eventid, name, eventdate, location FROM hostedEvents WHERE societyid = (%s) AND eventDate >= (%s) ORDER BY eventDATE;", (soc['societyID'], today,))
         result = curs.fetchall()
 
         if result == []:
@@ -179,8 +180,8 @@ def getUpcomingEvents(zID, conn = None, curs = None):
             eventJSON['name'] = i[1]
             eventJSON['eventDate'] = str(i[2])
             eventJSON['location'] = i[3]
-            eventJSON['societyID'] = soc[0]
-            eventJSON['societyName'] = soc[1]
+            eventJSON['societyID'] = soc['societyID']
+            eventJSON['societyName'] = soc['societyName']
             payload.append(eventJSON)
     
     return payload
