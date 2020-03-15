@@ -42,6 +42,7 @@ def register(zID, eventID, time, conn = None, curs = None):
         curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, time,))
     except Exception as e:
         print(e)
+        conn.close()
         return "failed"
     conn.commit()
     conn.close()
@@ -53,6 +54,8 @@ def changePoints(zID, eventID, newPoints, conn = None, curs = None):
     try:
         curs.execute("update participation set points=(%s) WHERE eventID=(%s) and zid=(%s)", (newPoints, eventID, zID,))
     except Exception as e:
+        print(e)
+        conn.close()
         return "failed"
     conn.commit()
     conn.close()
@@ -64,6 +67,8 @@ def deleteUserAttendance(zID, eventID, conn = None, curs = None):
     try:
         curs.execute("DELETE FROM participation WHERE zid=(%s) and eventid=(%s)", (zID, eventID,))
     except Exception as e:
+        print(e)
+        conn.close()
         return "failed"
     conn.commit()
     error = curs.fetchone()
@@ -78,6 +83,8 @@ def checkParticipation(zID, eventID, conn = None, curs = None):
     try:
         curs.execute("SELECT * FROM participation WHERE zid=(%s) and eventid=(%s)", (zID, eventID,))
     except Exception as e:
+        print(e)
+        conn.close()
         return False
 
     rows = curs.fetchall()
@@ -167,7 +174,7 @@ def getUpcomingEvents(zID, conn = None, curs = None):
 
     today = str(datetime.now().date())
     for soc in results:
-        curs.execute("SELECT eventid, name, eventdate, location FROM hostedEvents WHERE societyid = (%s) AND eventDate >= (%s) ORDER BY eventDATE;", (soc[0], today,))
+        curs.execute("SELECT eventid, name, eventdate, location FROM hostedEvents WHERE societyid = (%s) AND eventDate >= (%s) ORDER BY eventDATE;", (soc['societyID'], today,))
         result = curs.fetchall()
 
         if result == []:
@@ -179,8 +186,8 @@ def getUpcomingEvents(zID, conn = None, curs = None):
             eventJSON['name'] = i[1]
             eventJSON['eventDate'] = str(i[2])
             eventJSON['location'] = i[3]
-            eventJSON['societyID'] = soc[0]
-            eventJSON['societyName'] = soc[1]
+            eventJSON['societyID'] = soc['societyID']
+            eventJSON['societyName'] = soc['societyName']
             payload.append(eventJSON)
     
     return payload
@@ -191,7 +198,7 @@ def getUserSocieties(zID, conn = None, curs = None):
     try:
         curs.execute("SELECT societyID, societyName FROM userInSociety where zID = (%s);", (zID,))
     except Exception as e:
-        #print(e)
+        print(e)
         conn.close()
         return "failed"
     results = curs.fetchall()
