@@ -60,6 +60,15 @@ def getAESTTime():
     time = utc.astimezone(toZone)
     return time
 
+def callQuery(query, conn, curs, *args):
+    try:
+        curs.execute(query, *args)
+    except (Exception, psycopg2.DatabaseError) as e:
+        print(e)
+        conn.close()
+        return False
+    return True
+
 # General utilities functions
 # Accepts either a date in the form of "YYYY-MM-DD", or a week in the form of "T[1-3]W[1-10]", or a month in the range of [1-12]
 def onThisDay(interval, intervalType, socID = None):
