@@ -1,7 +1,11 @@
 import axios from "axios";
 import store from "@/store/index";
 
-const apiURL = 'https://pointr.live';
+let apiURL;
+apiURL = 'https://pointr.live';
+if (process.env.NODE_ENV === 'development'){
+    apiURL = 'http://localhost:5000';
+}
 
 export async function fetchAPI(url, method, data) {
     const headers = {}
