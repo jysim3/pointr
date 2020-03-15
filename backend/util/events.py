@@ -236,3 +236,27 @@ def getPastEvents(socID, conn, curs):
         payload.append(eventJSON)
     conn.close()
     return payload
+
+@makeConnection
+def getAllUpcomingEvents(conn, curs):
+    currentDate = datetime.now().date()
+    currentDate = str(currentDate)
+    results = callQuery("SELECT eventID, name, eventDate, location, societyName, societyID FROM hostedEvents WHERE eventdate >= (%s);", conn, curs, (currentDate, ))
+    if (results == False): return None
+
+    results = curs.fetchall()
+    if results == []:
+        return None
+
+    payload = []
+    for result in results:
+        eventJSON = {}
+        eventJSON['eventID'] = result[0]
+        eventJSON['name'] = result[1]
+        eventJSON['eventDate'] = str(result[2])
+        eventJSON['location'] = result[3]
+        eventJSON['societyName'] = result[4]
+        eventJSON['societyID'] = result[5]
+        payload.append(eventJSON)
+    conn.close()
+    return payload

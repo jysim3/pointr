@@ -206,5 +206,5 @@ class getAllEventID(Resource):
 @api.route('/getAllEvents')
 class getAllEvents(Resource):
     def get(self):
-        result = events.getAllEvents()
+        result = events.getAllUpcomingEvents()
         return jsonify(result)
