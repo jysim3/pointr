@@ -77,5 +77,5 @@ as select societyid, societyname, users.zID, role from society
 join socstaff on society.societyid = socstaff.society join users on socstaff.zid = users.zid;
 
 create or replace view userParticipatedEvents 
-as select hostedEvents.eventID, name, eventdate, location, hostedevents.societyname, societyid, zid from hostedEvents
+as select hostedEvents.eventID, name, eventdate, location, hostedevents.societyname, societyid, zid, time from hostedEvents
 join participation ON hostedEvents.eventID = participation.eventID;

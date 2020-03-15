@@ -22,7 +22,6 @@ def findSocID(socName, conn, curs):
 def createSocStaff(zID, societyID, role = 0, conn = None, curs = None):
     if (zID == None or societyID == None):
         return "failed, insufficient inputs"
-    # TODO: Check for society and zID existance
     try:
         curs.execute("INSERT INTO socstaff(society, zid, role) VALUES ((%s), (%s), (%s));", (societyID, zID, role,))
     except Exception as e:
@@ -82,7 +81,6 @@ def joinCollege(zID, societyID, floorGroup, conn, curs):
     return "success"
 
 
-# TODO: Make a flask route for this
 @makeConnection
 def registerToSoc(zID, societyID, conn, curs):
     try:
@@ -204,7 +202,6 @@ def joinSoc(zID, socID, conn, curs):
     return "success"
 
 # Base user: socStaff -> Role -> 0, admin 1
-# FIXME: Check for if zID is already in socStaff table, if so update the table rather than insert
 @makeConnection
 def makeAdmin(zID, socID, conn, curs):
     try:

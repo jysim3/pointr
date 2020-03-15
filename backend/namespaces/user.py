@@ -108,3 +108,12 @@ class checkzID(Resource):
         zID = request.args.get('zID')
         result = users.checkUser(zID)
         return jsonify({"msg": result})
+
+@api.route('/attendedEvents')
+class attended(Resource):
+    @auth_services.check_authorization(level=1)
+    def get(self, token_data):
+        zID = token_data['zID']
+        socID = request.args.get('socID')
+        results = participation.getUserParticipation(zID, socID)
+        return jsonify(results)

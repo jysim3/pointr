@@ -10,7 +10,7 @@ from util.validation_services import validate_args_with
 import pprint
 import os, sys
 
-# Expiration time on tokens - 60 minutes #FIXME
+# Expiration time on tokens - 60 minutes 
 token_exp = 1000*60
 activationTokenTimeout = 1000*60
 forgotTokenTimeout = 1000*60
@@ -147,10 +147,12 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                 args_data = {}
                 data = {}
                 
+                '''
                 try:
                     args_data = AuthSchema().load(request.args)
                 except ValidationError as err:
                     abort(400, err.messages)
+                '''
                 
                 
                 try:

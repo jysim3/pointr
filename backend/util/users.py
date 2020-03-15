@@ -53,7 +53,7 @@ def getUserInfo(zID, conn = None, curs = None):
         eventJSON = {}
         eventJSON['eventID'] = result[0]
         eventJSON['name'] = result[1]
-        eventJSON['eventDate'] = result[2]
+        eventJSON['eventDate'] = str(result[2])
         eventJSON['location'] = result[3]
         eventJSON['societyName'] = result[4]
         eventJSON['societyID'] = result[5]

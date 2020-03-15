@@ -5,11 +5,15 @@ from util import events, participation, utilFunctions, auth_services, societies,
 from util.sanitisation_services import sanitize
 from datetime import datetime
 import uuid
+from dateutil import tz
 
 api = Namespace('event', description='Event Management Services')
 
 def generateID(number = None):
     return str(uuid.uuid4().hex).upper()[:5]
+
+# TODO
+# Create a close registration method for any event that will instantly disallow any further attendance registration for that event
 
 # For creating a recurrent event
 # Usage: 
@@ -119,6 +123,7 @@ class Attend(Resource):
         zID = token_data['zID']
         if ('eventID' not in data):
             abort(400, "Malformed Request")
+        #time = utilFunctions.getAESTTime()
         time = datetime.now()
         status = participation.register(zID, sanitize(data['eventID']), time)
         if (status != "success"):
@@ -194,7 +199,10 @@ class getAllEventID(Resource):
             abort(400, "Something went wrong, no events found")
         return jsonify(result)
 
+# This returns all the past events (for all socs the person is participating for)
+
 # This returns all the events (including all of their event infomation)
+# NOTE: DEFUNCT ROUTE (WILL NOT BE MAINTAINED FURTHER)
 @api.route('/getAllEvents')
 class getAllEvents(Resource):
     def get(self):

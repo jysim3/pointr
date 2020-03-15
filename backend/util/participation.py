@@ -16,7 +16,7 @@ for counter in range(0, 12):
     week += relativedelta(days=7)
 
 @makeConnection
-def register(zID, eventID, time = None, conn = None, curs = None):
+def register(zID, eventID, time, conn = None, curs = None):
     if checkEvent(eventID) == False:
         return "Event does not exist"
 
@@ -27,6 +27,7 @@ def register(zID, eventID, time = None, conn = None, curs = None):
 
     # NOTE: @makeConnectiondefAULTS TO THE CURRENT TIME, unless a time argument has been provided
     # TODO: FIXME: If this is a multi-day event, we need to consider both eventdate and eventtime
+    '''
     eventTimes = getEventTimes(eventID)
     if (eventTimes != None):
         startTime, endTime = eventTimes[0], eventTimes[1]
@@ -36,8 +37,9 @@ def register(zID, eventID, time = None, conn = None, curs = None):
         elif (startTime != None):
             if (datetime.now().time() < startTime):
                 return "Event hasn't started yet"
+    '''
     try:
-        curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, datetime.now() if time == None else time))
+        curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, time,))
     except Exception as e:
         print(e)
         return "failed"
@@ -175,7 +177,7 @@ def getUpcomingEvents(zID, conn = None, curs = None):
             eventJSON = {}
             eventJSON['eventID'] = i[0]
             eventJSON['name'] = i[1]
-            eventJSON['eventDate'] = i[2]
+            eventJSON['eventDate'] = str(i[2])
             eventJSON['location'] = i[3]
             eventJSON['societyID'] = soc['societyID']
             eventJSON['societyName'] = soc['societyName']
@@ -190,6 +192,7 @@ def getUserSocieties(zID, conn = None, curs = None):
         curs.execute("SELECT societyID, societyName FROM userInSociety where zID = (%s);", (zID,))
     except Exception as e:
         #print(e)
+        conn.close()
         return "failed"
     results = curs.fetchall()
 
@@ -202,6 +205,33 @@ def getUserSocieties(zID, conn = None, curs = None):
 
     return payload
 
+@makeConnection
+def getUserParticipation(zID, socID = None, conn = None, curs = None):
+    try:
+        if socID == None:
+            curs.execute("SELECT eventID, name, eventDate, location, societyName, societyID FROM userParticipatedEvents WHERE zid = (%s) ORDER BY eventDate DESC;", (zID,))
+        else:
+            curs.execute("SELECT eventID, name, eventDate, location, societyName, societyID FROM userParticipatedEvents WHERE zid = (%s) AND societyID = (%s) ORDER BY eventDate DESC;", (zID, socID,))
+    except Exception as e:
+        conn.close()
+        return None
+
+    results = curs.fetchall()
+    if (results == []):
+        return None
+
+    payload = []
+    for event in results:
+        eventJSON = {}
+        eventJSON['eventID'] = event[0]
+        eventJSON['name'] = event[1]
+        eventJSON['eventDate'] = str(event[2])
+        eventJSON['location'] = event[3]
+        eventJSON['societyName'] = event[4]
+        eventJSON['societyID'] = event[5]
+        payload.append(eventJSON)
+    return payload
+
 # TODO: Average Monthly/Weekly Attendance info (for recurring events)
 
 # TODO: Average Monthly/Weekly Attendance info (for one society)
@@ -211,7 +241,7 @@ def averageAttendance(dateType, socID, conn = None, curs = None):
 
     payload = {}
     for i in range(0, len(weekDate) - 1):
-        curs.execute("SELECT * FROM events JOIN host ON (host.eventID = events.eventID) WHERE eventDate > (%s) and eventDate < (%s) and society = (%s);", (weekDate[f'T1W{str(i)}'], weekDate[f'T1W{str(i + 1)}'], socID,))
+        curs.execute("SELECT * FROM events JOIN host ON (host.eventID = events.eventID) WHERE eventDate >= (%s) and eventDate < (%s) and society = (%s);", (weekDate[f'T1W{str(i)}'], weekDate[f'T1W{str(i + 1)}'], socID,))
         #conn.commit()
         results = curs.fetchall()
         currPayload = []
