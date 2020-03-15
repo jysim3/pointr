@@ -26,7 +26,7 @@ class Society(Resource):
             return jsonify({"status": "Failed", "msg": "No such society"})
 
         return jsonify(eventsList)
-    
+
     @api.doc(description='''
         Create a new society
     ''')
