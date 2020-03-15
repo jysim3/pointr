@@ -207,6 +207,4 @@ class getAllEventID(Resource):
 class getAllEvents(Resource):
     def get(self):
         result = events.getAllEvents()
-        if (result == None):
-            abort(400, "Something went wrong, no events found")
         return jsonify(result)

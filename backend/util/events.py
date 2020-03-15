@@ -175,7 +175,7 @@ def getAllEvents(conn, curs):
 
     currentDate = datetime.now().date()
     currentDate = str(currentDate)
-    results = callQuery("SELECT eventID, name, eventDate, location, societyName, societyID FROM hostedEvents WHERE eventDate >= (%s) ORDER BY eventDate;", conn, curs, (currentDate, ))
+    results = callQuery("SELECT eventID, name, eventDate, location, societyName, societyID FROM hostedEvents ORDER BY eventDate;", conn, curs)
     if results == False: return None
 
     results = curs.fetchall()
