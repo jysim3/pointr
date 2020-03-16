@@ -142,7 +142,7 @@ def fetchRecur(eventID, conn, curs):
     baseID = eventID[:5]
     print(baseID)
 
-    queryStatus = callQuery(f"select * from events where eventID like '{baseID}%';", conn, curs)
+    queryStatus = callQuery("select * from events where eventID like (%s);", conn, curs, (eventID,))
     if (queryStatus == False): return None
     results = curs.fetchall()
     payload = []
