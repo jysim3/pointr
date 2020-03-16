@@ -23,4 +23,4 @@ GET `/api/soc` | namespaces/soc.py | Changed output JSON format to match the res
 
 api | file | details
 --- | ---- | ---
-    | APIDOC.md   | Started work on an API documentation file
+N/A   | APIDOC.md   | Started work on an API documentation file
