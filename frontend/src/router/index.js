@@ -10,6 +10,7 @@ import SignUp from '@/views/auth/SignUp.vue';
 import SocietyJoin from '@/views/SocietyJoin.vue';
 import AccountActivation from '@/views/auth/AccountActivation.vue';
 import Contact from '@/views/Contact.vue';
+import Society from '@/views/Society.vue';
 
 Vue.use(VueRouter);
 
@@ -75,6 +76,12 @@ const routes = [
   {
     path: '/contact',
     component: Contact
+  },
+  {
+    path: '/society/:socID?',
+    name: 'society',
+    component: Society,
+    props: true
   }
 ];
 
