@@ -42,7 +42,11 @@ export default {
         {
           to: "/joinsociety",
           text: "Join a society"
-        }
+        },
+        {
+          text: "My Societies",
+          to: "/societies"
+        },
       ],
       adminDashboardLinks: [
         {
@@ -54,8 +58,8 @@ export default {
           to: "/joinsociety"
         },
         {
-          text: "Documentation",
-          to: "/documentation"
+          text: "My Societies",
+          to: "/society"
         },
         {
           text: "Statistics",
