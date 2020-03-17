@@ -4,7 +4,7 @@
     <div id="form-container--entercode" class="form-container">
       <form class="form" @submit.prevent="submitZID">
         <h2>Make Admin</h2>
-        <FormError v-show="formErrorMessage" :msg="formErrorMessage" />
+        <FormMessage :msg="formStatus"/>
         <label class="label" for>Enter zid:</label>
         <!-- TODO: sanitise input, using quotes does not work -->
         <input class="input" v-model="zID" type="text" required />
@@ -16,12 +16,14 @@
 
 <script>
 import { fetchAPI } from "@/util";
-import FormError from "@/components/FormError.vue";
+import FormMessage from "@/components/FormMessage.vue";
+// import FormError from "@/components/FormError.vue";
 
 export default {
   name: "EventSignEnterCode",
   components: {
-    FormError,
+    //FormError,
+    FormMessage
   },
   props:{
     socID: {
@@ -31,7 +33,10 @@ export default {
   data() {
     return {
       zID: "",
-      formErrorMessage: "",
+      formStatus: {
+        success: null,
+        message: '',
+      }
     };
   },
   methods: {
@@ -42,7 +47,12 @@ export default {
         }
         fetchAPI("/api/soc/makeAdmin", "POST", data)
         .then(r => {
-            console.log(r) //eslint-disable-line
+          this.formStatus.success = true
+          this.formStatus.message = r.data.status
+        })
+        .catch(r => {
+          this.formStatus.success = false
+          this.formStatus.message =  r.response.data.message;
         })
     }
   }

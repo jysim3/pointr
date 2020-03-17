@@ -13,6 +13,7 @@ html {
   --c-secondary: #f4f4f4;
   --c-secondary-dark: #4d4d4d;
   --c-warning: #d45d79;
+  --c-success: #4caf50;
   --font-stack: 'Public Sans', Arial, Helvetica, sans-serif;
   --border-radius: 5px;
 }
