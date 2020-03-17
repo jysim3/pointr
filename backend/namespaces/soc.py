@@ -58,7 +58,7 @@ class Society(Resource):
         zID = parametres['zID'] if 'zID' in parametres else abort (400, "Malformed Request")
         societyID = parametres['societyID'] if 'societyID' in parametres else abort (400, "Malformed Request")
         # First check if the token zid is an admin of the soc
-        isAdmin = societies.checkAdmin(societyID, zID)
+        isAdmin = societies.checkAdmin(societyID, authorzID)
         if isAdmin == False:
             abort(405, "Not an admin for this particular society, unable to process request")
         result = societies.makeAdmin(zID, societyID)
