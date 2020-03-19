@@ -24,13 +24,25 @@ const state = {
 
 const getters = {
   memberSocieties(state) {
-    return state.info.societies.member;
+    if (state.info.societies) {
+      return state.info.societies.member;
+    } else {
+      return []
+    }
   },
   staffSocieties(state) {
-    return state.info.societies.staff;
+    if (state.info.societies) {
+      return state.info.societies.staff;
+    } else {
+      return []
+    }
   },
   allSocieties(state) {
-    return state.info.societies.member.concat(state.info.societies.staff);
+    if (state.info.societies) {
+      return state.info.societies.member.concat(state.info.societies.staff);
+    } else {
+      return []
+    }
   },
   allEvents() {
     return;
