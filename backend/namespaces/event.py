@@ -208,3 +208,20 @@ class getAllEvents(Resource):
     def get(self):
         result = events.getAllUpcomingEvents()
         return jsonify(result)
+
+
+# This closes the input eventID for further attendance marking
+@api.route('/closeEvent')
+class closeEvent(Resource):
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        eventID = request.get_json()['eventID']
+
+        socID = societies.getSocIDFromEventID()
+        if (societies.checkAdmin(socID, token_data['zID']) == False):
+            abort(403, "This user is not an admin of the society which is hosting this event")
+
+        results = events.closeEvent(eventID)
+        if (results != "success"):
+            abort(400, results)
+        return jsonify({"msg": results})

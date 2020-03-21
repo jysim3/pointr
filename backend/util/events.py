@@ -260,3 +260,18 @@ def getAllUpcomingEvents(conn, curs):
         payload.append(eventJSON)
     conn.close()
     return payload
+
+@makeConnection
+def closeEvent(eventID, conn, curs):
+    if checkEvent(eventID) == False: return "No such event"
+    currentDate = datetime.now()
+    results = callQuery("UPDATE events SET endTime = (%s) WHERE eventID = (%s);", conn, curs, (currentDate, eventID,))
+    if (results == False): return "Database error, check backend log"
+
+    conn.commit()
+    conn.close()
+    return "success"
+
+@makeConnection
+def openEvent(eventID, conn, curs):
+    return None

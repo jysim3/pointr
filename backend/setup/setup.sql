@@ -20,12 +20,13 @@ CREATE TABLE IF NOT EXISTS events (
     eventdate date NOT NULL,
     --- NOTE: FIXME: Added in a starttime in events, this is used to ensure users cant sign in to events before/after the event
     --- NOTE: We could, however, also add in a "grace period" of which we allow people to sign up (i.e. 30 mins before/after)
-    startTime time,
-    endTime time,
+    startTime TIMESTAMP,
+    endTime TIMESTAMP,
 	eventWeek TEXT NOT NULL,
     owner TEXT NOT NULL REFERENCES users(zid) ON DELETE CASCADE,
     qrCode boolean,
     description TEXT,
+    additionalInfomation JSON,
     primary key(eventID)
 );
 -- drop TABLE IF EXISTS participation CASCADE;
