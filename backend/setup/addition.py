@@ -81,6 +81,7 @@ def changeEvents(conn, curs):
             owner TEXT NOT NULL REFERENCES users(zid) ON DELETE CASCADE,
             qrCode boolean,
             description TEXT,
+            isClosed BOOLEAN,
             additionalInfomation JSON,
             primary key(eventID)
         );

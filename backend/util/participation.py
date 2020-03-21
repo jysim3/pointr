@@ -25,18 +25,17 @@ def register(zID, eventID, time, conn = None, curs = None):
 
     isArc = checkArc(zID)
 
-    # TODO: FIXME: If this is a multi-day event, we need to consider both eventdate and eventtime
     eventTimes = getEventTimes(eventID)
     if (eventTimes != None):
         startTime, endTime = eventTimes[0], eventTimes[1]
         if (endTime != None):
-            if (datetime.now().time() > endTime):
+            if (datetime.now() > endTime):
                 return "Event closed already"
         if (startTime != None):
-            if (datetime.now().time() < startTime):
+            if (datetime.now() < startTime):
                 return "Event hasn't started yet"
     results = callQuery("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", conn, curs, (1, isArc, zID, eventID, time,))
-    if (results == False): return "failed"
+    if (results == False): return "Database error, check backend log"
     conn.commit()
     conn.close()
     return "success"

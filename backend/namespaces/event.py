@@ -127,7 +127,7 @@ class Attend(Resource):
         time = datetime.now()
         status = participation.register(zID, sanitize(data['eventID']), time)
         if (status != "success"):
-            abort(403, "Attendance registration currently not possible for this event")
+            abort(403, status)
         payload['status'] = "success"
 
         return jsonify(payload)
@@ -217,7 +217,7 @@ class closeEvent(Resource):
     def post(self, token_data):
         eventID = request.get_json()['eventID']
 
-        socID = societies.getSocIDFromEventID()
+        socID = societies.getSocIDFromEventID(eventID)
         if (societies.checkAdmin(socID, token_data['zID']) == False):
             abort(403, "This user is not an admin of the society which is hosting this event")
 
@@ -225,3 +225,35 @@ class closeEvent(Resource):
         if (results != "success"):
             abort(400, results)
         return jsonify({"msg": results})
+
+@api.route('/openEvent')
+class openEvent(Resource):
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        eventID = request.get_json()['eventID']
+
+        socID = societies.getSocIDFromEventID(eventID)
+        if (societies.checkAdmin(socID, token_data['zID']) == False):
+            abort(403, "This user is not an admin of the society which is hosting this event")
+
+        results = events.openEvent(eventID)
+        if (results != "success"):
+            abort(400, results)
+        return jsonify({"msg": results})
+
+'''
+@api.route('/reopenEvent')
+class reopenEvent(Resource):
+    @areopenEventces.check_authorization(level=1)
+    def post(self, token_data):
+        eventID = request.get_json()['eventID']
+
+        socID = societies.getSocIDFromEventID()
+        if (societies.checkAdmin(socID, token_data['zID']) == False):
+            abort(403, "This user is not an admin of the society which is hosting this event")
+
+        results = events.reopenEvent(eventID)
+        if (results != "success"):
+            abort(400, results)
+        return jsonify({"msg": results})
+'''

@@ -264,8 +264,12 @@ def getAllUpcomingEvents(conn, curs):
 @makeConnection
 def closeEvent(eventID, conn, curs):
     if checkEvent(eventID) == False: return "No such event"
+    results = callQuery("SELECT isClosed FROM events WHERE eventID = (%s);", conn, curs, (eventID,))
+    if (results == False): return "Database error, check backend log"
+    results = curs.fetchone()
+    if (results is not None and results[0] == True): return "Event already closed"
     currentDate = datetime.now()
-    results = callQuery("UPDATE events SET endTime = (%s) WHERE eventID = (%s);", conn, curs, (currentDate, eventID,))
+    results = callQuery("UPDATE events SET endTime = (%s), isClosed = (%s) WHERE eventID = (%s);", conn, curs, (currentDate, True, eventID,))
     if (results == False): return "Database error, check backend log"
 
     conn.commit()
@@ -274,4 +278,27 @@ def closeEvent(eventID, conn, curs):
 
 @makeConnection
 def openEvent(eventID, conn, curs):
-    return None
+    if checkEvent(eventID) == False: return "No such event"
+    results = callQuery("SELECT isClosed FROM events WHERE eventID = (%s);", conn, curs, (eventID,))
+    if (results == False): return "Database error, check backend log"
+    results = curs.fetchone()
+    if (results is not None and results[0] == True): return "Event already closed"
+    currentDate = datetime.now()
+    results = callQuery("UPDATE events SET startTime = (%s) WHERE eventID = (%s);", conn, curs, (currentDate, eventID,))
+    if (results == False): return "Database error, check backend log"
+
+    conn.commit()
+    conn.close()
+    return "success"
+
+'''
+@makeConnection
+def reopenEvent(eventID, conn, curs):
+    if checkEvent(eventID) == False: return "No such event"
+    results = callQuery("UPDATE events SET endTime = (%s) AND isClosed = (%s) WHERE eventID = (%s);", conn, curs, (None, False, eventID,))
+    if (results == False): return "Database error, check backend log"
+
+    conn.commit()
+    conn.close()
+    return "success"
+'''

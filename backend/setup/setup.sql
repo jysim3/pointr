@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS events (
     owner TEXT NOT NULL REFERENCES users(zid) ON DELETE CASCADE,
     qrCode boolean,
     description TEXT,
+    isClosed BOOLEAN,
     additionalInfomation JSON,
     primary key(eventID)
 );
