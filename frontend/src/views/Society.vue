@@ -7,6 +7,9 @@
             <h2>Society page for {{ socName }} </h2>
             <MakeAdmin :socID="socID"/>
         </div>
+        <div v-else>
+            <h2>Society page for {{ socName }} </h2>
+        </div>
     </div>
 </template>
 
