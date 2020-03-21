@@ -24,3 +24,17 @@ GET `/api/soc` | namespaces/soc.py | Changed output JSON format to match the res
 api | file | details
 --- | ---- | ---
 N/A   | APIDOC.md   | Started work on an API documentation file
+
+## 21/03/2020
+### Changed
+
+api | file | details
+--- | ---- | ---
+POST `/api/event/attend` | namespaces/event.py | No longer allow attendance marking past endTime, or attendance marking before openTime
+
+### In-Progress
+
+api | file | details
+--- | ---- | ---
+POST `/api/event/closeEvent` | namespaces/event.py | Manually closes the event, will set the event's endTime field to be "now" on server time
+POST `/api/event/openEvent` | namespaces/event.py | Manually opens the event, will set the event's startTime field to be "now" on server time
