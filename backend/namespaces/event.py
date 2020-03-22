@@ -177,7 +177,7 @@ class adminAttendance(Resource):
 class getAttendance(Resource):
     @api.response(400, "Cannot find file")
     @api.response(400, "Malformed Response")
-    @auth_services.check_authorization(level=1, allowSocStaff=True)
+    @auth_services.check_authorization(level=0)
     def get(self, token_data):
         eventID = request.args.get('eventID')
         try:
@@ -202,3 +202,17 @@ class getAllEvents(Resource):
         if (result == None):
             abort(400, "Something went wrong, no events found")
         return jsonify(result)
+
+# This deletes a event (removing all the attendance info with it)
+@api.route('/deleteEvent')
+class deleteEvent(Resource):
+    @auth_services.check_authorization(level=1)
+    def delete(self, token_data):
+        eventID = request.get_json()['eventID']
+        socID = societies.getSocIDFromEventID(eventID)
+        results = societies.checkAdmin(socID, token_data['zID'])
+        if (results == False): abort (403, "Not an admin of the society that's hosting this event")
+        results = events.deleteEvent(eventID)
+        if (results != "success"):
+            abort (400, results)
+        return jsonify({"msg": results})

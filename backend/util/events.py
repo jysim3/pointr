@@ -201,7 +201,7 @@ def getAllEventID(conn, curs):
     currentDate = datetime.now().date()
     currentDate = str(currentDate)
     try:
-        curs.execute("SELECT eventID FROM events WHERE eventDate > (%s);", (currentDate, ))
+        curs.execute("SELECT eventID FROM events WHERE eventDate >= (%s);", (currentDate, ))
     except Exception as e:
         return None
     
@@ -213,3 +213,15 @@ def getAllEventID(conn, curs):
     for result in results:
         payload.append(result[0])
     return payload
+
+
+@makeConnection
+def deleteEvent(eventID, conn, curs):
+    # FIXME: Change this try/except block to runQuery one we pull
+    try:
+        curs.execute("DELETE FROM events WHERE eventID = (%s);", (eventID,))
+    except Exception as e:
+        print(e)
+        return "Database error, check backend log"
+
+    return "success"
