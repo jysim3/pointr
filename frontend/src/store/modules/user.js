@@ -7,34 +7,60 @@ const state = {
   authToken: localStorage.getItem('authToken') || '',
   isAuthenticated: false,
   isAdmin: false,
-  // info: {
-  //   zID: "",
-  //   name: "",
-  //   events: [],
-  //   societies: {
-  //     member: [],
-  //     staff: []
-  //   },
-  //   permission: 0
-  // },
-  info: {},
+  info: {
+    zID: "",
+    name: "",
+    events: [],
+    societies: {
+      member: [],
+      staff: []
+    },
+    permission: 0
+  },
+  // info: {},
     // TODO: make sure everything that will be mutated is already here.
   isLoading: true //TODO: move this into a global store
 };
 
 const getters = {
   memberSocieties(state) {
-    return state.info.societies.member;
+    if (state.info.societies) {
+      return state.info.societies.member;
+    } else {
+      return []
+    }
   },
   staffSocieties(state) {
-    return state.info.societies.staff;
+    if (state.info.societies) {
+      return state.info.societies.staff;
+    } else {
+      return []
+    }
   },
   allSocieties(state) {
-    return state.info.societies.member.concat(state.info.societies.staff);
+    if (state.info.societies) {
+      return state.info.societies.member.concat(state.info.societies.staff);
+    } else {
+      return []
+    }
   },
   allEvents() {
     return;
-  }
+  },
+  staffEvents (state) {
+    if (state.info.societies.staff) {
+      const k = {}
+      for (let v of state.info.societies.staff) {
+        if (v.events) {
+          k[v.societyID] = v.events
+        }
+      }
+      console.log(k)//eslint-disable-line 
+      return k
+    }
+    return null
+  },
+
 };
 
 const mutations = {
@@ -115,7 +141,15 @@ const actions = {
           member: involvedSocsResponse.data.member,
           staff: involvedSocsResponse.data.staff
         }
+
+        await societies.staff.forEach(async v  => {
+          v.events = []
+          const soc = await fetchAPI(`/api/soc/?societyID=${v.societyID}`,'GET')
+          v.events = soc.data.events
+        });
+
       }
+      console.log(societies) //eslint-disable-line
 
       const infoPayload = {
         ...infoResponse.data,
@@ -124,6 +158,7 @@ const actions = {
       }
       commit('info', infoPayload);
     } catch (error) {
+      console.log(error); //eslint-disable-line
       console.log(error.response); //eslint-disable-line
     }
   },

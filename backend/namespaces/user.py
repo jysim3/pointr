@@ -25,7 +25,6 @@ class userSocieties(Resource):
     def get(self):
         zID = request.args.get('zID')
         results = participation.getUserSocieties(zID)
-        print(results)
         if (isinstance(results, str) == True):
             abort(400, "Malformed Request")
         return jsonify({"status": "success", "message": results})
@@ -108,3 +107,12 @@ class checkzID(Resource):
         zID = request.args.get('zID')
         result = users.checkUser(zID)
         return jsonify({"msg": result})
+
+@api.route('/attendedEvents')
+class attended(Resource):
+    @auth_services.check_authorization(level=1)
+    def get(self, token_data):
+        zID = token_data['zID']
+        socID = request.args.get('socID')
+        results = participation.getUserParticipation(zID, socID)
+        return jsonify(results)

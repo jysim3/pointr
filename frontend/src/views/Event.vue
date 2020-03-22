@@ -7,10 +7,10 @@
     <div id="qr-and-form-container">
       <div style="display:flex;flex-direction:column;">
       <EventQRCode :eventID="this.eventID" />
-        <button
-          class="btn btn-primary"
-          @click="downloadCsv"
-        >Download csv</button>
+          <button
+            class="btn btn-primary"
+            @click="downloadCsv"
+          >Download csv</button>
       </div>
       <EventAdminAttendance :eventID="this.eventID" />
     </div>

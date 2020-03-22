@@ -20,12 +20,14 @@ CREATE TABLE IF NOT EXISTS events (
     eventdate date NOT NULL,
     --- NOTE: FIXME: Added in a starttime in events, this is used to ensure users cant sign in to events before/after the event
     --- NOTE: We could, however, also add in a "grace period" of which we allow people to sign up (i.e. 30 mins before/after)
-    startTime time,
-    endTime time,
+    startTime TIMESTAMP,
+    endTime TIMESTAMP,
 	eventWeek TEXT NOT NULL,
     owner TEXT NOT NULL REFERENCES users(zid) ON DELETE CASCADE,
     qrCode boolean,
     description TEXT,
+    isClosed BOOLEAN,
+    additionalInfomation JSON,
     primary key(eventID)
 );
 -- drop TABLE IF EXISTS participation CASCADE;
@@ -58,6 +60,7 @@ CREATE TABLE IF NOT EXISTS socstaff (
     society TEXT REFERENCES society(societyID) ON DELETE CASCADE,
     zid TEXT REFERENCES users(zid) ON DELETE CASCADE,
     role INTEGER NOT NULL,
+    additionalInfomation JSON,
     primary key (society, zid)
 );
 -- DROP TABLE IF EXISTS collegeUsers CASCADE;
@@ -77,5 +80,5 @@ as select societyid, societyname, users.zID, role from society
 join socstaff on society.societyid = socstaff.society join users on socstaff.zid = users.zid;
 
 create or replace view userParticipatedEvents 
-as select hostedEvents.eventID, name, eventdate, location, hostedevents.societyname, societyid, zid from hostedEvents
+as select hostedEvents.eventID, name, eventdate, location, hostedevents.societyname, societyid, zid, time from hostedEvents
 join participation ON hostedEvents.eventID = participation.eventID;
