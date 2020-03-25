@@ -15,8 +15,6 @@ mail = Mail(app)
 
 def sendActivationEmail(stringToSend, emailToSend):
     message = f"""\
-Subject: Activate Your Pointr Account
-
 Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nHave fun accumulating your room points :).\n\nPlease activate your account now: {stringToSend}"""
 
     msg = mail.send_message(
@@ -30,8 +28,6 @@ Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\
 
 def sendForgotEmail(link, zID, emailToSend):
     message = f"""\
-Subject: Password Reset Request 
-
 Hi,{zID}\nYou have requested to reset your password.\nFollow this link to reset your password: {link}"""
 
     msg = mail.send_message(
