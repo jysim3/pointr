@@ -38,3 +38,17 @@ api | file | details
 --- | ---- | ---
 POST `/api/event/closeEvent` | namespaces/event.py | Manually closes the event, will set the event's endTime field to be "now" on server time
 POST `/api/event/openEvent` | namespaces/event.py | Manually opens the event, will set the event's startTime field to be "now" on server time
+
+## 22/03/2020
+### Added
+
+api | file | details
+--- | ---- | ---
+DELETE `/api/event/deleteEvent` | namespaces/event.py | Delete a select event, will also remove any attendance currently associated with the eventID
+
+## 25/03/2020
+### Changed
+
+api | file | details
+--- | ---- | ---
+POST `/api/auth/register` | namespaces/auth.py | Changed the email module we are using to send out emails, now we are abstracting the process away with the Flask-mail module
