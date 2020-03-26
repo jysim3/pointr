@@ -9,3 +9,4 @@ UNSW-Hall_zID.csv
 zIDList.csv
 csvFiles
 test.py
+csvFiles/*
