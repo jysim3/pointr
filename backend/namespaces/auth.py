@@ -4,7 +4,6 @@ from util import auth_services, users, utilFunctions, societies
 from util.auth_services import ADMIN, USER
 from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema, ZIDDetailsSchema, PasswordSchema
 from marshmallow import Schema, fields, ValidationError, validates, validate
-from emailPointr import sendActivationEmail, sendForgotEmail
 from util.validation_services import validate_with, validate_args_with
 import pprint
 import uuid
@@ -40,6 +39,7 @@ class Register(Resource):
     @validate_with(RegisterDetailsSchema)
     def post(self, data):
 
+        from emailPointr import sendActivationEmail
         # Attempt to create a new user with the username and password
         zID = data['zID'].lower()
         password = data['password']
@@ -84,6 +84,7 @@ class Register(Resource):
 
         return jsonify({"status": "success"})
 
+# NOTE: DEFUNCT
 @api.route('/activate')
 class Activate(Resource):
     @api.header('Authorization', description='Activation token sent to email after call to /api/auth/register', type='String', required=True)
@@ -126,6 +127,7 @@ class Forgot(Resource):
         # Login and if successful return the token otherwise invalid credentials
         token = auth_services.generateForgotToken(data['zID'])
         
+        from emailPointr import sendForgotEmail
         sendForgotEmail(f"https://pointer.live/reset/{token}", data['zID'], f"{data['zID']}@student.unsw.edu.au")  
         
 @api.route('/reset')
