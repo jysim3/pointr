@@ -17,12 +17,15 @@ def sendActivationEmail(stringToSend, emailToSend):
     message = f"""\
 Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nHave fun accumulating your room points :).\n\nPlease activate your account now: {stringToSend}"""
 
-    msg = mail.send_message(
-        'Activate Your Pointr Account',
-        sender=app.config['MAIL_USERNAME'],
-        recipients=[emailToSend],
-        body=message
-    )
+    try:
+        msg = mail.send_message(
+            'Activate Your Pointr Account',
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[emailToSend],
+            body=message
+        )
+    except Exception:
+        return str(Exception)
     return "success"
 
 
@@ -30,12 +33,15 @@ def sendForgotEmail(link, zID, emailToSend):
     message = f"""\
 Hi,{zID}\nYou have requested to reset your password.\nFollow this link to reset your password: {link}"""
 
-    msg = mail.send_message(
-        'Reset Your Pointr Password',
-        sender=app.config['MAIL_USERNAME'],
-        recipients=[emailToSend],
-        body=message
-    )
+    try:
+        msg = mail.send_message(
+            'Reset Your Pointr Password',
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[emailToSend],
+            body=message
+        )
+    except Exception:
+        return str(Exception)
     return "success"
 
 '''
