@@ -39,7 +39,7 @@ class Register(Resource):
     @validate_with(RegisterDetailsSchema)
     def post(self, data):
 
-        from emailPointr import sendActivationEmail
+        from util.emailPointr import sendActivationEmail
         # Attempt to create a new user with the username and password
         zID = data['zID'].lower()
         password = data['password']
@@ -132,7 +132,7 @@ class Forgot(Resource):
         # Login and if successful return the token otherwise invalid credentials
         token = auth_services.generateForgotToken(data['zID'])
         
-        from emailPointr import sendForgotEmail
+        from util.emailPointr import sendForgotEmail
         results = sendForgotEmail(f"https://pointer.live/reset/{token}", data['zID'], f"{data['zID']}@student.unsw.edu.au")  
         if (results != "success"):
             abort(400, "Sending Email Not Successful")

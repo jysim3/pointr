@@ -6,6 +6,11 @@ from util.validation_services import validate_args_with, validate_with
 from schemata.soc_schemata import SocietyIDAndZIDSchema, SocietyIDSchema
 import pprint
 
+from werkzeug.utils import secure_filename
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 api = Namespace('soc', description='Society Attendance Services')
 
 # Get all the events hosted by a society
@@ -33,8 +38,24 @@ class Society(Resource):
     ''')
     @auth_services.check_authorization(level=2)
     def post(self):
+        from app import app, ALLOWED_EXTENSIONS
         data = request.get_json()
-        
+
+        # TODO: If we make a decision on using images, add sql query down below
+        '''
+        # For image upload
+        file = None # To shut the linter up
+        file = request.files['file']
+        if file.filename == '':
+            abort(400, "Invalid File Name")
+        if file and allowed_file(file.filename):
+            filename = secure_filename(filename)
+            file.save(app.config['UPLOAD_FOLDER'] + filename)
+        '''
+
+        if (data is None or 'societyName' not in data):
+            abort(400, "SocietyName not given in request")
+
         result = societies.createSociety(sanitize(data['founder'] if data['founder'] is not None else 'Not Applicable'), sanitize(data['societyName']))
         if (result == "exists already"):
             return jsonify({"status": "Failed", "msg": "A society with this name already exists"})

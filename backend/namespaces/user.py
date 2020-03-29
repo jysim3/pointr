@@ -40,7 +40,7 @@ class User(Resource):
     # Returns:
     # [{"eventID": "1239", "name": "Test Event 0", "society": "UNSW Hall", "eventDate": "2019-11-19"}, {"eventID": "1240", "name": "Coffee Night", "society": "UNSW Hall", "eventDate": "2019-11-20"}]
     @api.response(400, 'Malformed Request')
-    @auth_services.check_authorization(level=2, allowSelf=True)
+    @auth_services.check_authorization(level=1, allowSelf=True)
     @validation_services.validate_args_with(ZIDSchema)
     def get(self, token_data, args_data):
         attendance = users.getUserAttendance(args_data['zID'].lower())
