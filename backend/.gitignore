@@ -10,3 +10,6 @@ zIDList.csv
 csvFiles
 test*
 csvFiles/*
+.vscode
+.vscoed/*
+images/*

@@ -7,7 +7,7 @@ from marshmallow import Schema, fields, ValidationError, validates, validate
 from util.validation_services import validate_with, validate_args_with
 import pprint
 import uuid
-from smtplib import SMTPConnectError, SMTPServerDisconnected
+#from smtplib import SMTPConnectError, SMTPServerDisconnected
 
 # NOTE: Note that this file only exists on the server
 import csv
@@ -39,7 +39,7 @@ class Register(Resource):
     @validate_with(RegisterDetailsSchema)
     def post(self, data):
 
-        from emailPointr import sendActivationEmail
+        from util.emailPointr import sendActivationEmail
         # Attempt to create a new user with the username and password
         zID = data['zID'].lower()
         password = data['password']
@@ -56,13 +56,18 @@ class Register(Resource):
             abort(409, "username taken") 
 
         # Step 2, try sending an email, if error occurs, abort
-        try:
-            token = auth_services.generateActivationToken(zID)
-            sendActivationEmail(f"https://pointr.live/activate/{token}", f"{zID}@student.unsw.edu.au")
+        #try:
+        token = auth_services.generateActivationToken(zID)
+        results = sendActivationEmail(f"https://pointr.live/activate/{token}", f"{zID}@student.unsw.edu.au")
+        if (results != "success"):
+            # This only happens if we have some kind of SMTP error, most likely due to security measures on unrecognised devices
+            abort(400, "Sending Email Not Successful")
+        '''
         except SMTPServerDisconnected as e:
             abort(400, "Sending email not successful")
         except SMTPConnectError as e:
             abort(400, "Email failed")
+        '''
 
         # Step 3, inject the user into the database
         results = users.createUser(zID, firstName, lastName, password, isArc, int(commencementYear), studentType, degreeType)
@@ -127,8 +132,10 @@ class Forgot(Resource):
         # Login and if successful return the token otherwise invalid credentials
         token = auth_services.generateForgotToken(data['zID'])
         
-        from emailPointr import sendForgotEmail
-        sendForgotEmail(f"https://pointer.live/reset/{token}", data['zID'], f"{data['zID']}@student.unsw.edu.au")  
+        from util.emailPointr import sendForgotEmail
+        results = sendForgotEmail(f"https://pointer.live/reset/{token}", data['zID'], f"{data['zID']}@student.unsw.edu.au")  
+        if (results != "success"):
+            abort(400, "Sending Email Not Successful")
         
 @api.route('/reset')
 class Reset(Resource):

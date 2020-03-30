@@ -3,6 +3,7 @@ from flask_restx import Namespace, Resource, abort, reqparse
 from util.sanitisation_services import sanitize
 from util import societies, utilFunctions, auth_services, events
 from util.validation_services import validate_args_with, validate_with
+from util.files import uploadImages
 from schemata.soc_schemata import SocietyIDAndZIDSchema, SocietyIDSchema
 import pprint
 
@@ -17,8 +18,18 @@ class Society(Resource):
     ''')
     @auth_services.check_authorization(level=2)
     def post(self):
+        from app import app, ALLOWED_EXTENSIONS
         data = request.get_json()
-        
+
+        # TODO: If we make a decision on using images, add sql query down below
+        # For image upload
+        file = None # To shut the linter up
+        file = request.files['file']
+
+        if (data is None or 'societyName' not in data):
+            abort(400, "SocietyName not given in request")
+
+        # TODO: Chuck files to the end of this function
         result = societies.createSociety(sanitize(data['founder'] if data['founder'] is not None else 'Not Applicable'), sanitize(data['societyName']))
         if (result == "exists already"):
             return jsonify({"status": "Failed", "msg": "A society with this name already exists"})

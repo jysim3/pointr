@@ -21,6 +21,8 @@ api.add_namespace(soc, path='/api/soc')
 api.add_namespace(other, path='/api/other')
 api.add_namespace(auth, path='/api/auth')
 
+app.config['UPLOAD_FOLDER'] = "./images/"
+
 CORS(app)
 
 def main():
