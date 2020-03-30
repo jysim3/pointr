@@ -52,3 +52,10 @@ DELETE `/api/event/deleteEvent` | namespaces/event.py | Delete a select event, w
 api | file | details
 --- | ---- | ---
 POST `/api/auth/register` | namespaces/auth.py | Changed the email module we are using to send out emails, now we are abstracting the process away with the Flask-mail module
+
+## 30/03/2020
+### Changed
+
+api | file | details
+--- | ---- | ---
+POST `/api/soc` | namespaces/soc.py | Now accepts images (jpg, png, jpeg) to be uploaded as a part of the society creation process, add the image as a part of the request body to attach image

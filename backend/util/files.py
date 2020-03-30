@@ -1,14 +1,15 @@
 from werkzeug.utils import secure_filename
 from flask import request, abort
+import os
 
 ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# NOTE: File is the object received from the request, filename is the socID/zID or whatever else we want to call the file
 def uploadImages(file, filename = None):
     from app import app
-    # TODO: If we make a decision on using images, add sql query down below
     if file.filename == '':
         return "Invalid File Name"
 
@@ -18,6 +19,9 @@ def uploadImages(file, filename = None):
             filename = secure_filename(filename)
         else:
             return "Invalid file name"
+    else:
+        filename = filename + "."
+        filename = filename + str(file.filename).rsplit('.', 1)[1].lower()
 
     try:
         file.save(app.config['UPLOAD_FOLDER'] + filename)

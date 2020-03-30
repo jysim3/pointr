@@ -1,6 +1,8 @@
 from util.utilFunctions import checkUser, makeConnection, callQuery
+from util.files import uploadImages
 import random
 import string
+from json import dumps
 
 def generateID(number):
     id = ""
@@ -28,7 +30,7 @@ def createSocStaff(zID, societyID, role = 0, conn = None, curs = None):
     return "success"
 
 @makeConnection
-def createSociety(zID = None, societyName = None, isCollege = False, conn = None, curs = None):
+def createSociety(zID = None, societyName = None, isCollege = False, file = None, conn = None, curs = None):
     societyID = generateID(5).upper()
     results = callQuery("SELECT * FROM society WHERE societyName = (%s);", conn, curs, (societyName,))
     if (results == False): return "failed"
@@ -37,7 +39,15 @@ def createSociety(zID = None, societyName = None, isCollege = False, conn = None
         conn.close()
         return "exists already"
 
-    results = callQuery("INSERT INTO society(societyID, societyName, isCollege) VALUES ((%s), (%s), (%s));", conn, curs, (societyID, societyName, isCollege,))
+    if (file):
+        uploadResult = uploadImages(file, societyID)
+        if (isinstance(uploadResult, tuple) == False):
+            return "bad file name"
+        fileJSON = dumps({"logo": uploadResult[0]})
+        results = callQuery("INSERT INTO society(societyID, societyName, isCollege, additionalInfomation) VALUES ((%s), (%s), (%s), (%s));", conn, curs, (societyID, societyName, isCollege, fileJSON, ))
+    else:
+        results = callQuery("INSERT INTO society(societyID, societyName, isCollege) VALUES ((%s), (%s), (%s));", conn, curs, (societyID, societyName, isCollege, ))
+
     if (results == False): return "failed"
     conn.commit()
     conn.close()
@@ -51,7 +61,7 @@ def createSociety(zID = None, societyName = None, isCollege = False, conn = None
     superAdmins = getSuperAdmins()
     for i in superAdmins:
         createSocStaff(i[0], societyID, 5)
-    return societyID
+    return societyID, 0
 
 @makeConnection
 def isCollege(societyID, conn, curs):

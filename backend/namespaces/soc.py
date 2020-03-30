@@ -6,35 +6,40 @@ from util.validation_services import validate_args_with, validate_with
 from util.files import uploadImages
 from schemata.soc_schemata import SocietyIDAndZIDSchema, SocietyIDSchema
 import pprint
+from json import loads
 
 api = Namespace('soc', description='Society Attendance Services')
 
 @api.param('token', description='User Token', type='String', required='True')
-@api.route('/')
+@api.route('')
 class Society(Resource):
 
     @api.doc(description='''
         Create a new society
     ''')
-    @auth_services.check_authorization(level=2)
-    def post(self):
-        from app import app, ALLOWED_EXTENSIONS
-        data = request.get_json()
+    # FIXME: USING LEVEL 1 TOKENS TO TEST FUNCTIONALITIES, CHANGE THIS BACK TO 2 IN PRODUCTION
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        data = request.form['json']
+        data = loads(data)
 
         # TODO: If we make a decision on using images, add sql query down below
         # For image upload
-        file = None # To shut the linter up
-        file = request.files['file']
+        file = None
+        if request.files:
+            file = request.files['file']
 
         if (data is None or 'societyName' not in data):
             abort(400, "SocietyName not given in request")
 
         # TODO: Chuck files to the end of this function
-        result = societies.createSociety(sanitize(data['founder'] if data['founder'] is not None else 'Not Applicable'), sanitize(data['societyName']))
+        result = societies.createSociety(token_data['zID'], sanitize(data['societyName']), False, file)
         if (result == "exists already"):
-            return jsonify({"status": "Failed", "msg": "A society with this name already exists"})
-        return jsonify({"status": "Success", "msg": result})
-
+            abort(403, "A society with this name already exists")
+        elif (isinstance(result, tuple) != True):
+            print(result)
+            abort(400, "A server error occurred (most likely a database fault), check backend log for more details")
+        return jsonify({"status": "Success", "msg": result[0]})
 # Get all the events hosted by a society
 @api.param('token', description='User Token', type='String', required='True')
 @api.route('/events')
