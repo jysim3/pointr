@@ -12,7 +12,7 @@
           >{{ society.societyName }}</option>
         </select>
       </div>
-      <Loader v-if="!staffEvents" />
+      <Loader v-if="!allEvents" />
       <DashboardEventView v-if="selectedSociety !== ''" eventViewTitle="" :event-data="selectedSocietyEvents" />
     </div>
 
@@ -50,14 +50,14 @@ export default {
   
   computed: {
     ...mapGetters('user', [
-      'staffEvents', 'allSocieties', 'allEvents'
+      'allSocieties', 'allSocietyEvents', 'allEvents'
     ]),
 
     selectedSocietyEvents() {
       if (this.selectedSociety === "all"){
-        return this.allEvents()
+        return this.allEvents
       }
-      return this.allEvents(this.selectedSociety)
+      return this.allSocietyEvents(this.selectedSociety)
     },
   },
 };

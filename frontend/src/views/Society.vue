@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     ...mapGetters('user', [
-    'staffSocieties', 'allSocieties', 'allEvents'
+    'staffSocieties', 'allSocieties', 'allSocietyEvents'
     ]),
     isStaff() {
         return this.staffSocieties.some(e => e.societyID === this.socID)

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <EventSignEnterCode />
+    <EventEnterCode />
     <div id="dashboard-wrapper">
       <Loader v-if="upcomingEvents.isLoading" />
       <DashboardEventView
@@ -17,13 +17,13 @@
 <script>
 import Loader from "@/components/Loader.vue";
 import DashboardEventView from "@/components/EventList.vue";
-import EventSignEnterCode from "@/components/eventSign/EventSignEnterCode.vue";
+import EventEnterCode from "@/components/eventSign/EventEnterCode.vue";
 export default {
   name: "DashboardUser",
   components: {
     DashboardEventView,
     Loader,
-    EventSignEnterCode
+    EventEnterCode
   },
   data() {
     return {

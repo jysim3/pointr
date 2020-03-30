@@ -45,16 +45,22 @@ const getters = {
       return []
     }
   },
-  // https://vuex.vuejs.org/guide/getters.html#method-style-access
-  allEvents: (state) => socIDs => {
-    if (socIDs){
-      return state.info.events.filter(v => v.societyID.includes(socIDs))
-    }
-    return state.info.events;
+  isSocietyAdmin: (state) => socID => {
+    console.log(socID) // eslint-disable-line
+    console.log(state.info.societies.staff) // eslint-disable-line
+    return state.info.societies.staff.some(v => v.societyID === socID)
   },
+  // https://vuex.vuejs.org/guide/getters.html#method-style-access
+  allSocietyEvents: (state) => socIDs => {
+      return state.info.events.filter(v => v.societyID.includes(socIDs))
+  },
+  event: (state) => eventID => {
+      return state.info.events.find(v => v.eventID === eventID)
+  },
+  allEvents: (state) => state.info.events,
   staffEvents (state, getters) {
     const staffSocIDs = state.info.societies.staff.reduce((a, society) => a.concat(society.societyID), [])
-    return getters.allEvents(state,staffSocIDs)
+    return getters.allSocietyEvents(state,staffSocIDs)
   },
 
 };
