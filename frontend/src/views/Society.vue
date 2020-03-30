@@ -5,7 +5,6 @@
         <div v-else>
 
             <h2 v-once>Society page for {{ socName }} </h2>
-            <MakeAdmin v-if="isStaff" :socID="socID"/>
 
             <EventList
               :eventViewTitle="'Upcoming Events for ' + socName"
@@ -15,6 +14,7 @@
 
 
 
+            <MakeAdmin v-if="isStaff" :socID="socID"/>
 
 
         </div>
@@ -50,7 +50,7 @@ export default {
         }).societyName
     },
     societyEvents() {
-      return this.allEvents(this.socID)
+      return this.allSocietyEvents(this.socID)
     }
   }
 }

@@ -6,7 +6,7 @@
       <div class="event-view" v-if="listStyle === 'cards'">
 
         <div class="event-view-title">
-          <h2 class="event-view-title-text" v-once>{{ eventViewTitle }}</h2>
+          <h3 class="event-view-title-text" v-once>{{ eventViewTitle }}</h3>
           <a class="event-view-more" @click="viewAllData = !viewAllData"
             >View {{viewAllData ? 'less' : 'more'}}</a>
         </div>
@@ -17,7 +17,7 @@
       <div class="event-table" v-else-if="listStyle === 'table'">
 
         <div class="event-view-title">
-          <h2 class="event-view-title-text" v-once>{{ eventViewTitle }}</h2>
+          <h3 class="event-view-title-text" v-once>{{ eventViewTitle }}</h3>
         </div>
         <Table :data="formattedEventData" :fields="fields"/>
       </div>

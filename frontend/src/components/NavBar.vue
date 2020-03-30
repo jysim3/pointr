@@ -36,7 +36,7 @@ export default {
       ],
       userDashboardLinks: [
         {
-          to: "/sign",
+          to: "/event",
           text: "Mark attendance"
         },
         {
@@ -44,7 +44,7 @@ export default {
           text: "Join a society"
         },
         {
-          text: "My Societies",
+          text: "Societies",
           to: "/societies"
         },
       ],
@@ -58,13 +58,13 @@ export default {
           to: "/joinsociety"
         },
         {
-          text: "My Societies",
+          text: "Societies",
           to: "/society"
         },
-        {
-          text: "Statistics",
-          to: "/"
-        }
+        // {
+        //   text: "Statistics",
+        //   to: "/"
+        // }
       ]
     };
   },

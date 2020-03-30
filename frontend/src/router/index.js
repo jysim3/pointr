@@ -4,7 +4,7 @@ import store from '@/store/index';
 import Home from '@/views/Home.vue';
 import EventCreate from '@/views/EventCreate.vue';
 import Event from '@/views/Event.vue';
-import EventSign from '@/views/EventSign.vue';
+import EventSign from '@/views/EventSign-DEPRECATE.vue';
 import SignIn from '@/views/auth/SignIn.vue';
 import SignUp from '@/views/auth/SignUp.vue';
 import SocietyJoin from '@/views/SocietyJoin.vue';
