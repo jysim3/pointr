@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_restx import Api
+import os
 
 app = Flask(__name__)
 api = Api(app, version='1.0.0', title='Pointr backend',
@@ -21,7 +22,10 @@ api.add_namespace(soc, path='/api/soc')
 api.add_namespace(other, path='/api/other')
 api.add_namespace(auth, path='/api/auth')
 
-app.config['UPLOAD_FOLDER'] = "./images/"
+
+app.config['UPLOAD_FOLDER'] = f"{os.getcwd()}/images/"
+if (os.path.exists("images/") == False):
+    os.mkdir("images")
 
 CORS(app)
 
