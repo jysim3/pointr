@@ -24,6 +24,7 @@ api.add_namespace(auth, path='/api/auth')
 
 
 app.config['UPLOAD_FOLDER'] = f"{os.getcwd()}/images/"
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 if (os.path.exists("images/") == False):
     os.mkdir("images")
 
