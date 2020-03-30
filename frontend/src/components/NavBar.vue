@@ -26,7 +26,7 @@ export default {
     return {
       defaultLinks: [
         {
-          to: "/",
+          to: "/events",
           text: "Events"
         },
         {

@@ -8,10 +8,26 @@ import pprint
 
 api = Namespace('soc', description='Society Attendance Services')
 
-# Get all the events hosted by a society
 @api.param('token', description='User Token', type='String', required='True')
 @api.route('/')
 class Society(Resource):
+
+    @api.doc(description='''
+        Create a new society
+    ''')
+    @auth_services.check_authorization(level=2)
+    def post(self):
+        data = request.get_json()
+        
+        result = societies.createSociety(sanitize(data['founder'] if data['founder'] is not None else 'Not Applicable'), sanitize(data['societyName']))
+        if (result == "exists already"):
+            return jsonify({"status": "Failed", "msg": "A society with this name already exists"})
+        return jsonify({"status": "Success", "msg": result})
+
+# Get all the events hosted by a society
+@api.param('token', description='User Token', type='String', required='True')
+@api.route('/events')
+class SocietyEvents(Resource):
     @api.doc(description='''
         Get all of the events hosted by a society
     ''')
@@ -27,18 +43,6 @@ class Society(Resource):
             return jsonify({"status": "Failed", "msg": "No such society"})
 
         return jsonify(eventsList)
-
-    @api.doc(description='''
-        Create a new society
-    ''')
-    @auth_services.check_authorization(level=2)
-    def post(self):
-        data = request.get_json()
-        
-        result = societies.createSociety(sanitize(data['founder'] if data['founder'] is not None else 'Not Applicable'), sanitize(data['societyName']))
-        if (result == "exists already"):
-            return jsonify({"status": "Failed", "msg": "A society with this name already exists"})
-        return jsonify({"status": "Success", "msg": result})
         
 # Making an account by admin (required Superadmin)
 @api.param('token', description='User Token', type='String', required='True')

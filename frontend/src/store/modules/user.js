@@ -10,6 +10,7 @@ const state = {
   info: {
     zID: "",
     name: "",
+    attendedEvents: [],
     events: [],
     societies: {
       member: [],
@@ -44,21 +45,16 @@ const getters = {
       return []
     }
   },
-  allEvents() {
-    return;
-  },
-  staffEvents (state) {
-    if (state.info.societies.staff) {
-      const k = {}
-      for (let v of state.info.societies.staff) {
-        if (v.events) {
-          k[v.societyID] = v.events
-        }
-      }
-      console.log(k)//eslint-disable-line 
-      return k
+  // https://vuex.vuejs.org/guide/getters.html#method-style-access
+  allEvents: (state) => socIDs => {
+    if (socIDs){
+      return state.info.events.filter(v => v.societyID.includes(socIDs))
     }
-    return null
+    return state.info.events;
+  },
+  staffEvents (state, getters) {
+    const staffSocIDs = state.info.societies.staff.reduce((a, society) => a.concat(society.societyID), [])
+    return getters.allEvents(state,staffSocIDs)
   },
 
 };
@@ -121,13 +117,19 @@ const actions = {
         {
           url: '/api/auth/permission',
           method: 'POST'
+        },
+        {
+          url: '/api/user/getUpcomingEvents',
+          method: 'GET'
         }
       ];
       const [
         infoResponse,
         involvedSocsResponse,
-        permissionResponse
+        permissionResponse,
+        eventResponse
       ] = await Promise.all(requests.map(r => fetchAPI(r.url, r.method)));
+      const events = eventResponse.data
 
       // TODO: this is messy, should rather be defining in initial state or backend should not be returning undefined
       let societies;
@@ -142,21 +144,17 @@ const actions = {
           staff: involvedSocsResponse.data.staff
         }
 
-        await societies.staff.forEach(async v  => {
-          v.events = []
-          const soc = await fetchAPI(`/api/soc/?societyID=${v.societyID}`,'GET')
-          v.events = soc.data.events
-        });
-
       }
-      console.log(societies) //eslint-disable-line
+
 
       const infoPayload = {
         ...infoResponse.data,
         ...permissionResponse.data,
-        societies
+        events,
+        societies,
       }
       commit('info', infoPayload);
+      console.log(infoPayload) //eslint-disable-line
     } catch (error) {
       console.log(error); //eslint-disable-line
       console.log(error.response); //eslint-disable-line

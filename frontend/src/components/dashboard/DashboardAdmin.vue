@@ -4,7 +4,7 @@
       <div id="upcoming-events-filter" >
         <h2>Upcoming events for </h2>
         <select class="input--select select--admin"  v-model="selectedSociety" name="society-select">
-          <option value="" >Select a society</option>
+          <option value="all" >All</option>
           <option
             v-for="(society, index) in allSocieties"
             :key="index"
@@ -15,10 +15,6 @@
       <Loader v-if="!staffEvents" />
       <DashboardEventView v-if="selectedSociety !== ''" eventViewTitle="" :event-data="selectedSocietyEvents" />
     </div>
-    <!--- TODO: ignored to have a "finished" product
-    <DashboardEventView :event-view-title="upcomingCreatedEvents.title" :event-data="upcomingCreatedEvents.data" />
-    <DashboardEventView :event-view-title="pastCreatedEvents.title" :event-data="pastCreatedEvents.data" />
-    --->
 
   </div>
 </template>
@@ -26,9 +22,8 @@
 <script>
 //import { mapGetters } from "vuex";
 import Loader from '@/components/Loader.vue'
-import {fetchAPI} from '@/util'
 import { mapGetters } from 'vuex'
-import DashboardEventView from "@/components/dashboard/DashboardEventView.vue";
+import DashboardEventView from "@/components/EventList.vue";
 
 export default {
   name: "DashboardAdmin",
@@ -37,7 +32,7 @@ export default {
   },
   data() {
     return {
-      selectedSociety: "",
+      selectedSociety: "all",
       selectedRecentEventsSociety: "",
       upcomingCreatedEvents: {
         title: "Upcoming events",
@@ -51,24 +46,28 @@ export default {
     };
   },
   created() {
-    fetchAPI(`/api/event/getAllEvents`).then(r => {
-      this.allEvents = r.data;
-    });
   },
   
   computed: {
     ...mapGetters('user', [
-      'staffEvents', 'allSocieties'
+      'staffEvents', 'allSocieties', 'allEvents'
     ]),
 
     selectedSocietyEvents() {
-      return this.staffEvents[this.selectedSociety]
+      if (this.selectedSociety === "all"){
+        return this.allEvents()
+      }
+      return this.allEvents(this.selectedSociety)
     },
   },
 };
 </script>
 
 <style scoped>
+h2 {
+  display: inline-block;
+  margin-right: 1rem;
+}
 .select--admin {
   border: none;
 
