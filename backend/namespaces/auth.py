@@ -136,6 +136,7 @@ class Forgot(Resource):
         results = sendForgotEmail(f"https://pointer.live/reset/{token}", data['zID'], f"{data['zID']}@student.unsw.edu.au")  
         if (results != "success"):
             abort(400, "Sending Email Not Successful")
+        return jsonify({"msg": "success"})
         
 @api.route('/reset')
 class Reset(Resource):
