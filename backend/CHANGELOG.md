@@ -59,3 +59,10 @@ POST `/api/auth/register` | namespaces/auth.py | Changed the email module we are
 api | file | details
 --- | ---- | ---
 POST `/api/soc` | namespaces/soc.py | Now accepts images (jpg, png, jpeg) to be uploaded as a part of the society creation process, add the image as a part of the request body to attach image
+
+## 31/03/2020
+### Added
+
+api | file | details
+--- | ---- | ---
+GET `/api/soc/getSocLogo` | namespaces/soc.py | Returns a base64-encoded (but utf-8 decoded to get rid of the b'') string of the image logo of a specified society, None if image wasn't included as a part of the society creation process or error on everything else

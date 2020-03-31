@@ -55,7 +55,7 @@ class Society(Resource):
         elif (isinstance(result, tuple) != True):
             print(result)
             abort(400, "A server error occurred (most likely a database fault), check backend log for more details")
-        return jsonify({"status": "Success", "msg": result[0]})
+        return jsonify({"msg": result[0]})
         
 # Making an account by admin (required Superadmin)
 @api.param('token', description='User Token', type='String', required='True')
@@ -153,3 +153,17 @@ class getPast(Resource):
             abort(400, "Can't find socID")
         results = events.getPastEvents(socID)
         return jsonify(results)
+
+@api.route("/getSocLogo")
+class getLogo(Resource):
+    #@auth_services.check_authorization(level=1)
+    def get(self):
+        socID = request.args.get('socID')
+        if socID == None:
+            abort(400, "Can't find socID") 
+        results = societies.getSocLogo(socID)
+        if (results == None):
+            return jsonify({"msg": results})
+        elif (isinstance(results, tuple) == False):
+            abort(400, results)
+        return jsonify({"msg": results[0]})
