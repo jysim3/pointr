@@ -94,7 +94,7 @@ def getUserAttendance(zid, conn = None, curs = None):
     conn.close()
 
     payload = {}
-    payload['events'] = []
+    payload['attendedEvents'] = []
     payload['zID'] = zid.lower()
     payload['firstName'] = firstName
     payload['lastName'] = lastName
@@ -106,7 +106,7 @@ def getUserAttendance(zid, conn = None, curs = None):
         eventJSON['eventDate'] = str(event[3])
         eventJSON['points'] = event[0]
         eventJSON['isArc'] = event[4]
-        payload['events'].append(eventJSON)
+        payload['attendedEvents'].append(eventJSON)
 
     return payload
 

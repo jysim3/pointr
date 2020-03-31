@@ -2,7 +2,7 @@
   <div>
     <div id="form-container--entercode" class="form-container">
       <form class="form" @submit.prevent="submitEventCodeForm">
-        <h2>Sign event attendance</h2>
+        <h2>Enter event code</h2>
         <FormError v-show="formErrorMessage" :msg="formErrorMessage" />
         <label class="label" for>Event code</label>
         <!-- TODO: sanitise input, using quotes does not work -->

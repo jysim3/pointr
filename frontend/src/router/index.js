@@ -4,7 +4,7 @@ import store from '@/store/index';
 import Home from '@/views/Home.vue';
 import EventCreate from '@/views/EventCreate.vue';
 import Event from '@/views/Event.vue';
-import EventSign from '@/views/EventSign.vue';
+import EventSign from '@/views/EventSign-DEPRECATE.vue';
 import SignIn from '@/views/auth/SignIn.vue';
 import SignUp from '@/views/auth/SignUp.vue';
 import SocietyJoin from '@/views/SocietyJoin.vue';
@@ -30,13 +30,12 @@ const routes = [
     }
   },
   {
-    path: '/event/:eventID',
+    path: '/event/:eventID?',
     name: 'event',
     component: Event,
     props: true,
     meta: {
       requiresAuth: true,
-      requiresAdmin: true
     }
     // TODO: only the creator of the society/event should be able to access this, need to have function that checks they are authorized after we know they are authenticated.
   },

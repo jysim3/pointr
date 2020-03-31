@@ -26,10 +26,10 @@ export async function fetchAPI(url, method, data) {
 
     const response = await axios(options)
 
-    console.log(options) //eslint-disable-line
-    console.log(response) //eslint-disable-line
-    console.log(response.data) //eslint-disable-line
-    console.log(response.status) //eslint-disable-line
+    // console.log(options) //eslint-disable-line
+    // console.log(response) //eslint-disable-line
+    // console.log(response.data) //eslint-disable-line
+    // console.log(response.status) //eslint-disable-line
 
     return response
 }

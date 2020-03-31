@@ -10,10 +10,39 @@ from json import loads
 
 api = Namespace('soc', description='Society Attendance Services')
 
-# Get all the events hosted by a society
 @api.param('token', description='User Token', type='String', required='True')
 @api.route('')
 class Society(Resource):
+
+    @api.doc(description='''
+        Create a new society
+    ''')
+    # FIXME: USING LEVEL 1 TOKENS TO TEST FUNCTIONALITIES, CHANGE THIS BACK TO 2 IN PRODUCTION
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        data = request.form['json']
+        data = loads(data)
+
+        # For image upload
+        file = None
+        if request.files:
+            file = request.files['file']
+
+        if (data is None or 'societyName' not in data):
+            abort(400, "SocietyName not given in request")
+
+        result = societies.createSociety(token_data['zID'], sanitize(data['societyName']), False, file)
+        if (result == "exists already"):
+            abort(403, "A society with this name already exists")
+        elif (isinstance(result, tuple) != True):
+            print(result)
+            abort(400, "A server error occurred (most likely a database fault), check backend log for more details")
+        return jsonify({"msg": result[0]})
+
+# Get all the events hosted by a society
+@api.param('token', description='User Token', type='String', required='True')
+@api.route('/events')
+class SocietyEvents(Resource):
     @api.doc(description='''
         Get all of the events hosted by a society
     ''')
@@ -29,33 +58,6 @@ class Society(Resource):
             return jsonify({"status": "Failed", "msg": "No such society"})
 
         return jsonify(eventsList)
-
-    @api.doc(description='''
-        Create a new society
-    ''')
-    # FIXME: USING LEVEL 1 TOKENS TO TEST FUNCTIONALITIES, CHANGE THIS BACK TO 2 IN PRODUCTION
-    @auth_services.check_authorization(level=1)
-    def post(self, token_data):
-        data = request.form['json']
-        data = loads(data)
-
-        # TODO: If we make a decision on using images, add sql query down below
-        # For image upload
-        file = None
-        if request.files:
-            file = request.files['file']
-
-        if (data is None or 'societyName' not in data):
-            abort(400, "SocietyName not given in request")
-
-        # TODO: Chuck files to the end of this function
-        result = societies.createSociety(token_data['zID'], sanitize(data['societyName']), False, file)
-        if (result == "exists already"):
-            abort(403, "A society with this name already exists")
-        elif (isinstance(result, tuple) != True):
-            print(result)
-            abort(400, "A server error occurred (most likely a database fault), check backend log for more details")
-        return jsonify({"msg": result[0]})
         
 # Making an account by admin (required Superadmin)
 @api.param('token', description='User Token', type='String', required='True')

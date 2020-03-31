@@ -1,14 +1,22 @@
 <template>
     <!--- TODO: style this lmao -->
     <div class="wrapper">
-
         <SelectSociety v-if="!socID"/>
-        <div v-else-if="isStaff">
-            <h2>Society page for {{ socName }} </h2>
-            <MakeAdmin :socID="socID"/>
-        </div>
         <div v-else>
-            <h2>Society page for {{ socName }} </h2>
+
+            <h2 v-once>Society page for {{ socName }} </h2>
+
+            <EventList
+              :eventViewTitle="'Upcoming Events for ' + socName"
+              :eventData="societyEvents"
+              listStyle="table"
+            />
+
+
+
+            <MakeAdmin v-if="isStaff" :socID="socID"/>
+
+
         </div>
     </div>
 </template>
@@ -16,6 +24,7 @@
 <script>
 import MakeAdmin from "@/components/MakeAdmin.vue";
 import SelectSociety from "@/components/SelectSociety.vue";
+import EventList from "@/components/EventList.vue";
 import { mapGetters } from 'vuex'
 
 export default {
@@ -26,11 +35,11 @@ export default {
     }
   },
   components: {
-    MakeAdmin, SelectSociety
+    MakeAdmin, SelectSociety, EventList
   },
   computed: {
     ...mapGetters('user', [
-    'staffSocieties', 'allSocieties'
+    'staffSocieties', 'allSocieties', 'allSocietyEvents'
     ]),
     isStaff() {
         return this.staffSocieties.some(e => e.societyID === this.socID)
@@ -39,6 +48,9 @@ export default {
         return this.allSocieties.find(e => {
             return e.societyID === this.socID
         }).societyName
+    },
+    societyEvents() {
+      return this.allSocietyEvents(this.socID)
     }
   }
 }
