@@ -158,7 +158,7 @@ class getPast(Resource):
 
 @api.route("/getSocLogo")
 class getLogo(Resource):
-    #@auth_services.check_authorization(level=1)
+    @auth_services.check_authorization(level=1)
     def get(self):
         socID = request.args.get('socID')
         if socID == None:
