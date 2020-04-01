@@ -172,7 +172,7 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     data = request.get_json()
                 
                 if (activationRequired and not token_data['activation']):
-                    abort('403', 'Activation Required')
+                    abort(403, 'Activation Required')
 
                 # Check if eventID exists in query
                 if (allowSocStaff and 'eventID' in args_data):

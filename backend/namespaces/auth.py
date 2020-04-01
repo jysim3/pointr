@@ -167,7 +167,7 @@ class Permission(Resource):
 class Authorize(Resource):
 
     @api.response(400, 'Malformed Request')
-    @auth_services.check_authorization(activationRequired=False, level=0)
+    @auth_services.check_authorization(level=1)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
 
