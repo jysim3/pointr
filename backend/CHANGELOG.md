@@ -72,3 +72,9 @@ GET `/api/soc/getSocLogo` | namespaces/soc.py | Returns a base64-encoded (but ut
 api | file | details
 --- | ---- | ---
 GET `/api/events/` | namespaces/event.py | Returns a description field now, as a part of the payload json. Example `{"attendance": [], "description": "", "eventDate": "", "eventName": "", "location": "", "societyID": "", "societyName": ""}`. If description not provided when creating the event, "description" will be a field with value ""
+
+## 01/04/2020
+### Added
+api | file | details
+--- | ---- | ---
+POST `/api/auth/changePassword` | namespaces/auth.py | Changes the token bearer's password, 400 on error

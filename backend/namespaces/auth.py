@@ -154,6 +154,17 @@ class Reset(Resource):
             abort('400', "Invalid")
         return jsonify({"status": "success"})
 
+@api.route('/changePassword')
+class changePassword(Resource):
+    @auth_services.check_authorization(level = 1)
+    def post(self, token_data):
+        data = request.get_json()
+        if 'password' not in data:
+            abort(400, "No password provided")
+        if (users.changePassword(token_data['zID'], data['password']) == 'failed'):
+            abort(400, "Server Error, check backend log")
+        return jsonify({"status": "success"})
+
 @api.route('/permission')
 class Permission(Resource):
     
@@ -168,7 +179,7 @@ class Permission(Resource):
 class Authorize(Resource):
 
     @api.response(400, 'Malformed Request')
-    @auth_services.check_authorization(activationRequired=False, level=0)
+    @auth_services.check_authorization(level=1)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
 
