@@ -134,6 +134,10 @@ label,
 input {
   display: block;
 }
+.form > div {
+  display: block;
+  margin: auto;
+}
 
 .form label {
   align-self: flex-start;
@@ -225,7 +229,7 @@ input[type='checkbox'] {
   cursor: pointer;
 }
 
-input[type="date"] {
+input[type="date"], input[type="time"], textarea, option{
   font-family: var(--font-stack);
 }
 

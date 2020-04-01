@@ -1,5 +1,4 @@
 <template>
-    <!--- TODO: style this lmao -->
     <div class="wrapper">
         <SelectSociety v-if="!socID"/>
         <div v-else>
@@ -11,10 +10,8 @@
               :eventData="societyEvents"
               listStyle="table"
             />
-
-
-
             <MakeAdmin v-if="isStaff" :socID="socID"/>
+            <!--- TODO: more features for admins-->
 
 
         </div>
@@ -39,13 +36,13 @@ export default {
   },
   computed: {
     ...mapGetters('user', [
-    'staffSocieties', 'allSocieties', 'allSocietyEvents'
+    'staffSocieties', 'joinedSocieties', 'allSocietyEvents'
     ]),
     isStaff() {
         return this.staffSocieties.some(e => e.societyID === this.socID)
     },
     socName() {
-        return this.allSocieties.find(e => {
+        return this.joinedSocieties.find(e => {
             return e.societyID === this.socID
         }).societyName
     },

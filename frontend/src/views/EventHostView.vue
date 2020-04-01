@@ -53,7 +53,7 @@ export default {
     this.fetchAttendees();
     setInterval(() => {
       this.fetchAttendees();
-    }, 2000);
+    }, 5000);
   },
   computed: {
     eventURL() {

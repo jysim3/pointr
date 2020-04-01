@@ -38,14 +38,11 @@ export default {
     };
   },
   computed: {
-    // TODO: Move this to store
-    // TODO: availableSocieties needs to be fixed
     ...mapGetters('user', [
-      'allSocieties'
+      'joinedSocieties'
     ]),
     availableSocieties() {
-      // TODO: rename allSocieties getter to something better
-      return this.allSocietiesData.filter(s => !this.allSocieties.includes(s))
+      return this.allSocietiesData.filter(s => !this.joinedSocieties.includes(s))
     }
   },
   async created() {
