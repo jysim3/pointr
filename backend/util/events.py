@@ -314,3 +314,41 @@ def reopenEvent(eventID, conn, curs):
     conn.close()
     return "success"
 '''
+
+# Get the attendance information of one particular event
+# return a list of attendees in the form of: [(points, isArcMember, name, zid, time), (...)]
+# NOTE: isArcMember is bool, 0 == False, 1 == True
+# NOTE: Potentially we dont need to return the name of the user here
+@makeConnection
+def getEventInfo(eventID, conn = None, curs = None):
+    if (checkEvent(eventID) == False):
+        return "failed"
+
+    results = callQuery("SELECT name, eventdate, location, societyname, societyID, description FROM hostedEvents where eventID = (%s);", conn, curs, (eventID,))
+    if (results == False): return "failed"
+    results = curs.fetchone()
+    if (results is None):
+        return "failed"
+    payload = {}
+    payload['eventName'] = results[0]
+    payload['eventDate'] = str(results[1])
+    payload['location'] = results[2]
+    payload['societyName'] = results[3]
+    payload['societyID'] = results[4]
+    payload['description'] = results[5] if results[5] else ""
+    payload['attendance'] = []
+    results = callQuery("SELECT points, isArcMember, users.firstName,users.lastName, users.zID, participation.time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) JOIN USERS ON (PARTICIPATION.ZID = USERS.zID) WHERE events.eventID = (%s);", conn, curs, (eventID,))
+    if (results == False): return "failed"
+    results = curs.fetchall()
+    if results == []:
+        return payload
+    for result in results:
+        personJSON = {}
+        personJSON['points'] = result[0]
+        personJSON['isArcMember'] = result[1]
+        personJSON['userName'] = result[2]
+        personJSON['zID'] = result[3]
+        personJSON['attendanceTime'] = result[4]
+        payload['attendance'].append(personJSON)
+    conn.close()
+    return payload

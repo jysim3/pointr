@@ -3,6 +3,7 @@ from util.files import uploadImages
 import random
 import string
 from json import dumps
+import base64
 
 def generateID(number):
     id = ""
@@ -249,3 +250,29 @@ def getSuperAdmins(conn, curs):
     results = curs.fetchall()
     conn.close()
     return results
+
+# Function checks if a society has provided a logo or not, if exists return the file path, else False
+@makeConnection
+def checkLogo(socID, conn, curs):
+    queryResult = callQuery("SELECT additionalinfomation -> 'logo' FROM society WHERE societyid = (%s);", conn, curs, (socID,))
+    if (queryResult == False): return False
+
+    results = curs.fetchone()
+    conn.close()
+    return results[0] if results != None else False
+
+# Returns a base64 encoded string of the logo image
+@makeConnection
+def getSocLogo(socID, conn, curs):
+    logoPath = checkLogo(socID)
+    if (logoPath == False): return None
+
+    try:
+        with open(logoPath, "rb") as image:
+            imageString = base64.b64encode(image.read())
+    except IOError as e:
+        # TODO: If this occurs, set the logo path to Null in the db
+        return "File has been moved on the server, no longer avaliable"
+    except Exception as e:
+        return str(e)
+    return imageString.decode('utf-8'), 0

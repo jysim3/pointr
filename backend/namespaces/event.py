@@ -85,7 +85,7 @@ class Event(Resource):
     @auth_services.check_authorization(level=1)
     def get(self, token_data):
         eventID = request.args.get('eventID')
-        attendance = participation.getAttendance(sanitize(eventID))
+        attendance = events.getEventInfo(sanitize(eventID))
         if attendance == "failed":
             abort(400, "No such event")
 

@@ -136,6 +136,7 @@ class Forgot(Resource):
         results = sendForgotEmail(f"https://pointer.live/reset/{token}", data['zID'], f"{data['zID']}@student.unsw.edu.au")  
         if (results != "success"):
             abort(400, "Sending Email Not Successful")
+        return jsonify({"msg": "success"})
         
 @api.route('/reset')
 class Reset(Resource):
@@ -151,6 +152,17 @@ class Reset(Resource):
             abort('403', 'Invalid Credentials')
         if (users.changePassword(token_data['zID'], data['password']) == 'failed'):
             abort('400', "Invalid")
+        return jsonify({"status": "success"})
+
+@api.route('/changePassword')
+class changePassword(Resource):
+    @auth_services.check_authorization(level = 1)
+    def post(self, token_data):
+        data = request.get_json()
+        if 'password' not in data:
+            abort(400, "No password provided")
+        if (users.changePassword(token_data['zID'], data['password']) == 'failed'):
+            abort(400, "Server Error, check backend log")
         return jsonify({"status": "success"})
 
 @api.route('/permission')
