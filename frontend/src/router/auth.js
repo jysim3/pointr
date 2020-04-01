@@ -3,6 +3,7 @@ import SignUp from '@/views/auth/SignUp.vue';
 import AccountActivation from '@/views/auth/AccountActivation.vue';
 import ForgetPassword from '@/views/auth/ForgetPassword.vue';
 import ResetPassword from '@/views/auth/ResetPassword.vue';
+import ChangePassword from '@/views/auth/ChangePassword.vue';
 export default [
   {
     path: '/signin',
@@ -27,7 +28,13 @@ export default [
     props: true
   },
   {
-    path: '/resetPassword/:forgotToken?',
+    path: '/changePassword',
+    name: 'changePassword',
+    component: ChangePassword,
+    props: true
+  },
+  {
+    path: '/resetPassword/:forgotToken',
     name: 'resetPassword',
     component: ResetPassword,
     props: true

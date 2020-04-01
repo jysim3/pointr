@@ -228,8 +228,10 @@ def getInvolvedSocs(zID, conn = None, curs = None):
     return payload
 
 @makeConnection
-def changePassword(zID, password, conn = None, curs = None):
-
+def changePassword(zID, oldPassword, password, conn = None, curs = None):
+    results = checkUserInfo(zID, oldPassword)
+    if (results == False):
+        return 'failed'
     password = str(password).encode('UTF-8')
     pwHash = hashlib.sha256(password).hexdigest()
     try:

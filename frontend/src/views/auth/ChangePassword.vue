@@ -2,7 +2,8 @@
   <div class="card-container">
     <div class="form-container" id="form-container--signin">
         <form @submit.prevent="submitReset" class="form">
-        <h1>Reset Password</h1>
+        <h1>Change Password</h1>
+        <Input v-model="oldPassword" type="password" label="Old Password" />
         <InputNewPassword v-model="password"  />
             <button type="submit" class="btn btn-primary">Reset Password</button>
         </form>
@@ -12,24 +13,16 @@
 
 <script>
 import InputNewPassword from "@/components/input/InputNewPassword.vue";
-import { mapMutations } from "vuex";
-import jwt from "jsonwebtoken";
+import Input from "@/components/input/Input.vue";
 import { fetchAPI } from '@/util.js'
 
 export default {
   name: "ResetPassword",
   components: {
-      InputNewPassword
-  },
-  props: {
-    forgotToken: {
-      type: String,
-      required: true
-    }
+      InputNewPassword, Input
   },
   data() {
     return {
-      zID: "",
       password: "",
       oldPassword: "",
       repeatPassword: "",
@@ -37,29 +30,22 @@ export default {
       error: ""
     };
   },
-  async created() {
-    try {
-      const decodedToken = jwt.decode(this.forgotToken);
-      this.zID = decodedToken['zID'];
-    } catch (error) {
-      this.isActivatedStatus = error.response.status;
-    }
-  },
   methods: {
-    ...mapMutations('user', [
-      'authToken', 'resetState'
-    ]),
       async submitReset() {
           const data = {
-            password: this.password
+            password: this.password,
+            oldPassword: this.oldPassword
           }
-          this.authToken(this.forgotToken);
       try {
-        await fetchAPI("/api/auth/reset", "POST", data)
-        this.resetState()
+        await fetchAPI("/api/auth/changePassword", "POST", data)
         this.$router.push({ name: 'home' });
       } catch(error) {
-        console.log(error.response) //eslint-disable-line
+        const errorResponse = error.response;
+        if (errorResponse.status === 403) {
+          this.error = "Please check your sign in credentials"
+        } else {
+          this.error = "There was an error when trying to sign you in."
+        }
       }
       }
   }
