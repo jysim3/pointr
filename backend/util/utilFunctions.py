@@ -67,6 +67,7 @@ def callQuery(query, conn, curs, *args):
         print(e)
         conn.close()
         return False
+    conn.commit()
     return True
 
 # General utilities functions
