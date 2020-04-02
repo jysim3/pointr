@@ -29,7 +29,8 @@ if (os.path.exists("../assets/images/") == False):
 app.config['UPLOAD_FOLDER'] = f"{os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))}/assets/images/"
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-CORS(app)
+origins = ['http://localhost:8080','https://pointr.live'] # TODO: Make this depends on development/production
+CORS(app,origins=origins,supports_credentials=True)
 
 def main():
     app.run()

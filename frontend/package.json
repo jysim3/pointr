@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "cookie": "^0.4.0",
     "core-js": "^3.6.4",
     "express": "^4.17.1",
     "helmet": "^3.21.3",

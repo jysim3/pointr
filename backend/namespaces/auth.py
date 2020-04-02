@@ -1,4 +1,5 @@
 from flask import request, jsonify, request
+from flask import make_response
 from flask_restx import Namespace, Resource, abort, reqparse
 from util import auth_services, users, utilFunctions, societies
 from util.auth_services import ADMIN, USER
@@ -117,7 +118,9 @@ class Login(Resource):
         # Login and if successful return the token otherwise invalid credentials
         token = auth_services.login(data['zID'].lower(), data['password'])
         if (token):
-            return jsonify({"token": token})
+            response = make_response()
+            response.set_cookie('Authorization', token, httponly=True)
+            return response
         else:
             abort(403, 'Invalid Credentials / Account Not Activated')
 

@@ -154,9 +154,9 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
                     abort(400, err.messages)
                 '''
                 
-                
+                # TODO: Check token for HTTPOnly and Secure
                 try:
-                    token = TokenSchema().load({"token": request.headers.get('Authorization')})
+                    token = TokenSchema().load({"token": request.cookies.get('Authorization')})
                 except ValidationError as err:
                     abort(400, err.messages)
 

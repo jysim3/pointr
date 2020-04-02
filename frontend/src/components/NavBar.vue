@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapGetters, mapState, mapActions } from 'vuex'
 
 export default {
   name: "NavBar",
@@ -69,9 +69,11 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('user', [
+      'isAuthenticated'
+    ]),
     ...mapState('user', {
       isLoading: state => state.isLoading,
-      isAuthenticated: state => state.isAuthenticated,
       isAdmin: state => state.isAdmin
     }),
     authBtnText() {

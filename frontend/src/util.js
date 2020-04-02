@@ -1,5 +1,4 @@
 import axios from "axios";
-import store from "@/store/index";
 
 let apiURL;
 apiURL = 'https://pointr.live';
@@ -9,10 +8,6 @@ if (process.env.NODE_ENV === 'development'){
 
 export async function fetchAPI(url, method, data) {
     const headers = {}
-    const authToken = store.state.user.authToken
-    if (authToken) {
-        headers.Authorization = authToken;
-    }
     if (data) {
         headers['Content-Type'] = 'application/json'
     }
@@ -21,7 +16,8 @@ export async function fetchAPI(url, method, data) {
         url: apiURL + url,
         method: method,
         data: data,
-        headers: headers
+        headers: headers,
+        withCredentials: true
     }
 
     const response = await axios(options)

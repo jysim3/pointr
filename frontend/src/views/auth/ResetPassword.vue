@@ -15,6 +15,7 @@ import InputNewPassword from "@/components/input/InputNewPassword.vue";
 import { mapMutations } from "vuex";
 import jwt from "jsonwebtoken";
 import { fetchAPI } from '@/util.js'
+import cookie from 'cookie'
 
 export default {
   name: "ResetPassword",
@@ -53,7 +54,7 @@ export default {
           const data = {
             password: this.password
           }
-          this.authToken(this.forgotToken);
+          document.cookie = cookie.serialize('Authorization', this.forgotToken);
       try {
         await fetchAPI("/api/auth/reset", "POST", data)
         this.resetState()

@@ -4,7 +4,7 @@
         <div v-else>
 
             <h2 v-once>Society page for {{ socName }} </h2>
-
+            <img :src="`${apiURL}/api/soc/image?socID=${socID}`" />
             <EventList
               :eventViewTitle="'Upcoming Events for ' + socName"
               :eventData="societyEvents"
@@ -23,12 +23,18 @@ import MakeAdmin from "@/components/MakeAdmin.vue";
 import SelectSociety from "@/components/SelectSociety.vue";
 import EventList from "@/components/EventList.vue";
 import { mapGetters } from 'vuex'
+import { apiURL } from '@/util'
 
 export default {
-  name: 'EventSign',
+  name: 'Society',
   props: {
     socID: {
       type: String
+    }
+  },
+  data() {
+    return {
+      apiURL
     }
   },
   components: {
@@ -49,6 +55,9 @@ export default {
     societyEvents() {
       return this.allSocietyEvents(this.socID)
     }
+  },
+  async mounted() {
+    
   }
 }
 </script>

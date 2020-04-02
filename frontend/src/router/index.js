@@ -66,11 +66,11 @@ router.beforeResolve(async (to, from, next) => {
   }
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!store.state.user.isAuthenticated) {
+    if (!store.getters['user/isAuthenticated']) {
+      console.log(store.getters['user/isAuthenticated']) // eslint-disable-line
       next({
         path: '/signin',
         query: {redirect: to.fullPath}, // https://stackoverflow.com/questions/45856929/redirect-to-requested-page-after-login-using-vue-router
-        params: { nextUrl: to.fullPath } //FIXME: needs to actually work
       });
     } else if (store.state.user.info.permission < 1) {
       // If user is not activated yet ask them to activate account

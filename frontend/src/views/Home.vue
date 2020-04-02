@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import LandingPage from "@/components/LandingPage.vue";
 import DashboardUser from "@/components/dashboard/DashboardUser.vue";
 import DashboardAdmin from "@/components/dashboard/DashboardAdmin.vue";
@@ -27,9 +27,15 @@ export default {
   computed: {
     ...mapState("user", {
       isLoading: state => state.isLoading,
-      isAuthenticated: state => state.isAuthenticated,
       isAdmin: state => state.isAdmin
-    })
+    }),
+    ...mapGetters('user', [
+      'isAuthenticated'
+    ])
+    
+  },
+  mounted() {
+    console.log(this.$store.state) //eslint-disable-line
   }
 };
 </script>
