@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
     degreeType TEXT,
     isSuperAdmin BOOLEAN NOT NULL,
     activationStatus BOOLEAN NOT NULL,
-    additionalInfomation JSON,
+    additionalInfomation JSONB,
     primary key(zid)
 );
 -- drop TABLE IF EXISTS events CASCADE;
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS events (
     qrCode boolean,
     description TEXT,
     isClosed BOOLEAN,
-    additionalInfomation JSON,
+    additionalInfomation JSONB,
     primary key(eventID)
 );
 -- drop TABLE IF EXISTS participation CASCADE;
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS society (
     societyID TEXT,
     societyName TEXT NOT NULL unique,
     isCollege BOOLEAN NOT NULL,
-    additionalInfomation JSON,
+    additionalInfomation JSONB,
     primary key (societyID)
 );
 -- NOTE: Perhaps we can add an additional collegeSocs field here for more college specific fields
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS socstaff (
     society TEXT REFERENCES society(societyID) ON DELETE CASCADE,
     zid TEXT REFERENCES users(zid) ON DELETE CASCADE,
     role INTEGER NOT NULL,
-    additionalInfomation JSON,
+    additionalInfomation JSONB,
     primary key (society, zid)
 );
 -- DROP TABLE IF EXISTS collegeUsers CASCADE;
