@@ -83,9 +83,10 @@ POST `/api/auth/changePassword` | namespaces/auth.py | Changes the token bearer'
 ### Added
 api | file | details
 --- | ---- | ---
-GET `/api/user/image` | namespaces/user.py | Get the token-bearer's profile photo (if one was set) {"msg": "success", "path": "somepath"}. If photo doesn't exist (or not set), {"msg": "failed", "path": "Image doesn't exist"}
-GET `/api/soc/image` | namespaces/soc.py " | Get the socID (in the query string)'s society logo (if one was set) {"msg": "success", "path": "somepath"}. If logo doesn't exist (or not set), {"msg": "failed", "path": "Image doesn't exist"}
-
+GET `/api/user/image` | namespaces/user.py | Get the token-bearer's profile photo (if one was set) `{"msg": "success", "path": "somepath"}`. If photo doesn't exist (or not set), `{"msg": "failed", "path": "Image doesn't exist"}`
+GET `/api/soc/image` | namespaces/soc.py " | Get the socID (in the query string)'s society logo (if one was set) `{"msg": "success", "path": "somepath"}`. If logo doesn't exist (or not set), `{"msg": "failed", "path": "Image doesn't exist"}`
+POST `/api/user/image` | namespaces/user.py | Update the token-bearer's profile photo with the one provided in the request body (use field name 'image'). Return `{"status": "success"}`
+POST `/api/soc/image` | p Update the societyID specified in the request body's profile photo with the one provided in the request body (use field name 'image'). Return `{"status": "success"}`
 
 ### Changed
 api | file | details

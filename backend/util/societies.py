@@ -276,3 +276,14 @@ def getSocLogo(socID, conn, curs):
     except Exception as e:
         return str(e)
     return logoPath, 0
+
+@makeConnection
+def updateLogo(socID, file, conn, curs):
+    uploadResult = uploadImages(file, socID)
+    if (isinstance(uploadResult, tuple) == False):
+        return "bad file name"
+    fileJSON = dumps({"logo": uploadResult[0]})
+    results = callQuery("UPDATE society SET additionalInfomation = (%s) WHERE socID = (%s);", conn, curs, (fileJSON, socID,))
+    if (results == False): return "Database fault, check backend log"
+
+    return "success"

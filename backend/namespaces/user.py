@@ -59,7 +59,11 @@ class image(Resource):
 
     @auth_services.check_authorization(level=1)
     def post(self, token_data):
-        return -1
+        image = request.files['image'] if 'image' in request.files else abort (400, "No image provided")
+        result = users.updateUserImage(token_data['zID'], image)
+        if (result == "success"):
+            abort(400, result)
+        return jsonify({"status": "success"})
 
 # Function deprecated, moved this endpoint to POST /api/user
 '''
