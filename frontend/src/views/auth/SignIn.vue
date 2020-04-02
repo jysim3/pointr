@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
 import { fetchAPI } from "@/util";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
@@ -47,18 +46,14 @@ export default {
     };
   },
   methods: {
-    ...mapActions('user', [
-      'authenticateUser'
-    ]),
     async submitSignInForm() {
       try {
-        const response = await fetchAPI("/api/auth/login", "POST", {
+        await fetchAPI("/api/auth/login", "POST", {
           zID: this.zID,
           password: this.password
         })
 
         this.$router.push(this.$route.query.redirect || { name: 'home' });
-        this.authenticateUser(response.data.token);
       } catch(error) {
         const errorResponse = error.response;
         if (errorResponse.status === 403) {

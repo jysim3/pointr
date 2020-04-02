@@ -107,6 +107,15 @@ class Activate(Resource):
             abort(403, "Already activated")
         return jsonify({"status": "success"})
 
+@api.route('/logout')
+class Logout(Resource):
+    
+    @api.response(400, 'Malformed Request')
+    def post(self):
+        response = make_response()
+        response.set_cookie('Authorization', '', max_age=0)
+        return response
+
 @api.route('/login')
 class Login(Resource):
     

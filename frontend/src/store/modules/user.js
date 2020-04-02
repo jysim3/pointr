@@ -3,8 +3,8 @@ import { fetchAPI } from '@/util';
 // Currently the validity of a user's token will only be checked once,
 // this is to prevent a lot of requests to the backend.
 
-import cookie from 'cookie'
 const state = {
+  isAuthenticated: false,
   isAdmin: false,
   info: {
     zID: "",
@@ -23,7 +23,7 @@ const state = {
 };
 
 const getters = {
-  isAuthenticated: () => cookie.parse(document.cookie || ''),
+  isAuthenticated: () => state.isAuthenticated,
   memberSocieties(state) {
     if (state.info.societies) {
       return state.info.societies.member;
@@ -76,7 +76,7 @@ const mutations = {
     state.info = { ...infoPayload }
   },
   resetState(state) {
-    document.cookie = ''
+    state.isAuthenticated = false
     state.isAdmin = false;
     state.info = {};
   },
@@ -89,6 +89,9 @@ const mutations = {
   },
   setIsLoading(state, isLoading) {
     state.isLoading = isLoading;
+  },
+  authenticateUser(state) {
+    state.isAuthenticated = true
   }
 };
 
@@ -136,11 +139,17 @@ const actions = {
       console.log(error.response); //eslint-disable-line
     }
   },
-  initAuth({ commit, dispatch }) {
+  async initAuth({ commit, dispatch }) {
     try {
-      fetchAPI("/api/auth/validate", "POST");
-      if (state.isLoading) {
-        dispatch('userInfo').then(() => commit('setIsAdmin'))
+      const response = await fetchAPI("/api/auth/validate", "POST");
+      if (response.data.valid === "true") {
+        // Now that we now the token is valid we can authenticate the user and validate them.
+        // However, we only want to do this if they aren't already authenticated. This is to prevent many requests from going out unnecessarily.
+        if (!state.isAuthenticated) {
+          await commit('authenticateUser');
+          await dispatch('userInfo');
+          await commit('setIsAdmin');
+        }
       }
     } catch (error) {
       console.log(error.response) //eslint-disable-line
@@ -148,6 +157,7 @@ const actions = {
     commit('setIsLoading', false);
   },
   signOut({ commit }) {
+    fetchAPI('/api/auth/logout', 'POST')
     commit('resetState');
   }
 };
