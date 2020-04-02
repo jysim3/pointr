@@ -40,12 +40,15 @@ class User(Resource):
     # Returns:
     # [{"eventID": "1239", "name": "Test Event 0", "society": "UNSW Hall", "eventDate": "2019-11-19"}, {"eventID": "1240", "name": "Coffee Night", "society": "UNSW Hall", "eventDate": "2019-11-20"}]
     @api.response(400, 'Malformed Request')
-    @auth_services.check_authorization(level=1, allowSelf=True)
-    @validation_services.validate_args_with(ZIDSchema)
-    def get(self, token_data, args_data):
-        attendance = users.getUserAttendance(args_data['zID'].lower())
+    @auth_services.check_authorization(level=1)
+    def get(self, token_data):
+        attendance = users.getUserInfo(token_data['zID'])
+        if (attendance == "failed"):
+            abort(400, "Server issue, check backend log")
         return jsonify(attendance)
 
+# Function deprecated, moved this endpoint to POST /api/user
+'''
 # NOTE: OUTPUT VALUE CHANGED
 @api.route('/info')
 @api.param('token', description='Users Token', type='String', required='True')
@@ -61,6 +64,7 @@ class info(Resource):
             abort(400, 'Something went wrong')
         results['zID'] = token_data['zID']
         return jsonify(results)
+'''
 
 @api.route('/points')
 class Points(Resource):

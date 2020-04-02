@@ -78,3 +78,9 @@ GET `/api/events/` | namespaces/event.py | Returns a description field now, as a
 api | file | details
 --- | ---- | ---
 POST `/api/auth/changePassword` | namespaces/auth.py | Changes the token bearer's password, 400 on error
+
+## 02/04/2020
+### Changed
+api | file | details
+--- | ---- | ---
+GET `/api/user` | namespaces/user.py | Changed the output format to be a user infodump, output format: {"events": [], "firstName": "", "lastName": "", "image": "", "societies": {"member": [], "staff": []}, "zID": ""}

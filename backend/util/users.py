@@ -2,6 +2,10 @@ from util.utilFunctions import checkUser, makeConnection
 from util.societies import makeSuperAdmin
 #from util.files import uploadImages
 import hashlib
+from util.utilFunctions import callQuery
+import base64
+from util.files import uploadImages
+from json import dumps
 
 # Creating a user 
 # 8/1/2020: TODO: To implement the login system, we need to store hashed passwords
@@ -40,7 +44,7 @@ def getUserInfo(zID, conn = None, curs = None):
     firstName = name[0]
     lastName = name[1]
     try:
-        curs.execute("SELECT * FROM userParticipatedEvents WHERE zID = (%s);", (zID,))
+        curs.execute("SELECT * FROM userParticipatedEvents WHERE zID = (%s) ORDER BY societyID;", (zID,))
     except Exception as e:
         conn.close()
         return "failed"
@@ -49,6 +53,9 @@ def getUserInfo(zID, conn = None, curs = None):
     payload['zID'] = zID
     payload['firstName'] = firstName
     payload['lastName'] = lastName
+    payload['societies'] = getInvolvedSocs(zID)
+    userImage = getUserImage(zID)
+    payload['image'] = userImage[0] if isinstance(userImage, tuple) == True else ''
     payload['events'] = []
     for result in results:
         eventJSON = {}
@@ -60,6 +67,42 @@ def getUserInfo(zID, conn = None, curs = None):
         eventJSON['societyID'] = result[5]
         payload['events'].append(eventJSON)
     return payload
+
+@makeConnection
+def checkUserImage(zID, conn, curs):
+    queryResult = callQuery("SELECT additionalinfomation -> 'logo' FROM users WHERE zID = (%s);", conn, curs, (zID,))
+    if (queryResult == False): return False
+
+    results = curs.fetchone()
+    conn.close()
+    return results[0] if results != None else False
+
+@makeConnection
+def getUserImage(zID, conn, curs):
+    logoPath = checkUserImage(zID)
+    if (logoPath == False): return None
+
+    try:
+        with open(logoPath, "rb") as image:
+            imageString = base64.b64encode(image.read())
+    except IOError as e:
+        # TODO: If this occurs, set the logo path to Null in the db
+        return "File has been moved on the server, no longer avaliable"
+    except Exception as e:
+        return str(e)
+    return imageString.decode('utf-8'), 0
+
+@makeConnection
+def updateUserImage(zID, file, conn, curs):
+    uploadResult = uploadImages(file, zID)
+    if (isinstance(uploadResult, tuple) == False):
+        return "bad file name"
+    fileJSON = dumps({"logo": uploadResult[0]})
+    results = callQuery("UPDATE users SET additionalInfomation = (%s) WHERE zID = (%s);", conn, curs, (fileJSON, zID,))
+    if (results == False):
+        return "Database fault, check backend log"
+    return "success"
+
 
 @makeConnection
 def checkUserInfo(zID, password, conn = None, curs = None):
