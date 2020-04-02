@@ -50,7 +50,7 @@ def getUserInfo(zID, conn = None, curs = None):
     payload['firstName'] = firstName
     payload['lastName'] = lastName
     payload['societies'] = getInvolvedSocs(zID)
-    userImage = getUserImage(zID)
+    userImage = checkUserImage(zID)
     payload['image'] = userImage[0] if isinstance(userImage, tuple) == True else ''
     payload['events'] = []
     for result in results:

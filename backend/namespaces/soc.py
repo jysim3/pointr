@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort, reqparse
 from util.sanitisation_services import sanitize
 from util import societies, utilFunctions, auth_services, events
@@ -169,3 +169,17 @@ class getLogo(Resource):
         elif (isinstance(results, tuple) == False):
             abort(400, results)
         return jsonify({"msg": results[0]})
+
+@api.route("/image")
+class image(Resource):
+    @auth_services.check_authorization(level=1)
+    def get(self, token_data):
+        imageStatus = societies.checkLogo(request.args.get('socID'))
+        if imageStatus == False:
+            return jsonify({"msg": "failed", "path": "Image doesn't exist"})
+        return send_file(imageStatus)
+        #return jsonify({"msg": "success", "path": imageDirectory[0]})
+
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        return -1

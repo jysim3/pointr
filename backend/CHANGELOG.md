@@ -80,6 +80,13 @@ api | file | details
 POST `/api/auth/changePassword` | namespaces/auth.py | Changes the token bearer's password, 400 on error
 
 ## 02/04/2020
+### Added
+api | file | details
+--- | ---- | ---
+GET `/api/user/image` | namespaces/user.py | Get the token-bearer's profile photo (if one was set) {"msg": "success", "path": "somepath"}. If photo doesn't exist (or not set), {"msg": "failed", "path": "Image doesn't exist"}
+GET `/api/soc/image` | namespaces/soc.py " | Get the socID (in the query string)'s society logo (if one was set) {"msg": "success", "path": "somepath"}. If logo doesn't exist (or not set), {"msg": "failed", "path": "Image doesn't exist"}
+
+
 ### Changed
 api | file | details
 --- | ---- | ---

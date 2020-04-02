@@ -23,10 +23,11 @@ api.add_namespace(other, path='/api/other')
 api.add_namespace(auth, path='/api/auth')
 
 
-app.config['UPLOAD_FOLDER'] = f"{os.getcwd()}/images/"
+if (os.path.exists("../assets/images/") == False):
+    os.mkdir("../assets")
+    os.mkdir("../assets/images")
+app.config['UPLOAD_FOLDER'] = f"{os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))}/assets/images/"
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-if (os.path.exists("images/") == False):
-    os.mkdir("images")
 
 CORS(app)
 

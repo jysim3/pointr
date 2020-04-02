@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, send_from_directory, send_file
 from flask_restx import Namespace, Resource, abort, reqparse
 from util.sanitisation_services import sanitize
 from marshmallow import Schema, fields, ValidationError, validates, validate
@@ -46,6 +46,20 @@ class User(Resource):
         if (attendance == "failed"):
             abort(400, "Server issue, check backend log")
         return jsonify(attendance)
+
+@api.route("/image")
+class image(Resource):
+    @auth_services.check_authorization(level=1)
+    def get(self, token_data):
+        imageStatus = users.checkUserImage(token_data['zID'])
+        if (imageStatus == False):
+            return jsonify({"msg": "failed", "path": "Image doesn't exist"})
+        return send_file(imageStatus)
+        #return jsonify({"msg": "success", "path": imageDirectory[0]})
+
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        return -1
 
 # Function deprecated, moved this endpoint to POST /api/user
 '''

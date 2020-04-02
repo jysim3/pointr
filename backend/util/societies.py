@@ -275,4 +275,4 @@ def getSocLogo(socID, conn, curs):
         return "File has been moved on the server, no longer avaliable"
     except Exception as e:
         return str(e)
-    return imageString.decode('utf-8'), 0
+    return logoPath, 0
