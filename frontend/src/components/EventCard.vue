@@ -68,7 +68,7 @@ export default {
   background: white;
 
 
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   white-space: nowrap;
   max-width: 250px;
   height: 100px;

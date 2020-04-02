@@ -7,7 +7,7 @@
             <select class="input--select select--admin"  v-model="selectedSociety" name="society-select">
             <option value="" >Select a society</option>
             <option
-                v-for="(society, index) in allSocieties"
+                v-for="(society, index) in joinedSocieties"
                 :key="index"
                 :value="society.societyID"
             >{{ society.societyName }}{{ isStaff(society.societyID) ? ' (Admin)' : null}}</option>
@@ -27,7 +27,7 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-        'allSocieties', 'staffSocieties'
+        'joinedSocieties', 'staffSocieties'
         ]),
     },
     methods: {

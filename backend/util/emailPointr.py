@@ -2,6 +2,10 @@ import os
 from app import app
 from flask_mail import Mail
 
+if app.config['ENV'] == 'development':
+    site = 'http://localhost:8000'
+elif app.config['ENV'] == 'production':
+    site = 'https://pointr.live'
 # Utilising flask_mail
 app.config.update(
     MAIL_SERVER = "smtp.gmail.com",
@@ -15,7 +19,7 @@ mail = Mail(app)
 
 def sendActivationEmail(stringToSend, emailToSend):
     message = f"""\
-Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nHave fun accumulating your room points :).\n\nPlease activate your account now: {stringToSend}"""
+Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nHave fun accumulating your room points :).\n\nPlease activate your account now: {site+stringToSend}"""
 
     try:
         msg = mail.send_message(
@@ -31,7 +35,7 @@ Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\
 
 def sendForgotEmail(link, zID, emailToSend):
     message = f"""\
-Hi,{zID}\nYou have requested to reset your password.\nFollow this link to reset your password: {link}"""
+Hi,{zID}\nYou have requested to reset your password.\nFollow this link to reset your password: {site+link}"""
 
     try:
         msg = mail.send_message(

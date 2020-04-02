@@ -58,7 +58,7 @@ class Register(Resource):
         # Step 2, try sending an email, if error occurs, abort
         #try:
         token = auth_services.generateActivationToken(zID)
-        results = sendActivationEmail(f"https://pointr.live/activate/{token}", f"{zID}@student.unsw.edu.au")
+        results = sendActivationEmail(f"/activate/{token}", f"{zID}@student.unsw.edu.au")
         if (results != "success"):
             # This only happens if we have some kind of SMTP error, most likely due to security measures on unrecognised devices
             abort(400, "Sending Email Not Successful")
@@ -133,7 +133,7 @@ class Forgot(Resource):
         token = auth_services.generateForgotToken(data['zID'])
         
         from util.emailPointr import sendForgotEmail
-        results = sendForgotEmail(f"https://pointer.live/reset/{token}", data['zID'], f"{data['zID']}@student.unsw.edu.au")  
+        results = sendForgotEmail(f"/resetPassword/{token}", data['zID'], f"{data['zID']}@student.unsw.edu.au")  
         if (results != "success"):
             abort(400, "Sending Email Not Successful")
         return jsonify({"msg": "success"})
@@ -159,9 +159,9 @@ class changePassword(Resource):
     @auth_services.check_authorization(level = 1)
     def post(self, token_data):
         data = request.get_json()
-        if 'password' not in data:
+        if 'password' not in data or 'oldPassword' not in data:
             abort(400, "No password provided")
-        if (users.changePassword(token_data['zID'], data['password']) == 'failed'):
+        if (users.changePassword(token_data['zID'], data['oldPassword'], data['password']) == 'failed'):
             abort(400, "Server Error, check backend log")
         return jsonify({"status": "success"})
 

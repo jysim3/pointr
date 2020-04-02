@@ -6,7 +6,7 @@
         <select class="input--select select--admin"  v-model="selectedSociety" name="society-select">
           <option value="all" >All</option>
           <option
-            v-for="(society, index) in allSocieties"
+            v-for="(society, index) in joinedSocieties"
             :key="index"
             :value="society.societyID"
           >{{ society.societyName }}</option>
@@ -50,7 +50,7 @@ export default {
   
   computed: {
     ...mapGetters('user', [
-      'allSocieties', 'allSocietyEvents', 'allEvents'
+      'joinedSocieties', 'allSocietyEvents', 'allEvents'
     ]),
 
     selectedSocietyEvents() {

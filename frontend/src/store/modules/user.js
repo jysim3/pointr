@@ -38,7 +38,7 @@ const getters = {
       return []
     }
   },
-  allSocieties(state) {
+  joinedSocieties(state) {
     if (state.info.societies) {
       return state.info.societies.member.concat(state.info.societies.staff);
     } else {

@@ -4,18 +4,13 @@
     <form @submit.prevent="submitSignUpForm" class="form">
       <h2>Join Pointr</h2>
       <FormError v-if="formErrorMessage" :msg="formErrorMessage" />
-      <InputZID v-model="zID" :zID="zID" />
-      <label for="firstName" class="label">First Name</label>
-      <input v-model="userInfo.firstName" class="input" type="text" name="firstName" />
-      <label for="lastName" class="label">Last Name</label>
-      <input v-model="userInfo.lastName" class="input" type="text" name="lastName" />
-      <InputPassword v-model="password" :password="password" />
-      <InputPassword
-        v-model="repeatPassword"
-        :password="repeatPassword"
-        :repeatPassword="password"
-        :label="'Repeat password'"
-      />
+
+      <InputZID v-model="zID"  />
+
+      <Input v-model="userInfo.firstName" type="text" label="First Name"/>
+      <Input v-model="userInfo.lastName" type="text" label="Last Name"/>
+
+      <InputPassword v-model="password"  />
       <!-- TODO: fix :class on repeatPassword input -->
       <label class="label">Year began study</label>
       <input
@@ -93,7 +88,8 @@
 import { fetchAPI } from "@/util.js";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
-import InputPassword from "@/components/input/InputPassword.vue";
+import Input from "@/components/input/Input.vue";
+import InputPassword from "@/components/input/InputNewPassword.vue";
 
 export default {
   name: "SignUp",
@@ -101,6 +97,7 @@ export default {
     FormError,
     InputZID,
     InputPassword,
+    Input
   },
   props: {
     isPage: {
@@ -113,7 +110,6 @@ export default {
     return {
       zID: "",
       password: "",
-      repeatPassword: "",
       userInfo: {
         firstName: "",
         lastName: "",
