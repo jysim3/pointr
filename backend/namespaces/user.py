@@ -54,14 +54,13 @@ class image(Resource):
         imageStatus = users.checkUserImage(token_data['zID'])
         if (imageStatus == False):
             return jsonify({"msg": "failed", "path": "Image doesn't exist"})
-        return send_file(imageStatus)
-        #return jsonify({"msg": "success", "path": imageDirectory[0]})
+        return jsonify({"msg": "success", "path": imageStatus})
 
     @auth_services.check_authorization(level=1)
     def post(self, token_data):
         image = request.files['image'] if 'image' in request.files else abort (400, "No image provided")
         result = users.updateUserImage(token_data['zID'], image)
-        if (result == "success"):
+        if (result != "success"):
             abort(400, result)
         return jsonify({"status": "success"})
 

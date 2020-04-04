@@ -177,14 +177,15 @@ class image(Resource):
         imageStatus = societies.checkLogo(request.args.get('socID'))
         if imageStatus == False:
             return jsonify({"status": "failed", "path": "Image doesn't exist"})
-        return send_file(imageStatus)
-        #return jsonify({"msg": "success", "path": imageDirectory[0]})
+        return jsonify({"msg": "success", "path": imageStatus})
 
     @auth_services.check_authorization(level=1)
     def post(self, token_data):
-        socID = request.get_json()['socID'] if 'socID' in request.get_json() else abort (400, "No society specified")
+        #socID = request.get_json()['socID'] if 'socID' in request.get_json() else abort (400, "No society specified")
+        socID = loads(request.form['socID'])['socID'] if 'socID' in request.form else abort(400, "No society specified")
+        if societies.checkAdmin(socID, token_data['zID']) == False: abort(403, "Not an admin of this society")
         image = request.files['image'] if 'image' in request.files else abort (400, "No image provided")
         result = societies.updateLogo(socID, image)
-        if (result == "success"):
+        if (result != "success"):
             abort(400, result)
         return jsonify({"status": "success"})

@@ -66,12 +66,14 @@ def getUserInfo(zID, conn = None, curs = None):
 
 @makeConnection
 def checkUserImage(zID, conn, curs):
-    queryResult = callQuery("SELECT additionalinfomation -> 'logo' FROM users WHERE zID = (%s);", conn, curs, (zID,))
+    queryResult = callQuery("SELECT additionalinfomation FROM users WHERE zID = (%s);", conn, curs, (zID,))
     if (queryResult == False): return False
 
     results = curs.fetchone()
     conn.close()
-    return results[0] if results != None else False
+    if results == None: return False
+    elif 'logo' not in results[0]: return False
+    return results[0]['logo']
 
 @makeConnection
 def getUserImage(zID, conn, curs):

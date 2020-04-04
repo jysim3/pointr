@@ -1,6 +1,7 @@
 from werkzeug.utils import secure_filename
 from flask import request, abort
 import os
+import uuid
 
 ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg'}
 
@@ -13,15 +14,9 @@ def uploadImages(file, filename = None):
     if file.filename == '':
         return "Invalid File Name"
 
-    # Some checks/sanitisation for the filename
-    if not filename:
-        if file and allowed_file(file.filename):
-            filename = secure_filename(filename)
-        else:
-            return "Invalid file name"
-    else:
-        filename = filename + "."
-        filename = filename + str(file.filename).rsplit('.', 1)[1].lower()
+    # Generate a 256 bit UUID file name (2 128 bit uuids combined)
+    filename = str(uuid.uuid4().hex) + str(uuid.uuid4().hex) + "."
+    filename = filename + str(file.filename).rsplit('.', 1)[1].lower()
 
     try:
         file.save(app.config['UPLOAD_FOLDER'] + filename)

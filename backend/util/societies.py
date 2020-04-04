@@ -254,12 +254,14 @@ def getSuperAdmins(conn, curs):
 # Function checks if a society has provided a logo or not, if exists return the file path, else False
 @makeConnection
 def checkLogo(socID, conn, curs):
-    queryResult = callQuery("SELECT additionalinfomation -> 'logo' FROM society WHERE societyid = (%s);", conn, curs, (socID,))
+    queryResult = callQuery("SELECT additionalinfomation FROM society WHERE societyid = (%s);", conn, curs, (socID,))
     if (queryResult == False): return False
 
     results = curs.fetchone()
     conn.close()
-    return results[0] if results != None else False
+    if results == None: return False
+    elif 'logo' not in results[0]: return False
+    return results[0]['logo']
 
 # Returns a base64 encoded string of the logo image
 @makeConnection
@@ -283,7 +285,7 @@ def updateLogo(socID, file, conn, curs):
     if (isinstance(uploadResult, tuple) == False):
         return "bad file name"
     fileJSON = dumps({"logo": uploadResult[0]})
-    results = callQuery("UPDATE society SET additionalInfomation = (%s) WHERE socID = (%s);", conn, curs, (fileJSON, socID,))
+    results = callQuery("UPDATE society SET additionalInfomation = (%s) WHERE societyID = (%s);", conn, curs, (fileJSON, socID,))
     if (results == False): return "Database fault, check backend log"
 
     return "success"
