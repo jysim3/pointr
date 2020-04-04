@@ -14,7 +14,7 @@ def createConnection():
         database_name = 'pointrDB'
         if (os.environ.get('FLASK_ENV') == 'test'):
             database_name = 'testPointrDB'
-        conn = psycopg2.connect(database = "pointrDB")
+        conn = psycopg2.connect(database = database_name)
     except Error as e:
         print(e)
     return conn
