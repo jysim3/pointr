@@ -10,6 +10,11 @@
               :eventData="societyEvents"
               listStyle="table"
             />
+            <EventList
+              :eventViewTitle="'Past Events for ' + socName"
+              :eventData="pastSocietyEvents"
+              listStyle="table"
+            />
             <MakeAdmin v-if="isStaff" :socID="socID"/>
             <!--- TODO: more features for admins-->
 
@@ -23,6 +28,7 @@ import MakeAdmin from "@/components/MakeAdmin.vue";
 import SelectSociety from "@/components/SelectSociety.vue";
 import EventList from "@/components/EventList.vue";
 import { mapGetters } from 'vuex'
+import { fetchAPI } from '@/util.js'
 
 export default {
   name: 'EventSign',
@@ -33,6 +39,21 @@ export default {
   },
   components: {
     MakeAdmin, SelectSociety, EventList
+  },
+  data() {
+    return {
+      pastSocietyEvents:[
+      ]
+    }
+  },
+  mounted() {
+      fetchAPI(`/api/soc/getPastEvents?socID=${this.socID}`, "GET")
+      .then(v => {
+        this.pastSocietyEvents = v.data
+      })
+      .catch(e => {
+        console.log(e) // eslint-disable-line
+      })
   },
   computed: {
     ...mapGetters('user', [

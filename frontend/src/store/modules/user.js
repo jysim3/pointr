@@ -113,11 +113,7 @@ const actions = {
     try {
       const requests = [
         {
-          url: '/api/user/info',
-          method: 'POST'
-        },
-        {
-          url: '/api/user/involvedSocs',
+          url: '/api/user/',
           method: 'GET'
         },
         {
@@ -131,33 +127,17 @@ const actions = {
       ];
       const [
         infoResponse,
-        involvedSocsResponse,
         permissionResponse,
         eventResponse
       ] = await Promise.all(requests.map(r => fetchAPI(r.url, r.method)));
       const events = eventResponse.data
 
-      // TODO: this is messy, should rather be defining in initial state or backend should not be returning undefined
-      let societies;
-      if (!involvedSocsResponse.data) {
-        societies = {
-          member: [],
-          staff: []
-        }
-      } else {
-        societies = {
-          member: involvedSocsResponse.data.member,
-          staff: involvedSocsResponse.data.staff
-        }
-
-      }
 
 
       const infoPayload = {
         ...infoResponse.data,
         ...permissionResponse.data,
         events,
-        societies,
       }
       commit('info', infoPayload);
       console.log(infoPayload) //eslint-disable-line
