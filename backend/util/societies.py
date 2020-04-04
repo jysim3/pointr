@@ -1,4 +1,4 @@
-from util.utilFunctions import checkUser, makeConnection, callQuery
+from util.utilFunctions import checkUser, makeConnection, callQuery, checkSoc
 from util.files import uploadImages
 import random
 import string
@@ -289,3 +289,52 @@ def updateLogo(socID, file, conn, curs):
     if (results == False): return "Database fault, check backend log"
 
     return "success"
+
+@makeConnection
+def getSocName(socID, conn, curs):
+    queryResults = callQuery("SELECT societyName FROM society WHERE societyID = (%s);", conn, curs, (socID,))
+    if queryResults == False: return None
+    results = curs.fetchone()
+    if (results == None): return None
+    return results[0]
+
+@makeConnection
+def getSocMemberCount(socID, conn, curs):
+    queryResults = callQuery("SELECT COUNT(*) FROM socStaff WHERE role = 0 AND society = (%s);", conn, curs, (socID,))
+    if queryResults == False: return 0
+
+    results = curs.fetchone()
+    if results == None: return 0
+
+    return results[0]
+
+@makeConnection
+def getSocietyInfo(socID, conn, curs):
+    if (checkSoc(socID) == False): return "Bad socID, doesn't exist"
+    payload = {}
+
+    socName = getSocName(socID)
+    if socName == None: return "Bad socID, doesn't exist"
+    payload['socName'] = socName
+
+    payload['socID'] = socID
+
+    '''
+    socEvents = getEventForSoc(socID)
+    print(socEvents)
+    if isinstance(socEvents, list) == False: return "Database fault, check backend log"
+    payload['events'] = socEvents
+    '''
+
+    socAdmins = getAdminsForSoc(socID)
+    if isinstance(socAdmins, dict) == False: return "Database fault, check backend log"
+    socAdminsList = [key for key in socAdmins]
+    payload['admins'] = socAdminsList
+
+    socLogo = checkLogo(socID)
+    if (socLogo != False):
+        payload['logo'] = socLogo
+
+    payload['membershipCount'] = getSocMemberCount(socID)
+
+    return payload

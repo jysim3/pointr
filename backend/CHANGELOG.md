@@ -91,4 +91,10 @@ POST `/api/soc/image` | p Update the societyID specified in the request body's p
 ### Changed
 api | file | details
 --- | ---- | ---
-GET `/api/user` | namespaces/user.py | Changed the output format to be a user infodump, output format: {"events": [], "firstName": "", "lastName": "", "image": "", "societies": {"member": [], "staff": []}, "zID": ""}
+GET `/api/user` | namespaces/user.py | Changed the output format to be a user infodump, output format: `{"events": [], "firstName": "", "lastName": "", "image": "", "societies": {"member": [], "staff": []}, "zID": ""}`
+
+## 04/04/2020
+### Added
+api | file | details
+--- | ---- | ---
+GET `/api/soc` | namespaces/soc.py | Added a soc profile endpoint, output format: `{"admins": [], "logo": "", "membershipCount": 100, "socID": "", "socName": ""}`

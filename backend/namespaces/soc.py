@@ -39,6 +39,15 @@ class Society(Resource):
             abort(400, "A server error occurred (most likely a database fault), check backend log for more details")
         return jsonify({"msg": result[0]})
 
+    @auth_services.check_authorization(level=1)
+    def get(self, token_data):
+        socID = request.args.get('socID')
+        if socID == None: abort(400, "No socID provided")
+        payload = societies.getSocietyInfo(socID)
+        if isinstance(payload, str) == True: abort(400, payload)
+
+        return jsonify(payload)
+
 # Get all the events hosted by a society
 @api.param('token', description='User Token', type='String', required='True')
 @api.route('/events')
