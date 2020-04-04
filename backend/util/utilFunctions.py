@@ -2,6 +2,7 @@ from psycopg2 import Error
 import psycopg2
 from datetime import datetime
 from dateutil import tz
+import os
 
 # This file contains the check functions and that's it
 
@@ -10,6 +11,9 @@ def createConnection():
     conn = None
     try:
         #conn = sqlite3.connect(r'./database.db')
+        database_name = 'pointrDB'
+        if (os.environ.get('FLASK_ENV') == 'test'):
+            database_name = 'testPointrDB'
         conn = psycopg2.connect(database = "pointrDB")
     except Error as e:
         print(e)
