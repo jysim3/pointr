@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 from flask_restx import Api
 import os
@@ -22,6 +22,10 @@ api.add_namespace(soc, path='/api/soc')
 api.add_namespace(other, path='/api/other')
 api.add_namespace(auth, path='/api/auth')
 
+if (app.config['ENV'] == 'development'):
+    @app.route('/assets/images/<path:path>')
+    def send_images(path):
+            return send_from_directory('../assets/images/', path)
 
 if (os.path.exists("../assets/images/") == False):
     os.mkdir("../assets")

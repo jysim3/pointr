@@ -4,6 +4,7 @@
         <div v-else>
 
             <h2 v-once>Society page for {{ socName }} </h2>
+            <img v-if="socData" :src="apiURL + socData.logo" />
 
             <EventList
               :eventViewTitle="'Upcoming Events for ' + socName"
@@ -46,7 +47,8 @@ export default {
       pastSocietyEvents:[
       ],
       pastEventsLoading: false,
-      societyData: {}
+      socData: {},
+      apiURL: require('@/util').apiURL
     }
   },
   watch: {
