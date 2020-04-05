@@ -260,6 +260,7 @@ def checkLogo(socID, conn, curs):
     results = curs.fetchone()
     conn.close()
     if results == None: return False
+    elif not results[0]: return False
     elif 'logo' not in results[0]: return False
     return results[0]['logo']
 
