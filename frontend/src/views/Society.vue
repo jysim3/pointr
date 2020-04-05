@@ -14,6 +14,7 @@
               :eventViewTitle="'Past Events for ' + socName"
               :eventData="pastSocietyEvents"
               listStyle="table"
+              :loading="pastEventsLoading"
             />
             <MakeAdmin v-if="isStaff" :socID="socID"/>
             <!--- TODO: more features for admins-->
@@ -31,7 +32,7 @@ import { mapGetters } from 'vuex'
 import { fetchAPI } from '@/util.js'
 
 export default {
-  name: 'EventSign',
+  name: 'Society',
   props: {
     socID: {
       type: String
@@ -43,17 +44,28 @@ export default {
   data() {
     return {
       pastSocietyEvents:[
-      ]
+      ],
+      pastEventsLoading: false,
+      societyData: {}
     }
   },
-  mounted() {
-      fetchAPI(`/api/soc/getPastEvents?socID=${this.socID}`, "GET")
-      .then(v => {
-        this.pastSocietyEvents = v.data
-      })
-      .catch(e => {
-        console.log(e) // eslint-disable-line
-      })
+  watch: {
+    socID: function(newVal) {
+      this.loading = true
+      this.updateSocietyEvents(newVal)
+    }
+  },
+  created() {
+    this.updateSocietyEvents(this.socID)
+    fetchAPI(`/api/soc?socID=${this.socID}`, "GET")
+    .then(v => {
+      this.socData = v.data
+      console.log(v.data) // eslint-disable-line
+      this.loading = true
+    })
+    .catch(e => {
+      console.log(e) // eslint-disable-line
+    })
   },
   computed: {
     ...mapGetters('user', [
@@ -69,6 +81,19 @@ export default {
     },
     societyEvents() {
       return this.allSocietyEvents(this.socID)
+    }
+  },
+  methods: {
+    updateSocietyEvents(socID) {
+      this.pastEventsLoading = true
+      fetchAPI(`/api/soc/getPastEvents?socID=${socID}`, "GET")
+      .then(v => {
+        this.pastSocietyEvents = v.data
+        this.pastEventsLoading = false
+      })
+      .catch(e => {
+        console.log(e) // eslint-disable-line
+      })
     }
   }
 }
