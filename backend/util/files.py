@@ -26,4 +26,4 @@ def uploadImages(file, filename = None):
         return str(e)
 
     # On Success, returns path and 0, check for tuple
-    return app.config['UPLOAD_FOLDER'] + filename, 0
+    return f"/assets/images/{filename}", 0
