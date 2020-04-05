@@ -1,6 +1,9 @@
 <template>
   <div >
-    <div v-if="eventData">
+    <div v-if="loading">
+      <Loader />     
+    </div>
+    <div v-else-if="eventData">
 
 
       <div class="event-view" v-if="listStyle === 'cards'">
@@ -32,11 +35,12 @@
 import EventCard from "@/components/EventCard.vue";
 import FormError from "@/components/FormError.vue";
 import Table from "@/components/Table.vue";
+import Loader from "@/components/Loader.vue";
 
 export default {
   name: "DashboardEventView",
   components: {
-    EventCard, FormError,  Table
+    EventCard, FormError,  Table, Loader
   },
   props: {
     eventViewTitle: {
@@ -45,6 +49,10 @@ export default {
     },
     eventData: {
       type: Array,
+    },
+    loading: {
+      type: Boolean,
+      default: false
     },
     listStyle: {
       type: String,
