@@ -29,7 +29,7 @@ export default {
         }
     },
     created() {
-      fetchAPI(`/api/event?eventID=${this.eventID}`, "GET")
+      fetchAPI(`/api/event/?eventID=${this.eventID}`, "GET")
       .then(v => {
         this.eventData = v.data
         this.loading = true

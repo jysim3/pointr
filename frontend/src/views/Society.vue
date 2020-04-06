@@ -3,8 +3,10 @@
         <SelectSociety v-if="!socID"/>
         <div v-else>
 
-            <h2 v-once>Society page for {{ socName }} </h2>
-            <img v-if="socData" :src="apiURL + socData.logo" />
+            <div class="header">
+              <!-- <h1 class="header-text" v-once>{{ socName }}</h1> -->
+              <img v-if="socData" :src="apiURL + socData.logo" />
+            </div>
 
             <EventList
               :eventViewTitle="'Upcoming Events for ' + socName"
@@ -24,6 +26,26 @@
         </div>
     </div>
 </template>
+
+<style>
+.wrapper {
+    margin: auto;
+    width: 80%;
+}
+.header {
+  text-align: center;
+}
+.header h1 {
+  font-size: 4rem;
+}
+.header > img {
+  max-width: 100%;
+  border-radius: 10px ;
+  box-shadow:   0 0rem 2rem 0rem rgba(59,59,95,0.3);
+  border-radius: 10px ;
+}
+
+</style>
 
 <script>
 import MakeAdmin from "@/components/MakeAdmin.vue";
@@ -52,22 +74,13 @@ export default {
     }
   },
   watch: {
-    socID: function(newVal) {
+    socID: function() {
       this.loading = true
-      this.updateSocietyEvents(newVal)
+      this.$nextTick(() => this.updateSocietyData())
     }
   },
   created() {
-    this.updateSocietyEvents(this.socID)
-    fetchAPI(`/api/soc?socID=${this.socID}`, "GET")
-    .then(v => {
-      this.socData = v.data
-      console.log(v.data) // eslint-disable-line
-      this.loading = true
-    })
-    .catch(e => {
-      console.log(e) // eslint-disable-line
-    })
+    this.updateSocietyData()
   },
   computed: {
     ...mapGetters('user', [
@@ -86,9 +99,21 @@ export default {
     }
   },
   methods: {
-    updateSocietyEvents(socID) {
+    updateSocietyData() {
+      if (!this.socID) {
+        return
+      }
+      fetchAPI(`/api/soc?socID=${this.socID}`, "GET")
+      .then(v => {
+        this.socData = v.data
+        console.log(v.data) // eslint-disable-line
+        this.loading = true
+      })
+      .catch(e => {
+        console.log(e) // eslint-disable-line
+      })
       this.pastEventsLoading = true
-      fetchAPI(`/api/soc/getPastEvents?socID=${socID}`, "GET")
+      fetchAPI(`/api/soc/getPastEvents?socID=${this.socID}`, "GET")
       .then(v => {
         this.pastSocietyEvents = v.data
         this.pastEventsLoading = false
@@ -100,11 +125,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.wrapper {
-    margin: auto;
-    width: 80%;
-}
-
-</style>

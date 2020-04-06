@@ -1,7 +1,8 @@
 <template>
-  <div>
+  <div id="event-host-view-wrapper">
     <EventCodeDisplay :eventID="eventID" />
     <h1 id="welcome-header">Welcome to {{ this.name }}</h1>
+    <p class="description">{{ this.description }}</p>
     <!-- TODO: add more event information here -->
     <h2 id="mark-attendance-header">Sign your attendance</h2>
     <div id="qr-and-form-container">
@@ -46,7 +47,8 @@ export default {
     return {
       name: "",
       participants: [],
-      error: ""
+      error: "",
+      description: ""
     };
   },
   created() {
@@ -81,6 +83,8 @@ export default {
         const response = await fetchAPI(`/api/event/?eventID=${this.eventID}`);
         this.participants = response.data.attendance;
         this.name = response.data.eventName;
+        this.description = response.data.description;
+
 
       } catch (error) {
         console.log(error.response) //eslint-disable-line
@@ -92,8 +96,16 @@ export default {
 
 <style scoped>
 /* TODO: refactor this CSS */
+#event-host-view-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
 #welcome-header {
   margin: 2rem 0;
+}
+.description {
+  text-align: center;
 }
 
 #mark-attendance-header {
