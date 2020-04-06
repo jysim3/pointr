@@ -23,6 +23,7 @@ def uploadImages(file, filename = None):
     except IOError:
         return "Upload Folder Not Initialised"
     except Exception as e:
+        print(e)
         return str(e)
 
     # On Success, returns path and 0, check for tuple
