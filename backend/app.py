@@ -33,7 +33,7 @@ if (app.config['ENV'] == 'development'):
 if (app.config['ENV'] == 'development'):
     app.config['UPLOAD_FOLDER'] = f"{os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))}/assets/images/"
 elif (app.config['ENV'] in ['production','test']):
-    app.config['UPLOAD_FOLDER'] = f"/var/www/assets/images/"
+    app.config['UPLOAD_FOLDER'] = f"/var/www/static/assets/images/"
 #app.config['UPLOAD_FOLDER'] = "../assets/images/"
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
