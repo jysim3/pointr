@@ -13,6 +13,8 @@ app.config.update(
     MAIL_USE_SSL = True,
     MAIL_USERNAME = "pointr.help@gmail.com",
     MAIL_PASSWORD = os.environ.get("POINTR_EMAIL_PASSWORD")
+    #MAIL_USERNAME = "stevenshen1871@gmail.com",
+    #MAIL_PASSWORD = "990928ss"
 )
 mail = Mail(app)
 
@@ -42,6 +44,21 @@ Hi,{zID}\nYou have requested to reset your password.\nFollow this link to reset 
             'Reset Your Pointr Password',
             sender=app.config['MAIL_USERNAME'],
             recipients=[emailToSend],
+            body=message
+        )
+    except Exception:
+        return str(Exception)
+    return "success"
+
+def sendEnquiry(subject, message):
+    recipients=["stevenshen1999@hotmail.com", "steynharrison1@gmail.com", "junyang.0607@gmail.com", "hello@ivanvelickovic.com"]
+    #recipients=["stevenshen1999@hotmail.com", "shenthemaster@gmail.com"]
+
+    try:
+        msg = mail.send_message(
+            subject,
+            sender=app.config['MAIL_USERNAME'],
+            recipients=recipients,
             body=message
         )
     except Exception:

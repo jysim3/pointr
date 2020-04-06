@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from flask_restx import Namespace, Resource, abort, reqparse
 from marshmallow import Schema, fields, ValidationError, validates, validate
-from util import utilFunctions
+from util import utilFunctions, auth_services, emailPointr
 
 api = Namespace('other', description='Other utility routes')
 
@@ -24,3 +24,18 @@ class onThisDay(Resource):
             return jsonify({"status": "Failed", "msg": "No date provided"})
 
         return jsonify(utilFunctions.onThisDay(interval, intervalType)) if socID == None else jsonify(utilFunctions.onThisDay(interval, intervalType, socID))
+
+
+@api.route("/enquire")
+class enqurie(Resource):
+    #@auth_services.check_authorization(level=1)
+    def post(self):
+        data = request.get_json()
+        if not data: abort(400, "Please provide the infomation in JSON format in request body")
+        subject = None if 'subject' not in data else data['subject']
+        message = data['message'] if 'message' in data else abort(400, "Please provide a message")
+
+        sendEmail = emailPointr.sendEnquiry(subject, message)
+        if (sendEmail != "success"):
+            abort(400, "Sending Email Not Successful, check backend log")
+        return jsonify({"status": "success"})
