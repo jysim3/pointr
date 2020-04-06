@@ -13,30 +13,51 @@
           class="routes"
         >
         
-      <i class="material-icons routes-icon">{{ routes.icon }}</i>
-        <span class="routes-text"> {{ routes.text }} </span>
+        <!-- TODO: Cleaner nav bar would be great -->
+      <i class="material-icons routes-icon" :class="{'routes-display-icon': routes.alwaysIcon}">{{ routes.icon }}</i>
+        <span class="routes-text" :class="{'routes-display-icon': routes.alwaysIcon}"> {{ routes.text }} </span>
         
         </router-link>
-        <a @click="authBtnClicked" class="btn btn-primary btn--nav">{{ authBtnText }}</a>
-        <a class="routes">
-          <i @click="authBtnClicked" class="material-icons routes-icon">{{ authBtnIcon }}</i>
-        </a>
+        <!-- TODO: CLEAN UP THIS MESSY SHIT -->
+        <div v-if="this.isAuthenticated" class="routes-more-wrapper">
+          <i @click="displayMore = !displayMore" class="material-icons routes-display-more">{{ displayMore ? 'expand_less' : 'expand_more' }}</i>
+
+          <transition name="slide-fade">
+            <div class="routes-more" v-if="displayMore">
+              <a class="routes-more-profile">
+                <img src="https://st3.depositphotos.com/6672868/14376/v/450/depositphotos_143767633-stock-illustration-user-profile-group.jpg"/>
+                <div class="routes-more-profile-text">
+                  <div class="routes-more-profile-text-title">{{ name }}</div>
+                  <span>{{ zID }}</span>
+                </div>
+              </a>
+              <hr/>
+              <div class="routes-more-link"> Profile </div>
+              <div class="routes-more-link"> Change Password </div>
+              <div @click="authBtnClicked" class="routes-more-link"> Log out </div>
+            </div>
+          </transition>
+        </div>
+        <a v-else @click="authBtnClicked" class="btn btn-primary btn--nav">Sign in</a>
+
+
       </div> 
     </div>
   </div>
 </template>
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 export default {
   name: "NavBar",
   data() {
     return {
+      displayMore: false,
       defaultLinks: [
         {
           to: "/events",
           text: "Events",
-          icon: "calendar_today"
+          icon: "calendar_today",
         },
         {
           to: "/contact",
@@ -60,8 +81,8 @@ export default {
         {
           text: "Create Event",
           to: "/create",
-          icon:"add"
-          
+          icon:"add",
+          alwaysIcon: true
         },
         {
           text: "Societies",
@@ -77,6 +98,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('user', [
+      'name', 'zID'
+    ]),
     ...mapState('user', {
       isLoading: state => state.isLoading,
       isAuthenticated: state => state.isAuthenticated,
@@ -115,6 +139,7 @@ export default {
     authBtnClicked() {
       if (this.isAuthenticated) {
         this.signOut()
+        this.displayMore = false
         if (this.$route.name !== 'home') {
           // TODO: shouldn't need to push a route, should be automatically done by router. Investigate further, happens when eg sign out from /joinsociety
           this.$router.push({ name: 'home' }); 
@@ -179,6 +204,68 @@ export default {
 }
 .routes-icon {
   display: none;
+}
+.routes-display-icon {
+  display: block;
+}
+span.routes-display-icon {
+  display: none;
+}
+.routes-display-more {
+  cursor: pointer;
+}
+.routes-more-wrapper  {
+  position: relative;
+}
+.routes-more  {
+  width: 200px;
+  position: absolute;
+  top: 2rem;
+  right: 0;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 5px;
+}
+
+.slide-fade-enter-active,.slide-fade-leave-active  {
+  transition: all .3s;
+}
+.slide-fade-enter, .slide-fade-leave-to {
+  transform: translateY(-30px);
+  opacity: 0;
+}
+
+.routes-more-profile {
+  display: flex;
+  align-items: center;
+  box-shadow: none;
+}
+.routes-more-profile-text {
+  margin-left: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+.routes-more-profile-text-title {
+  font-weight: bold;
+  display: block;
+  
+  color: black;
+}
+.routes-more-profile > img  {
+  width: 50px;
+  border-radius: 25px;
+} 
+.routes-more > hr {
+  margin-top: 1rem;
+}
+.routes-more-link {
+  padding-left: 1rem;
+  padding-top: 1rem;
+  cursor: pointer;
+}
+.routes-more-link:hover {
+  color: black;
+  font-weight: bold;
 }
 
 .logo {

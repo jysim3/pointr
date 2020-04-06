@@ -1,5 +1,6 @@
 import { fetchAPI } from '@/util';
 
+// TODO: make user.js about user information, make auth.js for authentication purposes
 // Currently the validity of a user's token will only be checked once,
 // this is to prevent a lot of requests to the backend.
 
@@ -9,7 +10,8 @@ const state = {
   isAdmin: false,
   info: {
     zID: "",
-    name: "",
+    firstName: "",
+    lastName: "",
     attendedEvents: [],
     events: [],
     societies: {
@@ -24,6 +26,8 @@ const state = {
 };
 
 const getters = {
+  name: (state) => `${state.info.firstName} ${state.info.lastName}`,
+  zID: (state) => state.info.zID, 
   memberSocieties(state) {
     if (state.info.societies) {
       return state.info.societies.member;
