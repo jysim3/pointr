@@ -6,7 +6,7 @@
               <div class="profile" >
                 <div class="profile-info">
 
-                  <h2 class="header-text" v-once>{{ socName }}</h2>
+                  <h2 class="header-text">{{ socData.socName }}</h2>
                 <i class="material-icons profile-buttons-followers">favorite</i>
 <!-- TODO: MAKE THIS 'JOIN SOCIETY' -->
                   <p> Society for the college UNSW Hall. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
@@ -18,7 +18,7 @@
               <div class="profile-buttons">
 
                 <i class="material-icons profile-buttons-followers">person</i>
-                <span class="profile-buttons-followers">224 members</span>
+                <span class="profile-buttons-followers">{{ socData.membersCount}} members</span>
                 <i class="material-icons profile-buttons-followers" style="color: purple">trending_up</i>
                 <span class="profile-buttons-followers">150 weekly active users</span>
               </div>
@@ -43,12 +43,12 @@
             <div class="main">
               <div class="wrapper">
                 <EventList
-                  :eventViewTitle="'Upcoming Events for ' + socName"
+                  :eventViewTitle="'Upcoming Events for ' + socData.socName"
                   :eventData="societyEvents"
                   listStyle="table"
                 />
                 <EventList
-                  :eventViewTitle="'Past Events for ' + socName"
+                  :eventViewTitle="'Past Events for ' + socData.socName"
                   :eventData="pastSocietyEvents"
                   listStyle="table"
                   :loading="pastEventsLoading"
@@ -61,7 +61,7 @@
     </div>
 </template>
 
-<style>
+<style scoped>
 .wrapper {
     margin: auto;
     width: 80%;
@@ -187,11 +187,6 @@ export default {
     isStaff() {
         return this.staffSocieties.some(e => e.societyID === this.socID)
     },
-    socName() {
-        return this.joinedSocieties.find(e => {
-            return e.societyID === this.socID
-        }).societyName
-    },
     societyEvents() {
       return this.allSocietyEvents(this.socID)
     }
@@ -203,7 +198,11 @@ export default {
       }
       fetchAPI(`/api/soc?socID=${this.socID}`, "GET")
       .then(v => {
-        this.socData = v.data
+        const data = v.data
+        this.socData.admins = data.admins
+        this.socData.logo = data.logo
+        this.socData.membersCount = data.membershipCount
+        this.socData.socName = data.socName
         console.log(v.data) // eslint-disable-line
         this.loading = true
       })
