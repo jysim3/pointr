@@ -5,15 +5,23 @@
       <div class="logo">
         <img @click="toHome" class="logo" src="../assets/logo.png" alt="pointr logo" />
       </div>
-      <div v-show="!isLoading" class="links">
+      <div v-show="!isLoading" class="routes-container">
         <router-link
           v-for="(routes, i) in navBarLinks"
           :key="i"
           :to="routes.to"
-          class="link"
-        >{{ routes.text }}</router-link>
+          class="routes"
+        >
+        
+      <i class="material-icons routes-icon">{{ routes.icon }}</i>
+        <span class="routes-text"> {{ routes.text }} </span>
+        
+        </router-link>
         <a @click="authBtnClicked" class="btn btn-primary btn--nav">{{ authBtnText }}</a>
-      </div>
+        <a class="routes">
+          <i @click="authBtnClicked" class="material-icons routes-icon">{{ authBtnIcon }}</i>
+        </a>
+      </div> 
     </div>
   </div>
 </template>
@@ -27,44 +35,44 @@ export default {
       defaultLinks: [
         {
           to: "/events",
-          text: "Events"
+          text: "Events",
+          icon: "calendar_today"
         },
         {
           to: "/contact",
-          text: "Contact"
+          text: "Contact",
+          icon: "email"
         }
       ],
       userDashboardLinks: [
         {
           to: "/event",
-          text: "Mark attendance"
-        },
-        {
-          to: "/joinsociety",
-          text: "Join a society"
+          text: "Mark attendance",
+          icon: "check"
         },
         {
           text: "Societies",
-          to: "/societies"
+          to: "/societies",
+          icon: "pages"
         },
       ],
       adminDashboardLinks: [
         {
-          text: "Create an event",
-          to: "/create"
-        },
-        {
-          text: "Join a society",
-          to: "/joinsociety"
+          text: "Create Event",
+          to: "/create",
+          icon:"add"
+          
         },
         {
           text: "Societies",
-          to: "/society"
+          to: "/society",
+          icon: "pages"
         },
-        // {
-        //   text: "Statistics",
-        //   to: "/"
-        // }
+        {
+          to: "/contact",
+          text: "Contact",
+          icon: "email"
+        }
       ]
     };
   },
@@ -74,6 +82,13 @@ export default {
       isAuthenticated: state => state.isAuthenticated,
       isAdmin: state => state.isAdmin
     }),
+    authBtnIcon() {
+      if (this.isAuthenticated) {
+        return "exit_to_app";
+      } else {
+        return "lock";
+      }
+    },
     authBtnText() {
       if (this.isAuthenticated) {
         return "Sign out";
@@ -125,44 +140,75 @@ export default {
   z-index: 1;
   position: relative;
   margin-bottom: 2rem;
-  padding: 1.5rem 0 1.5rem 0;
+  padding: 0.4rem 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .box-container {
-  width: 80%;
-  margin: auto;
+  margin: 0 2rem;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
 }
 
-.links {
+.routes-container {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
 }
 
-.link {
-  margin: 0.5rem 2rem 0 2rem;
+.routes {
+  margin: 0.5rem 1rem ;
   font-size: 1.1rem;
 }
 
-.link--active {
+.routes--active {
   box-shadow: inset 0 -2px 0 0 var(--c-secondary-dark);
+}
+.routes-text {
+  display: block;
+}
+.routes-text, .routes-icon {
+  text-align: center;
+  width: 100%;
+}
+.routes-icon {
+  display: none;
 }
 
 .logo {
-  max-width: 200px;
+
+  height: 4rem;
   cursor: pointer;
 }
 
 .btn--nav {
   margin: 0 2rem 0 2rem;
-  font-size: 1.1rem;
+  font-size: 1rem;
+}
+@media only screen and (max-width: 900px) {
+  
+  .routes-icon {
+    font-size: 2rem;
+  }
+  .routes-icon {
+    display: inherit;
+  }
+  .routes-text {
+    display: none;
+  }
+  .btn--nav {
+    display: none;
+  }
+}
+@media only screen and (max-width: 700px) {
+  .box-container{
+    flex-direction: column;
+  }
 }
 </style>

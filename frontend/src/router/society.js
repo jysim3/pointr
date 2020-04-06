@@ -2,7 +2,7 @@ import SocietyJoin from '@/views/SocietyJoin.vue';
 import Society from '@/views/Society.vue';
 export default [
   {
-    path: '/joinsociety',
+    path: '/society/join',
     name: 'joinSociety',
     component: SocietyJoin,
     meta: {
