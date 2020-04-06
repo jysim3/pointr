@@ -1,6 +1,7 @@
 <template>
     <div class="wrapper">
         <SelectSociety v-if="!socID"/>
+        <Loader v-else-if="loading" />
         <div id="society-wrapper" v-else>
             <div class="header">
               <div class="profile" >
@@ -149,6 +150,7 @@ span.profile-buttons-followers {
 import MakeAdmin from "@/components/MakeAdmin.vue";
 import SelectSociety from "@/components/SelectSociety.vue";
 import EventList from "@/components/EventList.vue";
+import Loader from "@/components/Loader.vue";
 import { mapGetters } from 'vuex'
 import { fetchAPI } from '@/util.js'
 
@@ -160,7 +162,7 @@ export default {
     }
   },
   components: {
-    MakeAdmin, SelectSociety, EventList
+    MakeAdmin, SelectSociety, EventList, Loader
   },
   data() {
     return {
@@ -168,7 +170,8 @@ export default {
       ],
       pastEventsLoading: false,
       socData: {},
-      apiURL: require('@/util').apiURL
+      apiURL: require('@/util').apiURL,
+      loading: false,
     }
   },
   watch: {
@@ -196,6 +199,7 @@ export default {
       if (!this.socID) {
         return
       }
+      this.loading = true
       fetchAPI(`/api/soc?socID=${this.socID}`, "GET")
       .then(v => {
         const data = v.data
@@ -204,7 +208,7 @@ export default {
         this.socData.membersCount = data.membershipCount
         this.socData.socName = data.socName
         console.log(v.data) // eslint-disable-line
-        this.loading = true
+        this.loading = false
       })
       .catch(e => {
         console.log(e) // eslint-disable-line
