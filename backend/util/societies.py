@@ -31,7 +31,7 @@ def createSocStaff(zID, societyID, role = 0, conn = None, curs = None):
     return "success"
 
 @makeConnection
-def createSociety(zID = None, societyName = None, isCollege = False, file = None, conn = None, curs = None):
+def createSociety(zID = None, societyName = None, isCollege = False, file = None, description = None, conn = None, curs = None):
     societyID = generateID(5).upper()
     results = callQuery("SELECT * FROM society WHERE societyName = (%s);", conn, curs, (societyName,))
     if (results == False): return "failed"
@@ -45,9 +45,9 @@ def createSociety(zID = None, societyName = None, isCollege = False, file = None
         if (isinstance(uploadResult, tuple) == False):
             return "bad file name"
         fileJSON = dumps({"logo": uploadResult[0]})
-        results = callQuery("INSERT INTO society(societyID, societyName, isCollege, additionalInfomation) VALUES ((%s), (%s), (%s), (%s));", conn, curs, (societyID, societyName, isCollege, fileJSON, ))
+        results = callQuery("INSERT INTO society(societyID, societyName, isCollege, description, additionalInfomation) VALUES ((%s), (%s), (%s), (%s), (%s));", conn, curs, (societyID, societyName, isCollege, description, fileJSON, ))
     else:
-        results = callQuery("INSERT INTO society(societyID, societyName, isCollege) VALUES ((%s), (%s), (%s));", conn, curs, (societyID, societyName, isCollege, ))
+        results = callQuery("INSERT INTO society(societyID, societyName, isCollege, description) VALUES ((%s), (%s), (%s), (%s));", conn, curs, (societyID, societyName, isCollege, description,))
 
     if (results == False): return "failed"
     conn.commit()
@@ -310,6 +310,15 @@ def getSocMemberCount(socID, conn, curs):
     return results[0]
 
 @makeConnection
+def getDescription(socID, conn, curs):
+    queryResults = curs.execute("SELECT description FROM society WHERE societyID = (%s);", (socID,))
+    if queryResults == False: return None
+
+    results = curs.fetchone()
+    if results == None: return None
+    return results[0]
+
+@makeConnection
 def getSocietyInfo(socID, conn, curs):
     if (checkSoc(socID) == False): return "Bad socID, doesn't exist"
     payload = {}
@@ -319,6 +328,7 @@ def getSocietyInfo(socID, conn, curs):
     payload['socName'] = socName
 
     payload['socID'] = socID
+    payload['description'] = getDescription(socID)
 
     '''
     socEvents = getEventForSoc(socID)

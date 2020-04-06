@@ -20,18 +20,15 @@ class Society(Resource):
     # FIXME: USING LEVEL 1 TOKENS TO TEST FUNCTIONALITIES, CHANGE THIS BACK TO 2 IN PRODUCTION
     @auth_services.check_authorization(level=1)
     def post(self, token_data):
-        data = request.form['json']
-        data = loads(data)
-
+        socName = request.form['socName'] if 'socName' in request.form else abort(400, "No society name provided")
+        description = request.form['description'] if 'description' in request.form else None
+        
         # For image upload
         file = None
         if request.files:
             file = request.files['file']
 
-        if (data is None or 'societyName' not in data):
-            abort(400, "SocietyName not given in request")
-
-        result = societies.createSociety(token_data['zID'], sanitize(data['societyName']), False, file)
+        result = societies.createSociety(token_data['zID'], sanitize(socName), False, file, description)
         if (result == "exists already"):
             abort(403, "A society with this name already exists")
         elif (isinstance(result, tuple) != True):

@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS participation (
 -- drop TABLE IF EXISTS society CASCADE;
 CREATE TABLE IF NOT EXISTS society (
     societyID TEXT,
+    description TEXT,
     societyName TEXT NOT NULL unique,
     isCollege BOOLEAN NOT NULL,
     additionalInfomation JSONB,
