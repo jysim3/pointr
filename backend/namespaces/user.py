@@ -56,6 +56,15 @@ class description(Resource):
         description = users.getDescription(zID)
         return jsonify({"status": "success", "payload": {"description": description}})
 
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        data = request.get_json()
+        description = data['description'] if 'description' in data else abort(400, "Didn't provide a description in the request body")
+        results = users.updateDescription(token_data['zID'], description)
+        if (results != "success"):
+            abort(400, "Backend fault, check database log")
+        return jsonify({"status": "success"})
+
 @api.route("/image")
 class image(Resource):
     @auth_services.check_authorization(level=1)
