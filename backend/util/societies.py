@@ -311,12 +311,19 @@ def getSocMemberCount(socID, conn, curs):
 
 @makeConnection
 def getDescription(socID, conn, curs):
-    queryResults = curs.execute("SELECT description FROM society WHERE societyID = (%s);", (socID,))
+    queryResults = callQuery("SELECT description FROM society WHERE societyID = (%s);", (socID,))
     if queryResults == False: return None
 
     results = curs.fetchone()
     if results == None: return None
     return results[0]
+
+@makeConnection
+def updateDescription(socID, description, conn, curs):
+    queryResults = callQuery("UPDATE society SET description = (%s) WHERE societyID = (%s);", (socID,))
+    if queryResults == False: return "failed"
+
+    return "success"
 
 @makeConnection
 def getSocietyInfo(socID, conn, curs):

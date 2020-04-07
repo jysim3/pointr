@@ -195,3 +195,24 @@ class image(Resource):
         if (result != "success"):
             abort(400, result)
         return jsonify({"status": "success"})
+
+@api.route("/description")
+class description(Resource):
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        data = request.get_json()
+        if (not data or 'socID' not in data or 'description' not in data): abort(400, "No socID or description provided in the request body")
+
+        if societies.checkAdmin(data['socID'], token_data['zID']) == False: abort(403, "Not an admin")
+
+        results = societies.updateDescription(data['socID'], data['description'])
+        if (results != "success"): abort(400, "Server error, check backend log")
+
+        return jsonify({"status": "success"})
+
+    def get(self, token_data):
+        data = request.get_json()
+        if (not data or 'socID' not in data): abort(400, "SocID not provided in the request body")
+
+        results = societies.getDescription(data['socID'])
+        return jsonify({"status": "success", "payload": {"description": results}})

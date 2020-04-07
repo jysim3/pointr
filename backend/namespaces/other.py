@@ -28,7 +28,7 @@ class onThisDay(Resource):
 
 @api.route("/enquire")
 class enqurie(Resource):
-    #@auth_services.check_authorization(level=1)
+    @auth_services.check_authorization(level=1)
     def post(self):
         from util.emailPointr import sendEnquiry
         data = request.get_json()
