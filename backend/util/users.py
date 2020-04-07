@@ -51,7 +51,7 @@ def getUserInfo(zID, conn = None, curs = None):
     payload['lastName'] = lastName
     payload['societies'] = getInvolvedSocs(zID)
     userImage = checkUserImage(zID)
-    payload['image'] = userImage[0] if isinstance(userImage, tuple) == True else ''
+    payload['image'] = userImage if userImage != False else None
     payload['events'] = []
     for result in results:
         eventJSON = {}
@@ -72,7 +72,7 @@ def checkUserImage(zID, conn, curs):
     results = curs.fetchone()
     conn.close()
     if results == None: return False
-    elif results[0] == None: return False
+    elif not results[0]: return False
     elif 'logo' not in results[0]: return False
     return results[0]['logo']
 
