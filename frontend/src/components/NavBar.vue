@@ -164,7 +164,7 @@ export default {
   background: #e3f2fd;
   z-index: 1;
   position: relative;
-  margin-bottom: 2rem;
+  /* margin-bottom: 2rem; */
   padding: 0.4rem 0;
   display: flex;
   justify-content: space-between;

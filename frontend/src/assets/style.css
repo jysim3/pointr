@@ -154,7 +154,7 @@ input {
   width: 100%;
 }
 
-.checkbox-input-container {
+.form > .checkbox-input-container {
   margin-top: 1rem;
 }
 
