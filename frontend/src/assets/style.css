@@ -135,8 +135,9 @@ input {
   display: block;
 }
 .form > div {
-  display: block;
-  margin: auto;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .form label {

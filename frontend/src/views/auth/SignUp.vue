@@ -16,67 +16,34 @@
       <input
         v-model.number="userInfo.commencmentYear"
         :max="currentYear"
-        :min="2000"
+        :min="currentYear-15"
         type="number"
         class="input"
         :class="commencmentYearValid"
         required
       />
       <!-- Degree type input -->
-      <label for="degree-type" class="label">Degree type</label>
-      <div class="radio-input-container">
-        <input
-          v-model="userInfo.degreeType"
-          :value="'undergraduate'"
-          class="input"
-          type="radio"
-          name="degree-type"
-          id="undergraduate"
-          required
-        />
-        <label for="undergraduate" class="label">Undergraduate</label>
-      </div>
-      <div class="radio-input-container">
-        <input
-          v-model="userInfo.degreeType"
-          :value="'postgraduate'"
-          class="input"
-          type="radio"
-          name="degree-type"
-          id="postgraduate"
-          required
-        />
-        <label for="postgraduate" class="label">Postgraduate</label>
-      </div>
+      <Input required 
+        label="Degree Type" 
+        type="radio" 
+        :options="degreeTypeOptions"
+        name="degree-type"
+        v-model="userInfo.degreeType" />
       <!-- Student type input -->
-      <label for="student-type" class="label">Student type</label>
-      <div class="radio-input-container">
-        <input
-          v-model="userInfo.studentType"
-          :value="'domestic'"
-          type="radio"
-          name="student-type"
-          id="domestic"
-          required
-        />
-        <label for="domestic" class="label">Domestic</label>
-      </div>
-      <div class="radio-input-container">
-        <input
-          v-model="userInfo.studentType"
-          :value="'international'"
-          type="radio"
-          name="student-type"
-          id="international"
-          required
-        />
-        <label for="international" class="label">International</label>
-      </div>
+      <Input required 
+        label="Student Type" 
+        type="radio" 
+        :options="studentTypeOptions"
+        name="degree-type"
+        v-model="userInfo.studentType" />
+
       <!-- Arc member input -->
-      <div class="checkbox-input-container">
-        <label for="arc-member">Are you an arc member?</label>
-        <input v-model="userInfo.isArcMember" type="checkbox" id="arc-member" name="arc-member" required />
-      </div>
+      <Input required
+        label="Are you an arc member?"
+        v-model="userInfo.isArcMember"
+        type="checkbox"
+        />
+
       <!-- TODO: gender input? -->
       <button type="submit" class="btn btn-primary">Sign Up</button>
     </form>
@@ -118,6 +85,14 @@ export default {
         degreeType: "",
         isArcMember: false
       },
+      studentTypeOptions: [
+        { value:'domestic', 'label': 'Domestic'},
+        { value:'international', 'label': 'International'}
+      ],
+      degreeTypeOptions: [
+        { value:'undergraduate', 'label': 'Undergraduate'},
+        { value:'postgraduate', 'label': 'Postgraduate'}
+      ],
       formErrorMessage: "",
     };
   },

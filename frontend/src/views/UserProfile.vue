@@ -1,0 +1,248 @@
+<template>
+
+    <div>
+        <!-- TODO: LET USER EDIT THIS INFO -->
+        <Loader v-if="loading" />
+        <div v-else>
+            <div class="wrapper header">
+              <div class="profile" >
+
+                <div class="profile-info">
+                    <div class="profile-info-group">
+                        <span class="profile-info-numbers">50</span>
+                        <span class="profile-info-subtitle">followers</span>
+                    </div>
+                    <div class="profile-info-group">
+                        <span class="profile-info-numbers">10</span>
+                        <span class="profile-info-subtitle">events went</span>
+                    </div>
+                </div>
+                <img v-if="userData" :src="apiURL + userData.image" />
+                <div class="profile-buttons">
+                    <i class="material-icons profile-info-button">favorite</i>
+                    </div>
+                </div>
+            </div>
+            
+
+
+
+
+
+            <div class="main wrapper">
+                <div class="main-name">
+                    <h2 class="main-name-title" v-once>{{userData.firstName}} {{userData.lastName}}</h2>
+                    <span class="main-name-subtitle" v-once>{{userData.zID}}</span>
+                </div>
+
+                  <p class="main-description">{{userData.description}}</p>
+                <div class="main-stats" v-for="(s,i) in stats" :key="i">
+                    <i class="material-icons">{{s.icon}}</i>
+                    <span >{{s.text}}</span>
+                </div>
+
+                <!--- TODO: more features for admins-->
+            </div>
+        </div>
+    </div>
+</template>
+
+
+<script>
+// import MakeAdmin from "@/components/MakeAdmin.vue";
+// import SelectSociety from "@/components/SelectSociety.vue";
+// import EventList from "@/components/EventList.vue";
+import Loader from "@/components/Loader.vue";
+import { mapGetters } from 'vuex'
+import { fetchAPI } from '@/util.js'
+
+export default {
+  name: 'Society',
+  props: {
+    zID: {
+      type: String
+    }
+  },
+  components: {
+      Loader
+  },
+  data() {
+    return {
+      userData: {},
+      apiURL: require('@/util').apiURL,
+      loading: false,
+      statsData: [
+      ]
+    }
+  },
+  watch: {
+    zID: function() {
+      this.loading = true
+      this.$nextTick(() => this.updateUserData())
+    }
+  },
+  created() {
+    this.updateUserData()
+  },
+  computed: {
+    ...mapGetters('user', [
+    ]),
+    stats () {
+
+        const stat = this.statsData
+        if (this.userData.societies.staff.length > 0) {
+            stat.push(
+            {
+                icon: 'home',
+                text: 'Admin for ' + this.userData.societies.staff.map(v => v.societyName).join(', ')
+            })
+
+        }
+          return stat
+    }
+  },
+  methods: {
+    updateUserData() {
+      if (!this.zID) {
+        return
+      }
+      this.loading = true
+      fetchAPI(`/api/user/?zID=${this.zID}`, "GET")
+      .then(v => {
+        const data = v.data
+        this.userData.firstName = data.firstName
+        this.userData.lastName = data.lastName
+        this.userData.image = data.image
+        this.userData.societies = data.societies
+        this.userData.description = data.description
+        // this.userData.events = data.events
+
+        this.loading = false
+        console.log(v) // eslint-disable-line
+      })
+      .catch(e => {
+        console.log(e) // eslint-disable-line
+      })
+    }
+  }
+}
+</script>
+<style scoped>
+.wrapper {
+    margin: auto;
+    width: 80%;
+    max-width: 900px;
+}
+.header {
+  margin-top: 20%;
+  position: relative;
+}
+.profile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+    position: relative;
+}
+.profile > * {
+    flex: 0 0 0;
+}
+.profile-info {
+    display: flex;
+}
+.profile-info-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-right: 1.5rem;
+    width: 90px;
+}
+.profile-info-numbers {
+    font-size: 1.5rem;
+    color: black;
+}
+.profile-info-subtitle {
+    padding-top: 0.5rem;
+}
+.profile > img {
+  width: 150px;
+  object-fit: cover;
+  height: 150px;
+  box-shadow:   0 0rem 2rem 0rem rgba(59,59,95,0.3);
+  border-radius: 150px ;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+.tabs-wrapper, .tabs {
+  width: 100%;
+}
+.tabs-wrapper {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.tabs {
+  list-style-type: none;
+  margin-bottom: -1px;
+  display: flex;
+  margin-top: 3rem;
+  padding: 0;
+}
+.tabs-item {
+  display: block;
+  flex: 1 1 0;
+  text-align: center;
+  margin-right: 2px;
+  padding: 0.5rem 1rem;
+  border-radius: 5px 5px 0 0 ;
+  background-color: #e3f2fd;
+  color: black;
+  max-width: 8rem;
+  cursor: pointer;
+}
+.tabs-item--active {
+  background-color: white;
+}
+.tabs-item:hover {
+  background-color: var(--c-primary);
+}
+
+.main {
+  background: white;
+  padding: 3rem;
+  padding-top: 150px;
+  margin-top: -75px;
+  z-index: -1;
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.main > * {
+    text-align: center;
+    width: 80%;
+}
+.main-name {
+    padding-bottom: 2rem;
+    color: black;
+}
+.main-description {
+    font-size: 0.9rem;
+}
+.main-stats {
+    padding-top: 2rem;
+}
+.main-stats i {
+    margin-right: 1rem;
+}
+.main-stats * {
+  vertical-align: middle;
+}
+@media only screen and (max-width: 700px) {
+  .profile {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+}
+</style>

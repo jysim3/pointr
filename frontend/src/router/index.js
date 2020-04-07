@@ -4,6 +4,7 @@ import store from '@/store/index';
 import Home from '@/views/Home.vue';
 import EventSign from '@/views/EventSign-DEPRECATE.vue';
 import Contact from '@/views/Contact.vue';
+import UserProfile from '@/views/UserProfile.vue';
 
 Vue.use(VueRouter);
 import eventRoutes from './event'
@@ -40,6 +41,16 @@ const routes = [
       requiresAuth: true
     }
   },
+  {
+
+    path: '/user/:zID?',
+    name: 'userProfile',
+    component: UserProfile,
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
+  }
 ];
 
 const router = new VueRouter({

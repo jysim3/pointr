@@ -4,43 +4,53 @@
       <form id="create-event-form" class="form" @submit.prevent="submitEventForm">
         <h2>Create an event</h2>
 
-        <label class="label" for>Event title</label>
-        <input class="input" v-model="title" type="text" required />
+        <InputModule required 
+        label="Event title" 
+        type="input" 
+        v-model="title" />
 
-        <label class="label" for>Location</label>
-        <input class="input" v-model="location" type="text" required />
+        <InputModule required 
+        label="Location" 
+        type="input" 
+        v-model="location" />
 
-        <label class="label" for>Description</label>
-        <textarea class="input" v-model="description"  required />
+        <InputModule required 
+        label="Description" 
+        type="textarea" 
+        v-model="description" />
 
-        <label class="label" for>Society</label>
-        <select class="input" v-model="society">
-          <option
-            v-for="s in availableSocieties"
-            :key="s.societyID"
-            :value="s.societyID"
-          >{{s.societyName}}</option>
-        </select>
+        <InputModule required 
+        label="Society" 
+        type="select" 
+        :options="availableSocieties.map(s=>({value: s.societyID, label:s.societyName}))"
+        v-model="society" />
 
-        <label class="label" for>Date</label>
-        <input class="input" v-model="date" type="date" required />
+        <InputModule required 
+        label="Date" 
+        type="date" 
+        v-model="date" />
 
-        <label class="label" for>Start Time</label>
-        <input class="input" v-model="startTime" type="time" required />
+        <InputModule required 
+        label="Start Time" 
+        type="time" 
+        v-model="startTime" />
 
-        <label class="label" for>End Time</label>
-        <input class="input" v-model="endTime" type="time" required />
+        <InputModule required 
+        label="End Time" 
+        type="time" 
+        v-model="endTime" />
 
-        <label class="label" for>Repeat</label>
-        <select class="input" v-model="repeat">
-          <option value>No Repeat</option>
-          <option value="day">Every Day</option>
-          <option value="week">Every Week</option>
-          <option value="month">Every Month</option>
-        </select>
-        
-        <label class="label" v-if="repeat" for>End Date</label>
-        <input class="input" v-if="repeat" v-model="endDate" type="date" required />
+        <InputModule 
+        label="Repeat" 
+        type="select" 
+        :options="repeatOptions"
+        v-model="repeat" />
+
+        <InputModule required 
+        v-if="repeat"
+        label="End Date" 
+        type="date" 
+        v-model="endDate" />
 
         <!-- <label class="label" for>Set default points</label>
         <input class="input" v-model="point" type="number" min="0" required />
@@ -54,9 +64,13 @@
 
 <script>
 import { fetchAPI } from "@/util.js";
+import InputModule from "@/components/input/Input.vue";
 
 export default {
   name: "EventCreate",
+  components: {
+    InputModule
+  },
   data() {
     return {
       title: "",
@@ -69,7 +83,25 @@ export default {
       startTime: "",
       endTime: "",
       point: 1,
-      availableSocieties: []
+      availableSocieties: [],
+      repeatOptions: [
+        {
+          value: "",
+          label: "No Repeat"
+        },
+        {
+          value: "day",
+          label: "Every day"
+        },
+        {
+          value: "week",
+          label: "Every week"
+        },
+        {
+          value: "month",
+          label: "Every month"
+        },
+      ]
     };
   },
   created() {
