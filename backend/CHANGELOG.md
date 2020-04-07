@@ -99,8 +99,14 @@ api | file | details
 --- | ---- | ---
 GET `/api/soc` | namespaces/soc.py | Added a soc profile endpoint, output format: `{"admins": [], "logo": "", "membershipCount": 100, "socID": "", "socName": ""}`
 
-## 04/06/2020
+## 06/04/2020
 ### Added
 api | file | details
 --- | ---- | --
 POST `/api/other/enquire` | namespaces/other.py | Sends a enquiry email using pointr.help@gmail.com to the 4 developer's email accounts. Input format: `{"subject": "", "message": ""}`
+
+## 07/04/2020
+### Added
+api | file | details
+--- | ---- | --
+POST `/api/event/upcomingEvents` | namespaces/events.py | Returns a set of x amount of all upcoming public events (default to 10)

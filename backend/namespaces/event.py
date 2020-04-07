@@ -58,6 +58,7 @@ class Event(Resource):
         description = str(data['description']) if 'description' in data else None
         startTime = str(data['startTime']) if 'startTime' in data else None
         endTime = str(data['endTime']) if 'endTime' in data else None
+        public = str(data['public']) if 'public' in data else True
 
         # Only recurrent event does this
         endDate = sanitize(str(data['endDate']).lower()) if 'endDate' in data else None
@@ -66,9 +67,9 @@ class Event(Resource):
 
         results = None
         if isRecur is not False:
-            results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description, startTime, endTime)
+            results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description, startTime, endTime, public)
         else:
-            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, societyID, location, description, startTime, endTime)
+            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, societyID, location, description, startTime, endTime, public)
 
         if (isinstance(results, tuple) == False):
             return jsonify({"status": "failed", "msg": results})
@@ -224,9 +225,6 @@ class deleteEvent(Resource):
         if (results != "success"):
             abort (400, results)
         return jsonify({"msg": results})
-        result = events.getAllUpcomingEvents()
-        return jsonify(result)
-
 
 # This closes the input eventID for further attendance marking
 @api.route('/closeEvent')
@@ -258,6 +256,15 @@ class openEvent(Resource):
         if (results != "success"):
             abort(400, results)
         return jsonify({"msg": results})
+
+@api.route("/upcomingEvents")
+class upcoming(Resource):
+    #@auth_services.check_authorization(level=1)
+    def get(self):
+        limit = 10 if request.args.get('limit') == None else request.args.get('limit')
+        upcoming = events.getAllUpcomingEvents(limit)
+
+        return jsonify(upcoming)
 
 '''
 @api.route('/reopenEvent')

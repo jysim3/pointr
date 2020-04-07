@@ -39,7 +39,7 @@ def findWeek(date: datetime):
 
 # Creting an event (single instance events)
 @makeConnection
-def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None, location = None, description = None, startTime = None, endTime = None, conn = None, curs = None):
+def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None, location = None, description = None, startTime = None, endTime = None, public = True, conn = None, curs = None):
 
     if (checkUser(zID) == False):
         return "no such user"
@@ -65,7 +65,7 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
     if (week == None):
         return "Not a valid date for events"
 
-    queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, endTime) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, (eventID, eventName, zID, eventDate, week, qrFlag, description, startTime, endTime,))
+    queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, endTime, public) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, (eventID, eventName, zID, eventDate, week, qrFlag, description, startTime, endTime, public,))
 
     # NOTE: Currently, location defaults to UNSW Hall if one isnt provided
     queryStatus1 = callQuery("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", conn, curs, ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
@@ -83,7 +83,7 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
     # Example Cont.: The above indicates this event occurs every fortnightly starting with 30/1/2020 to 30/5/2020
 '''
 @makeConnection
-def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag = None, location = None, societyID = None, description = None, startTime = None, endTime = None, conn = None, curs = None):
+def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag = None, location = None, societyID = None, description = None, startTime = None, endTime = None, public = True, conn = None, curs = None):
     if (checkUser(zID) == False):
         conn.close()
         return "no such user"
@@ -136,7 +136,7 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
             eventStartDate += interval
             continue
 
-        queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, endTime) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, (currEventID, eventName, zID, eventStartDate.date(), week, qrFlag, description, startTime, endTime,))
+        queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, endTime, public) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, (currEventID, eventName, zID, eventStartDate.date(), week, qrFlag, description, startTime, endTime, public,))
 
         queryStatus2 = callQuery("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", conn, curs, ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, currEventID,))
         if(queryStatus == False or queryStatus2 == False): return None
@@ -264,7 +264,7 @@ def getPastEvents(socID, conn, curs):
     return payload
 
 @makeConnection
-def getAllUpcomingEvents(conn, curs):
+def getAllUpcomingEvents(limit, conn, curs):
     currentDate = datetime.now().date()
     currentDate = str(currentDate)
     results = callQuery("SELECT eventID, name, eventDate, location, societyName, societyID FROM hostedEvents WHERE eventdate >= (%s);", conn, curs, (currentDate, ))
@@ -275,6 +275,7 @@ def getAllUpcomingEvents(conn, curs):
         return None
 
     payload = []
+    counter = 0
     for result in results:
         eventJSON = {}
         eventJSON['eventID'] = result[0]
@@ -284,6 +285,9 @@ def getAllUpcomingEvents(conn, curs):
         eventJSON['societyName'] = result[4]
         eventJSON['societyID'] = result[5]
         payload.append(eventJSON)
+        counter += 1
+        if (counter >= limit):
+            break
     conn.close()
     return payload
 
