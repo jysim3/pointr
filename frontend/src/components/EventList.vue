@@ -10,7 +10,7 @@
 
         <div class="event-view-title">
           <h3 class="event-view-title-text" v-once>{{ eventViewTitle }}</h3>
-          <a class="event-view-more" @click="viewAllData = !viewAllData"
+          <a class="event-view-more link" @click="viewAllData = !viewAllData"
             >View {{viewAllData ? 'less' : 'more'}}</a>
         </div>
 
@@ -131,7 +131,6 @@ export default {
   margin: auto;
   margin-top: 4rem;
   padding: 0;
-  box-shadow: 0px 10px 30px rgba(0, 0, 0 )
 }
 
 </style>

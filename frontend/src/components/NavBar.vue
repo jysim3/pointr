@@ -10,7 +10,7 @@
           v-for="(routes, i) in navBarLinks"
           :key="i"
           :to="routes.to"
-          class="routes"
+          class="routes link"
         >
         
         <!-- TODO: Cleaner nav bar would be great -->
@@ -20,10 +20,16 @@
         </router-link>
         <!-- TODO: CLEAN UP THIS MESSY SHIT -->
         <div v-if="this.isAuthenticated" class="routes-more-wrapper">
-          <i @click="displayMore = !displayMore" class="material-icons routes-display-more">{{ displayMore ? 'expand_less' : 'expand_more' }}</i>
+          <i @click="toggleMore" class="material-icons routes-display-more">{{ displayMore ? 'expand_less' : 'expand_more' }}</i>
 
           <transition name="slide-fade">
-            <div class="routes-more" v-if="displayMore">
+            <div 
+            ref="routes-more"
+            class="routes-more" 
+            v-if="displayMore"
+            @focusout="toggleMore"
+            tabindex="0"
+            >
               <router-link :to="'/user/' + this.zID" class="routes-more-profile">
                 <img src="https://st3.depositphotos.com/6672868/14376/v/450/depositphotos_143767633-stock-illustration-user-profile-group.jpg"/>
                 <div class="routes-more-profile-text">
@@ -33,7 +39,7 @@
               </router-link>
               <hr/>
               <div class="routes-more-link"> Profile </div>
-              <div class="routes-more-link"> Change Password </div>
+              <router-link :to="{name:'changePassword'}" class="routes-more-link"> Change Password </router-link>
               <div @click="authBtnClicked" class="routes-more-link"> Log out </div>
             </div>
           </transition>
@@ -153,6 +159,14 @@ export default {
     },
     toHome() {
       this.$router.push({ name: "home" });
+    },
+    toggleMore() {
+      this.displayMore = !this.displayMore
+      this.$nextTick(() => {
+        console.log(this.displayMore) //eslint-disable-line
+        if (this.displayMore ) 
+          this.$refs['routes-more'].focus()
+      })
     }
   }
 };
@@ -217,6 +231,9 @@ span.routes-display-icon {
 .routes-more-wrapper  {
   position: relative;
 }
+.routes-more:focus  {
+  outline: none;
+}
 .routes-more  {
   width: 200px;
   position: absolute;
@@ -262,6 +279,8 @@ span.routes-display-icon {
   padding-left: 1rem;
   padding-top: 1rem;
   cursor: pointer;
+  display: block;
+  color: black;
 }
 .routes-more-link:hover {
   color: black;
