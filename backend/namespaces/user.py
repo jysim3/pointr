@@ -42,7 +42,8 @@ class User(Resource):
     @api.response(400, 'Malformed Request')
     @auth_services.check_authorization(level=1)
     def get(self, token_data):
-        attendance = users.getUserInfo(token_data['zID'])
+        zID = request.args.get('zID')
+        attendance = users.getUserInfo(zID if zID else token_data['zID'])
         if (attendance == "failed"):
             abort(400, "Server issue, check backend log")
         return jsonify(attendance)
