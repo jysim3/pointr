@@ -49,6 +49,7 @@ class Register(Resource):
         commencementYear = data['commencementYear'] if 'commencementYear' in data else 2020
         studentType = data['studentType'] if 'studentType' in data else "domestic"
         degreeType = data['degreeType'] if 'degreeType' in data else "undergraduate"
+        description = data['description'] if 'description' in data else None
         #floorGroup = data['floorGroup'] if 'floorGroup' in data else "unspecified"
 
         # Step 1, check for validity of the zID
@@ -70,7 +71,7 @@ class Register(Resource):
         '''
 
         # Step 3, inject the user into the database
-        results = users.createUser(zID, firstName, lastName, password, isArc, int(commencementYear), studentType, degreeType)
+        results = users.createUser(zID, firstName, lastName, password, isArc, int(commencementYear), studentType, degreeType, description)
         if results != "success":
             abort(403, results)
 

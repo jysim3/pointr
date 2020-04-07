@@ -14,12 +14,12 @@ from json import dumps
 # Potential returns:
 # 1. "Failed" on any psql error or if the user exists already
 @makeConnection
-def createUser(zID, firstName, lastName, password, isArc = True, commencementYear = 2020, studentType = "domestic", degreeType = "undergraduate", isSuperAdmin = False, conn = None, curs = None):
+def createUser(zID, firstName, lastName, password, isArc = True, commencementYear = 2020, studentType = "domestic", degreeType = "undergraduate", isSuperAdmin = False, description = None, conn = None, curs = None):
     password = str(password).encode('UTF-8')
     pwHash = hashlib.sha256(password).hexdigest()
 
     
-    queryResults = callQuery("INSERT INTO users(zid, firstName, lastName, password, isArc, commencementYear, studentType, degreeType, isSuperAdmin, activationStatus) values((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), False);", conn, curs, (zID, firstName, lastName, pwHash, isArc, commencementYear, studentType, degreeType, isSuperAdmin))
+    queryResults = callQuery("INSERT INTO users(zid, firstName, lastName, password, isArc, commencementYear, studentType, degreeType, isSuperAdmin, activationStatus, description) values((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), False);", conn, curs, (zID, firstName, lastName, pwHash, isArc, commencementYear, studentType, degreeType, isSuperAdmin, description,))
     if queryResults == False: return "failed"
 
     conn.commit()
@@ -28,6 +28,24 @@ def createUser(zID, firstName, lastName, password, isArc = True, commencementYea
     if (isSuperAdmin == True):
         makeSuperAdmin(zID)
     return "success"
+
+@makeConnection
+def updateDescription(zID, description, conn, curs):
+    queryResults = callQuery("UPDATE users SET description = (%s) WHERE zid = (%s);", conn, curs, (description, zID,))
+    if queryResults == False: return "failed"
+
+    conn.commit()
+    conn.close()
+    return "success"
+
+@makeConnection
+def getDescription(zID, conn, curs):
+    queryResults = callQuery("SELECT description FROM users WHERE zid = (%s);", conn, curs, (zID,))
+    if queryResults == False: return None
+
+    result = curs.fetchone()
+    conn.close()
+    return result[0]
 
 @makeConnection
 def getUserInfo(zID, conn = None, curs = None):
@@ -52,6 +70,7 @@ def getUserInfo(zID, conn = None, curs = None):
     payload['societies'] = getInvolvedSocs(zID)
     userImage = checkUserImage(zID)
     payload['image'] = userImage if userImage != False else None
+    payload['description'] = getDescription(zID)
     payload['events'] = []
     for result in results:
         eventJSON = {}

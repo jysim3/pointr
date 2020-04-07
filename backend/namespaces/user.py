@@ -48,6 +48,14 @@ class User(Resource):
             abort(400, "Server issue, check backend log")
         return jsonify(attendance)
 
+@api.route('/description')
+class description(Resource):
+    @auth_services.check_authorization(level=1)
+    def get(self, token_data):
+        zID = token_data['zID']
+        description = users.getDescription(zID)
+        return jsonify({"status": "success", "payload": {"description": description}})
+
 @api.route("/image")
 class image(Resource):
     @auth_services.check_authorization(level=1)

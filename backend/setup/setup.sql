@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
     degreeType TEXT,
     isSuperAdmin BOOLEAN NOT NULL,
     activationStatus BOOLEAN NOT NULL,
+    description TEXT,
     additionalInfomation JSONB,
     primary key(zid)
 );
