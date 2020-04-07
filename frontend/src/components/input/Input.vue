@@ -1,7 +1,52 @@
 <template>
-  <div>
+  <div 
+  :class="{ 'checkbox-input-container': type==='checkbox' }"
+  >
     <label class="label">{{label}}</label>
+
+    <select 
+      v-if="type === 'select'" 
+      :value="value" 
+      @input="sendInput"
+      :required="required"
+      class="input"
+     >
+          <option
+            v-for="(item) in options"
+            :key="item.value"
+            :value="item.value"
+          >{{item.label}}</option>
+     </select>
+
+    <textarea 
+      v-else-if="type === 'textarea'" 
+      :value="value" 
+      @input="sendInput"
+      :required="required"
+      class="input"
+     ></textarea>
+     <div 
+      v-else-if="type === 'radio'"
+      >
+
+        <div 
+        class="radio-input-container" 
+        v-for="(item, index) in options"
+        :key="index"
+        >
+          <input
+            :value="item.value"
+            @input="sendInput"
+            type="radio"
+            :required="required"
+            :name="name"
+            class="input"
+          />
+          <label class="label">{{item.label}}</label>
+        </div>
+      </div>
     <input
+      v-else
       class="input"
       :class="{ 'input--invalid': !valid }"
       :value="value"
@@ -21,7 +66,7 @@ export default {
           default: true
       }, 
       value: {
-          type: String
+          type: [String, Boolean]
       }, 
       type: {
           type: String
@@ -31,11 +76,18 @@ export default {
       },
       required: {
             type: Boolean,
-            default: true
+            default: false
+      },
+      name: {
+          type: String,
       },
       errorMessage: {
           type: String,
           default: "Error"
+      },
+      options: {
+        type: Array,
+        default: () => []
       }
   },
   methods: {

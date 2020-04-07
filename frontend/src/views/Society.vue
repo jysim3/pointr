@@ -104,6 +104,7 @@
   box-shadow:   0 0rem 2rem 0rem rgba(59,59,95,0.3);
   border-radius: 150px ;
   margin: 0 3rem 2rem 3rem;
+  flex-shrink: 0;
 }
 span.profile-buttons-followers {
   margin-right: 1rem;

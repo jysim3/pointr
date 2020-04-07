@@ -24,13 +24,13 @@
 
           <transition name="slide-fade">
             <div class="routes-more" v-if="displayMore">
-              <a class="routes-more-profile">
+              <router-link :to="'/user/' + this.zID" class="routes-more-profile">
                 <img src="https://st3.depositphotos.com/6672868/14376/v/450/depositphotos_143767633-stock-illustration-user-profile-group.jpg"/>
                 <div class="routes-more-profile-text">
                   <div class="routes-more-profile-text-title">{{ name }}</div>
                   <span>{{ zID }}</span>
                 </div>
-              </a>
+              </router-link>
               <hr/>
               <div class="routes-more-link"> Profile </div>
               <div class="routes-more-link"> Change Password </div>
