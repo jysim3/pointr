@@ -55,6 +55,11 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
     elif (societyID == None):
         societyID = findSocID("UNSW Hall")
 
+    startTime = eventDate + ' ' + startTime
+    startTime = datetime.strptime(startTime, "%Y-%m-%d %H:%M")
+    endTime = eventDate + ' ' + endTime
+    endTime = datetime.strptime(endTime, "%Y-%m-%d %H:%M")
+
     eventDate = datetime.strptime(eventDate, "%Y-%m-%d").date()
     week = findWeek(eventDate)
     if (week == None):
@@ -108,21 +113,30 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
         conn.close()
         return "Unacceptable parametre"
 
-    eventStartDate = datetime.strptime(eventStartDate, "%Y-%m-%d").date()
+    eventStartDate = datetime.strptime(eventStartDate, "%Y-%m-%d")
     eventEndDate = datetime.strptime(eventEndDate, "%Y-%m-%d").date()
+
     counter = 0
     eventIDLists = []
     previousWeek = None
-    while eventStartDate < eventEndDate:
+    startTimeHour = int(startTime.split(":")[0])
+    startTimeMinute = int(startTime.split(":")[1])
+    endTimeHour, endTimeMinute = int(endTime.split(":")[0]), int(endTime.split(":")[1])
+    while eventStartDate.date() < eventEndDate:
+        startTime = eventStartDate
+        startTime = startTime.replace(hour=startTimeHour, minute=startTimeMinute)
+        endTime = eventStartDate
+        endTime = endTime.replace(hour=endTimeHour, minute=endTimeMinute)
+
         currEventID = eventID + f"{counter:02d}"
-        week = findWeek(eventStartDate)
+        week = findWeek(eventStartDate.date())
         if (week is None):
             break
         elif (previousWeek == week):
             eventStartDate += interval
             continue
 
-        queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, endTime) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, (currEventID, eventName, zID, eventStartDate, week, qrFlag, description, startTime, endTime,))
+        queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, endTime) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, (currEventID, eventName, zID, eventStartDate.date(), week, qrFlag, description, startTime, endTime,))
 
         queryStatus2 = callQuery("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", conn, curs, ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, currEventID,))
         if(queryStatus == False or queryStatus2 == False): return None
