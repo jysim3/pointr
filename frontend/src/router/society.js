@@ -13,6 +13,10 @@ export default [
     path: '/society/:socID?',
     name: 'society',
     component: Society,
-    props: true
+    // TODO: make this available for public?
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
   },
 ]

@@ -1,15 +1,17 @@
 <template>
-    <div class="wrapper">
+
+    <div>
         <SelectSociety v-if="!socID"/>
-        <div id="society-wrapper" v-else>
-            <div class="header">
+        <Loader v-else-if="loading" />
+        <div v-else>
+            <div class="wrapper header">
               <div class="profile" >
                 <div class="profile-info">
 
-                  <h2 class="header-text" v-once>{{ socName }}</h2>
-                <i class="material-icons profile-buttons-followers">favorite</i>
+                  <h2 class="profile-info-title" v-once>{{ socData.socName }}</h2>
+                <i class="material-icons profile-info-button">favorite</i>
 <!-- TODO: MAKE THIS 'JOIN SOCIETY' -->
-                  <p> Society for the college UNSW Hall. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+                  <p> Society for the college UNSW Hall. UNSW Hall has been the affordable accommodation option for almost 5 years and has given many rural and international students the opportunity to live on campus in a supportive and loving environment. </p>
 
                 </div>
                 <img v-if="socData" :src="apiURL + socData.logo" />
@@ -18,21 +20,23 @@
               <div class="profile-buttons">
 
                 <i class="material-icons profile-buttons-followers">person</i>
-                <span class="profile-buttons-followers">224 members</span>
+                <span class="profile-buttons-followers">{{ socData.membersCount}} members</span>
                 <i class="material-icons profile-buttons-followers" style="color: purple">trending_up</i>
                 <span class="profile-buttons-followers">150 weekly active users</span>
               </div>
             </div>
+    
+            <div class="wrapper">
+              <div class="tabs-wrapper" >
+                <ul class="tabs">
+                  <li class="tabs-item tabs-item--active">Home</li>
+                  <li class="tabs-item">TBC</li>
+                  <li class="tabs-item">TBC</li>
+                  <li class="tabs-item">TBC</li>
+                </ul>
 
-            <div class="tabs-wrapper" >
-              <ul class="tabs">
-                <li class="tabs-item tabs-item--active">Home</li>
-                <li class="tabs-item">TBC</li>
-                <li class="tabs-item">TBC</li>
-                <li class="tabs-item">TBC</li>
-              </ul>
 
-
+              </div>
             </div>
             
 
@@ -43,12 +47,12 @@
             <div class="main">
               <div class="wrapper">
                 <EventList
-                  :eventViewTitle="'Upcoming Events for ' + socName"
+                  :eventViewTitle="'Upcoming Events for ' + socData.socName"
                   :eventData="societyEvents"
                   listStyle="table"
                 />
                 <EventList
-                  :eventViewTitle="'Past Events for ' + socName"
+                  :eventViewTitle="'Past Events for ' + socData.socName"
                   :eventData="pastSocietyEvents"
                   listStyle="table"
                   :loading="pastEventsLoading"
@@ -61,7 +65,7 @@
     </div>
 </template>
 
-<style>
+<style scoped>
 .wrapper {
     margin: auto;
     width: 80%;
@@ -72,7 +76,7 @@
 }
 .profile {
   display: flex;
-  /* text-align: center; */
+  align-items: center;
   justify-content: space-between;
 }
 .profile-info > h2 {
@@ -90,13 +94,16 @@
 .profile-info > p {
   padding-top: 1rem;
 }
+.profile-info-button {
+  cursor: pointer;
+}
 .profile > img {
   width: 150px;
   object-fit: cover;
   height: 150px;
   box-shadow:   0 0rem 2rem 0rem rgba(59,59,95,0.3);
   border-radius: 150px ;
-  margin: 0 3rem;
+  margin: 0 3rem 2rem 3rem;
 }
 span.profile-buttons-followers {
   margin-right: 1rem;
@@ -127,6 +134,7 @@ span.profile-buttons-followers {
   background-color: #e3f2fd;
   color: black;
   max-width: 8rem;
+  cursor: pointer;
 }
 .tabs-item--active {
   background-color: white;
@@ -142,13 +150,19 @@ span.profile-buttons-followers {
   background: white;
   padding: 0 3rem;
 }
-
+@media only screen and (max-width: 700px) {
+  .profile {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+}
 </style>
 
 <script>
 import MakeAdmin from "@/components/MakeAdmin.vue";
 import SelectSociety from "@/components/SelectSociety.vue";
 import EventList from "@/components/EventList.vue";
+import Loader from "@/components/Loader.vue";
 import { mapGetters } from 'vuex'
 import { fetchAPI } from '@/util.js'
 
@@ -160,7 +174,7 @@ export default {
     }
   },
   components: {
-    MakeAdmin, SelectSociety, EventList
+    MakeAdmin, SelectSociety, EventList, Loader
   },
   data() {
     return {
@@ -168,7 +182,8 @@ export default {
       ],
       pastEventsLoading: false,
       socData: {},
-      apiURL: require('@/util').apiURL
+      apiURL: require('@/util').apiURL,
+      loading: false,
     }
   },
   watch: {
@@ -187,11 +202,6 @@ export default {
     isStaff() {
         return this.staffSocieties.some(e => e.societyID === this.socID)
     },
-    socName() {
-        return this.joinedSocieties.find(e => {
-            return e.societyID === this.socID
-        }).societyName
-    },
     societyEvents() {
       return this.allSocietyEvents(this.socID)
     }
@@ -201,11 +211,15 @@ export default {
       if (!this.socID) {
         return
       }
+      this.loading = true
       fetchAPI(`/api/soc?socID=${this.socID}`, "GET")
       .then(v => {
-        this.socData = v.data
-        console.log(v.data) // eslint-disable-line
-        this.loading = true
+        const data = v.data
+        this.socData.admins = data.admins
+        this.socData.logo = data.logo
+        this.socData.membersCount = data.membershipCount
+        this.socData.socName = data.socName
+        this.loading = false
       })
       .catch(e => {
         console.log(e) // eslint-disable-line

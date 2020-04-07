@@ -13,21 +13,24 @@
           <a class="event-view-more" @click="viewAllData = !viewAllData"
             >View {{viewAllData ? 'less' : 'more'}}</a>
         </div>
-        <div class="event-cards " :class="viewAllData ? 'viewAllCards' : ''">
+
+        <FormError v-if="eventData.length === 0" msg="Seems like there is no events at the moment"/> 
+        <div v-else class="event-cards " :class="viewAllData ? 'viewAllCards' : ''">
           <EventCard v-for="(event, index) in showEventData" :key="index" :eventData="event"></EventCard>
         </div>
+
       </div>
       <div class="event-table" v-else-if="listStyle === 'table'">
 
         <div class="event-view-title">
           <h3 class="event-view-title-text" v-once>{{ eventViewTitle }}</h3>
         </div>
-        <Table :data="formattedEventData" :fields="fields"/>
+        <FormError v-if="eventData.length === 0" msg="Seems like there is no events at the moment"/> 
+        <Table v-else :data="formattedEventData" :fields="fields"/>
       </div>
 
     </div>
-    <FormError v-else msg="Seems like there is no events at the moment"/> 
-      
+       
   </div>
 </template>
 
