@@ -68,6 +68,9 @@ h2 {
   display: inline-block;
   margin-right: 1rem;
 }
+#dashboard-wrapper {
+  margin-top: 5rem;
+}
 .select--admin {
   border: none;
 
