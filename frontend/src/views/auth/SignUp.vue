@@ -4,84 +4,46 @@
     <form @submit.prevent="submitSignUpForm" class="form">
       <h2>Join Pointr</h2>
       <FormError v-if="formErrorMessage" :msg="formErrorMessage" />
-      <InputZID v-model="zID" :zID="zID" />
-      <label for="firstName" class="label">First Name</label>
-      <input v-model="userInfo.firstName" class="input" type="text" name="firstName" />
-      <label for="lastName" class="label">Last Name</label>
-      <input v-model="userInfo.lastName" class="input" type="text" name="lastName" />
-      <InputPassword v-model="password" :password="password" />
-      <InputPassword
-        v-model="repeatPassword"
-        :password="repeatPassword"
-        :repeatPassword="password"
-        :label="'Repeat password'"
-      />
+
+      <InputZID v-model="zID"  />
+
+      <Input v-model="userInfo.firstName" type="text" label="First Name"/>
+      <Input v-model="userInfo.lastName" type="text" label="Last Name"/>
+
+      <InputPassword v-model="password"  />
       <!-- TODO: fix :class on repeatPassword input -->
       <label class="label">Year began study</label>
       <input
         v-model.number="userInfo.commencmentYear"
         :max="currentYear"
-        :min="2000"
+        :min="currentYear-15"
         type="number"
         class="input"
         :class="commencmentYearValid"
         required
       />
       <!-- Degree type input -->
-      <label for="degree-type" class="label">Degree type</label>
-      <div class="radio-input-container">
-        <input
-          v-model="userInfo.degreeType"
-          :value="'undergraduate'"
-          class="input"
-          type="radio"
-          name="degree-type"
-          id="undergraduate"
-          required
-        />
-        <label for="undergraduate" class="label">Undergraduate</label>
-      </div>
-      <div class="radio-input-container">
-        <input
-          v-model="userInfo.degreeType"
-          :value="'postgraduate'"
-          class="input"
-          type="radio"
-          name="degree-type"
-          id="postgraduate"
-          required
-        />
-        <label for="postgraduate" class="label">Postgraduate</label>
-      </div>
+      <Input required 
+        label="Degree Type" 
+        type="radio" 
+        :options="degreeTypeOptions"
+        name="degree-type"
+        v-model="userInfo.degreeType" />
       <!-- Student type input -->
-      <label for="student-type" class="label">Student type</label>
-      <div class="radio-input-container">
-        <input
-          v-model="userInfo.studentType"
-          :value="'domestic'"
-          type="radio"
-          name="student-type"
-          id="domestic"
-          required
-        />
-        <label for="domestic" class="label">Domestic</label>
-      </div>
-      <div class="radio-input-container">
-        <input
-          v-model="userInfo.studentType"
-          :value="'international'"
-          type="radio"
-          name="student-type"
-          id="international"
-          required
-        />
-        <label for="international" class="label">International</label>
-      </div>
+      <Input required 
+        label="Student Type" 
+        type="radio" 
+        :options="studentTypeOptions"
+        name="degree-type"
+        v-model="userInfo.studentType" />
+
       <!-- Arc member input -->
-      <div class="checkbox-input-container">
-        <label for="arc-member">Are you an arc member?</label>
-        <input v-model="userInfo.isArcMember" type="checkbox" id="arc-member" name="arc-member" required />
-      </div>
+      <Input required
+        label="Are you an arc member?"
+        v-model="userInfo.isArcMember"
+        type="checkbox"
+        />
+
       <!-- TODO: gender input? -->
       <button type="submit" class="btn btn-primary">Sign Up</button>
     </form>
@@ -93,7 +55,8 @@
 import { fetchAPI } from "@/util.js";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
-import InputPassword from "@/components/input/InputPassword.vue";
+import Input from "@/components/input/Input.vue";
+import InputPassword from "@/components/input/InputNewPassword.vue";
 
 export default {
   name: "SignUp",
@@ -101,6 +64,7 @@ export default {
     FormError,
     InputZID,
     InputPassword,
+    Input
   },
   props: {
     isPage: {
@@ -113,7 +77,6 @@ export default {
     return {
       zID: "",
       password: "",
-      repeatPassword: "",
       userInfo: {
         firstName: "",
         lastName: "",
@@ -122,6 +85,14 @@ export default {
         degreeType: "",
         isArcMember: false
       },
+      studentTypeOptions: [
+        { value:'domestic', 'label': 'Domestic'},
+        { value:'international', 'label': 'International'}
+      ],
+      degreeTypeOptions: [
+        { value:'undergraduate', 'label': 'Undergraduate'},
+        { value:'postgraduate', 'label': 'Postgraduate'}
+      ],
       formErrorMessage: "",
     };
   },

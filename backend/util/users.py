@@ -1,6 +1,11 @@
 from util.utilFunctions import checkUser, makeConnection
 from util.societies import makeSuperAdmin
+#from util.files import uploadImages
 import hashlib
+from util.utilFunctions import callQuery
+import base64
+from util.files import uploadImages
+from json import dumps
 
 # Creating a user 
 # 8/1/2020: TODO: To implement the login system, we need to store hashed passwords
@@ -9,15 +14,13 @@ import hashlib
 # Potential returns:
 # 1. "Failed" on any psql error or if the user exists already
 @makeConnection
-def createUser(zID, firstName, lastName, password, isArc = True, commencementYear = 2020, studentType = "domestic", degreeType = "undergraduate", isSuperAdmin = False, conn = None, curs = None):
+def createUser(zID, firstName, lastName, password, isArc = True, commencementYear = 2020, studentType = "domestic", degreeType = "undergraduate", isSuperAdmin = False, description = None, conn = None, curs = None):
     password = str(password).encode('UTF-8')
     pwHash = hashlib.sha256(password).hexdigest()
 
-    try:
-        curs.execute("INSERT INTO users(zid, firstName, lastName, password, isArc, commencementYear, studentType, degreeType, isSuperAdmin, activationStatus) values((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), False);", (zID, firstName, lastName, pwHash, isArc, commencementYear, studentType, degreeType, isSuperAdmin))
-    except Exception as e:
-        print(e)
-        return "failed"
+    
+    queryResults = callQuery("INSERT INTO users(zid, firstName, lastName, password, isArc, commencementYear, studentType, degreeType, isSuperAdmin, activationStatus, description) values((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), False);", conn, curs, (zID, firstName, lastName, pwHash, isArc, commencementYear, studentType, degreeType, isSuperAdmin, description,))
+    if queryResults == False: return "failed"
 
     conn.commit()
     conn.close()
@@ -27,27 +30,47 @@ def createUser(zID, firstName, lastName, password, isArc = True, commencementYea
     return "success"
 
 @makeConnection
+def updateDescription(zID, description, conn, curs):
+    queryResults = callQuery("UPDATE users SET description = (%s) WHERE zid = (%s);", conn, curs, (description, zID,))
+    if queryResults == False: return "failed"
+
+    conn.commit()
+    conn.close()
+    return "success"
+
+@makeConnection
+def getDescription(zID, conn, curs):
+    queryResults = callQuery("SELECT description FROM users WHERE zid = (%s);", conn, curs, (zID,))
+    if queryResults == False: return None
+
+    result = curs.fetchone()
+    conn.close()
+    return result[0]
+
+@makeConnection
 def getUserInfo(zID, conn = None, curs = None):
-    try:
-        curs.execute("SELECT firstName, lastName FROM users WHERE zID = (%s);", (zID,))
-    except Exception as e:
-        conn.close()
-        return "failed"
+    
+    queryResults = callQuery("SELECT firstName, lastName FROM users WHERE zID = (%s);", conn, curs, (zID,))
+    if queryResults == False: return "failed"
+
     name = curs.fetchone()
     if (name is None):
         return None
     firstName = name[0]
     lastName = name[1]
-    try:
-        curs.execute("SELECT * FROM userParticipatedEvents WHERE zID = (%s);", (zID,))
-    except Exception as e:
-        conn.close()
-        return "failed"
+    
+    queryResults = callQuery("SELECT * FROM userParticipatedEvents WHERE zID = (%s) ORDER BY societyID;", conn, curs, (zID,))
+    if queryResults == False: return "failed"
+
     results = curs.fetchall()
     payload = {}
     payload['zID'] = zID
     payload['firstName'] = firstName
     payload['lastName'] = lastName
+    payload['societies'] = getInvolvedSocs(zID)
+    userImage = checkUserImage(zID)
+    payload['image'] = userImage if userImage != False else None
+    payload['description'] = getDescription(zID)
     payload['events'] = []
     for result in results:
         eventJSON = {}
@@ -61,16 +84,58 @@ def getUserInfo(zID, conn = None, curs = None):
     return payload
 
 @makeConnection
+def checkUserImage(zID, conn, curs):
+    queryResult = callQuery("SELECT additionalinfomation FROM users WHERE zID = (%s);", conn, curs, (zID,))
+    if (queryResult == False): return False
+
+    results = curs.fetchone()
+    conn.close()
+    if results == None: return False
+    elif not results[0]: return False
+    elif 'logo' not in results[0]: return False
+    return results[0]['logo']
+
+@makeConnection
+def getUserImage(zID, conn, curs):
+    logoPath = checkUserImage(zID)
+    if (logoPath == False): return None
+
+    try:
+        with open(logoPath, "rb") as image:
+            imageString = base64.b64encode(image.read())
+    except IOError as e:
+        # TODO: If this occurs, set the logo path to Null in the db
+        return "File has been moved on the server, no longer avaliable"
+
+    return imageString.decode('utf-8'), 0
+
+@makeConnection
+def updateUserImage(zID, file, conn, curs):
+    uploadResult = uploadImages(file, zID)
+    if (isinstance(uploadResult, tuple) == False):
+        return "bad file name"
+    fileJSON = dumps({"logo": uploadResult[0]})
+    results = callQuery("UPDATE users SET additionalInfomation = (%s) WHERE zID = (%s);", conn, curs, (fileJSON, zID,))
+    if (results == False):
+        return "Database fault, check backend log"
+    return "success"
+
+
+@makeConnection
 def checkUserInfo(zID, password, conn = None, curs = None):
     password = hashlib.sha256(password.encode(encoding="utf-8")).hexdigest()
 
-    curs.execute("SELECT * FROM users where zid = (%s) AND password = (%s);", (zID, password,))
+    queryResults = callQuery("SELECT * FROM users where zid = (%s) AND password = (%s);", conn, curs, (zID, password,))
+    if queryResults == False: return False
+    
     result = curs.fetchone()
     if result is None:
         return False
     if (checkActivation(zID) == False):
         return False
-    curs.execute("SELECT * FROM socStaff where role = 5 and zID = (%s);", (zID,))
+    queryResults = callQuery("SELECT * FROM socStaff where role = 5 and zID = (%s);", conn, curs, (zID,))
+    if queryResults == False: return False
+
     superAdmins = curs.fetchall()
     if superAdmins == []:
         return 1
@@ -83,10 +148,14 @@ def getUserAttendance(zid, conn = None, curs = None):
     if (checkUser(zid) == False):
         return {"status": "Failed"}
 
-    curs.execute("select points, events.eventid, name, eventdate, isarcmember, societyName from events join participation on (events.eventid = participation.eventid) join host on (events.eventid = host.eventid) join society on (society.societyID = host.society) where participation.zid = (%s);", (zid,))
+    queryResults = callQuery("select points, events.eventid, name, eventdate, isarcmember, societyName from events join participation on (events.eventid = participation.eventid) join host on (events.eventid = host.eventid) join society on (society.societyID = host.society) where participation.zid = (%s);", conn, curs, (zid,))
+    if queryResults == False: return {"status": "Failed"}
+
     results = curs.fetchall()
 
-    curs.execute("select firstName, lastName from users where zid = (%s);", (zid,))
+    queryResults = callQuery("select firstName, lastName from users where zid = (%s);", conn, curs, (zid,))
+    if queryResults == False: return {"status": "Failed"}
+
     result = curs.fetchone()
     firstName = result[0]
     lastName = result[1]
@@ -94,7 +163,7 @@ def getUserAttendance(zid, conn = None, curs = None):
     conn.close()
 
     payload = {}
-    payload['events'] = []
+    payload['attendedEvents'] = []
     payload['zID'] = zid.lower()
     payload['firstName'] = firstName
     payload['lastName'] = lastName
@@ -106,7 +175,7 @@ def getUserAttendance(zid, conn = None, curs = None):
         eventJSON['eventDate'] = str(event[3])
         eventJSON['points'] = event[0]
         eventJSON['isArc'] = event[4]
-        payload['events'].append(eventJSON)
+        payload['attendedEvents'].append(eventJSON)
 
     return payload
 
@@ -116,25 +185,25 @@ def getPersonEventsForSoc(zID, societyID, conn = None, curs = None):
     if (checkUser(zID) == False):
         return "no such user"
 
-    curs.execute("select firstName, lastName from users where zid = (%s);", (zID,))
+    queryResults = callQuery("select firstName, lastName from users where zid = (%s);", conn, curs, (zID,))
+    if queryResults == False: return "failed"
+  
     name = curs.fetchone()
     firstName = name[0]
     lastName = name[1]
 
-    try:
-        curs.execute("select societyName from society where societyID = (%s);", (societyID,))
-    except Exception as e:
-        conn.close()
-        return "failed"
+    
+    queryResults = callQuery("select societyName from society where societyID = (%s);", conn, curs, (societyID,))
+    if queryResults == False: return "failed"
+
     socName = curs.fetchone()
     if (socName is None):
         return None
 
-    try:
-        curs.execute("select * from events join host on (events.eventID = host.eventID) join participation on (events.eventID = participation.eventID) where society = (%s) and participation.zid = (%s);", (societyID, zID,))
-    except Exception as e:
-        conn.close()
-        return "failed"
+    
+    queryResults = callQuery("select * from events join host on (events.eventID = host.eventID) join participation on (events.eventID = participation.eventID) where society = (%s) and participation.zid = (%s);", conn, curs, (societyID, zID,))
+    if queryResults == False: return "failed"
+        
     events = curs.fetchall()
     conn.close()
 
@@ -155,47 +224,42 @@ def getPersonEventsForSoc(zID, societyID, conn = None, curs = None):
 
 @makeConnection
 def checkArc(zID, conn = None, curs = None):
-    curs.execute("SELECT isArc FROM USERS WHERE zid = (%s);", (zID,))
+    queryResults = callQuery("SELECT isArc FROM USERS WHERE zid = (%s);", conn, curs, (zID,))
+    if queryResults == False: return False
+
     name = curs.fetchone()
     return True if name != [] else False
 
 @makeConnection
 def addActivationLink(zID, activationLink, conn = None, curs = None):
-    try:
-        curs.execute("UPDATE users SET activationLink = (%s) WHERE zID = (%s);", (activationLink, zID,))
-        conn.commit()
-    except Exception as e:
-        conn.close()
-        return "failed"
+
+    queryResults = callQuery("UPDATE users SET activationLink = (%s) WHERE zID = (%s);", conn, curs, (activationLink, zID,))
+    if (queryResults == False): return "failed"
+
     return "success"
 
 @makeConnection
 def activateAccount(zID, conn = None, curs = None):
     # TODO: Remove the next 8 lines, already implemented in checkActivation
-    try:
-        curs.execute("SELECT activationStatus FROM users WHERE zID = (%s);", (zID,))
-    except Exception as e:
-        conn.close()
-        return "failed"
+    
+    queryResults = callQuery("SELECT activationStatus FROM users WHERE zID = (%s);", conn, curs, (zID,))
+    if queryResults == False: return "failed"
+
     result = curs.fetchone()
     if (result[0]) == True:
         return "already activated"
+    
+    queryResults = callQuery("UPDATE users SET activationStatus = True WHERE zID = (%s);", conn, curs, (zID,))
+    if queryResults == False: return "failed"
 
-    try:
-        curs.execute("UPDATE users SET activationStatus = True WHERE zID = (%s);", (zID,))
-    except Exception as e:
-        conn.close()
-        return "failed"
     conn.commit()
     return "success"
 
 @makeConnection
 def checkActivation(zID, conn = None, curs = None):
-    try:
-        curs.execute("SELECT activationStatus FROM USERS WHERE zID = (%s);", (zID,))
-    except Exception as e:
-        conn.close()
-        return False
+    
+    queryResults = callQuery("SELECT activationStatus FROM USERS WHERE zID = (%s);", conn, curs, (zID,))
+    if queryResults == False: return False
 
     result = curs.fetchone()
     if (result is None):
@@ -204,13 +268,14 @@ def checkActivation(zID, conn = None, curs = None):
 
 @makeConnection
 def getInvolvedSocs(zID, conn = None, curs = None):
-    try:
-        curs.execute("SELECT societyID, societyName, role FROM userInSociety WHERE role = 0 AND zid = (%s);", (zID,))
-        normalMember = curs.fetchall()
-        curs.execute("SELECT societyID, societyName, role FROM userInSociety WHERE role = 1 and zid = (%s);", (zID,))
-        staffMember = curs.fetchall()
-    except Exception as e:
-        return None
+    
+    queryResults = callQuery("SELECT societyID, societyName, role FROM userInSociety WHERE role = 0 AND zid = (%s);", conn, curs, (zID,))
+    if queryResults == False: return None
+    normalMember = curs.fetchall()
+    queryResults = callQuery("SELECT societyID, societyName, role FROM userInSociety WHERE role = 1 and zid = (%s);", conn, curs, (zID,))
+    if queryResults == False: return None
+    staffMember = curs.fetchall()
+
     payload = {}
     payload['member'] = []
     for i in normalMember:
@@ -227,29 +292,23 @@ def getInvolvedSocs(zID, conn = None, curs = None):
     return payload
 
 @makeConnection
-def changePassword(zID, password, conn = None, curs = None):
-
+def changePassword(zID, oldPassword, password, conn = None, curs = None):
+    results = checkUserInfo(zID, oldPassword)
+    if (results == False):
+        return 'failed'
     password = str(password).encode('UTF-8')
     pwHash = hashlib.sha256(password).hexdigest()
-    try:
-        curs.execute("UPDATE users SET password = (%s) WHERE zID = (%s);", (pwHash, zID,))
-        conn.commit()
-    except Exception as e:
-        conn.close()
-        return "failed"
+
+    queryResults = callQuery("UPDATE users SET password = (%s) WHERE zID = (%s);", conn, curs, (pwHash, zID,))
+    if queryResults == False: return "failed"
 
     conn.close()
     return "success"
 
 @makeConnection
 def deleteAccount(zID, conn = None, curs = None):
-
-    try:
-        curs.execute("DELETE FROM users WHERE zID = (%s);", (zID,))
-        conn.commit()
-    except Exception as e:
-        conn.close()
-        return "failed"
+    queryResults = callQuery("DELETE FROM users WHERE zID = (%s);", conn, curs, (zID,))
+    if queryResults == False: return "failed"
 
     conn.close()
     return "success"

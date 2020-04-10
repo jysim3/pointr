@@ -1,35 +1,29 @@
 <template>
-  <div>
-    <label class="label">zID</label>
-    <input
-      class="input"
-      :class="{ 'input--invalid': !isZIDValid }"
-      :value="zID"
-      @input="$emit('input', $event.target.value)"
-      type="text"
-      required
-    />
-  </div>
+  <Input label="zID" type="text" 
+  :value="value"
+  @input="$emit('input', $event)"
+  :valid="isZIDValid" 
+  errorMessage="Invalid zID"
+  />
 </template>
 
 <script>
+import Input from '@/components/input/Input.vue'
 export default {
   name: "InputZID",
+  components: {
+    Input
+  },
   props: {
-    zID: {
+    value: {
       type: String,
-      required: true
-    }
+    },
   },
   computed: {
     isZIDValid() {
       // Eg z5267516 or 5267516 will both work.
       // If nothing in input then don't make it invalid
-      if (this.zID.length === 0) {
-        return true;
-      }
-      const re = RegExp("^[zZ]?[0-9]{7}$");
-      return re.test(this.zID);
+      return this.value.length === 0 || /^[zZ]?[0-9]{7}$/.test(this.value);
     }
   }
 };

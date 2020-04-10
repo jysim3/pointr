@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     degreeType TEXT,
     isSuperAdmin BOOLEAN NOT NULL,
     activationStatus BOOLEAN NOT NULL,
-    additionalInfomation JSON,
+    description TEXT,
+    additionalInfomation JSONB,
     primary key(zid)
 );
 -- drop TABLE IF EXISTS events CASCADE;
@@ -20,12 +21,14 @@ CREATE TABLE IF NOT EXISTS events (
     eventdate date NOT NULL,
     --- NOTE: FIXME: Added in a starttime in events, this is used to ensure users cant sign in to events before/after the event
     --- NOTE: We could, however, also add in a "grace period" of which we allow people to sign up (i.e. 30 mins before/after)
-    startTime time,
-    endTime time,
+    startTime TIMESTAMP,
+    endTime TIMESTAMP,
 	eventWeek TEXT NOT NULL,
     owner TEXT NOT NULL REFERENCES users(zid) ON DELETE CASCADE,
     qrCode boolean,
     description TEXT,
+    isClosed BOOLEAN,
+    additionalInfomation JSONB,
     primary key(eventID)
 );
 -- drop TABLE IF EXISTS participation CASCADE;
@@ -40,9 +43,10 @@ CREATE TABLE IF NOT EXISTS participation (
 -- drop TABLE IF EXISTS society CASCADE;
 CREATE TABLE IF NOT EXISTS society (
     societyID TEXT,
+    description TEXT,
     societyName TEXT NOT NULL unique,
     isCollege BOOLEAN NOT NULL,
-    additionalInfomation JSON,
+    additionalInfomation JSONB,
     primary key (societyID)
 );
 -- NOTE: Perhaps we can add an additional collegeSocs field here for more college specific fields
@@ -58,7 +62,7 @@ CREATE TABLE IF NOT EXISTS socstaff (
     society TEXT REFERENCES society(societyID) ON DELETE CASCADE,
     zid TEXT REFERENCES users(zid) ON DELETE CASCADE,
     role INTEGER NOT NULL,
-    additionalInfomation JSON,
+    additionalInfomation JSONB,
     primary key (society, zid)
 );
 -- DROP TABLE IF EXISTS collegeUsers CASCADE;
@@ -70,7 +74,7 @@ CREATE TABLE IF NOT EXISTS collegeUsers (
 );
 
 create or replace view hostedEvents 
-as select events.eventID, name, eventdate, location, societyname, societyID from events 
+as select events.eventID, name, eventdate, location, societyname, societyID, description from events 
 join host on events.eventID = host.eventID join society on (society.societyID = host.society);
 
 create or replace view userInSociety 

@@ -1,5 +1,6 @@
 import { fetchAPI } from '@/util';
 
+// TODO: make user.js about user information, make auth.js for authentication purposes
 // Currently the validity of a user's token will only be checked once,
 // this is to prevent a lot of requests to the backend.
 
@@ -9,7 +10,9 @@ const state = {
   isAdmin: false,
   info: {
     zID: "",
-    name: "",
+    firstName: "",
+    lastName: "",
+    attendedEvents: [],
     events: [],
     societies: {
       member: [],
@@ -23,30 +26,45 @@ const state = {
 };
 
 const getters = {
+  name: (state) => `${state.info.firstName} ${state.info.lastName}`,
+  zID: (state) => state.info.zID, 
   memberSocieties(state) {
-    return state.info.societies.member;
+    if (state.info.societies) {
+      return state.info.societies.member;
+    } else {
+      return []
+    }
   },
   staffSocieties(state) {
-    return state.info.societies.staff;
-  },
-  allSocieties(state) {
-    return state.info.societies.member.concat(state.info.societies.staff);
-  },
-  allEvents() {
-    return;
-  },
-  staffEvents (state) {
-    if (state.info.societies.staff) {
-      const k = {}
-      for (let v of state.info.societies.staff) {
-        if (v.events) {
-          k[v.societyID] = v.events
-        }
-      }
-      console.log(k)//eslint-disable-line 
-      return k
+    if (state.info.societies) {
+      return state.info.societies.staff;
+    } else {
+      return []
     }
-    return null
+  },
+  joinedSocieties(state) {
+    if (state.info.societies) {
+      return state.info.societies.member.concat(state.info.societies.staff);
+    } else {
+      return []
+    }
+  },
+  isSocietyAdmin: (state) => socID => {
+    console.log(socID) // eslint-disable-line
+    console.log(state.info.societies.staff) // eslint-disable-line
+    return state.info.societies.staff.some(v => v.societyID === socID)
+  },
+  // https://vuex.vuejs.org/guide/getters.html#method-style-access
+  allSocietyEvents: (state) => socIDs => {
+      return state.info.events.filter(v => v.societyID.includes(socIDs))
+  },
+  event: (state) => eventID => {
+      return state.info.events.find(v => v.eventID === eventID)
+  },
+  allEvents: (state) => state.info.events,
+  staffEvents (state, getters) {
+    const staffSocIDs = state.info.societies.staff.reduce((a, society) => a.concat(society.societyID), [])
+    return getters.allSocietyEvents(state,staffSocIDs)
   },
 
 };
@@ -99,52 +117,34 @@ const actions = {
     try {
       const requests = [
         {
-          url: '/api/user/info',
-          method: 'POST'
-        },
-        {
-          url: '/api/user/involvedSocs',
+          url: '/api/user/',
           method: 'GET'
         },
         {
           url: '/api/auth/permission',
           method: 'POST'
+        },
+        {
+          url: '/api/user/getUpcomingEvents',
+          method: 'GET'
         }
       ];
       const [
         infoResponse,
-        involvedSocsResponse,
-        permissionResponse
+        permissionResponse,
+        eventResponse
       ] = await Promise.all(requests.map(r => fetchAPI(r.url, r.method)));
+      const events = eventResponse.data
 
-      // TODO: this is messy, should rather be defining in initial state or backend should not be returning undefined
-      let societies;
-      if (!involvedSocsResponse.data) {
-        societies = {
-          member: [],
-          staff: []
-        }
-      } else {
-        societies = {
-          member: involvedSocsResponse.data.member,
-          staff: involvedSocsResponse.data.staff
-        }
 
-        await societies.staff.forEach(async v  => {
-          v.events = []
-          const soc = await fetchAPI(`/api/soc/?societyID=${v.societyID}`,'GET')
-          v.events = soc.data.events
-        });
-
-      }
-      console.log(societies) //eslint-disable-line
 
       const infoPayload = {
         ...infoResponse.data,
         ...permissionResponse.data,
-        societies
+        events,
       }
       commit('info', infoPayload);
+      console.log(infoPayload) //eslint-disable-line
     } catch (error) {
       console.log(error); //eslint-disable-line
       console.log(error.response); //eslint-disable-line

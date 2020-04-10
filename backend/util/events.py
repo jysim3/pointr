@@ -39,7 +39,7 @@ def findWeek(date: datetime):
 
 # Creting an event (single instance events)
 @makeConnection
-def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None, location = None, description = None, startTime = None, endTime = None, conn = None, curs = None):
+def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None, location = None, description = None, startTime = None, endTime = None, public = True, conn = None, curs = None):
 
     if (checkUser(zID) == False):
         return "no such user"
@@ -55,12 +55,17 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
     elif (societyID == None):
         societyID = findSocID("UNSW Hall")
 
+    startTime = eventDate + ' ' + startTime
+    startTime = datetime.strptime(startTime, "%Y-%m-%d %H:%M")
+    endTime = eventDate + ' ' + endTime
+    endTime = datetime.strptime(endTime, "%Y-%m-%d %H:%M")
+
     eventDate = datetime.strptime(eventDate, "%Y-%m-%d").date()
     week = findWeek(eventDate)
     if (week == None):
         return "Not a valid date for events"
 
-    queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, endTime) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, (eventID, eventName, zID, eventDate, week, qrFlag, description, startTime, endTime,))
+    queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, endTime, public) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, (eventID, eventName, zID, eventDate, week, qrFlag, description, startTime, endTime, public,))
 
     # NOTE: Currently, location defaults to UNSW Hall if one isnt provided
     queryStatus1 = callQuery("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", conn, curs, ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
@@ -78,7 +83,7 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
     # Example Cont.: The above indicates this event occurs every fortnightly starting with 30/1/2020 to 30/5/2020
 '''
 @makeConnection
-def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag = None, location = None, societyID = None, description = None, startTime = None, endTime = None, conn = None, curs = None):
+def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag = None, location = None, societyID = None, description = None, startTime = None, endTime = None, public = True, conn = None, curs = None):
     if (checkUser(zID) == False):
         conn.close()
         return "no such user"
@@ -108,21 +113,30 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
         conn.close()
         return "Unacceptable parametre"
 
-    eventStartDate = datetime.strptime(eventStartDate, "%Y-%m-%d").date()
+    eventStartDate = datetime.strptime(eventStartDate, "%Y-%m-%d")
     eventEndDate = datetime.strptime(eventEndDate, "%Y-%m-%d").date()
+
     counter = 0
     eventIDLists = []
     previousWeek = None
-    while eventStartDate < eventEndDate:
+    startTimeHour = int(startTime.split(":")[0])
+    startTimeMinute = int(startTime.split(":")[1])
+    endTimeHour, endTimeMinute = int(endTime.split(":")[0]), int(endTime.split(":")[1])
+    while eventStartDate.date() < eventEndDate:
+        startTime = eventStartDate
+        startTime = startTime.replace(hour=startTimeHour, minute=startTimeMinute)
+        endTime = eventStartDate
+        endTime = endTime.replace(hour=endTimeHour, minute=endTimeMinute)
+
         currEventID = eventID + f"{counter:02d}"
-        week = findWeek(eventStartDate)
+        week = findWeek(eventStartDate.date())
         if (week is None):
             break
         elif (previousWeek == week):
             eventStartDate += interval
             continue
 
-        queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, endTime) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, (currEventID, eventName, zID, eventStartDate, week, qrFlag, description, startTime, endTime,))
+        queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, endTime, public) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, (currEventID, eventName, zID, eventStartDate.date(), week, qrFlag, description, startTime, endTime, public,))
 
         queryStatus2 = callQuery("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", conn, curs, ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, currEventID,))
         if(queryStatus == False or queryStatus2 == False): return None
@@ -142,7 +156,7 @@ def fetchRecur(eventID, conn, curs):
     baseID = eventID[:5]
     print(baseID)
 
-    queryStatus = callQuery(f"select * from events where eventID like '{baseID}%';", conn, curs)
+    queryStatus = callQuery("select * from events where eventID like (%s);", conn, curs, (eventID,))
     if (queryStatus == False): return None
     results = curs.fetchall()
     payload = []
@@ -210,8 +224,20 @@ def getAllEventID(conn, curs):
     payload = []
     for result in results:
         payload.append(result[0])
-    conn.close()
     return payload
+
+
+@makeConnection
+def deleteEvent(eventID, conn, curs):
+    # FIXME: Change this try/except block to runQuery one we pull
+    try:
+        curs.execute("DELETE FROM events WHERE eventID = (%s);", (eventID,))
+    except Exception as e:
+        print(e)
+        return "Database error, check backend log"
+
+    conn.close()
+    return "success"
 
 @makeConnection
 def getPastEvents(socID, conn, curs):
@@ -238,7 +264,7 @@ def getPastEvents(socID, conn, curs):
     return payload
 
 @makeConnection
-def getAllUpcomingEvents(conn, curs):
+def getAllUpcomingEvents(limit, conn, curs):
     currentDate = datetime.now().date()
     currentDate = str(currentDate)
     results = callQuery("SELECT eventID, name, eventDate, location, societyName, societyID FROM hostedEvents WHERE eventdate >= (%s);", conn, curs, (currentDate, ))
@@ -249,6 +275,7 @@ def getAllUpcomingEvents(conn, curs):
         return None
 
     payload = []
+    counter = 0
     for result in results:
         eventJSON = {}
         eventJSON['eventID'] = result[0]
@@ -258,5 +285,88 @@ def getAllUpcomingEvents(conn, curs):
         eventJSON['societyName'] = result[4]
         eventJSON['societyID'] = result[5]
         payload.append(eventJSON)
+        counter += 1
+        if (counter >= limit):
+            break
+    conn.close()
+    return payload
+
+@makeConnection
+def closeEvent(eventID, conn, curs):
+    if checkEvent(eventID) == False: return "No such event"
+    results = callQuery("SELECT isClosed FROM events WHERE eventID = (%s);", conn, curs, (eventID,))
+    if (results == False): return "Database error, check backend log"
+    results = curs.fetchone()
+    if (results is not None and results[0] == True): return "Event already closed"
+    currentDate = datetime.now()
+    results = callQuery("UPDATE events SET endTime = (%s), isClosed = (%s) WHERE eventID = (%s);", conn, curs, (currentDate, True, eventID,))
+    if (results == False): return "Database error, check backend log"
+
+    conn.commit()
+    conn.close()
+    return "success"
+
+@makeConnection
+def openEvent(eventID, conn, curs):
+    if checkEvent(eventID) == False: return "No such event"
+    results = callQuery("SELECT isClosed FROM events WHERE eventID = (%s);", conn, curs, (eventID,))
+    if (results == False): return "Database error, check backend log"
+    results = curs.fetchone()
+    if (results is not None and results[0] == True): return "Event already closed"
+    currentDate = datetime.now()
+    results = callQuery("UPDATE events SET startTime = (%s) WHERE eventID = (%s);", conn, curs, (currentDate, eventID,))
+    if (results == False): return "Database error, check backend log"
+
+    conn.commit()
+    conn.close()
+    return "success"
+
+'''
+@makeConnection
+def reopenEvent(eventID, conn, curs):
+    if checkEvent(eventID) == False: return "No such event"
+    results = callQuery("UPDATE events SET endTime = (%s) AND isClosed = (%s) WHERE eventID = (%s);", conn, curs, (None, False, eventID,))
+    if (results == False): return "Database error, check backend log"
+
+    conn.commit()
+    conn.close()
+    return "success"
+'''
+
+# Get the attendance information of one particular event
+# return a list of attendees in the form of: [(points, isArcMember, name, zid, time), (...)]
+# NOTE: isArcMember is bool, 0 == False, 1 == True
+# NOTE: Potentially we dont need to return the name of the user here
+@makeConnection
+def getEventInfo(eventID, conn = None, curs = None):
+    if (checkEvent(eventID) == False):
+        return "failed"
+
+    results = callQuery("SELECT name, eventdate, location, societyname, societyID, description FROM hostedEvents where eventID = (%s);", conn, curs, (eventID,))
+    if (results == False): return "failed"
+    results = curs.fetchone()
+    if (results is None):
+        return "failed"
+    payload = {}
+    payload['eventName'] = results[0]
+    payload['eventDate'] = str(results[1])
+    payload['location'] = results[2]
+    payload['societyName'] = results[3]
+    payload['societyID'] = results[4]
+    payload['description'] = results[5] if results[5] else ""
+    payload['attendance'] = []
+    results = callQuery("SELECT points, isArcMember, users.firstName,users.lastName, users.zID, participation.time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) JOIN USERS ON (PARTICIPATION.ZID = USERS.zID) WHERE events.eventID = (%s);", conn, curs, (eventID,))
+    if (results == False): return "failed"
+    results = curs.fetchall()
+    if results == []:
+        return payload
+    for result in results:
+        personJSON = {}
+        personJSON['points'] = result[0]
+        personJSON['isArcMember'] = result[1]
+        personJSON['userName'] = result[2]
+        personJSON['zID'] = result[3]
+        personJSON['attendanceTime'] = result[4]
+        payload['attendance'].append(personJSON)
     conn.close()
     return payload

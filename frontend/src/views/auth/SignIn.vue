@@ -5,15 +5,17 @@
         <h2>Sign in to Pointr</h2>
         <FormError v-if="error" :msg="error" />
         <InputZID v-model="zID" :zID="zID" />
-        <InputPassword v-model="password" :password="password" />
+        <Input v-model="password" type="password" label="Password" />
         <!-- <div class="label-input-div">
         <label class="label input--checkbox-label">Remember me</label>
         <input v-model="rememberUser" class="input input--checkbox" type="checkbox" />
         </div>-->
         <button type="submit" class="btn btn-primary">Sign In</button>
-        <div id="signup-route">
-          <p>Don't have an account?</p>
-          <router-link id="need-account-link" to="/signup">Sign up</router-link>
+        <div class="additional-links">
+          <p>Forgot your password?</p>
+          <router-link to="/forgotPassword">Reset your password here</router-link>
+          <p>Don't have an account? Sign up </p>
+          <router-link id="need-account-link" to="/signup">Sign up here</router-link>
         </div>
       </form>
     </div>
@@ -25,14 +27,16 @@ import { mapActions } from 'vuex';
 import { fetchAPI } from "@/util";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
-import InputPassword from "@/components/input/InputPassword.vue";
+import Input from "@/components/input/Input.vue";
+// import InputPassword from "@/components/input/InputNewPassword.vue";
 
 export default {
   name: "SignIn",
   components: {
     FormError,
     InputZID,
-    InputPassword,
+    Input
+    // InputPassword,
   },
   data() {
     return {
@@ -73,12 +77,16 @@ export default {
   margin-top: 2rem;
 }
 
-#signup-route {
+.additional-links {
   margin-top: 2rem;
   text-align: center;
 }
 
-#signup-route p {
-  margin-bottom: 0.5rem;
+.additional-links a {
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+.additional-links p {
+  padding-bottom: 0.5rem;
 }
 </style>

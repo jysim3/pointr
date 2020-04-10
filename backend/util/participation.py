@@ -1,7 +1,7 @@
 # Comment out the two lines below in production
 import sys
 sys.path.append('../')
-from util.utilFunctions import checkUser, checkEvent, makeConnection
+from util.utilFunctions import checkUser, checkEvent, makeConnection, callQuery
 from util.users import checkArc
 from util.events import getEventTimes
 from datetime import datetime
@@ -25,25 +25,17 @@ def register(zID, eventID, time, conn = None, curs = None):
 
     isArc = checkArc(zID)
 
-    # NOTE: @makeConnectiondefAULTS TO THE CURRENT TIME, unless a time argument has been provided
-    # TODO: FIXME: If this is a multi-day event, we need to consider both eventdate and eventtime
-    '''
     eventTimes = getEventTimes(eventID)
     if (eventTimes != None):
         startTime, endTime = eventTimes[0], eventTimes[1]
         if (endTime != None):
-            if (datetime.now().time() > endTime):
+            if (datetime.now() > endTime):
                 return "Event closed already"
-        elif (startTime != None):
-            if (datetime.now().time() < startTime):
+        if (startTime != None):
+            if (datetime.now() < startTime):
                 return "Event hasn't started yet"
-    '''
-    try:
-        curs.execute("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", (1, isArc, zID, eventID, time,))
-    except Exception as e:
-        print(e)
-        conn.close()
-        return "failed"
+    results = callQuery("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", conn, curs, (1, isArc, zID, eventID, time,))
+    if (results == False): return "Database error, check backend log"
     conn.commit()
     conn.close()
     return "success"
@@ -51,12 +43,8 @@ def register(zID, eventID, time, conn = None, curs = None):
 @makeConnection
 def changePoints(zID, eventID, newPoints, conn = None, curs = None):
 
-    try:
-        curs.execute("update participation set points=(%s) WHERE eventID=(%s) and zid=(%s)", (newPoints, eventID, zID,))
-    except Exception as e:
-        print(e)
-        conn.close()
-        return "failed"
+    results = callQuery("update participation set points=(%s) WHERE eventID=(%s) and zid=(%s)", conn, curs, (newPoints, eventID, zID,))
+    if (results == False): return "failed"
     conn.commit()
     conn.close()
     return "success"
@@ -64,84 +52,29 @@ def changePoints(zID, eventID, newPoints, conn = None, curs = None):
 @makeConnection
 def deleteUserAttendance(zID, eventID, conn = None, curs = None):
 
-    try:
-        curs.execute("DELETE FROM participation WHERE zid=(%s) and eventid=(%s)", (zID, eventID,))
-    except Exception as e:
-        print(e)
-        conn.close()
-        return "failed"
+    results = callQuery("DELETE FROM participation WHERE zid=(%s) and eventid=(%s)", conn, curs, (zID, eventID,))
+    if (results == False): return "failed"
     conn.commit()
-    error = curs.fetchone()
     conn.close()
-    if error is not None:
-        return "failed"
     return "success"
 
 @makeConnection
 def checkParticipation(zID, eventID, conn = None, curs = None):
 
-    try:
-        curs.execute("SELECT * FROM participation WHERE zid=(%s) and eventid=(%s)", (zID, eventID,))
-    except Exception as e:
-        print(e)
-        conn.close()
-        return False
+    results = callQuery("SELECT * FROM participation WHERE zid=(%s) and eventid=(%s)", conn, curs, (zID, eventID,))
+    if (results == False): return False
 
     rows = curs.fetchall()
     conn.close()
     return False if rows == [] else True
-
-# Get the attendance information of one particular event
-# return a list of attendees in the form of: [(points, isArcMember, name, zid, time), (...)]
-# NOTE: isArcMember is bool, 0 == False, 1 == True
-# NOTE: Potentially we dont need to return the name of the user here
-@makeConnection
-def getAttendance(eventID, conn = None, curs = None):
-    if (checkEvent(eventID) == False):
-        return "failed"
-
-    try:
-        curs.execute("SELECT name, eventdate, location, societyname, societyID FROM hostedEvents where eventID = (%s);", (eventID,))
-    except Exception as e:
-        conn.close()
-        return "failed"
-    results = curs.fetchone()
-    if (results is None):
-        return "failed"
-    payload = {}
-    payload['eventName'] = results[0]
-    payload['eventDate'] = str(results[1])
-    payload['location'] = results[2]
-    payload['societyName'] = results[3]
-    payload['societyID'] = results[4]
-    payload['attendance'] = []
-    try:
-        curs.execute("SELECT points, isArcMember, users.firstName,users.lastName, users.zID, participation.time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) JOIN USERS ON (PARTICIPATION.ZID = USERS.zID) WHERE events.eventID = (%s);", (eventID,))
-    except Exception as e:
-        conn.close()
-        return "failed"
-    results = curs.fetchall()
-    if results == []:
-        return payload
-    for result in results:
-        personJSON = {}
-        personJSON['points'] = result[0]
-        personJSON['isArcMember'] = result[1]
-        personJSON['userName'] = result[2]
-        personJSON['zID'] = result[3]
-        personJSON['attendanceTime'] = result[4]
-        payload['attendance'].append(personJSON)
-    return payload
 
 @makeConnection
 def getAttendanceCSV(eventID, conn = None, curs = None):
     if (checkEvent(eventID) == False):
         return "failed"
 
-    try:
-        curs.execute("SELECT isArcMember, users.zID, users.firstName, users.lastName, time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) JOIN USERS ON (PARTICIPATION.ZID = USERS.zID) WHERE events.eventID = (%s);", (eventID,))
-    except Exception as e:
-        return "failed"
+    results = callQuery("SELECT isArcMember, users.zID, users.firstName, users.lastName, time FROM PARTICIPATION JOIN EVENTS ON (participation.eventID = events.eventID) JOIN USERS ON (PARTICIPATION.ZID = USERS.zID) WHERE events.eventID = (%s);", conn, curs, (eventID,))
+    if (results == False): return "failed"
     results = curs.fetchall()
     if results == []:
         return "No attendance"
@@ -174,7 +107,8 @@ def getUpcomingEvents(zID, conn = None, curs = None):
 
     today = str(datetime.now().date())
     for soc in results:
-        curs.execute("SELECT eventid, name, eventdate, location FROM hostedEvents WHERE societyid = (%s) AND eventDate >= (%s) ORDER BY eventDATE;", (soc['societyID'], today,))
+        results = callQuery("SELECT eventid, name, eventdate, location FROM hostedEvents WHERE societyid = (%s) AND eventDate >= (%s) ORDER BY eventDATE;", conn, curs, (soc['societyID'], today,))
+        if (results == False): return "failed"
         result = curs.fetchall()
 
         if result == []:
@@ -190,17 +124,14 @@ def getUpcomingEvents(zID, conn = None, curs = None):
             eventJSON['societyName'] = soc['societyName']
             payload.append(eventJSON)
     
+    conn.close()
     return payload
 
 @makeConnection
 def getUserSocieties(zID, conn = None, curs = None):
 
-    try:
-        curs.execute("SELECT societyID, societyName FROM userInSociety where zID = (%s);", (zID,))
-    except Exception as e:
-        print(e)
-        conn.close()
-        return "failed"
+    results = callQuery("SELECT societyID, societyName FROM userInSociety where zID = (%s);", conn, curs, (zID,))
+    if (results == False): return "failed"
     results = curs.fetchall()
 
     payload = []
@@ -210,18 +141,16 @@ def getUserSocieties(zID, conn = None, curs = None):
         societyJSON['societyName'] = society[1]
         payload.append(societyJSON)
 
+    conn.close()
     return payload
 
 @makeConnection
 def getUserParticipation(zID, socID = None, conn = None, curs = None):
-    try:
-        if socID == None:
-            curs.execute("SELECT eventID, name, eventDate, location, societyName, societyID FROM userParticipatedEvents WHERE zid = (%s) ORDER BY eventDate DESC;", (zID,))
-        else:
-            curs.execute("SELECT eventID, name, eventDate, location, societyName, societyID FROM userParticipatedEvents WHERE zid = (%s) AND societyID = (%s) ORDER BY eventDate DESC;", (zID, socID,))
-    except Exception as e:
-        conn.close()
-        return None
+    if socID == None:
+        results = callQuery("SELECT eventID, name, eventDate, location, societyName, societyID FROM userParticipatedEvents WHERE zid = (%s) ORDER BY eventDate DESC;", conn, curs, (zID,))
+    else:
+        results = callQuery("SELECT eventID, name, eventDate, location, societyName, societyID FROM userParticipatedEvents WHERE zid = (%s) AND societyID = (%s) ORDER BY eventDate DESC;", conn, curs, (zID, socID,))
+    if (results == False): return None
 
     results = curs.fetchall()
     if (results == []):
@@ -237,6 +166,7 @@ def getUserParticipation(zID, socID = None, conn = None, curs = None):
         eventJSON['societyName'] = event[4]
         eventJSON['societyID'] = event[5]
         payload.append(eventJSON)
+    conn.close()
     return payload
 
 # TODO: Average Monthly/Weekly Attendance info (for recurring events)
@@ -248,7 +178,8 @@ def averageAttendance(dateType, socID, conn = None, curs = None):
 
     payload = {}
     for i in range(0, len(weekDate) - 1):
-        curs.execute("SELECT * FROM events JOIN host ON (host.eventID = events.eventID) WHERE eventDate >= (%s) and eventDate < (%s) and society = (%s);", (weekDate[f'T1W{str(i)}'], weekDate[f'T1W{str(i + 1)}'], socID,))
+        results = callQuery("SELECT * FROM events JOIN host ON (host.eventID = events.eventID) WHERE eventDate >= (%s) and eventDate < (%s) and society = (%s);", conn, curs, (weekDate[f'T1W{str(i)}'], weekDate[f'T1W{str(i + 1)}'], socID,))
+        if (results == False): return "failed"
         #conn.commit()
         results = curs.fetchall()
         currPayload = []
@@ -259,7 +190,8 @@ def averageAttendance(dateType, socID, conn = None, curs = None):
             eventJSON['date'] = str(event[2])
 
             # TODO: Change this to average
-            curs.execute("SELECT count(*) AS count FROM participation WHERE eventID = (%s);", (event[0],))
+            results = callQuery("SELECT count(*) AS count FROM participation WHERE eventID = (%s);", conn, curs, (event[0],))
+            if (results == False): return "failed"
             eventJSON['attendance'] = curs.fetchone()[0]
 
             currPayload.append(eventJSON)

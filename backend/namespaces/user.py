@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, send_from_directory, send_file
 from flask_restx import Namespace, Resource, abort, reqparse
 from util.sanitisation_services import sanitize
 from marshmallow import Schema, fields, ValidationError, validates, validate
@@ -40,12 +40,50 @@ class User(Resource):
     # Returns:
     # [{"eventID": "1239", "name": "Test Event 0", "society": "UNSW Hall", "eventDate": "2019-11-19"}, {"eventID": "1240", "name": "Coffee Night", "society": "UNSW Hall", "eventDate": "2019-11-20"}]
     @api.response(400, 'Malformed Request')
-    @auth_services.check_authorization(level=2, allowSelf=True)
-    @validation_services.validate_args_with(ZIDSchema)
-    def get(self, token_data, args_data):
-        attendance = users.getUserAttendance(args_data['zID'].lower())
+    @auth_services.check_authorization(level=1)
+    def get(self, token_data):
+        zID = request.args.get('zID')
+        attendance = users.getUserInfo(zID if zID else token_data['zID'])
+        if (attendance == "failed"):
+            abort(400, "Server issue, check backend log")
         return jsonify(attendance)
 
+@api.route('/description')
+class description(Resource):
+    @auth_services.check_authorization(level=1)
+    def get(self, token_data):
+        zID = token_data['zID']
+        description = users.getDescription(zID)
+        return jsonify({"status": "success", "payload": {"description": description}})
+
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        data = request.get_json()
+        description = data['description'] if 'description' in data else abort(400, "Didn't provide a description in the request body")
+        results = users.updateDescription(token_data['zID'], description)
+        if (results != "success"):
+            abort(400, "Backend fault, check database log")
+        return jsonify({"status": "success"})
+
+@api.route("/image")
+class image(Resource):
+    @auth_services.check_authorization(level=1)
+    def get(self, token_data):
+        imageStatus = users.checkUserImage(token_data['zID'])
+        if (imageStatus == False):
+            return jsonify({"msg": "failed", "path": "Image doesn't exist"})
+        return jsonify({"msg": "success", "path": imageStatus})
+
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        image = request.files['image'] if 'image' in request.files else abort (400, "No image provided")
+        result = users.updateUserImage(token_data['zID'], image)
+        if (result != "success"):
+            abort(400, result)
+        return jsonify({"status": "success"})
+
+# Function deprecated, moved this endpoint to POST /api/user
+'''
 # NOTE: OUTPUT VALUE CHANGED
 @api.route('/info')
 @api.param('token', description='Users Token', type='String', required='True')
@@ -61,6 +99,7 @@ class info(Resource):
             abort(400, 'Something went wrong')
         results['zID'] = token_data['zID']
         return jsonify(results)
+'''
 
 @api.route('/points')
 class Points(Resource):

@@ -1,6 +1,9 @@
-from util.utilFunctions import checkUser, makeConnection, callQuery
+from util.utilFunctions import checkUser, makeConnection, callQuery, checkSoc
+from util.files import uploadImages
 import random
 import string
+from json import dumps
+import base64
 
 def generateID(number):
     id = ""
@@ -28,7 +31,7 @@ def createSocStaff(zID, societyID, role = 0, conn = None, curs = None):
     return "success"
 
 @makeConnection
-def createSociety(zID = None, societyName = None, isCollege = False, conn = None, curs = None):
+def createSociety(zID = None, societyName = None, isCollege = False, file = None, description = None, conn = None, curs = None):
     societyID = generateID(5).upper()
     results = callQuery("SELECT * FROM society WHERE societyName = (%s);", conn, curs, (societyName,))
     if (results == False): return "failed"
@@ -37,7 +40,15 @@ def createSociety(zID = None, societyName = None, isCollege = False, conn = None
         conn.close()
         return "exists already"
 
-    results = callQuery("INSERT INTO society(societyID, societyName, isCollege) VALUES ((%s), (%s), (%s));", conn, curs, (societyID, societyName, isCollege,))
+    if (file):
+        uploadResult = uploadImages(file, societyID)
+        if (isinstance(uploadResult, tuple) == False):
+            return "bad file name"
+        fileJSON = dumps({"logo": uploadResult[0]})
+        results = callQuery("INSERT INTO society(societyID, societyName, isCollege, description, additionalInfomation) VALUES ((%s), (%s), (%s), (%s), (%s));", conn, curs, (societyID, societyName, isCollege, description, fileJSON, ))
+    else:
+        results = callQuery("INSERT INTO society(societyID, societyName, isCollege, description) VALUES ((%s), (%s), (%s), (%s));", conn, curs, (societyID, societyName, isCollege, description,))
+
     if (results == False): return "failed"
     conn.commit()
     conn.close()
@@ -51,7 +62,7 @@ def createSociety(zID = None, societyName = None, isCollege = False, conn = None
     superAdmins = getSuperAdmins()
     for i in superAdmins:
         createSocStaff(i[0], societyID, 5)
-    return societyID
+    return societyID, 0
 
 @makeConnection
 def isCollege(societyID, conn, curs):
@@ -239,3 +250,109 @@ def getSuperAdmins(conn, curs):
     results = curs.fetchall()
     conn.close()
     return results
+
+# Function checks if a society has provided a logo or not, if exists return the file path, else False
+@makeConnection
+def checkLogo(socID, conn, curs):
+    queryResult = callQuery("SELECT additionalinfomation FROM society WHERE societyid = (%s);", conn, curs, (socID,))
+    if (queryResult == False): return False
+
+    results = curs.fetchone()
+    conn.close()
+    if results == None: return False
+    elif not results[0]: return False
+    elif 'logo' not in results[0]: return False
+    return results[0]['logo']
+
+# Returns a base64 encoded string of the logo image
+@makeConnection
+def getSocLogo(socID, conn, curs):
+    logoPath = checkLogo(socID)
+    if (logoPath == False): return None
+
+    try:
+        with open(logoPath, "rb") as image:
+            imageString = base64.b64encode(image.read())
+    except IOError as e:
+        # TODO: If this occurs, set the logo path to Null in the db
+        return "File has been moved on the server, no longer avaliable"
+    except Exception as e:
+        return str(e)
+    return logoPath, 0
+
+@makeConnection
+def updateLogo(socID, file, conn, curs):
+    uploadResult = uploadImages(file, socID)
+    if (isinstance(uploadResult, tuple) == False):
+        return "bad file name"
+    fileJSON = dumps({"logo": uploadResult[0]})
+    results = callQuery("UPDATE society SET additionalInfomation = (%s) WHERE societyID = (%s);", conn, curs, (fileJSON, socID,))
+    if (results == False): return "Database fault, check backend log"
+
+    return "success"
+
+@makeConnection
+def getSocName(socID, conn, curs):
+    queryResults = callQuery("SELECT societyName FROM society WHERE societyID = (%s);", conn, curs, (socID,))
+    if queryResults == False: return None
+    results = curs.fetchone()
+    if (results == None): return None
+    return results[0]
+
+@makeConnection
+def getSocMemberCount(socID, conn, curs):
+    queryResults = callQuery("SELECT COUNT(*) FROM socStaff WHERE role = 0 AND society = (%s);", conn, curs, (socID,))
+    if queryResults == False: return 0
+
+    results = curs.fetchone()
+    if results == None: return 0
+
+    return results[0]
+
+@makeConnection
+def getDescription(socID, conn, curs):
+    queryResults = callQuery("SELECT description FROM society WHERE societyID = (%s);", conn, curs, (socID,))
+    if queryResults == False: return None
+
+    results = curs.fetchone()
+    if results == None: return None
+    return results[0]
+
+@makeConnection
+def updateDescription(socID, description, conn, curs):
+    queryResults = callQuery("UPDATE society SET description = (%s) WHERE societyID = (%s);", conn, curs, (socID,))
+    if queryResults == False: return "failed"
+
+    return "success"
+
+@makeConnection
+def getSocietyInfo(socID, conn, curs):
+    if (checkSoc(socID) == False): return "Bad socID, doesn't exist"
+    payload = {}
+
+    socName = getSocName(socID)
+    if socName == None: return "Bad socID, doesn't exist"
+    payload['socName'] = socName
+
+    payload['socID'] = socID
+    payload['description'] = getDescription(socID)
+
+    '''
+    socEvents = getEventForSoc(socID)
+    print(socEvents)
+    if isinstance(socEvents, list) == False: return "Database fault, check backend log"
+    payload['events'] = socEvents
+    '''
+
+    socAdmins = getAdminsForSoc(socID)
+    if isinstance(socAdmins, dict) == False: return "Database fault, check backend log"
+    socAdminsList = [key for key in socAdmins]
+    payload['admins'] = socAdminsList
+
+    socLogo = checkLogo(socID)
+    if (socLogo != False):
+        payload['logo'] = socLogo
+
+    payload['membershipCount'] = getSocMemberCount(socID)
+
+    return payload

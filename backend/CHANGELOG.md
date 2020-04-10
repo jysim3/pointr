@@ -23,4 +23,90 @@ GET `/api/soc` | namespaces/soc.py | Changed output JSON format to match the res
 
 api | file | details
 --- | ---- | ---
-    | APIDOC.md   | Started work on an API documentation file
+N/A   | APIDOC.md   | Started work on an API documentation file
+
+## 21/03/2020
+### Changed
+
+api | file | details
+--- | ---- | ---
+POST `/api/event/attend` | namespaces/event.py | No longer allow attendance marking past endTime, or attendance marking before openTime
+
+### In-Progress
+
+api | file | details
+--- | ---- | ---
+POST `/api/event/closeEvent` | namespaces/event.py | Manually closes the event, will set the event's endTime field to be "now" on server time
+POST `/api/event/openEvent` | namespaces/event.py | Manually opens the event, will set the event's startTime field to be "now" on server time
+
+## 22/03/2020
+### Added
+
+api | file | details
+--- | ---- | ---
+DELETE `/api/event/deleteEvent` | namespaces/event.py | Delete a select event, will also remove any attendance currently associated with the eventID
+
+## 25/03/2020
+### Changed
+
+api | file | details
+--- | ---- | ---
+POST `/api/auth/register` | namespaces/auth.py | Changed the email module we are using to send out emails, now we are abstracting the process away with the Flask-mail module
+
+## 30/03/2020
+### Changed
+
+api | file | details
+--- | ---- | ---
+POST `/api/soc` | namespaces/soc.py | Now accepts images (jpg, png, jpeg) to be uploaded as a part of the society creation process, add the image as a part of the request body to attach image
+
+## 31/03/2020
+### Added
+
+api | file | details
+--- | ---- | ---
+GET `/api/soc/getSocLogo` | namespaces/soc.py | Returns a base64-encoded (but utf-8 decoded to get rid of the b'') string of the image logo of a specified society, None if image wasn't included as a part of the society creation process or error on everything else
+
+### Changed
+
+api | file | details
+--- | ---- | ---
+GET `/api/events/` | namespaces/event.py | Returns a description field now, as a part of the payload json. Example `{"attendance": [], "description": "", "eventDate": "", "eventName": "", "location": "", "societyID": "", "societyName": ""}`. If description not provided when creating the event, "description" will be a field with value ""
+
+## 01/04/2020
+### Added
+api | file | details
+--- | ---- | ---
+POST `/api/auth/changePassword` | namespaces/auth.py | Changes the token bearer's password, 400 on error
+
+## 02/04/2020
+### Added
+api | file | details
+--- | ---- | ---
+GET `/api/user/image` | namespaces/user.py | Get the token-bearer's profile photo (if one was set) `{"msg": "success", "path": "somepath"}`. If photo doesn't exist (or not set), `{"msg": "failed", "path": "Image doesn't exist"}`
+GET `/api/soc/image` | namespaces/soc.py " | Get the socID (in the query string)'s society logo (if one was set) `{"msg": "success", "path": "somepath"}`. If logo doesn't exist (or not set), `{"msg": "failed", "path": "Image doesn't exist"}`
+POST `/api/user/image` | namespaces/user.py | Update the token-bearer's profile photo with the one provided in the request body (use field name 'image'). Return `{"status": "success"}`
+POST `/api/soc/image` | p Update the societyID specified in the request body's profile photo with the one provided in the request body (use field name 'image'). Return `{"status": "success"}`
+
+### Changed
+api | file | details
+--- | ---- | ---
+GET `/api/user` | namespaces/user.py | Changed the output format to be a user infodump, output format: `{"events": [], "firstName": "", "lastName": "", "image": "", "societies": {"member": [], "staff": []}, "zID": ""}`
+
+## 04/04/2020
+### Added
+api | file | details
+--- | ---- | ---
+GET `/api/soc` | namespaces/soc.py | Added a soc profile endpoint, output format: `{"admins": [], "logo": "", "membershipCount": 100, "socID": "", "socName": ""}`
+
+## 06/04/2020
+### Added
+api | file | details
+--- | ---- | --
+POST `/api/other/enquire` | namespaces/other.py | Sends a enquiry email using pointr.help@gmail.com to the 4 developer's email accounts. Input format: `{"subject": "", "message": ""}`
+
+## 07/04/2020
+### Added
+api | file | details
+--- | ---- | --
+POST `/api/event/upcomingEvents` | namespaces/events.py | Returns a set of x amount of all upcoming public events (default to 10)

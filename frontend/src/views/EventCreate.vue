@@ -3,34 +3,64 @@
     <div class="form-container">
       <form id="create-event-form" class="form" @submit.prevent="submitEventForm">
         <h2>Create an event</h2>
-        <label class="label" for>Event title</label>
-        <input class="input" v-model="title" type="text" required />
-        <label class="label" for>Location</label>
-        <input class="input" v-model="location" type="text" required />
-        <label class="label" for>Society</label>
-        <select class="input" v-model="society">
-          <option
-            v-for="s in availableSocieties"
-            :key="s.societyID"
-            :value="s.societyID"
-          >{{s.societyName}}</option>
-        </select>
-        <label class="label" for>Date</label>
-        <input class="input" v-model="date" type="date" required />
-        <label class="label" for>Repeat</label>
-        <select class="input" v-model="repeat">
-          <option value>No Repeat</option>
-          <option value="day">Every Day</option>
-          <option value="week">Every Week</option>
-          <option value="month">Every Month</option>
-        </select>
-        
-        <label class="label" v-if="repeat" for>End Date</label>
-        <input class="input" v-if="repeat" v-model="endDate" type="date" required />
-        <label class="label" for>Set default points</label>
+
+        <InputModule required 
+        label="Event title" 
+        type="input" 
+        v-model="title" />
+
+        <InputModule required 
+        label="Location" 
+        type="input" 
+        v-model="location" />
+
+        <InputModule required 
+        label="Description" 
+        type="textarea" 
+        v-model="description" />
+
+        <InputModule required 
+        label="Society" 
+        type="select" 
+        :options="availableSocieties.map(s=>({value: s.societyID, label:s.societyName}))"
+        v-model="society" />
+
+        <InputModule required 
+        label="Date" 
+        type="date" 
+        v-model="date" />
+
+        <InputModule required 
+        label="Start Time" 
+        type="time" 
+        v-model="startTime" />
+
+        <InputModule required 
+        label="End Time" 
+        type="time" 
+        v-model="endTime" />
+
+        <InputModule 
+        label="Repeat" 
+        type="select" 
+        :options="repeatOptions"
+        v-model="repeat" />
+
+        <InputModule required 
+        v-if="repeat"
+        label="End Date" 
+        type="date" 
+        v-model="endDate" />
+
+      <InputModule required
+        label="Public Event?"
+        v-model="publicEvent"
+        type="checkbox"
+        />
+        <!-- <label class="label" for>Set default points</label>
         <input class="input" v-model="point" type="number" min="0" required />
         <label class="label" for>Show QR Code/Event link</label>
-        <input class="input" type="checkbox" checked />
+        <input class="input" type="checkbox" checked /> -->
         <button type="submit" class="btn btn-primary">Create Event</button>
       </form>
     </div>
@@ -39,9 +69,13 @@
 
 <script>
 import { fetchAPI } from "@/util.js";
+import InputModule from "@/components/input/Input.vue";
 
 export default {
   name: "EventCreate",
+  components: {
+    InputModule
+  },
   data() {
     return {
       title: "",
@@ -50,8 +84,30 @@ export default {
       date: "",
       endDate: "",
       repeat: "",
+      description: "",
+      startTime: "",
+      endTime: "",
       point: 1,
-      availableSocieties: []
+      publicEvent: "",
+      availableSocieties: [],
+      repeatOptions: [
+        {
+          value: "",
+          label: "No Repeat"
+        },
+        {
+          value: "day",
+          label: "Every day"
+        },
+        {
+          value: "week",
+          label: "Every week"
+        },
+        {
+          value: "month",
+          label: "Every month"
+        },
+      ]
     };
   },
   created() {
@@ -59,13 +115,16 @@ export default {
   },
   methods: {
     async submitEventForm() {
-      // TODO: clean this up
       const data = {
         zID: this.$store.state.user.info.zID,
         name: this.title,
         location: this.location,
         eventDate: this.date,
-        socID: this.society
+        socID: this.society,
+        description: this.description,
+        startTime: this.startTime,
+        endTime: this.endTime,
+        public: this.publicEvent
       };
       if (this.repeat !== "") {
         data.endDate = this.endDate;
@@ -100,4 +159,7 @@ export default {
 </script>
 
 <style scoped>
+textarea {
+  max-width: 20rem;
+}
 </style>

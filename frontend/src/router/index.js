@@ -2,42 +2,35 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import store from '@/store/index';
 import Home from '@/views/Home.vue';
-import EventCreate from '@/views/EventCreate.vue';
-import Event from '@/views/Event.vue';
-import EventSign from '@/views/EventSign.vue';
-import SignIn from '@/views/auth/SignIn.vue';
-import SignUp from '@/views/auth/SignUp.vue';
-import SocietyJoin from '@/views/SocietyJoin.vue';
-import AccountActivation from '@/views/auth/AccountActivation.vue';
+import EventSign from '@/views/EventSign-DEPRECATE.vue';
 import Contact from '@/views/Contact.vue';
+import UserProfile from '@/views/UserProfile.vue';
 
 Vue.use(VueRouter);
+import eventRoutes from './event'
+import authRoutes from './auth'
+import societyRoutes from './society'
 
+const DEFAULT_TITLE = "Pointr"
 const routes = [
+  ...authRoutes,
+  ...eventRoutes,
+  ...societyRoutes,
   {
     path: '/',
     name: 'home',
-    component: Home
-  },
-  {
-    path: '/create',
-    name: 'create',
-    component: EventCreate,
+    component: Home,
     meta: {
-      requiresAuth: true,
-      requiresAdmin: true
+        title: 'Home - Pointr'
     }
   },
-  {
-    path: '/event/:eventID',
-    name: 'event',
-    component: Event,
-    props: true,
-    meta: {
-      requiresAuth: true,
-      requiresAdmin: true
-    }
     // TODO: only the creator of the society/event should be able to access this, need to have function that checks they are authorized after we know they are authenticated.
+  {
+    path: '/contact',
+    component: Contact,
+    meta: {
+        title: 'Contact - Pointr'
+    }
   },
   {
     path: '/sign/:eventID?',
@@ -49,32 +42,14 @@ const routes = [
     }
   },
   {
-    path: '/signin',
-    name: 'signIn',
-    component: SignIn
-  },
-  {
-    path: '/signup',
-    name: 'signUp',
-    component: SignUp
-  },
-  {
-    path: '/joinsociety',
-    name: 'joinSociety',
-    component: SocietyJoin,
+
+    path: '/user/:zID?',
+    name: 'userProfile',
+    component: UserProfile,
+    props: true,
     meta: {
       requiresAuth: true
     }
-  },
-  {
-    path: '/activate/:activateToken?',
-    name: 'activate',
-    component: AccountActivation,
-    props: true
-  },
-  {
-    path: '/contact',
-    component: Contact
   }
 ];
 
@@ -120,4 +95,11 @@ router.beforeResolve(async (to, from, next) => {
   store.commit('user/setIsLoading', false);
 });
 
+
+router.beforeEach((to, from, next) => {
+  document.title = to.meta && to.meta.title || DEFAULT_TITLE
+  next()
+})
+
 export default router;
+export { routes }

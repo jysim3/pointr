@@ -4,11 +4,10 @@ from util import auth_services, users, utilFunctions, societies
 from util.auth_services import ADMIN, USER
 from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema, ZIDDetailsSchema, PasswordSchema
 from marshmallow import Schema, fields, ValidationError, validates, validate
-from emailPointr import sendActivationEmail, sendForgotEmail
 from util.validation_services import validate_with, validate_args_with
 import pprint
 import uuid
-from smtplib import SMTPConnectError, SMTPServerDisconnected
+#from smtplib import SMTPConnectError, SMTPServerDisconnected
 
 # NOTE: Note that this file only exists on the server
 import csv
@@ -40,6 +39,7 @@ class Register(Resource):
     @validate_with(RegisterDetailsSchema)
     def post(self, data):
 
+        from util.emailPointr import sendActivationEmail
         # Attempt to create a new user with the username and password
         zID = data['zID'].lower()
         password = data['password']
@@ -49,6 +49,7 @@ class Register(Resource):
         commencementYear = data['commencementYear'] if 'commencementYear' in data else 2020
         studentType = data['studentType'] if 'studentType' in data else "domestic"
         degreeType = data['degreeType'] if 'degreeType' in data else "undergraduate"
+        description = data['description'] if 'description' in data else None
         #floorGroup = data['floorGroup'] if 'floorGroup' in data else "unspecified"
 
         # Step 1, check for validity of the zID
@@ -56,16 +57,21 @@ class Register(Resource):
             abort(409, "username taken") 
 
         # Step 2, try sending an email, if error occurs, abort
-        try:
-            token = auth_services.generateActivationToken(zID)
-            sendActivationEmail(f"https://pointr.live/activate/{token}", f"{zID}@student.unsw.edu.au")
+        #try:
+        token = auth_services.generateActivationToken(zID)
+        results = sendActivationEmail(f"/activate/{token}", f"{zID}@student.unsw.edu.au")
+        if (results != "success"):
+            # This only happens if we have some kind of SMTP error, most likely due to security measures on unrecognised devices
+            abort(400, "Sending Email Not Successful")
+        '''
         except SMTPServerDisconnected as e:
             abort(400, "Sending email not successful")
         except SMTPConnectError as e:
             abort(400, "Email failed")
+        '''
 
         # Step 3, inject the user into the database
-        results = users.createUser(zID, firstName, lastName, password, isArc, int(commencementYear), studentType, degreeType)
+        results = users.createUser(zID, firstName, lastName, password, isArc, int(commencementYear), studentType, degreeType, description)
         if results != "success":
             abort(403, results)
 
@@ -84,6 +90,7 @@ class Register(Resource):
 
         return jsonify({"status": "success"})
 
+# NOTE: DEFUNCT
 @api.route('/activate')
 class Activate(Resource):
     @api.header('Authorization', description='Activation token sent to email after call to /api/auth/register', type='String', required=True)
@@ -126,7 +133,11 @@ class Forgot(Resource):
         # Login and if successful return the token otherwise invalid credentials
         token = auth_services.generateForgotToken(data['zID'])
         
-        sendForgotEmail(f"https://pointer.live/reset/{token}", data['zID'], f"{data['zID']}@student.unsw.edu.au")  
+        from util.emailPointr import sendForgotEmail
+        results = sendForgotEmail(f"/resetPassword/{token}", data['zID'], f"{data['zID']}@student.unsw.edu.au")  
+        if (results != "success"):
+            abort(400, "Sending Email Not Successful")
+        return jsonify({"msg": "success"})
         
 @api.route('/reset')
 class Reset(Resource):
@@ -144,6 +155,17 @@ class Reset(Resource):
             abort('400', "Invalid")
         return jsonify({"status": "success"})
 
+@api.route('/changePassword')
+class changePassword(Resource):
+    @auth_services.check_authorization(level = 1)
+    def post(self, token_data):
+        data = request.get_json()
+        if 'password' not in data or 'oldPassword' not in data:
+            abort(400, "No password provided")
+        if (users.changePassword(token_data['zID'], data['oldPassword'], data['password']) == 'failed'):
+            abort(400, "Server Error, check backend log")
+        return jsonify({"status": "success"})
+
 @api.route('/permission')
 class Permission(Resource):
     
@@ -158,7 +180,7 @@ class Permission(Resource):
 class Authorize(Resource):
 
     @api.response(400, 'Malformed Request')
-    @auth_services.check_authorization(activationRequired=False, level=0)
+    @auth_services.check_authorization(level=1)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
 

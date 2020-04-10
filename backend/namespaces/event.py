@@ -58,6 +58,7 @@ class Event(Resource):
         description = str(data['description']) if 'description' in data else None
         startTime = str(data['startTime']) if 'startTime' in data else None
         endTime = str(data['endTime']) if 'endTime' in data else None
+        public = str(data['public']) if 'public' in data else True
 
         # Only recurrent event does this
         endDate = sanitize(str(data['endDate']).lower()) if 'endDate' in data else None
@@ -66,12 +67,12 @@ class Event(Resource):
 
         results = None
         if isRecur is not False:
-            results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description, startTime, endTime)
+            results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description, startTime, endTime, public)
         else:
-            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, societyID, location, description, startTime, endTime)
+            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, societyID, location, description, startTime, endTime, public)
 
         if (isinstance(results, tuple) == False):
-            return jsonify({"status": "failed", "msg": results})
+            return abort(400, results)
         return jsonify({"status": "Success", "msg": results[0]})
 
     # For getting info on an event, i.e. participation information
@@ -85,7 +86,7 @@ class Event(Resource):
     @auth_services.check_authorization(level=1)
     def get(self, token_data):
         eventID = request.args.get('eventID')
-        attendance = participation.getAttendance(sanitize(eventID))
+        attendance = events.getEventInfo(sanitize(eventID))
         if attendance == "failed":
             abort(400, "No such event")
 
@@ -127,7 +128,7 @@ class Attend(Resource):
         time = datetime.now()
         status = participation.register(zID, sanitize(data['eventID']), time)
         if (status != "success"):
-            abort(403, "Attendance registration currently not possible for this event")
+            abort(403, status)
         payload['status'] = "success"
 
         return jsonify(payload)
@@ -182,7 +183,7 @@ class adminAttendance(Resource):
 class getAttendance(Resource):
     @api.response(400, "Cannot find file")
     @api.response(400, "Malformed Response")
-    @auth_services.check_authorization(level=1, allowSocStaff=True)
+    @auth_services.check_authorization(level=0)
     def get(self, token_data):
         eventID = request.args.get('eventID')
         try:
@@ -206,5 +207,78 @@ class getAllEventID(Resource):
 @api.route('/getAllEvents')
 class getAllEvents(Resource):
     def get(self):
-        result = events.getAllUpcomingEvents()
+        result = events.getAllEvents()
+        if (result == None):
+            abort(400, "Something went wrong, no events found")
         return jsonify(result)
+
+# This deletes a event (removing all the attendance info with it)
+@api.route('/deleteEvent')
+class deleteEvent(Resource):
+    @auth_services.check_authorization(level=1)
+    def delete(self, token_data):
+        eventID = request.get_json()['eventID']
+        socID = societies.getSocIDFromEventID(eventID)
+        results = societies.checkAdmin(socID, token_data['zID'])
+        if (results == False): abort (403, "Not an admin of the society that's hosting this event")
+        results = events.deleteEvent(eventID)
+        if (results != "success"):
+            abort (400, results)
+        return jsonify({"msg": results})
+
+# This closes the input eventID for further attendance marking
+@api.route('/closeEvent')
+class closeEvent(Resource):
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        eventID = request.get_json()['eventID']
+
+        socID = societies.getSocIDFromEventID(eventID)
+        if (societies.checkAdmin(socID, token_data['zID']) == False):
+            abort(403, "This user is not an admin of the society which is hosting this event")
+
+        results = events.closeEvent(eventID)
+        if (results != "success"):
+            abort(400, results)
+        return jsonify({"msg": results})
+
+@api.route('/openEvent')
+class openEvent(Resource):
+    @auth_services.check_authorization(level=1)
+    def post(self, token_data):
+        eventID = request.get_json()['eventID']
+
+        socID = societies.getSocIDFromEventID(eventID)
+        if (societies.checkAdmin(socID, token_data['zID']) == False):
+            abort(403, "This user is not an admin of the society which is hosting this event")
+
+        results = events.openEvent(eventID)
+        if (results != "success"):
+            abort(400, results)
+        return jsonify({"msg": results})
+
+@api.route("/upcomingEvents")
+class upcoming(Resource):
+    #@auth_services.check_authorization(level=1)
+    def get(self):
+        limit = 10 if request.args.get('limit') == None else request.args.get('limit')
+        upcoming = events.getAllUpcomingEvents(limit)
+
+        return jsonify(upcoming)
+
+'''
+@api.route('/reopenEvent')
+class reopenEvent(Resource):
+    @areopenEventces.check_authorization(level=1)
+    def post(self, token_data):
+        eventID = request.get_json()['eventID']
+
+        socID = societies.getSocIDFromEventID()
+        if (societies.checkAdmin(socID, token_data['zID']) == False):
+            abort(403, "This user is not an admin of the society which is hosting this event")
+
+        results = events.reopenEvent(eventID)
+        if (results != "success"):
+            abort(400, results)
+        return jsonify({"msg": results})
+'''
