@@ -52,7 +52,7 @@
         type="date" 
         v-model="endDate" />
 
-      <InputModule required
+      <InputModule
         label="Public Event?"
         v-model="publicEvent"
         type="checkbox"
