@@ -46,6 +46,15 @@
         </div>
       </div>
     <input
+      v-else-if="type === 'checkbox'"
+      class="input"
+      :class="{ 'input--invalid': !valid }"
+      :checked="!!value"
+      @input="sendInput"
+      :type="type"
+      :required="required"
+    />
+    <input
       v-else
       class="input"
       :class="{ 'input--invalid': !valid }"
@@ -92,7 +101,11 @@ export default {
   },
   methods: {
       sendInput(event) {
-        this.$emit('input', event.target.value)
+        if (this.type === 'checkbox') {
+          this.$emit('input', event.target.checked)
+        } else {
+          this.$emit('input', event.target.value)
+        }
         this.$nextTick(() => event.target.setCustomValidity(!this.valid?this.errorMessage:''))
       }
   },
