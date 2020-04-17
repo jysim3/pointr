@@ -2,6 +2,14 @@ from flask import Flask, send_from_directory
 from flask_cors import CORS
 from flask_restx import Api
 import os
+from apscheduler.schedulers.background import BackgroundScheduler
+
+def updateAccessCodes():
+    # Added a background scheduler to update access codes for all events that are currently running
+    print("updated")
+
+scheduler = BackgroundScheduler(daemon=True)
+scheduler.add_job(updateAccessCodes, trigger='interval', seconds=5)
 
 app = Flask(__name__)
 api = Api(app, version='1.0.0', title='Pointr backend',
@@ -30,12 +38,15 @@ if (app.config['ENV'] == 'development'):
     if (os.path.exists("../assets/images/") == False):
         os.mkdir("../assets")
         os.mkdir("../assets/images")
+
 if (app.config['ENV'] == 'development'):
     app.config['UPLOAD_FOLDER'] = f"{os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))}/assets/images/"
 elif (app.config['ENV'] in ['production','test']):
     app.config['UPLOAD_FOLDER'] = f"/var/www/static/assets/images/"
 #app.config['UPLOAD_FOLDER'] = "../assets/images/"
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+scheduler.start()
 
 CORS(app)
 
