@@ -102,11 +102,17 @@ GET `/api/soc` | namespaces/soc.py | Added a soc profile endpoint, output format
 ## 06/04/2020
 ### Added
 api | file | details
---- | ---- | --
+--- | ---- | ---
 POST `/api/other/enquire` | namespaces/other.py | Sends a enquiry email using pointr.help@gmail.com to the 4 developer's email accounts. Input format: `{"subject": "", "message": ""}`
 
 ## 07/04/2020
 ### Added
 api | file | details
---- | ---- | --
+--- | ---- | ---
 POST `/api/event/upcomingEvents` | namespaces/events.py | Returns a set of x amount of all upcoming public events (default to 10)
+
+## 21/04/2020
+### Added
+api | file | details
+--- | ---- | ---
+GET `/api/event/accessCode` | namespaces/events.py | Added a 10 seconds temporary access code to events to verify event registration's authenticity

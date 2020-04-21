@@ -229,12 +229,8 @@ def getAllEventID(conn, curs):
 
 @makeConnection
 def deleteEvent(eventID, conn, curs):
-    # FIXME: Change this try/except block to runQuery one we pull
-    try:
-        curs.execute("DELETE FROM events WHERE eventID = (%s);", (eventID,))
-    except Exception as e:
-        print(e)
-        return "Database error, check backend log"
+    queryResults = callQuery("DELETE FROM events WHERE eventID = (%s);", conn, curs, (eventID,))
+    if queryResults == False: return "Database error, check backend log"
 
     conn.close()
     return "success"
@@ -370,3 +366,33 @@ def getEventInfo(eventID, conn = None, curs = None):
         payload['attendance'].append(personJSON)
     conn.close()
     return payload
+
+@makeConnection
+def getAccessCode(eventID, conn, curs):
+    queryResults = callQuery("SELECT accessCode FROM events WHERE eventID = (%s);", conn, curs, (eventID,))
+    if queryResults == False: return None
+
+    results = curs.fetchone()
+    if not results: return "Event not found"
+
+    return results[0]
+
+@makeConnection
+def getCurrentlyRunningEvents(conn, curs):
+    rightNow = datetime.now()
+    queryResults = callQuery("SELECT eventID FROM events WHERE startTime < (%s) AND (%s) < endTime;", conn, curs, (rightNow, rightNow,))
+    if queryResults == False: return None
+
+    results = curs.fetchall()
+    if not results: return None
+
+    conn.close()
+    return [i[0] for i in results]
+
+@makeConnection
+def updateAccessCode(eventID, accessCode, conn, curs):
+    queryResults = callQuery("UPDATE events SET accesscode = (%s) WHERE eventID = (%s);", conn, curs, (accessCode, eventID,))
+    if queryResults == False: return None
+
+    conn.close()
+    return True

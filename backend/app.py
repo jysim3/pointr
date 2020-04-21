@@ -3,16 +3,11 @@ from flask_cors import CORS
 from flask_restx import Api
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
+from util.general import tick
 
-def updateAccessCodes():
-    # Added a background scheduler to update access codes for all events that are currently running
-    print("updated")
-
-scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(updateAccessCodes, trigger='interval', seconds=5)
 
 app = Flask(__name__)
-api = Api(app, version='1.0.0', title='Pointr backend',
+api = Api(app, version='1.0.1', title='Pointr backend',
     description='Backend for pointr.live',
 )
 
@@ -46,12 +41,16 @@ elif (app.config['ENV'] in ['production','test']):
 #app.config['UPLOAD_FOLDER'] = "../assets/images/"
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
+
+def updateAccessCodes():
+    # Added a background scheduler to update access codes for all events that are currently running
+    tick()
+
+scheduler = BackgroundScheduler(daemon=True)
+scheduler.add_job(updateAccessCodes, trigger='interval', seconds=10)
 scheduler.start()
 
 CORS(app)
 
-def main():
-    app.run()
-
 if __name__ == '__main__':
-    main()
+    app.run()

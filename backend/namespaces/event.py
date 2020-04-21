@@ -12,9 +12,6 @@ api = Namespace('event', description='Event Management Services')
 def generateID(number = None):
     return str(uuid.uuid4().hex).upper()[:5]
 
-# TODO
-# Create a close registration method for any event that will instantly disallow any further attendance registration for that event
-
 # For creating a recurrent event
 # Usage: 
 # POST /api/event
@@ -34,7 +31,7 @@ def generateID(number = None):
 # { status: "success", "msg": [{"date": 2020-04-04, "eventID": "1FAEA00001"}, {...}}
 # or
 # { status: "ERROR MESSAGE"}
-# FIXME: HARRISON FUCKED UP, AND HES TRYING TO JUSTIFY HIS MISTAKE
+# TODO: Ask user when they create an event if they want to enable temporary access code
 @api.route('/')
 class Event(Resource):
     @api.response(200, 'Success')
@@ -54,7 +51,7 @@ class Event(Resource):
         startDate = sanitize(str(data['eventDate'])).lower()
         eventName = sanitize(str(data['name']))
         hasQR = str(data['hasQR']) if 'hasQR' in data else False
-        societyID = str(data['socID']) if 'socID' in data else None # FIXME: Coordinate with the frontend to ensure this field is always passed
+        societyID = str(data['socID']) if 'socID' in data else None 
         description = str(data['description']) if 'description' in data else None
         startTime = str(data['startTime']) if 'startTime' in data else None
         endTime = str(data['endTime']) if 'endTime' in data else None
@@ -91,6 +88,15 @@ class Event(Resource):
             abort(400, "No such event")
 
         return jsonify(attendance)
+
+@api.route('/accessCode')
+class accessCode(Resource):
+    def get(self):
+        eventID = request.args.get('eventID')
+        code = events.getAccessCode(eventID)
+        if not code or code == "Event not found": abort(400, "Event not found")
+
+        return jsonify({"accessCode": code})
 
 @api.route('/onthisday')
 class OnThisDay(Resource):

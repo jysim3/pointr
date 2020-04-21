@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS collegeUsers (
 );
 
 create or replace view hostedEvents 
-as select events.eventID, name, eventdate, location, societyname, societyID, description from events 
+as select events.eventID, name, eventdate, location, societyname, societyID, events.description from events 
 join host on events.eventID = host.eventID join society on (society.societyID = host.society);
 
 create or replace view userInSociety 

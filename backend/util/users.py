@@ -240,7 +240,6 @@ def addActivationLink(zID, activationLink, conn = None, curs = None):
 
 @makeConnection
 def activateAccount(zID, conn = None, curs = None):
-    # TODO: Remove the next 8 lines, already implemented in checkActivation
     
     queryResults = callQuery("SELECT activationStatus FROM users WHERE zID = (%s);", conn, curs, (zID,))
     if queryResults == False: return "failed"

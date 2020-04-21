@@ -15,6 +15,7 @@ for counter in range(0, 12):
     weekDate[f'T1W{str(counter)}'] = str(week)
     week += relativedelta(days=7)
 
+# TODO: Check if eventID has a temporaryAccessCode enabled, if so check that field
 @makeConnection
 def register(zID, eventID, time, conn = None, curs = None):
     if checkEvent(eventID) == False:
