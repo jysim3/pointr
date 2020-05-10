@@ -29,6 +29,10 @@ CREATE TABLE IF NOT EXISTS events (
     description TEXT,
     isClosed BOOLEAN,
     additionalInfomation JSONB,
+    --- temporary indicates whether or not an event required the use of a temporary access code
+    temporary BOOLEAN,
+    --- temporaryAccess codes are generated for events which are temporary, updated once every 30 seconds
+    accessCode TEXT,
     primary key(eventID)
 );
 -- drop TABLE IF EXISTS participation CASCADE;

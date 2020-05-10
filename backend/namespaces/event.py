@@ -57,6 +57,9 @@ class Event(Resource):
         endTime = str(data['endTime']) if 'endTime' in data else None
         public = str(data['public']) if 'public' in data else True
 
+        # This is for whether or not a soc wants to enforce a temporary access code for their events
+        temporaryAccess = str(data['temporaryAccess']) if 'temporaryAccess' in data else False
+
         # Only recurrent event does this
         endDate = sanitize(str(data['endDate']).lower()) if 'endDate' in data else None
         recurType = sanitize(str(data['recurType']).lower()) if 'recurType' in data else None
@@ -64,9 +67,9 @@ class Event(Resource):
 
         results = None
         if isRecur is not False:
-            results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description, startTime, endTime, public)
+            results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description, startTime, endTime, public, temporaryAccess)
         else:
-            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, societyID, location, description, startTime, endTime, public)
+            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, societyID, location, description, startTime, endTime, public, temporaryAccess)
 
         if (isinstance(results, tuple) == False):
             return jsonify({"status": "failed", "msg": results})
@@ -130,9 +133,12 @@ class Attend(Resource):
         zID = token_data['zID']
         if ('eventID' not in data):
             abort(400, "Malformed Request")
+
+        accessCode = data['accessCode'] if 'accessCode' in data else None
+
         #time = utilFunctions.getAESTTime()
         time = datetime.now()
-        status = participation.register(zID, sanitize(data['eventID']), time)
+        status = participation.register(zID, sanitize(data['eventID']), time, accessCode)
         if (status != "success"):
             abort(403, status)
         payload['status'] = "success"

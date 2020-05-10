@@ -17,7 +17,7 @@ for counter in range(0, 12):
 
 # TODO: Check if eventID has a temporaryAccessCode enabled, if so check that field
 @makeConnection
-def register(zID, eventID, time, conn = None, curs = None):
+def register(zID, eventID, time, accessCode, conn = None, curs = None):
     if checkEvent(eventID) == False:
         return "Event does not exist"
 
@@ -35,11 +35,26 @@ def register(zID, eventID, time, conn = None, curs = None):
         if (startTime != None):
             if (datetime.now() < startTime):
                 return "Event hasn't started yet"
+
+    eventCode = getAccessCode(eventID)
+    print(eventCode)
+    if eventCode:
+        if accessCode != eventCode: return "Wrong Access Code"
+
     results = callQuery("INSERT INTO participation(points, isArcMember, zid, eventID, time) VALUES ((%s), (%s), (%s), (%s), (%s))", conn, curs, (1, isArc, zID, eventID, time,))
     if (results == False): return "Database error, check backend log"
     conn.commit()
     conn.close()
     return "success"
+
+@makeConnection
+def getAccessCode(eventID, conn, curs):
+    queryResults = callQuery("SELECT accessCode FROM events WHERE eventid = (%s);", conn, curs, (eventID,))
+    if queryResults == False: return "Databse error, check backend log"
+
+    code = curs.fetchone()
+    conn.close()
+    return code[0] if code is not None else None
 
 @makeConnection
 def changePoints(zID, eventID, newPoints, conn = None, curs = None):

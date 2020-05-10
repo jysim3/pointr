@@ -18,7 +18,6 @@ def createUser(zID, firstName, lastName, password, isArc = True, commencementYea
     password = str(password).encode('UTF-8')
     pwHash = hashlib.sha256(password).hexdigest()
 
-    
     queryResults = callQuery("INSERT INTO users(zid, firstName, lastName, password, isArc, commencementYear, studentType, degreeType, isSuperAdmin, activationStatus, description) values((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), False);", conn, curs, (zID, firstName, lastName, pwHash, isArc, commencementYear, studentType, degreeType, isSuperAdmin, description,))
     if queryResults == False: return "failed"
 

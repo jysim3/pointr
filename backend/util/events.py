@@ -39,7 +39,8 @@ def findWeek(date: datetime):
 
 # Creting an event (single instance events)
 @makeConnection
-def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None, location = None, description = None, startTime = None, endTime = None, public = True, conn = None, curs = None):
+def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None, location = None, description = None, \
+    startTime = None, endTime = None, public = True, temporary = False, conn = None, curs = None):
 
     if (checkUser(zID) == False):
         return "no such user"
@@ -65,10 +66,13 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
     if (week == None):
         return "Not a valid date for events"
 
-    queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, endTime, public) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, (eventID, eventName, zID, eventDate, week, qrFlag, description, startTime, endTime, public,))
+    queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, \
+        endTime, public, temporary) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, \
+            (eventID, eventName, zID, eventDate, week, qrFlag, description, startTime, endTime, public, temporary,))
 
     # NOTE: Currently, location defaults to UNSW Hall if one isnt provided
-    queryStatus1 = callQuery("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", conn, curs, ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
+    queryStatus1 = callQuery("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", conn, curs, \
+        ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
     if (queryStatus == False or queryStatus1 == False): return None
     conn.commit()
     conn.close()
@@ -83,7 +87,9 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
     # Example Cont.: The above indicates this event occurs every fortnightly starting with 30/1/2020 to 30/5/2020
 '''
 @makeConnection
-def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, qrFlag = None, location = None, societyID = None, description = None, startTime = None, endTime = None, public = True, conn = None, curs = None):
+def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, recurInterval, recurType, \
+    qrFlag = None, location = None, societyID = None, description = None, startTime = None, endTime = None, \
+        public = True, temporary = False, conn = None, curs = None):
     if (checkUser(zID) == False):
         conn.close()
         return "no such user"
@@ -136,7 +142,9 @@ def createRecurrentEvent(zID, eventID, eventName, eventStartDate, eventEndDate, 
             eventStartDate += interval
             continue
 
-        queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, endTime, public) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, (currEventID, eventName, zID, eventStartDate.date(), week, qrFlag, description, startTime, endTime, public,))
+        queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, endTime, \
+            public, temporary) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, \
+                (currEventID, eventName, zID, eventStartDate.date(), week, qrFlag, description, startTime, endTime, public, temporary,))
 
         queryStatus2 = callQuery("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", conn, curs, ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, currEventID,))
         if(queryStatus == False or queryStatus2 == False): return None
@@ -380,7 +388,10 @@ def getAccessCode(eventID, conn, curs):
 @makeConnection
 def getCurrentlyRunningEvents(conn, curs):
     rightNow = datetime.now()
-    queryResults = callQuery("SELECT eventID FROM events WHERE startTime < (%s) AND (%s) < endTime;", conn, curs, (rightNow, rightNow,))
+    #queryResults = callQuery("SELECT eventID FROM events WHERE startTime < (%s) AND (%s) < endTime AND temporary = True;", conn, curs, (rightNow, rightNow,))
+    # FIXME: Come back to this when merging back into master, change this to the line above
+    queryResults = callQuery("SELECT eventID FROM events WHERE temporary = True;", conn, curs)
+
     if queryResults == False: return None
 
     results = curs.fetchall()

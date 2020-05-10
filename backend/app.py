@@ -47,7 +47,7 @@ def updateAccessCodes():
     tick()
 
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(updateAccessCodes, trigger='interval', seconds=10)
+scheduler.add_job(updateAccessCodes, trigger='interval', seconds=20)
 scheduler.start()
 
 CORS(app)
