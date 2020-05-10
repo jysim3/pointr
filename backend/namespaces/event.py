@@ -72,7 +72,7 @@ class Event(Resource):
             results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, societyID, location, description, startTime, endTime, public, temporaryAccess)
 
         if (isinstance(results, tuple) == False):
-            return jsonify({"status": "failed", "msg": results})
+            return abort(400, results)
         return jsonify({"status": "Success", "msg": results[0]})
 
     # For getting info on an event, i.e. participation information

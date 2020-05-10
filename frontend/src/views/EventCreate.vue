@@ -52,6 +52,11 @@
         type="date" 
         v-model="endDate" />
 
+      <InputModule
+        label="Public Event?"
+        v-model="publicEvent"
+        type="checkbox"
+        />
         <!-- <label class="label" for>Set default points</label>
         <input class="input" v-model="point" type="number" min="0" required />
         <label class="label" for>Show QR Code/Event link</label>
@@ -83,6 +88,7 @@ export default {
       startTime: "",
       endTime: "",
       point: 1,
+      publicEvent: "",
       availableSocieties: [],
       repeatOptions: [
         {
@@ -117,7 +123,8 @@ export default {
         socID: this.society,
         description: this.description,
         startTime: this.startTime,
-        endTime: this.endTime
+        endTime: this.endTime,
+        public: this.publicEvent
       };
       if (this.repeat !== "") {
         data.endDate = this.endDate;

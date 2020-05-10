@@ -10,7 +10,7 @@
 
         <div class="event-view-title">
           <h3 class="event-view-title-text" v-once>{{ eventViewTitle }}</h3>
-          <a class="event-view-more" @click="viewAllData = !viewAllData"
+          <a class="event-view-more link" @click="viewAllData = !viewAllData"
             >View {{viewAllData ? 'less' : 'more'}}</a>
         </div>
 
@@ -22,7 +22,7 @@
       </div>
       <div class="event-table" v-else-if="listStyle === 'table'">
 
-        <div class="event-view-title">
+        <div v-if="eventViewTitle" class="event-view-title">
           <h3 class="event-view-title-text" v-once>{{ eventViewTitle }}</h3>
         </div>
         <FormError v-if="eventData.length === 0" msg="Seems like there is no events at the moment"/> 
@@ -48,7 +48,6 @@ export default {
   props: {
     eventViewTitle: {
       type: String,
-      required: true
     },
     eventData: {
       type: Array,
@@ -130,7 +129,8 @@ export default {
 }
 .event-table {
   margin: auto;
-  padding-top: 4rem;
+  margin-top: 4rem;
+  padding: 0;
 }
 
 </style>

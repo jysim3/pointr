@@ -17,6 +17,7 @@
                         <span class="profile-info-subtitle">events went</span>
                     </div>
                 </div>
+                <!-- TODO: Let user modify -->
                 <img v-if="userData" :src="apiURL + userData.image" />
                 <div class="profile-buttons">
                     <i class="material-icons profile-info-button">favorite</i>
