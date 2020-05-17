@@ -4,12 +4,18 @@ from flask_restx import Api
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from util.general import tick
+from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
 api = Api(app, version='1.0.1', title='Pointr backend',
     description='Backend for pointr.live',
 )
+
+app.config['SQLALCHEMY_ECHO'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{os.environ.get('SQLPassword')}@localhost/pointrDB"
+db = SQLAlchemy(app)
 
 from namespaces.event import api as event
 from namespaces.stats import api as stats
@@ -51,6 +57,3 @@ scheduler.add_job(updateAccessCodes, trigger='interval', seconds=20)
 scheduler.start()
 
 CORS(app)
-
-if __name__ == '__main__':
-    app.run()

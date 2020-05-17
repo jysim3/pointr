@@ -6,6 +6,7 @@ from util.sanitisation_services import sanitize
 from datetime import datetime
 import uuid
 from dateutil import tz
+from models.event import Events
 
 api = Namespace('event', description='Event Management Services')
 
