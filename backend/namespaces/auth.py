@@ -11,26 +11,8 @@ import uuid
 # SQLAlchemy
 from app import db
 from models.user import Users
+from hashlib import sha256
 #from smtplib import SMTPConnectError, SMTPServerDisconnected
-
-# NOTE: Note that this file only exists on the server
-import csv
-zIDList = {}
-try:
-    with open('zIDList.csv') as hallList:
-        csv_reader = csv.reader(hallList, delimiter=',')
-        line_count = 0
-        for row in csv_reader:
-            if line_count == 0:
-                line_count += 1
-                continue
-            name = row[0].strip()
-            floorGroup = row[1].strip()
-            if name == '':
-                continue
-            zIDList[name] = floorGroup
-except IOError:
-    print("This file is no longer avaliable on the repo, only server side")
 
 api = Namespace('auth', description='Authentication & Authorization Services')
 
@@ -62,6 +44,22 @@ class Register(Resource):
 
         return jsonify({"status": "success"})
 
+@api.route('/login')
+class Login(Resource):
+    
+    @api.response(400, 'Malformed Request')
+    @api.response(403, 'Invalid Credentials')
+    @validate_with(LoginDetailsSchema)
+    def post(self, data):
+        user = Users.query.filter_by(zid=data['zID'], 
+            password=sha256(data['password'].encode('UTF-8')).hexdigest()).first()
+
+        if not user: abort(403, 'Invalid Credentials / Account Not Activated')
+
+        # Login and if successful return the token otherwise invalid credentials
+        token = auth_services.generateLoginToken(user)
+        return jsonify({"token": token})
+
 # NOTE: DEFUNCT
 @api.route('/activate')
 class Activate(Resource):
@@ -78,21 +76,6 @@ class Activate(Resource):
         elif (result == "already activated"):
             abort(403, "Already activated")
         return jsonify({"status": "success"})
-
-@api.route('/login')
-class Login(Resource):
-    
-    @api.response(400, 'Malformed Request')
-    @api.response(403, 'Invalid Credentials')
-    @validate_with(LoginDetailsSchema)
-    def post(self, data):
-        
-        # Login and if successful return the token otherwise invalid credentials
-        token = auth_services.login(data['zID'].lower(), data['password'])
-        if (token):
-            return jsonify({"token": token})
-        else:
-            abort(403, 'Invalid Credentials / Account Not Activated')
 
 @api.route('/forgot')
 class Forgot(Resource):
