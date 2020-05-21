@@ -6,4 +6,6 @@ passlib==1.7.2
 PyJWT==1.7.1
 flask-restx==0.1.0
 marshmallow==3.3.0
+flask_sqlalchemy==2.4.1
+apscheduler==3.6.3
 werkzeug==0.16.1

@@ -6,7 +6,6 @@ from util.sanitisation_services import sanitize
 from datetime import datetime
 import uuid
 from dateutil import tz
-from models.event import Events
 
 api = Namespace('event', description='Event Management Services')
 
@@ -33,6 +32,7 @@ def generateID(number = None):
 # or
 # { status: "ERROR MESSAGE"}
 # TODO: Ask user when they create an event if they want to enable temporary access code
+# TODO: Make just ''
 @api.route('/')
 class Event(Resource):
     @api.response(200, 'Success')
