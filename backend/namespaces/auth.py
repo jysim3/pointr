@@ -18,7 +18,6 @@ api = Namespace('auth', description='Authentication & Authorization Services')
 
 @api.route('/register')
 class Register(Resource):
-    # @api.response(200, 'Success', token_details)
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
     @api.response(409, 'Username Taken')
@@ -46,7 +45,6 @@ class Register(Resource):
 
 @api.route('/login')
 class Login(Resource):
-    
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
     @validate_with(LoginDetailsSchema)
@@ -56,7 +54,6 @@ class Login(Resource):
 
         if not user: abort(403, 'Invalid Credentials / Account Not Activated')
 
-        # Login and if successful return the token otherwise invalid credentials
         token = auth_services.generateLoginToken(user)
         return jsonify({"token": token})
 
