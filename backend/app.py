@@ -48,6 +48,7 @@ elif (app.config['ENV'] in ['production','test']):
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 
+'''
 def updateAccessCodes():
     # Added a background scheduler to update access codes for all events that are currently running
     tick()
@@ -55,5 +56,6 @@ def updateAccessCodes():
 scheduler = BackgroundScheduler(daemon=True)
 scheduler.add_job(updateAccessCodes, trigger='interval', seconds=20)
 scheduler.start()
+'''
 
 CORS(app)

@@ -1,4 +1,5 @@
 from app import db
+from datetime import datetime
 
 '''
 class BaseEvent(db.Model):
@@ -69,10 +70,30 @@ class CompositeEvent(db.Model):
         return previews
 
 
-attendance = db.Table('attend',
-    db.Column('zID', db.Text, db.ForeignKey('users.zID'), primary_key=True),
-    db.Column('eventID', db.Text, db.ForeignKey('events.id'), primary_key=True)
-)
+class Attendance(db.Model):
+    __tablename__ = 'attend'
+
+    zID = db.Column(db.Text, db.ForeignKey('users.zID'), primary_key=True)
+    eventID = db.Column(db.Text, db.ForeignKey('events.id'), primary_key=True)
+    time = db.Column(db.DateTime(timezone=True), nullable=False, server_default=str(datetime.utcnow()))
+    #firstname = db.Column(db.Text, nullable=False)
+    #lastname = db.Column(db.Text, nullable=False)
+    users = db.relationship("Users")
+
+    def jsonifySelf(self):
+        return {
+            'zID': self.zID,
+            'time': str(self.time),
+            'firstname': self.users.firstname,
+            'lastname': self.users.lastname
+        }
+
+class Interested(db.Model):
+    __tablename__ = 'interested'
+    zID = db.Column(db.Text, db.ForeignKey('users.zID'), primary_key=True)
+    eventID = db.Column(db.Text, db.ForeignKey('events.id'), primary_key=True)
+
+    users = db.relationship("Users")
 
 
 class Event(db.Model):
@@ -101,7 +122,8 @@ class Event(db.Model):
     compositeID = db.Column(db.Text, db.ForeignKey("compositeEvents.id"), nullable=False)
     _composite = db.relationship("CompositeEvent", back_populates="_events")
 
-    attendances = db.relationship('Users', secondary=attendance)
+    attendances = db.relationship('Attendance')
+    interested = db.relationship('Interested')
 
     def getPreview(self):
         payload = {}
@@ -115,6 +137,15 @@ class Event(db.Model):
         return payload
 
     def addAttendance(self, student):
-        self.attendances.append(student)
+        attend = Attendance(time=datetime.utcnow())
+        attend.users = student
+        self.attendances.append(attend)
+
         db.session.add(self)
         db.session.commit()
+
+    def getAttendeeCSV(self):
+        results = [i.jsonifySelf() for i in self.attendances]
+        # TODO: COnver this to a CSV file, save it on the local directory and then
+        # Serve up the path
+        return results

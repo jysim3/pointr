@@ -20,3 +20,10 @@ class Users(db.Model):
     superadmin = db.Column(db.Boolean, nullable=False)
     activated = db.Column(db.Boolean, nullable=False)
 
+    def jsonAttendanceFormat(self):
+        return {
+            'zID': self.zID,
+            'firstname': self.firstname,
+            'lastname': self.lastname,
+            'isarc': self.isarc
+        }
