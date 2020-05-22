@@ -7,88 +7,55 @@ from marshmallow import Schema, fields, ValidationError, validates, validate
 from util.validation_services import validate_with, validate_args_with
 import pprint
 import uuid
-#from smtplib import SMTPConnectError, SMTPServerDisconnected
 
-# NOTE: Note that this file only exists on the server
-import csv
-zIDList = {}
-try:
-    with open('zIDList.csv') as hallList:
-        csv_reader = csv.reader(hallList, delimiter=',')
-        line_count = 0
-        for row in csv_reader:
-            if line_count == 0:
-                line_count += 1
-                continue
-            name = row[0].strip()
-            floorGroup = row[1].strip()
-            if name == '':
-                continue
-            zIDList[name] = floorGroup
-except IOError:
-    print("This file is no longer avaliable on the repo, only server side")
+# SQLAlchemy
+from app import db
+from models.user import Users
+from hashlib import sha256
+#from smtplib import SMTPConnectError, SMTPServerDisconnected
 
 api = Namespace('auth', description='Authentication & Authorization Services')
 
 @api.route('/register')
 class Register(Resource):
-    # @api.response(200, 'Success', token_details)
     @api.response(400, 'Malformed Request')
     @api.response(403, 'Invalid Credentials')
     @api.response(409, 'Username Taken')
     @validate_with(RegisterDetailsSchema)
+    # NOTE: As of 20/05/2020, data is now a object of type Users
+    # We can load this directly into the db
     def post(self, data):
-
         from util.emailPointr import sendActivationEmail
-        # Attempt to create a new user with the username and password
-        zID = data['zID'].lower()
-        password = data['password']
-        firstName = data['firstName'] if 'firstName' in data else "John"
-        lastName = data['lastName'] if 'lastName' in data else "Doe"
-        isArc = data['isArc'] if 'isArc' in data else True
-        commencementYear = data['commencementYear'] if 'commencementYear' in data else 2020
-        studentType = data['studentType'] if 'studentType' in data else "domestic"
-        degreeType = data['degreeType'] if 'degreeType' in data else "undergraduate"
-        description = data['description'] if 'description' in data else None
-        #floorGroup = data['floorGroup'] if 'floorGroup' in data else "unspecified"
-
         # Step 1, check for validity of the zID
-        if (utilFunctions.checkUser(zID) == True):
-            abort(409, "username taken") 
+        if Users.query.filter_by(zid=data.zid).first():
+            abort(409, "username taken")
 
         # Step 2, try sending an email, if error occurs, abort
-        #try:
-        token = auth_services.generateActivationToken(zID)
-        results = sendActivationEmail(f"/activate/{token}", f"{zID}@student.unsw.edu.au")
+        token = auth_services.generateActivationToken(data.zid)
+        results = sendActivationEmail(f"/activate/{token}", f"{data.zid}@student.unsw.edu.au")
         if (results != "success"):
             # This only happens if we have some kind of SMTP error, most likely due to security measures on unrecognised devices
             abort(400, "Sending Email Not Successful")
-        '''
-        except SMTPServerDisconnected as e:
-            abort(400, "Sending email not successful")
-        except SMTPConnectError as e:
-            abort(400, "Email failed")
-        '''
 
         # Step 3, inject the user into the database
-        results = users.createUser(zID, firstName, lastName, password, isArc, int(commencementYear), studentType, degreeType, description)
-        if results != "success":
-            abort(403, results)
-
-        # FIXME: PLEASE REMOVE ME AFTER THE FIRST TIME WE HAVE TO SIGN THE USERS ON
-        global zIDList
-        if (zID in zIDList):
-            socID = societies.findSocID("UNSW Hall")
-            results = societies.joinSoc(zID, socID)
-            resultsForJoin = "success" 
-            isCol = societies.isCollege(socID)
-            if (isCol == True):
-                floorGroup = zIDList[zID]
-                resultsForJoin = societies.joinCollege(zID, socID, floorGroup) 
-            if results != "success" or resultsForJoin != "success":
-                return jsonify({"status": "kind of success", "msg": "Account created but could not join UNSW Hall"})
+        db.session.add(data)
+        db.session.commit()
 
         return jsonify({"status": "success"})
+
+@api.route('/login')
+class Login(Resource):
+    @api.response(400, 'Malformed Request')
+    @api.response(403, 'Invalid Credentials')
+    @validate_with(LoginDetailsSchema)
+    def post(self, data):
+        user = Users.query.filter_by(zid=data['zID'], 
+            password=sha256(data['password'].encode('UTF-8')).hexdigest()).first()
+
+        if not user: abort(403, 'Invalid Credentials / Account Not Activated')
+
+        token = auth_services.generateLoginToken(user)
+        return jsonify({"token": token})
 
 # NOTE: DEFUNCT
 @api.route('/activate')
@@ -106,21 +73,6 @@ class Activate(Resource):
         elif (result == "already activated"):
             abort(403, "Already activated")
         return jsonify({"status": "success"})
-
-@api.route('/login')
-class Login(Resource):
-    
-    @api.response(400, 'Malformed Request')
-    @api.response(403, 'Invalid Credentials')
-    @validate_with(LoginDetailsSchema)
-    def post(self, data):
-        
-        # Login and if successful return the token otherwise invalid credentials
-        token = auth_services.login(data['zID'].lower(), data['password'])
-        if (token):
-            return jsonify({"token": token})
-        else:
-            abort(403, 'Invalid Credentials / Account Not Activated')
 
 @api.route('/forgot')
 class Forgot(Resource):

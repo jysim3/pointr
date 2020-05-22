@@ -6,6 +6,7 @@ from util import auth_services, users, participation, validation_services, valid
 from schemata.auth_schemata import TokenSchema, AuthSchema
 from schemata.user_schemata import ZIDSchema, PostPointsSchema
 from util.auth_services import ADMIN, USER
+from models.user import Users
 
 api = Namespace('user', description='User Services')
 # /user fails but /use doesnt and /user/ doesnt

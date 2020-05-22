@@ -72,18 +72,16 @@ def authorize(token, permission):
         abort(403, 'Invalid Credentials')
     abort(400, 'Malformed Request')
 
-def login(zID, password):
-    results = checkUserInfo(zID, password)
-    if (results == False):
-        return None
+def generateLoginToken(user):
+    permission = 5 if user.superadmin == True else 1
     global token_exp
     token = jwt.encode(
         {
             'exp': datetime.utcnow() + timedelta(seconds=token_exp),
             'iat': datetime.utcnow(),
-            'zID': zID,
-            'permission': 1 if results == 1 else 5,
-            'activation': checkActivation(zID),
+            'zID': user.zid,
+            'permission': permission,
+            'activation': user.activated,
             'type': 'normal'
         }, 
         jwt_secret, algorithm='HS256' 

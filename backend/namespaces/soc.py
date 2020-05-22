@@ -7,6 +7,7 @@ from util.files import uploadImages
 from schemata.soc_schemata import SocietyIDAndZIDSchema, SocietyIDSchema
 import pprint
 from json import loads
+from models.society import Societies
 
 api = Namespace('soc', description='Society Attendance Services')
 
