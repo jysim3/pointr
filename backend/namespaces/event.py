@@ -11,6 +11,7 @@ api = Namespace('event', description='Event Management Services')
 
 from models.event import *
 from models.user import *
+from models.society import *
 from app import db
 
 def generateID(number = None):
@@ -243,6 +244,21 @@ class reopenEvent(Resource):
 '''
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @api.route("/dummy")
 class dummy(Resource):
     def post(self):
@@ -251,7 +267,6 @@ class dummy(Resource):
         end=datetime.utcnow(), status="open")
 
         db.session.add(testComposite)
-        db.session.commit()
 
         testBase0 = Event(id="000", name="mem", start=datetime.utcnow(),
         end=datetime.utcnow(), status="open", hasQR=False, hasAccessCode=False,
@@ -262,12 +277,14 @@ class dummy(Resource):
         hasAdminSignin=False, compositeID="123")
         db.session.add(testBase0)
         db.session.add(testBase1)
-        db.session.commit()
 
         newUser = Users(zID="z5161616", firstname="Steven", lastname="Shen",
         password="12345678", isarc=True, commencementyear=2000, studenttype="undergraduate",
         degreetype="bachelors", superadmin=False, activated=True)
         db.session.add(newUser)
+
+        newSoc = Societies(id="1234", name="Test Society")
+        db.session.add(newSoc)
         db.session.commit()
 
     @api.param
@@ -283,12 +300,22 @@ class dummy2(Resource):
         user = Users.query.filter_by(zID="z5161616").first()
         event.addAttendance(user)
         event.addInterested(user)
-        print(event.getInterested())
+        print(event.getAttended())
+        #print(event.getInterested())
         #print(user.getAttended())
         return -1
         '''
         '''
-        return jsonify(event.getAttendeeCSV())
+        #return jsonify(event.getAttendeeCSV())
 
     def get(self):
+        return -1
+
+@api.route("/dummy3")
+class dummy3(Resource):
+    def post(self):
+        society = Societies.query.filter_by(id="1234").first()
+        user = Users.query.filter_by(zID="z5161616").first()
+        society.addStaff(user, 1)
+        print(society.getAdmins())
         return -1

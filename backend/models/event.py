@@ -1,5 +1,6 @@
 from app import db
 from datetime import datetime
+from models.society import host
 
 class CompositeEvent(db.Model):
     __tablename__ = "compositeEvents"
@@ -28,12 +29,6 @@ class CompositeEvent(db.Model):
     def getEvents(self):
         """
         Function to return all the events which belong to this composite event
-
-        Parameters:
-            self: an object of type CompositeEvent
-
-        Returns:
-            a list of objects of type Event
         """
         return self._events
 
@@ -109,6 +104,11 @@ class Event(db.Model):
         secondary=interest,
         back_populates="interested"
     )
+    hosting = db.relationship(
+        'Societies',
+        secondary=host,
+        back_populates="hosting"
+    )
 
     def getPreview(self):
         return {
@@ -121,7 +121,10 @@ class Event(db.Model):
         }
 
     def addAttendance(self, student):
-        if Attendance.query.filter_by(user=student, event=self).first():
+        # TODO: Check whether current time is beyond the ending time
+        if self.status == "closed":
+            return "Event Closed"
+        elif Attendance.query.filter_by(user=student, event=self).first():
             return "Already Attended"
 
         attend = Attendance(time=datetime.utcnow(),
@@ -136,14 +139,26 @@ class Event(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def getAttendeeCSV(self):
+    def getAttendedCSV(self):
         results = [i.jsonifySelf() for i in self.attendees]
         # TODO: COnver this to a CSV file, save it on the local directory and then
         # Serve up the path
         return results
+
+    def getAttended(self):
+        """
+        Returns a list of objects of type Users that have attended this event
+        """
+        return [i for i in self.attendees]
 
     def getInterested(self):
         """
         Returns a list of objects of type Users that has expressed interest in this event
         """
         return [i for i in self.interested]
+
+    def closeEvent(self):
+        self.status = "closed"
+
+        db.session.add(self)
+        db.session.commit()

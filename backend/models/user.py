@@ -27,6 +27,14 @@ class Users(db.Model):
         secondary=interest,
         back_populates="interested"
     )
+    staff = db.relationship("Staff", back_populates="user")
+
+    def getPreview(self):
+        return {
+            'firstname': self.firstname,
+            'lastname': self.lastname,
+            'photo': self.photo,
+        }
 
     def jsonAttendanceFormat(self):
         return {
@@ -36,20 +44,20 @@ class Users(db.Model):
             'isarc': self.isarc
         }
 
-    def getEvents(self):
+    def getAttended(self):
         """
         Returns a list of objects of type Event that this user has went to
         """
         return [i.event for i in self.attended]
 
-    def getEventsIDs(self):
+    def getAttendedIDs(self):
         """
         Returns a list of event IDs that this user has been to
         Lighter version of the function getEvents()
         """
         return [i.event.id for i in self.attended]
 
-    def getEventsJSON(self):
+    def getAttendedJSON(self):
         """
         Returns a JSON array of the events' previews that this user has been to
         """
