@@ -1,33 +1,6 @@
 from app import db
 from datetime import datetime
 
-'''
-class BaseEvent(db.Model):
-    __tablename__ = "events"
-
-    id = db.Column(db.Text, primary_key=True)
-    name = db.Column(db.Text, nullable=False)
-
-    start = db.Column(db.DateTime(timezone=True), nullable=True)
-    end = db.Column(db.DateTime(timezone=True), nullable=True)
-
-    hasQR = db.Column(db.Boolean, nullable=True)
-    
-    description = db.Column(db.Text, nullable=True)
-    previewDescription = db.Column(db.Text, nullable=True)
-
-    # TODO Consider and document functionality with admins
-    closed = db.Column(db.Boolean, nullable=False)
-
-    # TODO String Array
-    photo = db.Column(db.Text, nullable=True)
-
-    # NOTE: temporary Indiciates whether or not an event has request an access code feature
-    temporary = db.Column(db.Boolean, nullable=False)
-    accessCode = db.Column(db.Text, nullable=True)
-'''
-
-
 class CompositeEvent(db.Model):
     __tablename__ = "compositeEvents"
 
@@ -53,6 +26,15 @@ class CompositeEvent(db.Model):
     _events = db.relationship("Event", back_populates="_composite")
 
     def getEvents(self):
+        """
+        Function to return all the events which belong to this composite event
+
+        Parameters:
+            self: an object of type CompositeEvent
+
+        Returns:
+            a list of objects of type Event
+        """
         return self._events
 
     def getEventsIDs(self):
@@ -73,27 +55,25 @@ class CompositeEvent(db.Model):
 class Attendance(db.Model):
     __tablename__ = 'attend'
 
-    zID = db.Column(db.Text, db.ForeignKey('users.zID'), primary_key=True)
     eventID = db.Column(db.Text, db.ForeignKey('events.id'), primary_key=True)
-    time = db.Column(db.DateTime(timezone=True), nullable=False, server_default=str(datetime.utcnow()))
-    #firstname = db.Column(db.Text, nullable=False)
-    #lastname = db.Column(db.Text, nullable=False)
-    users = db.relationship("Users")
+    zID = db.Column(db.Text, db.ForeignKey('users.zID'), primary_key=True)
+    time = db.Column(db.DateTime(timezone=True), nullable=False)
+
+    user = db.relationship("Users", back_populates="attended")
+    event = db.relationship("Event", back_populates="attendees")
 
     def jsonifySelf(self):
         return {
             'zID': self.zID,
             'time': str(self.time),
-            'firstname': self.users.firstname,
-            'lastname': self.users.lastname
+            'firstname': self.user.firstname,
+            'lastname': self.user.lastname
         }
 
-class Interested(db.Model):
-    __tablename__ = 'interested'
-    zID = db.Column(db.Text, db.ForeignKey('users.zID'), primary_key=True)
-    eventID = db.Column(db.Text, db.ForeignKey('events.id'), primary_key=True)
-
-    users = db.relationship("Users")
+interest = db.Table('interested',
+    db.Column('zID', db.Text, db.ForeignKey('users.zID'), primary_key=True),
+    db.Column('eventID', db.Text, db.ForeignKey('events.id'), primary_key=True)
+)
 
 
 class Event(db.Model):
@@ -122,30 +102,48 @@ class Event(db.Model):
     compositeID = db.Column(db.Text, db.ForeignKey("compositeEvents.id"), nullable=False)
     _composite = db.relationship("CompositeEvent", back_populates="_events")
 
-    attendances = db.relationship('Attendance')
-    interested = db.relationship('Interested')
+    attendees = db.relationship("Attendance", back_populates="event")
+    #attendances = db.relationship("Attendance")
+    interested = db.relationship(
+        'Users',
+        secondary=interest,
+        back_populates="interested"
+    )
 
     def getPreview(self):
-        payload = {}
-        payload['id'] = self.id
-        payload['name'] = self.name
-        payload['logo'] = self.photos[0] if self.photos else None
-        payload['preview'] = self.preview
-        payload['startTime'] = self.start
-        payload['location'] = self.location
-
-        return payload
+        return {
+            'id': self.id,
+            'name': self.name,
+            'logo': self.photos[0] if self.photos else None,
+            'preview': self.preview,
+            'startTime': self.start,
+            'location': self.location
+        }
 
     def addAttendance(self, student):
-        attend = Attendance(time=datetime.utcnow())
-        attend.users = student
-        self.attendances.append(attend)
+        if Attendance.query.filter_by(user=student, event=self).first():
+            return "Already Attended"
+
+        attend = Attendance(time=datetime.utcnow(),
+            user=student, event=self)
+
+        db.session.add(attend)
+        db.session.commit()
+
+    def addInterested(self, student):
+        self.interested.append(student)
 
         db.session.add(self)
         db.session.commit()
 
     def getAttendeeCSV(self):
-        results = [i.jsonifySelf() for i in self.attendances]
+        results = [i.jsonifySelf() for i in self.attendees]
         # TODO: COnver this to a CSV file, save it on the local directory and then
         # Serve up the path
         return results
+
+    def getInterested(self):
+        """
+        Returns a list of objects of type Users that has expressed interest in this event
+        """
+        return [i for i in self.interested]

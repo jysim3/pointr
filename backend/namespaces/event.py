@@ -280,9 +280,13 @@ class dummy(Resource):
 class dummy2(Resource):
     def post(self):
         event = Event.query.filter_by(id="000").first()
-        '''
         user = Users.query.filter_by(zID="z5161616").first()
         event.addAttendance(user)
+        event.addInterested(user)
+        print(event.getInterested())
+        #print(user.getAttended())
+        return -1
+        '''
         '''
         return jsonify(event.getAttendeeCSV())
 

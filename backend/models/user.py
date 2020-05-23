@@ -1,4 +1,5 @@
 from app import db
+from models.event import interest
 
 class Users(db.Model):
     __tablename__ = 'users'
@@ -20,6 +21,13 @@ class Users(db.Model):
     superadmin = db.Column(db.Boolean, nullable=False)
     activated = db.Column(db.Boolean, nullable=False)
 
+    attended = db.relationship("Attendance", back_populates="user")
+    interested = db.relationship(
+        "Event",
+        secondary=interest,
+        back_populates="interested"
+    )
+
     def jsonAttendanceFormat(self):
         return {
             'zID': self.zID,
@@ -27,3 +35,22 @@ class Users(db.Model):
             'lastname': self.lastname,
             'isarc': self.isarc
         }
+
+    def getEvents(self):
+        """
+        Returns a list of objects of type Event that this user has went to
+        """
+        return [i.event for i in self.attended]
+
+    def getEventsIDs(self):
+        """
+        Returns a list of event IDs that this user has been to
+        Lighter version of the function getEvents()
+        """
+        return [i.event.id for i in self.attended]
+
+    def getEventsJSON(self):
+        """
+        Returns a JSON array of the events' previews that this user has been to
+        """
+        return [i.getPreview() for i in self.attended]
