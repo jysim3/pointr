@@ -6,7 +6,6 @@ import { fetchAPI } from '@/util';
 
 const state = {
   authToken: localStorage.getItem('authToken') || '',
-  isAuthenticated: false,
   isAdmin: false,
   info: {
     zID: "",
@@ -28,6 +27,7 @@ const state = {
 const getters = {
   name: (state) => `${state.info.firstName} ${state.info.lastName}`,
   zID: (state) => state.info.zID, 
+  isAuthenticated: state => !!state.authToken,
   memberSocieties(state) {
     if (state.info.societies) {
       return state.info.societies.member;
@@ -86,7 +86,6 @@ const mutations = {
   resetState(state) {
     localStorage.removeItem('authToken');
     state.authToken = '';
-    state.isAuthenticated = false;
     state.isAdmin = false;
     state.info = {};
   },
@@ -97,9 +96,6 @@ const mutations = {
       state.isAdmin = false;
     }
   },
-  setIsAuthenticated(state) {
-    state.isAuthenticated = true;
-  },
   setIsLoading(state, isLoading) {
     state.isLoading = isLoading;
   }
@@ -109,7 +105,6 @@ const actions = {
   async authenticateUser({ dispatch, commit }, authToken) {
     // Currently, this action should only be called if we know that the token is valid.
     commit('authToken', authToken);
-    commit('setIsAuthenticated');
     await dispatch('userInfo');
     commit('setIsAdmin');
   },
@@ -158,7 +153,7 @@ const actions = {
         if (response.data.valid === "true") {
           // Now that we now the token is valid we can authenticate the user and validate them.
           // However, we only want to do this if they aren't already authenticated. This is to prevent many requests from going out unnecessarily.
-          if (!state.isAuthenticated) {
+          if (!state.authToken) {
             await dispatch('authenticateUser', state.authToken);
           }
         }
