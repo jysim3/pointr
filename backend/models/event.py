@@ -129,8 +129,8 @@ class Event(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'startTime': self.start,
-            'endTime': self.end,
+            'start': str(self.start),
+            'end': str(self.end),
             'photos': self.photos,
             'description': self.description,
             'preview': self.preview,
@@ -193,7 +193,7 @@ class Event(db.Model):
         return 0
 
     @staticmethod
-    def findEvent(id):
+    def getEvent(id):
         event = Event.query.filter_by(id=id).first()
         return None if not event else event
 

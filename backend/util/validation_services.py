@@ -55,7 +55,7 @@ def validateArgsWith(schema):
                 data = schema().load(request.args)
             except ValidationError as err:
                 abort(400, err.messages)
-            return func(args_data=data, *args, **kwargs)
+            return func(argsData=data, *args, **kwargs)
         return wrapper
     return decorator
 
@@ -63,7 +63,9 @@ schemaNameToModel = {
     'String': fields.String,
     'Integer': fields.Integer,
     'DateTime': fields.DateTime,
-    'Boolean': fields.Boolean
+    'AwareDateTime': fields.DateTime,
+    'Boolean': fields.Boolean,
+    'List': fields.List
 }
 
 def toModel(api, schema):

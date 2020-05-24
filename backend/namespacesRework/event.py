@@ -1,30 +1,31 @@
 from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort
 from util.validation_services import validateArgsWith, validateWith, toQuery
-from schemata.event_schemata import AttendSchema, EventCreationSchema
+from util.validation_services import toModel
+from schemata.event_schemata import AttendSchema, EventCreationSchema, EventPatchSchema
 from util import auth_services
 from schemata.models import authModel, offsetModel
-from schemata.event_schemata import OffsetSchema
+from schemata.event_schemata import OffsetSchema, EventIDSchema
 from pprint import pprint
 from app import db
+from models.event import Event
 api = Namespace('rework/event', description='Reworked Event Management Services')
 
 @api.route('')
-class Event(Resource):
+class EventRoute(Resource):
     
     @api.doc(description='''
         Creates an event with data given body data for the society specified (as either query or in body)
         <h3>Authorization Details:</h3>
         Requires the token bearer to be an admin of one of the specified societies
     ''')
-    #@api.expect(authModel)
+    #@api.expect(toModel(api, EventCreationSchema))
     #@auth_services.check_authorization(level=2, allowSocStaff=True)
     @validateWith(EventCreationSchema)
     def post(self, data):
-        pprint(data)
         db.session.add(data)
         db.session.commit()
-
+        return jsonify({"id": data.id})
     
     @api.doc(description='''
         Get the event described by the given eventID
@@ -33,9 +34,13 @@ class Event(Resource):
     ''')
     @api.param('eventID', 'The eventID of the event to get')
     @api.expect(authModel)
-    @auth_services.check_authorization(level=1)
-    def get(self, token_data):
-        pass
+    # @auth_services.check_authorization(level=1)
+    @validateArgsWith(EventIDSchema)
+    def get(self, argsData):
+        if argsData:
+            return argsData.getEventJSON()
+        else:
+            abort(400, "Invalid eventID")
     
     @api.doc(description='''
         Delete the event described by the given eventID. 
@@ -46,6 +51,7 @@ class Event(Resource):
     @api.expect(authModel)
     @auth_services.check_authorization(level=2, allowSocStaff=True)
     def delete(self, token_data):
+        #TODO
         pass
     
     @api.doc(description='''
@@ -55,12 +61,25 @@ class Event(Resource):
     ''')
     @api.param('eventID', 'The eventID of the event to update')
     @api.expect(authModel)
-    @auth_services.check_authorization(level=2, allowSocStaff=True)
-    def patch(self, token_data):
-        pass
+    @validateArgsWith(EventIDSchema)
+    @validateWith(EventPatchSchema)
+    # @auth_services.check_authorization(level=2, allowSocStaff=True)
+    def patch(self, argsData, data):
+        if argsData:
+
+            for key,value in data.items():
+                setattr(argsData,key,value)
+
+            db.session.add(argsData)
+            db.session.commit()
+
+            return argsData.getEventJSON()
+        else:
+            abort(400, "Invalid eventID")
+        
 
 @api.route('/attend')
-class Attend(Resource):
+class AttendRoute(Resource):
 
     @api.doc(description='''
         The token bearer is recorded as having attended the given eventID.
@@ -79,7 +98,7 @@ class Attend(Resource):
         pass
 
 @api.route('/attend/admin')
-class AttendAdmin(Resource):
+class AttendAdminRoute(Resource):
 
     @api.doc(description='''
         If the token bearer is an admin of the event, the zID given is recorded as having 
@@ -100,7 +119,7 @@ class AttendAdmin(Resource):
         pass
 
 @api.route('/upcoming')
-class Upcoming(Resource):
+class UpcomingRoute(Resource):
 
     @api.doc(description='''
         Get events visible to token bearer coming up in the next days amount of days from offset inclusive (0 = today) 
@@ -111,7 +130,7 @@ class Upcoming(Resource):
         pass
 
 @api.route('/composite')
-class Composite(Resource):
+class CompositeRoute(Resource):
 
     @api.doc(description='''
         Requests that the event specified as subEvent becomes a event within the event specfied by eventID
