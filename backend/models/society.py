@@ -21,6 +21,9 @@ class Societies(db.Model):
     # TODO String Array
     photo = db.Column(db.Text, nullable=True)
 
+    type = db.Column(db.Integer, nullable=False)
+    tags = db.Column(db.ARRAY(db.Integer), nullable=True)
+
     # TODO: Need something here to indicate the type of society
     # I.e. invitational, etc.
 
@@ -80,6 +83,11 @@ class Societies(db.Model):
         Returns a list of eventIDs of type strings that this society is hosting
         """
         return [i.id for i in self.hosting]
+
+    @staticmethod
+    def findSociety(id):
+        society = Societies.query.filter_by(id=id).first()
+        return None if not society else society
 
 
 class Staff(db.Model):

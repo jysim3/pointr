@@ -62,3 +62,14 @@ class Users(db.Model):
         Returns a JSON array of the events' previews that this user has been to
         """
         return [i.getPreview() for i in self.attended]
+
+    def getInterested(self):
+        """
+        Returns a list of objects of type Event that this user has expressed an interest to
+        """
+        return [i for i in self.interested]
+
+    @staticmethod
+    def findUser(zID):
+        user = Users.query.filter_by(zID=zID).first()
+        return None if not user else user

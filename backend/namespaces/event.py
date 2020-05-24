@@ -263,7 +263,7 @@ class reopenEvent(Resource):
 class dummy(Resource):
     def post(self):
         from datetime import datetime
-        society = Societies(id="999", name="Rome")
+        society = Societies(id="999", name="Rome", type=1)
         db.session.add(society)
         db.session.commit()
 
@@ -334,3 +334,13 @@ class dummy4(Resource):
         """
         society = Societies.query.filter_by(id="999").first()
         society.getEventsIDs()
+
+@api.route("/dummy5")
+class dummy5(Resource):
+    def post(self):
+        testBase1 = Event(**{'id': "001", 'name': "mem",
+        'start': datetime.utcnow(), 'end': datetime.utcnow(),
+        'status': 'open', 'hasQR': False, 'hasAccessCode': False,
+        'hasAdminSignin':False, 'compositeID':"123"})
+        db.session.add(testBase1)
+        db.session.commit()

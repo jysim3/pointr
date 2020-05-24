@@ -92,9 +92,9 @@ class Event(db.Model):
     accessCode = db.Column(db.Text, nullable=True)
     hasAdminSignin = db.Column(db.Boolean, nullable=False)
 
-    tags = db.Column(db.ARRAY(db.Text), nullable=True)
+    tags = db.Column(db.ARRAY(db.Integer), nullable=True)
 
-    status = db.Column(db.Text, nullable=False)
+    status = db.Column(db.Integer, nullable=False)
 
     compositeID = db.Column(db.Text, db.ForeignKey("compositeEvents.id"), nullable=False)
     _composite = db.relationship("CompositeEvent", back_populates="_events")
@@ -168,3 +168,8 @@ class Event(db.Model):
     @staticmethod
     def getEventsByTag(tag):
         return 0
+
+    @staticmethod
+    def findEvent(id):
+        event = Event.query.filter_by(id=id).first()
+        return None if not event else event
