@@ -10,6 +10,7 @@ from util.validation_services import validate_args_with
 import pprint
 import os, sys
 from models.society import Societies
+from models.event import Event
 
 # Expiration time on tokens - 60 minutes 
 token_exp = 1000*60
@@ -265,21 +266,27 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
             if allowSocAdmin:
                 if 'socID' in data:
                     # We grant access if the token bearer is a socadmin
-                    # TODO:
                     society = Societies.query.filter_by(id=data['socID']).first()
                     if not society: abort(403, "SocietyID doesn't exist")
 
                     admins = society.getAdminsIDs()
                     if token_data['zID'] not in admins: abort(403, "You are not an admin of this society")
 
+                    # TODO: Fix up the authorised data
                     return func(token_data=token_data, *args, **kwargs)
 
                 if 'eventID' in data:
                     # We grant access if the token bearer can have control over eventID
                     # I.e. if the user is an admin of the soc that's hosting this event
                     # WE need this because socID and eventID dont always come
-                    # TODO:
-                    pass
+                    event = Event.query.filter_by(id=data['eventID']).first()
+                    if not event: abort(403, "EventID doesn't exist")
+
+                    society = event.getHostSoc()
+                    admins = society.getAdminsIDs()
+                    if token_data['zID'] not in admins: abort(403, "You are not an admin of this society")
+
+                    return func(token_data=token_data, *args, **kwargs)
 
             data = None
             if request.get_json() != None:
