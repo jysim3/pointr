@@ -27,9 +27,9 @@ export default {
   computed: {
     ...mapState("user", {
       isLoading: state => state.isLoading,
-      isAuthenticated: state => state.isAuthenticated,
       isAdmin: state => state.isAdmin
-    })
+    }),
+    isAuthenticated() { return this.$store.getters['user/isAuthenticated']},
   }
 };
 </script>

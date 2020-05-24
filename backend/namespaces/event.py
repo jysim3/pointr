@@ -9,6 +9,11 @@ from dateutil import tz
 
 api = Namespace('event', description='Event Management Services')
 
+from models.event import *
+from models.user import *
+from models.society import *
+from app import db
+
 def generateID(number = None):
     return str(uuid.uuid4().hex).upper()[:5]
 
@@ -33,65 +38,7 @@ def generateID(number = None):
 # { status: "ERROR MESSAGE"}
 # TODO: Ask user when they create an event if they want to enable temporary access code
 # TODO: Make just ''
-@api.route('/')
-class Event(Resource):
-    @api.response(200, 'Success')
-    @api.response(400, 'Malformed Request')
-    @api.response(403, 'Invalid Credentials')
-    @auth_services.check_authorization(level=2, allowSocStaff=True)
-    def post(self, token_data):
-        data = request.get_json()
-        eventID = generateID(5).upper()
 
-        # To determine if an event is being created as a recurrent event
-        isRecur = str(data['isRecur']) if 'isRecur' in data and data['isRecur'] == 1 else False
-
-        # For both single and recurrent event
-        zID = sanitize(str(token_data['zID']))
-        location = sanitize(str(data['location'])).lower() if 'location' in data else None
-        startDate = sanitize(str(data['eventDate'])).lower()
-        eventName = sanitize(str(data['name']))
-        hasQR = str(data['hasQR']) if 'hasQR' in data else False
-        societyID = str(data['socID']) if 'socID' in data else None 
-        description = str(data['description']) if 'description' in data else None
-        startTime = str(data['startTime']) if 'startTime' in data else None
-        endTime = str(data['endTime']) if 'endTime' in data else None
-        public = str(data['public']) if 'public' in data else True
-
-        # This is for whether or not a soc wants to enforce a temporary access code for their events
-        temporaryAccess = str(data['temporaryAccess']) if 'temporaryAccess' in data else False
-
-        # Only recurrent event does this
-        endDate = sanitize(str(data['endDate']).lower()) if 'endDate' in data else None
-        recurType = sanitize(str(data['recurType']).lower()) if 'recurType' in data else None
-        recurInterval = sanitize(data['recurInterval']).lower() if 'recurInterval' in data else None
-
-        results = None
-        if isRecur is not False:
-            results = events.createRecurrentEvent(zID, eventID, eventName, startDate, endDate, recurInterval, recurType, hasQR, location, societyID, description, startTime, endTime, public, temporaryAccess)
-        else:
-            results = events.createSingleEvent(zID, eventID, eventName, startDate, hasQR, societyID, location, description, startTime, endTime, public, temporaryAccess)
-
-        if (isinstance(results, tuple) == False):
-            return abort(400, results)
-        return jsonify({"status": "Success", "msg": results[0]})
-
-    # For getting info on an event, i.e. participation information
-    # Usage:
-    # GET /api/event?eventID=ID
-    # Returns: 
-    # {"eventName": "memes", "eventDate": "2020-04-01", "location": "UNSW Hall", "societyName": "UNSW Hall", "societyID": "MEMESASD", "attendance": ["points": 1, "isArc" = True, "username": "steven shen", "zID": "z5161616", time: "2020-02-25 00:19:05"]}
-    @api.response(200, 'Success')
-    @api.response(400, 'Malformed Request')
-    @api.response(403, 'Invalid Credentials')
-    @auth_services.check_authorization(level=1)
-    def get(self, token_data):
-        eventID = request.args.get('eventID')
-        attendance = events.getEventInfo(sanitize(eventID))
-        if attendance == "failed":
-            abort(400, "No such event")
-
-        return jsonify(attendance)
 
 @api.route('/accessCode')
 class accessCode(Resource):
@@ -295,3 +242,95 @@ class reopenEvent(Resource):
             abort(400, results)
         return jsonify({"msg": results})
 '''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@api.route("/dummy")
+class dummy(Resource):
+    def post(self):
+        from datetime import datetime
+        society = Societies(id="999", name="Rome")
+        db.session.add(society)
+        db.session.commit()
+
+        testComposite = CompositeEvent(id="123", name="mem", start=datetime.utcnow(),
+        end=datetime.utcnow(), status="open")
+
+        db.session.add(testComposite)
+
+        testBase0 = Event(id="000", name="mem", start=datetime.utcnow(),
+        end=datetime.utcnow(), status="open", hasQR=False, hasAccessCode=False,
+        hasAdminSignin=False, compositeID="123")
+        Event().getEventsByTags()
+        society.hosting.append(testBase0)
+
+        testBase1 = Event(id="001", name="mem", start=datetime.utcnow(),
+        end=datetime.utcnow(), status="open", hasQR=False, hasAccessCode=False,
+        hasAdminSignin=False, compositeID="123")
+        db.session.add(testBase0)
+        db.session.add(testBase1)
+
+        newUser = Users(zID="z5161616", firstname="Steven", lastname="Shen",
+        password="12345678", isarc=True, commencementyear=2000, studenttype="undergraduate",
+        degreetype="bachelors", superadmin=False, activated=True)
+        db.session.add(newUser)
+
+        newSoc = Societies(id="1234", name="Test Society")
+        db.session.add(newSoc)
+        db.session.commit()
+
+    @api.param
+    def get(self):
+        event = CompositeEvent.query.filter_by(id="123").first()
+        for i in event.getEvents():
+            print(i)
+
+@api.route("/dummy2")
+class dummy2(Resource):
+    def post(self):
+        event = Event.query.filter_by(id="000").first()
+        user = Users.query.filter_by(zID="z5161616").first()
+        event.addAttendance(user)
+        event.addInterested(user)
+        print(event.getAttended())
+        #print(event.getInterested())
+        #print(user.getAttended())
+        return -1
+        '''
+        '''
+        #return jsonify(event.getAttendeeCSV())
+
+    def get(self):
+        return -1
+
+@api.route("/dummy3")
+class dummy3(Resource):
+    def post(self):
+        society = Societies.query.filter_by(id="1234").first()
+        user = Users.query.filter_by(zID="z5161616").first()
+        society.addStaff(user, 1)
+        print(society.getAdmins())
+        return -1
+
+@api.route("/dummy4")
+class dummy4(Resource):
+    def post(self):
+        """
+        Used to test event creation flow
+        """
+        society = Societies.query.filter_by(id="999").first()
+        society.getEventsIDs()
