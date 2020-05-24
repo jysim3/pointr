@@ -263,6 +263,10 @@ class reopenEvent(Resource):
 class dummy(Resource):
     def post(self):
         from datetime import datetime
+        society = Societies(id="999", name="Rome")
+        db.session.add(society)
+        db.session.commit()
+
         testComposite = CompositeEvent(id="123", name="mem", start=datetime.utcnow(),
         end=datetime.utcnow(), status="open")
 
@@ -271,6 +275,8 @@ class dummy(Resource):
         testBase0 = Event(id="000", name="mem", start=datetime.utcnow(),
         end=datetime.utcnow(), status="open", hasQR=False, hasAccessCode=False,
         hasAdminSignin=False, compositeID="123")
+        Event().getEventsByTags()
+        society.hosting.append(testBase0)
 
         testBase1 = Event(id="001", name="mem", start=datetime.utcnow(),
         end=datetime.utcnow(), status="open", hasQR=False, hasAccessCode=False,
@@ -319,3 +325,12 @@ class dummy3(Resource):
         society.addStaff(user, 1)
         print(society.getAdmins())
         return -1
+
+@api.route("/dummy4")
+class dummy4(Resource):
+    def post(self):
+        """
+        Used to test event creation flow
+        """
+        society = Societies.query.filter_by(id="999").first()
+        society.getEventsIDs()

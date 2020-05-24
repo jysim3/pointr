@@ -1,13 +1,12 @@
 from app import db
 
-# Colleges cannot be joined but other societies can be (colleges are given set list of members)
-# Join type: Invitation/Admin Approval/Anyone
-
-
 host = db.Table('hosted',
     db.Column('eventID', db.Text, db.ForeignKey('events.id'), primary_key=True),
     db.Column('socID', db.Text, db.ForeignKey('societies.id'), primary_key=True)
 )
+
+# Colleges cannot be joined but other societies can be (colleges are given set list of members)
+# Join type: Invitation/Admin Approval/Anyone
 
 class Societies(db.Model):
     __tablename__ = "societies"
@@ -49,6 +48,13 @@ class Societies(db.Model):
         members = Staff.query.filter_by(rank=0).all()
         return [i.user.getPreview() for i in members]
 
+    def getMembersIDs(self):
+        """
+        Returns a list of user zIDs in string format which are members of this society)
+        """
+        members = Staff.query.filter_by(rank=0).all()
+        return [i.user.zID for i in members]
+
     def getAdmins(self):
         admins = Staff.query.filter(Staff.rank>=1).all()
         return [i.user.getPreview() for i in admins]
@@ -60,6 +66,21 @@ class Societies(db.Model):
         return True if Staff.query.filter(Staff.rank>=1, Staff.user==user).first() else False
 
     # TODO: COnsider refactoring isMember, isAdmin into one function
+    # TODO: Also consider whether or not we should have use a Staff.query or just iterate
+    # through the staff table
+
+    def getEvents(self):
+        """
+        Returns a list of objects of type events that this society is hosting
+        """
+        return [i for i in self.hosting]
+
+    def getEventsIDs(self):
+        """
+        Returns a list of eventIDs of type strings that this society is hosting
+        """
+        return [i.id for i in self.hosting]
+
 
 class Staff(db.Model):
     __tablename__ = 'staff'

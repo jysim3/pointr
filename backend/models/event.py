@@ -2,6 +2,31 @@ from app import db
 from datetime import datetime
 from models.society import host
 
+class Attendance(db.Model):
+    __tablename__ = 'attend'
+
+    eventID = db.Column(db.Text, db.ForeignKey('events.id'), primary_key=True)
+    zID = db.Column(db.Text, db.ForeignKey('users.zID'), primary_key=True)
+    time = db.Column(db.DateTime(timezone=True), nullable=False)
+
+    user = db.relationship("Users", back_populates="attended")
+    event = db.relationship("Event", back_populates="attendees")
+
+    def jsonifySelf(self):
+        return {
+            'zID': self.zID,
+            'time': str(self.time),
+            'firstname': self.user.firstname,
+            'lastname': self.user.lastname
+        }
+
+interest = db.Table('interested',
+    db.Column('zID', db.Text, db.ForeignKey('users.zID'), primary_key=True),
+    db.Column('eventID', db.Text, db.ForeignKey('events.id'), primary_key=True)
+)
+
+
+# TODO: Need a relationship to hook up compositeEvent with societies
 class CompositeEvent(db.Model):
     __tablename__ = "compositeEvents"
 
@@ -46,29 +71,6 @@ class CompositeEvent(db.Model):
 
         return previews
 
-
-class Attendance(db.Model):
-    __tablename__ = 'attend'
-
-    eventID = db.Column(db.Text, db.ForeignKey('events.id'), primary_key=True)
-    zID = db.Column(db.Text, db.ForeignKey('users.zID'), primary_key=True)
-    time = db.Column(db.DateTime(timezone=True), nullable=False)
-
-    user = db.relationship("Users", back_populates="attended")
-    event = db.relationship("Event", back_populates="attendees")
-
-    def jsonifySelf(self):
-        return {
-            'zID': self.zID,
-            'time': str(self.time),
-            'firstname': self.user.firstname,
-            'lastname': self.user.lastname
-        }
-
-interest = db.Table('interested',
-    db.Column('zID', db.Text, db.ForeignKey('users.zID'), primary_key=True),
-    db.Column('eventID', db.Text, db.ForeignKey('events.id'), primary_key=True)
-)
 
 
 class Event(db.Model):
@@ -162,3 +164,7 @@ class Event(db.Model):
 
         db.session.add(self)
         db.session.commit()
+
+    @staticmethod
+    def getEventsByTag(tag):
+        return 0
