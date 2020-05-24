@@ -1,25 +1,25 @@
 # Event
 Status |To do | Method | Route/Query | Description
 -------|-------|--------|-------------|------------
-No Work| Keep | POST  | `/api/event/`| Create an event with given payload You must be admin of given society or superadmin
-No Work|Keep | GET   | `/api/event?eventid={eventid}`| Get an event with given eventid TODO names?
+Documented| Keep | POST  | `/api/event/`| Create an event with given payload You must be admin of given society or superadmin
+Documented|Keep | GET   | `/api/event?eventid={eventid}`| Get an event with given eventid TODO names?
+Documented|Move | DELETE| `/api/event?eventid={eventid}`| Delete an event with given eventid
+Documented|Make | PATCH | `/api/event?eventid={eventid}`| Update an event with given eventid and payload
 No Work|Make | GET   | `/api/event/preview?eventid={eventid}`| Returns preview data (id, image, description, number of attendees/interesteds, start time, location) NOTE not really needed
 No Work|Make | POST  | `/api/event/composite` | Takes in body the message, the composite event (Who the token bearer must be admin of) and the subevent. 
 No Work|Make | PUT   | `/api/event/composite/requests?eventid={}&status={1/0}` | Takes in message, the composite event (Who the token bearer must be admin of) and the subevent. 
 No Work|Make | GET   | `/api/event/composite/requests?eventid={}` | If admin, return list of requested composite eventing.
 No Work|Make | GET | `/api/event/tag?tag={tag}` | Search for events with given tag
 No Work|Make | GET | `/api/event/tags` | Returns static list of tags possible
-No Work|Move | DELETE| `/api/event?eventid={eventid}`| Delete an event with given eventid
-No Work|Make | PATCH | `/api/event?eventid={eventid}`| Update an event with given eventid and payload
 No Work|Keep | GET   | `/api/event/accessCode?eventid={eventid}`| Get current access Code TODO Consider is it just in GET /api/event///?
 No Work|Merge with signAttendanceAdmin | POST  | `/api/event/attend`| Body must contain eventid and optionally (for admins) contains a zid to sign in to this event, otherwise signs in self
-No Work|Keep | DELETE  | `/api/event/attend`| Body must contain eventid and optionally (for admins) contains a zid to delete attendance, otherwise deletes self
+Documented|Keep | DELETE  | `/api/event/attend`| Body must contain eventid and optionally (for admins) contains a zid to delete attendance, otherwise deletes self
 No Work|Rename | | | POST `/api/event/closeEvent` to PUT `/api/event/close?eventid={eventid}`
-No Work|Rename | | | DELETE `/api/event/deleteEvent` to DELETE `/api/event?eventid={eventid}` 
+Documented|Rename | | | DELETE `/api/event/deleteEvent` to DELETE `/api/event?eventid={eventid}` 
 No Work|Rename | | | GET `/api/event/getAllEvents` to GET `/api/event/all` Returns JSON of every event TODO Specify number?
 No Work|Rename | | | GET `/api/event/getAllEvents` to GET `/api/event/all/id` Returns id of every event TODO Specify number?
 No Work|Rename | | | GET `/api/event/getAttendance` to GET `/api/event/attendance?eventid={eventid}` Returns CSV file
-No Work|Merge/Create | GET | `/api/event/upcoming?day={days In Future}` | Return preview of events coming up in described day (0 is today, 1 is tomorrow etc). Merge of `/api/event/onthisday` and `/api/event/upcomingEvent` to 
+Documented|Merge/Create | GET | `/api/event/upcoming?day={days In Future}` | Return preview of events coming up in described day (0 is today, 1 is tomorrow etc). Merge of `/api/event/onthisday` and `/api/event/upcomingEvent` to 
 No Work|Remove | POST | `/api/event/openEvent` | Yeet it
 No Work|Remove | POST | `/api/event/signAttendanceAdmin` | Merged with attend
 No Work|Remove | POST | `/api/event/onthisday` | Merged with upcomingEvents to upcoming
@@ -65,7 +65,7 @@ No Work|Add | PUT | `/api​/soc​/leave` | Removes member from society, can be
 No Work|Add | PUT | `/api​/soc​/leave/all` | Removes all members from society, must be done by superadmin.
 No Work|Remove | POST | `/api​/soc​/makeAdmin` | Done by modifying database directly (use makeAdmin.py)
 No Work|Keep | POST | `/api​/soc​/staff`
-No Work|Keep | GET | ​`/api​/soc​/staff` | Keep em
+No Work|Keep | GET | ​`/api​/soc​/staff` | Keep em but call admin instead
 No Work|Keep | DELETE | `/api​/soc​/staff`
 
 ## TODO Non zid people
@@ -79,15 +79,14 @@ No Work|Remove | GET | `/api​/other​/onThisDay`
 # Auth
 Status | To do | Method | Route/Query | Description
 -------|-------|--------|-------------|------------
-No Work|Keep | POST  | `/api/event`
-No Work|Keep | POST | `/api​/auth​/activate`
-No Work|Rename | POST | `/api​/auth​/changePassword` | to `/api​/auth​/change`
-No Work|Keep | POST | `/api​/auth​/forgot`
-No Work|Keep | POST | `​/api​/auth​/login`
-No Work|Remove | POST | `/api​/auth​/permission` | Use value in token instead
-No Work|Keep | POST | `​/api​/auth​/register`
-No Work|Keep | POST | `​/api​/auth​/reset` | Used for 
-No Work|Keep | POST | `​/api​/auth​/validate`
+Documented|Keep | POST | `/api​/auth​/activate`
+Documented|Rename | POST | `/api​/auth​/changePassword` | to `/api​/auth​/change`
+Documented|Keep | POST | `/api​/auth​/forgot`
+Documented|Keep | POST | `​/api​/auth​/login`
+Done|Remove | POST | `/api​/auth​/permission` | Use value in token instead
+Documented|Keep | POST | `​/api​/auth​/register`
+Documented|Keep | POST | `​/api​/auth​/reset` | Used for 
+Done|Keep | POST | `​/api​/auth​/validate`
+No Work|Keep (for now) | POST | `​/api​/auth​/validateSelf`
 No Work|Keep (for now) | POST | `​/api​/auth​/validateEventAdmin`
-No Work|Keep (for now) | POST |​ `/api​/auth​/validateSelf`
 No Work|Keep (for now) | POST | `/api​/auth​/validateSocietyAdmin`

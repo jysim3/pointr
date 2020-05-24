@@ -1,4 +1,4 @@
-from flask import request, jsonify, request
+from flask import request, jsonify
 from flask_restx import Namespace, Resource, abort, reqparse
 from util import auth_services, users, utilFunctions, societies
 from util.auth_services import ADMIN, USER

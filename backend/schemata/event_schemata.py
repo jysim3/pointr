@@ -23,3 +23,14 @@ class EventIDSchema(Schema):
 class AttendSchema(Schema):
     eventID = common_schemata.eventIDRequired
     zID = common_schemata.zid
+
+pos = fields.Int(default=0, validate=validate.Length(min=0))
+pos.description = "Position from start"
+
+number = fields.Int(default=1, validate=validate.Length(min=1))
+number.description = "Number from position"
+
+class OffsetSchema(Schema):
+    name = "Search Offset"
+    pos = pos
+    number = number

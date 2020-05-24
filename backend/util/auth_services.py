@@ -223,6 +223,93 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
             abort(400, 'Malformed Request')
         return wrapper
     return decorator
+
+def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowSocAdmin=False):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+
+            args_data = {}
+            data = {}
+
+            try:
+                args_data = AuthSchema().load(request.args)
+                data = AuthSchema().load(request.get_json())
+                token = TokenSchema().load({"token": request.headers.get('Authorization')})
+            except ValidationError as err:
+                abort(400, err.messages)
+
+            # Combine args and data
+            # args data takes precedence
+            data.update(args_data)
+
+            try:
+                # Decode token
+                token_data = jwt.decode(
+                    token['token'],
+                    jwt_secret,
+                    algorithms='HS256'
+                )
+            except jwt.InvalidSignatureError:
+                abort(403, 'Invalid Credentials')
+            except jwt.ExpiredSignatureError:
+                abort(401, 'Expired Token')
+            except jwt.DecodeError:
+                abort(403, 'Invalid Credentials')
+            
+            # Allow oneself to modify data if specified
+            if allowSelf:
+                if 'zID' in data and 'zID' == token_data['zID']:
+                    return func(token_data=token_data, authorized_data={'zID':data['zID']}, *args, **kwargs)
+            
+            if allowSocAdmin:
+                if 'socID' in data:
+                    pass
+
+                if 'eventID' in data:
+                    pass
+
+            data = None
+            if request.get_json() != None:
+                data = request.get_json()
+            
+            if (activationRequired and not token_data['activation']):
+                abort(403, 'Activation Required')
+
+            # Check if eventID exists in query then check
+            if (allowSocAdmin and 'eventID' in data):
+                societyID = getSocIDFromEventID(data['eventID'])
+                admins = getAdminsForSoc(societyID)
+                if (token_data['zID'].lower() in admins):
+                    return func(token_data=token_data, *args, **kwargs)
+
+
+            # if societyID exists in query
+            if (allowSocAdmin and 'societyID' in args_data):
+
+                # check if zID is admin of society
+                admins = getAdminsForSoc(args_data['societyID'])
+                
+                pprint.pprint(admins)
+                if (token_data['zID'].lower() in admins):
+                    # if so allow
+                    return func(token_data=token_data, *args, **kwargs)
+            elif (allowSocAdmin and 'societyID' in data) or (allowSocAdmin and 'socID' in data):
+                admins = getAdminsForSoc(data['societyID']) if 'societyID' in data else getAdminsForSoc(data['socID'])
+                if (token_data['zID'].lower() in admins):
+                    return func(token_data=token_data, *args, **kwargs)
+
+            # Check permissions on token
+            if (int(token_data['permission']) >= level):
+                return func(token_data=token_data, *args, **kwargs)
+                # Allow a token of a zID access data pertaining to that zID
+            elif (allowSelf and 'zID' in args_data and token_data['zID'].lower() == args_data['zID'].lower()):
+                return func(token_data=token_data, *args, **kwargs)
+            else:
+                abort(401, "Permission Denied")
+            abort(400, 'Malformed Request')
+
+        return wrapper
+    return decorator
  
 # Low   
 # eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1ODI2MDI1MzgsImlhdCI6MTU4MjU0MjUzOCwieklEIjoiejUyMTQ4MDgiLCJwZXJtaXNzaW9uIjoxfQ.eOIssA0CfC_aKM14qZBe9T-SHXBkwkAKLkG7VJxbBt4
