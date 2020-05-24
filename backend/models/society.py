@@ -62,6 +62,10 @@ class Societies(db.Model):
         admins = Staff.query.filter(Staff.rank>=1).all()
         return [i.user.getPreview() for i in admins]
 
+    def getAdminsIDs(self):
+        admins = Staff.query.filter(Staff.rank>=1).all()
+        return [i.user.zID for i in admins]
+
     def isMember(self, user):
         return True if Staff.query.filter(Staff.rank>=0, Staff.user==user).first() else False
 

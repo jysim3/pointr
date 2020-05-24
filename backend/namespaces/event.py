@@ -310,8 +310,6 @@ class dummy2(Resource):
         #print(event.getInterested())
         #print(user.getAttended())
         return -1
-        '''
-        '''
         #return jsonify(event.getAttendeeCSV())
 
     def get(self):
