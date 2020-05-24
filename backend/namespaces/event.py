@@ -268,18 +268,17 @@ class dummy(Resource):
         db.session.commit()
 
         testComposite = CompositeEvent(id="123", name="mem", start=datetime.utcnow(),
-        end=datetime.utcnow(), status="open")
+        end=datetime.utcnow(), status=0)
 
         db.session.add(testComposite)
 
         testBase0 = Event(id="000", name="mem", start=datetime.utcnow(),
-        end=datetime.utcnow(), status="open", hasQR=False, hasAccessCode=False,
+        end=datetime.utcnow(), status=0, hasQR=False, hasAccessCode=False,
         hasAdminSignin=False, compositeID="123")
-        Event().getEventsByTags()
         society.hosting.append(testBase0)
 
         testBase1 = Event(id="001", name="mem", start=datetime.utcnow(),
-        end=datetime.utcnow(), status="open", hasQR=False, hasAccessCode=False,
+        end=datetime.utcnow(), status=0, hasQR=False, hasAccessCode=False,
         hasAdminSignin=False, compositeID="123")
         db.session.add(testBase0)
         db.session.add(testBase1)
@@ -289,7 +288,7 @@ class dummy(Resource):
         degreetype="bachelors", superadmin=False, activated=True)
         db.session.add(newUser)
 
-        newSoc = Societies(id="1234", name="Test Society")
+        newSoc = Societies(id="1234", name="Test Society", type=0)
         db.session.add(newSoc)
         db.session.commit()
 

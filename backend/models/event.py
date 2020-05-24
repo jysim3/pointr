@@ -122,6 +122,26 @@ class Event(db.Model):
             'location': self.location
         }
 
+    def getEventJSON(self):
+        """
+        Returns the full json of this event
+        """
+        return {
+            'id': self.id,
+            'name': self.name,
+            'startTime': self.start,
+            'endTime': self.end,
+            'photos': self.photos,
+            'description': self.description,
+            'preview': self.preview,
+            'location': self.location,
+            'hasQR': self.hasQR,
+            'hasAccessCode': self.hasAccessCode,
+            'hasAdminSignin': self.hasAdminSignin,
+            'tags': self.tags,
+            'status': self.status
+        }
+
     def addAttendance(self, student):
         # TODO: Check whether current time is beyond the ending time
         if self.status == "closed":
@@ -165,6 +185,9 @@ class Event(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def getHostSoc(self):
+        return self.hosting
+
     @staticmethod
     def getEventsByTag(tag):
         return 0
@@ -173,3 +196,13 @@ class Event(db.Model):
     def findEvent(id):
         event = Event.query.filter_by(id=id).first()
         return None if not event else event
+
+    @staticmethod
+    def getAllEvents():
+        events = Event.query.all()
+        return events
+
+    @staticmethod
+    def getAllEventsPreviews():
+        events = Event.query.all()
+        return [event.getPreview() for event in events]
