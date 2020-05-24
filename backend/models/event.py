@@ -96,7 +96,7 @@ class Event(db.Model):
 
     status = db.Column(db.Integer, nullable=False)
 
-    compositeID = db.Column(db.Text, db.ForeignKey("compositeEvents.id"), nullable=False)
+    compositeID = db.Column(db.Text, db.ForeignKey("compositeEvents.id"), nullable=True)
     _composite = db.relationship("CompositeEvent", back_populates="_events")
 
     attendees = db.relationship("Attendance", back_populates="event")
