@@ -1,10 +1,12 @@
 from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort
 from util.validation_services import validateArgsWith, validateWith, toQuery
-from schemata.event_schemata import AttendSchema
+from schemata.event_schemata import AttendSchema, EventCreationSchema
 from util import auth_services
 from schemata.models import authModel, offsetModel
 from schemata.event_schemata import OffsetSchema
+from pprint import pprint
+from app import db
 api = Namespace('rework/event', description='Reworked Event Management Services')
 
 @api.route('')
@@ -15,10 +17,14 @@ class Event(Resource):
         <h3>Authorization Details:</h3>
         Requires the token bearer to be an admin of one of the specified societies
     ''')
-    @api.expect(authModel)
-    @auth_services.check_authorization(level=2, allowSocStaff=True)
-    def post(self, token_data):
-        pass
+    #@api.expect(authModel)
+    #@auth_services.check_authorization(level=2, allowSocStaff=True)
+    @validateWith(EventCreationSchema)
+    def post(self, data):
+        pprint(data)
+        db.session.add(data)
+        db.session.commit()
+
     
     @api.doc(description='''
         Get the event described by the given eventID

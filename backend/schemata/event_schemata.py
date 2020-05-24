@@ -1,15 +1,32 @@
-from marshmallow import Schema, fields, ValidationError, validates, validate
+from marshmallow import Schema, fields, ValidationError, validates, validate, post_load
+from models.event import CompositeEvent, Event
 from schemata import common_schemata
+from constants import constants as c
+import uuid
 
-# { zID: "z5214808", name: "Coffee Night", eventDate: "2019-11-19"}
 class EventCreationSchema(Schema):
-    pass
-    #zID = common_schemata.zid
-    #name = common_schemata.name
-    #eventStartDate = common_schemata.dateRequired
-    #eventEndDate = common_schemata.dateRequired
-    #eventStartTime = common_schemata.timeRequired
-    #eventEndTime = common_schemata.timeRequired
+    name = "Event Form"
+
+    name = common_schemata.nameRequired
+    start = common_schemata.dateRequired
+    end = common_schemata.dateRequired
+
+    # TODO photos = db.Column(db.ARRAY(db.Text), nullable=True)
+    description = fields.Str(default="No Description")
+    previewDescription = fields.Str(default="No Description")
+    location = fields.Str(required=True)
+
+    status = fields.Int(required=True, default=c.EVENT_STATUS_DEFAULT, validate=validate.Range(0, len(c.EVENT_STATUS)))
+    tags = fields.List(fields.Int(validate=validate.Range(0, len(c.EVENT_TAGS))), required=True)
+
+    hasQR = fields.Boolean(required=True)
+    hasAccessCode = fields.Boolean(required=True)
+    hasAdminSignin = fields.Boolean(required=True)
+
+    @post_load
+    def makeEvent(self, data, **kwargs):
+        data['id'] = uuid.uuid4().hex
+        return Event(**data)
     
 class RecurringEventSchema(Schema):
     pass

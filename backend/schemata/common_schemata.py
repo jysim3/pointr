@@ -31,9 +31,8 @@ passwordRequired.example = "password"
 
 booleanRequired = fields.Bool(required=True, error="Not a boolean")
 
-date = fields.Str(validate=validate.Regexp('^202[0-9]-[0-1][0-9]-[0-3][0-9]$'))
-
-dateRequired = fields.Str(required=True, validate=validate.Regexp('^202[0-9]-[0-1][0-9]-[0-3][0-9]$'))
+date = fields.AwareDateTime(error="DateTime Required")
+dateRequired = fields.AwareDateTime(required=True, error="DateTime Required")
 
 points = fields.Int(error='Enter a valid point value')
 
