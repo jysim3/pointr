@@ -206,3 +206,8 @@ class Event(db.Model):
     def getAllEventsPreviews():
         events = Event.query.all()
         return [event.getPreview() for event in events]
+
+    @staticmethod
+    def deleteEvent(event):
+        db.session.delete(event)
+        db.session.commit()

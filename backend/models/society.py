@@ -93,6 +93,11 @@ class Societies(db.Model):
         society = Societies.query.filter_by(id=id).first()
         return None if not society else society
 
+    @staticmethod
+    def getAllSocieties():
+        societies = Societies.query.all()
+        return societies
+
 
 class Staff(db.Model):
     __tablename__ = 'staff'

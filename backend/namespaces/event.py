@@ -341,3 +341,9 @@ class dummy5(Resource):
         'hasAdminSignin':False, 'compositeID':"123"})
         db.session.add(testBase1)
         db.session.commit()
+
+@api.route("/dummy6")
+class dummy6(Resource):
+    def post(self):
+        event = Event.findEvent('000')
+        Event.deleteEvent(event)
