@@ -42,6 +42,7 @@ def findWeek(date: datetime):
 def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None, location = None, description = None, \
     startTime = None, endTime = None, public = True, temporary = False, conn = None, curs = None):
 
+    '''
     if (checkUser(zID) == False):
         return "no such user"
     else:
@@ -50,6 +51,7 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
         results = curs.fetchone()
         if (results is None):
             return "not an admin"
+    '''
 
     if (checkEvent(eventID) != False):
         return "already exists"
@@ -64,16 +66,19 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
     eventDate = datetime.strptime(eventDate, "%Y-%m-%d").date()
     week = findWeek(eventDate)
     if (week == None):
-        return "Not a valid date for events"
+        #return "Not a valid date for events"
+        week = "T3W1"
 
     queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, \
         endTime, public, temporary) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, \
             (eventID, eventName, zID, eventDate, week, qrFlag, description, startTime, endTime, public, temporary,))
 
+    '''
     # NOTE: Currently, location defaults to UNSW Hall if one isnt provided
     queryStatus1 = callQuery("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", conn, curs, \
         ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
     if (queryStatus == False or queryStatus1 == False): return None
+    '''
     conn.commit()
     conn.close()
     return eventID, True

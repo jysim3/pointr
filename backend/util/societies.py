@@ -34,11 +34,14 @@ def createSocStaff(zID, societyID, role = 0, conn = None, curs = None):
 def createSociety(zID = None, societyName = None, isCollege = False, file = None, description = None, conn = None, curs = None):
     societyID = generateID(5).upper()
     results = callQuery("SELECT * FROM society WHERE societyName = (%s);", conn, curs, (societyName,))
-    if (results == False): return "failed"
+    if (results == False): 
+        conn.commit()
+        conn.close()
+        return "failed"
     result = curs.fetchone()
     if (result != None):
         conn.close()
-        return "exists already"
+        return "failed"
 
     if (file):
         uploadResult = uploadImages(file, societyID)
@@ -49,20 +52,27 @@ def createSociety(zID = None, societyName = None, isCollege = False, file = None
     else:
         results = callQuery("INSERT INTO society(societyID, societyName, isCollege, description) VALUES ((%s), (%s), (%s), (%s));", conn, curs, (societyID, societyName, isCollege, description,))
 
-    if (results == False): return "failed"
+    if (results == False):
+        conn.close()
+        return "failed"
     conn.commit()
     conn.close()
 
     # If we didn't specify a staff when creating the soc
+    '''
     if (zID == None):
         return societyID
+    '''
+    return societyID
 
     # Otherwise, we add a staff with the job title of "President"
+    '''
     createSocStaff(zID, societyID, 1)
     superAdmins = getSuperAdmins()
     for i in superAdmins:
         createSocStaff(i[0], societyID, 5)
     return societyID, 0
+    '''
 
 @makeConnection
 def isCollege(societyID, conn, curs):
