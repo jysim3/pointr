@@ -6,6 +6,7 @@ from schemata.event_schemata import AttendSchema, EventCreationSchema, EventPatc
 from util import auth_services
 from schemata.models import authModel, offsetModel
 from schemata.event_schemata import OffsetSchema, EventIDSchema
+from schemata.soc_schemata import SocietyIDSchema
 from pprint import pprint
 from app import db
 from models.event import Event
@@ -21,11 +22,15 @@ class EventRoute(Resource):
     ''')
     #@api.expect(toModel(api, EventCreationSchema))
     #@auth_services.check_authorization(level=2, allowSocStaff=True)
+    @validateArgsWith(SocietyIDSchema)
     @validateWith(EventCreationSchema)
-    def post(self, data):
+    def post(self, data, argsData):
         print("event.py" + str(data.start))
+        argsData.hosting.append(data)
         db.session.add(data)
+        db.session.add(argsData)
         db.session.commit()
+
         return jsonify({"status": "success", "data": [{"id": data.id}]})
     
     @api.doc(description='''

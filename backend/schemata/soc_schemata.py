@@ -60,3 +60,6 @@ class SocietyPatchSchema(Schema):
     type = fields.Int()
 
     tags = fields.List(fields.Int(validate=validate.Range(0, len(c.EVENT_TAGS))))
+
+class SocietyTagSchema(Schema):
+    tag = fields.Int()

@@ -1,4 +1,6 @@
 from app import db
+from datetime import datetime
+from pytz import timezone
 
 host = db.Table('hosted',
     db.Column('eventID', db.Text, db.ForeignKey('events.id'), primary_key=True),
@@ -102,6 +104,29 @@ class Societies(db.Model):
         """
         return [i.id for i in self.hosting]
 
+    def getUpcomingEvents(self):
+        """
+        Returns a list of objects of type events that this society has upcoming
+        """
+        currentTime = datetime.now(timezone('utc'))
+        events = []
+        for i in self.hosting:
+            if i.start > currentTime:
+                events.append(i)
+        return events
+
+    def getPastEvents(self):
+        """
+        Returns a list of objects of type events that this society has upcoming
+        """
+        currentTime = datetime.now(timezone('utc'))
+        events = []
+        for i in self.hosting:
+            if i.end < currentTime:
+                events.append(i)
+        return events
+
+
     @staticmethod
     def findSociety(id):
         society = Societies.query.filter_by(id=id).first()
@@ -112,6 +137,10 @@ class Societies(db.Model):
         societies = Societies.query.all()
         return societies
 
+    @staticmethod
+    def getSocietiesByTag(tag):
+        taggedSocs = Societies.query.filter(Societies.tags.any(tag)).all()
+        return taggedSocs
 
 class Staff(db.Model):
     __tablename__ = 'staff'

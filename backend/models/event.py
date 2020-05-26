@@ -192,6 +192,7 @@ class Event(db.Model):
 
     @staticmethod
     def getEventsByTag(tag):
+        # TODO
         return 0
 
     @staticmethod

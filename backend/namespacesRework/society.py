@@ -1,30 +1,14 @@
 from flask_restx import Namespace, Resource, abort
 from util.validation_services import validateArgsWith, validateWith
 from util.auth_services import checkAuthorization
-from schemata.soc_schemata import SocietyCreationScheme, SocietyIDSchema, SocietyPatchSchema
+from schemata.soc_schemata import *
 from schemata.models import authModel
+from constants import constants
 
 api = Namespace('soc', description='Society Attendance Services')
 
 from app import db
 from flask import jsonify
-
-"""
-    @api.doc(description='''
-        Get the event described by the given eventID
-        <h3>Authorization Details:</h3>
-        Only returns full list of attendees if super admin or admin of event
-    ''')
-    @api.param('eventID', 'The eventID of the event to get')
-    @api.expect(authModel)
-    # @auth_services.check_authorization(level=1)
-    @validateArgsWith(EventIDSchema)
-    def get(self, argsData):
-        if argsData:
-            return argsData.getEventJSON()
-        else:
-            abort(400, "Invalid eventID")
-"""
 
 @api.route('')
 class Society(Resource):
@@ -96,7 +80,7 @@ class Tags(Resource):
         Returns static list of all society tags possible
     ''')
     def get(self):
-        pass
+        return jsonify({"status": "success", "data": [constants.SOCIETY_TAGS]})
 
 @api.route('/tag')
 class Tag(Resource):
@@ -104,8 +88,13 @@ class Tag(Resource):
     @api.doc(description='''
         Returns preview of societies with the given tags (multiple tags are OR'd)
     ''')
-    def get(self):
-        pass
+    @validateArgsWith(SocietyTagSchema)
+    @api.expect(authModel)
+    #@checkAuthorization()
+    def get(self, argsData):
+        socs = Societies.getSocietiesByTag(argsData['tag'])
+        socs = [i.getSocietyJSON() for i in socs]
+        return jsonify({"status": "success", "data": socs})
 
 @api.route('/events/upcoming')
 class Upcoming(Resource):
@@ -113,8 +102,12 @@ class Upcoming(Resource):
     @api.doc(description='''
         Returns previews of upcoming events of society
     ''')
-    def get(self):
-        pass
+    @validateArgsWith(SocietyIDSchema)
+    @api.expect(authModel)
+    def get(self, argsData):
+        events = argsData.getUpcomingEvents()
+        events = [i.getPreview() for i in events]
+        return jsonify({"status": "success", "data": events})
 
 @api.route('/events/past')
 class Past(Resource):
@@ -122,8 +115,12 @@ class Past(Resource):
     @api.doc(description='''
         Returns previews of past events of society
     ''')
-    def get(self):
-        pass
+    @validateArgsWith(SocietyIDSchema)
+    @api.expect(authModel)
+    def get(self, argsData):
+        events = argsData.getPastEvents()
+        events = [i.getPreview() for i in events]
+        return jsonify({"status": "success", "data": events})
 
 @api.route('/admin')
 class Admin(Resource):
