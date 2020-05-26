@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <SelectSociety class="absolute-center" v-if="!socID"/>
+        <SelectSociety  v-if="!socID"/>
         <Loader v-else-if="loading" />
         <div v-else>
             <div class="wrapper header">

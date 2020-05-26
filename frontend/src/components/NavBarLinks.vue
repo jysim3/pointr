@@ -37,12 +37,12 @@ export default {
             userDashboardLinks: [
                 {
                 to: "/event",
-                text: "Mark attendance",
-                icon: "check"
+                text: "Events",
+                icon: "calendar_today"
                 },
                 {
                 text: "Societies",
-                to: "/societies",
+                to: "/society",
                 icon: "pages"
                 }
             ],
@@ -61,17 +61,11 @@ export default {
         }
     },
     computed: {
-        isAdmin() { return this.$store.getters['user/isAdmin']},
         navBarLinks() {
-        if (!this.isAuthenticated) {
+        if (!this.$store.getters.isAuthenticated) {
             return this.defaultLinks;
         }
-
-        if (this.isAdmin) {
-            return this.adminDashboardLinks;
-        } else {
-            return this.userDashboardLinks;
-        }
+          return this.userDashboardLinks;
         }
     }
 }

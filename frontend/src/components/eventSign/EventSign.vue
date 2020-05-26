@@ -8,12 +8,12 @@
       <Loader v-if="loading" />
       <div v-else class="form">
         <h2>Sign attendance</h2>
-        <EventCard :eventData="eventData" />
+        <EventCard :data="cardData" />
         <button
           v-if="!eventSignSuccess"
           class="btn btn-primary"
           type="submit"
-        >Sign as {{ this.$store.state.user.info.name }} ({{ this.$store.state.user.info.zID }})</button>
+        >Sign as {{ this.$store.state.user.name }} ({{ this.$store.state.user.zID }})</button>
         <div id="submit-message" v-else>
           <h3 v-if="eventAlreadySigned">Already signed this event!</h3>
           <h3 v-else>Success!</h3>
@@ -50,6 +50,18 @@ export default {
       eventSignSuccess: false,
       eventAlreadySigned: false
     };
+  },
+  computed: {
+    cardData() {
+      return {
+        title: this.eventData.name,
+        subtitle: this.eventData.societyName,
+        tags: [
+          this.eventData.eventDate, this.eventData.location
+        ],
+        _link: `/event/${this.eventData.eventID}`
+      }
+    }
   },
   created() {
     fetchAPI(`/api/event/?eventID=${this.eventID}`, "GET").then(j => {

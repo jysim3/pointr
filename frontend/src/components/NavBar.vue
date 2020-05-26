@@ -11,7 +11,7 @@
       <div class="routes-container">
         <NavBarLinks />
         <NavBarProfile v-if="this.isAuthenticated" />
-        <router-link v-else to="signIn" class="btn btn-primary btn--nav">Sign in</router-link>
+        <router-link v-else to="/signin" class="btn btn-primary btn--nav">Sign in</router-link>
       </div>
     </div>
   </div>
@@ -34,7 +34,7 @@ export default {
   },
   computed: {
     ...mapGetters("user", ["name", "zID"]),
-    isAuthenticated() { return this.$store.getters['user/isAuthenticated']},
+    isAuthenticated() { return this.$store.getters.isAuthenticated},
     isLoading() { return this.$store.getters['user/isLoading']},
     authBtnIcon: () => (this.isAuthenticated ? "exit_to_app" : "lock"),
   }
