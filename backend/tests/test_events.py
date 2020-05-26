@@ -3,8 +3,7 @@ from app import app
 from tests.utils import fetch
 from pprint import pprint
 from nose2.tools import params
-from datetime import datetime
-import pytz
+from datetime import datetime, timezone
 import json
 import dateutil.parser
 
@@ -31,8 +30,8 @@ class TestEvents(unittest.TestCase):
         c = app.test_client()
         initialData = {
             "name": "Gamersoc Minecraft Night",
-            "start": str(pytz.utc.localize(datetime.utcnow())),
-            "end": str(pytz.utc.localize(datetime.utcnow())),
+            "start": str(datetime.now(timezone.utc)),
+            "end": str(datetime.now(timezone.utc)),
 
             "location": "My place",
 
@@ -56,9 +55,12 @@ class TestEvents(unittest.TestCase):
         })
 
         returnedData = json.loads(response.data)
-        returnedData['start'] = str(dateutil.parser.parse(returnedData['start']))
+
         self.assertEqual(response.status_code, 200)
         self.assertDictContainsSubset(initialData, returnedData)
+
+    def testPatchEvent(self):
+        pass
 
     def testGet(self):
         c = app.test_client()
