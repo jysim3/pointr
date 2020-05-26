@@ -73,12 +73,10 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
         endTime, public, temporary) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, \
             (eventID, eventName, zID, eventDate, week, qrFlag, description, startTime, endTime, public, temporary,))
 
-    '''
     # NOTE: Currently, location defaults to UNSW Hall if one isnt provided
     queryStatus1 = callQuery("INSERT INTO host(location, society, eventID) VALUES ((%s), (%s), (%s));", conn, curs, \
         ("UNSW Hall" if location is None else location, societyID if societyID is not None else -1, eventID,))
     if (queryStatus == False or queryStatus1 == False): return None
-    '''
     conn.commit()
     conn.close()
     return eventID, True
