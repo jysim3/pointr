@@ -15,7 +15,6 @@ class Societies(db.Model):
     description = db.Column(db.Text, nullable=True)
     name = db.Column(db.Text, nullable=False, unique=True)
     
-    description = db.Column(db.Text, nullable=True)
     previewDescription = db.Column(db.Text, nullable=True)
 
     # TODO String Array
@@ -34,6 +33,21 @@ class Societies(db.Model):
         secondary=host,
         back_populates="hosting"
     )
+
+    def getPreview(self):
+        # TODO
+        return -1
+
+    def getSocietyJSON(self):
+        return {
+            'id': self.id,
+            'description': self.description,
+            'name': self.name,
+            'previewDescription': self.previewDescription,
+            'photo': self.photo,
+            'type': self.type,
+            'tags': self.tags
+        }
 
     def addStaff(self, user, role=0):
         if Staff.query.filter_by(user=user, society=self).first():

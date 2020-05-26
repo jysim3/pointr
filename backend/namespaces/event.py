@@ -275,7 +275,8 @@ class dummy(Resource):
         testBase0 = Event(id="000", name="mem", start=datetime.utcnow(),
         end=datetime.utcnow(), status=0, hasQR=False, hasAccessCode=False,
         hasAdminSignin=False, compositeID="123")
-        society.hosting.append(testBase0)
+        #society.hosting.append(testBase0)
+        testBase0.hosting.append(society)
 
         testBase1 = Event(id="001", name="mem", start=datetime.utcnow(),
         end=datetime.utcnow(), status=0, hasQR=False, hasAccessCode=False,

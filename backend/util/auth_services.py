@@ -226,7 +226,7 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
         return wrapper
     return decorator
 
-def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowSocAdmin=False):
+def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowSocAdmin=False, allowSocMember=False):
     def decorator(func):
         def wrapper(*args, **kwargs):
 
@@ -235,7 +235,10 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
 
             try:
                 args_data = AuthSchema().load(request.args)
-                data = AuthSchema().load(request.get_json())
+                try:
+                    data = AuthSchema().load(request.get_json())
+                except Exception as e:
+                    abort(400, "NO TOKEN")
                 token = TokenSchema().load({"token": request.headers.get('Authorization')})
             except ValidationError as err:
                 abort(400, err.messages)
@@ -263,30 +266,42 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
                 if 'zID' in data and 'zID' == token_data['zID']:
                     return func(token_data=token_data, authorized_data={'zID':data['zID']}, *args, **kwargs)
             
-            if allowSocAdmin:
-                if 'socID' in data:
-                    # We grant access if the token bearer is a socadmin
-                    society = Societies.query.filter_by(id=data['socID']).first()
-                    if not society: abort(403, "SocietyID doesn't exist")
+            if 'socID' in data:
+                society = Societies.query.filter_by(id=data['socID']).first()
+                if not society: abort(403, "SocietyID doesn't exist")
 
+                if allowSocMember:
+                    members = society.getMembersIDs()
+                    if token_data['zID'] not in members: abort(403, "You are not a member of this society")
+                    return func(token_data=token_data, *args, **kwargs)
+
+                if allowSocAdmin:
                     admins = society.getAdminsIDs()
                     if token_data['zID'] not in admins: abort(403, "You are not an admin of this society")
 
                     # TODO: Fix up the authorised data
                     return func(token_data=token_data, *args, **kwargs)
 
-                if 'eventID' in data:
-                    # We grant access if the token bearer can have control over eventID
-                    # I.e. if the user is an admin of the soc that's hosting this event
-                    # WE need this because socID and eventID dont always come
-                    event = Event.query.filter_by(id=data['eventID']).first()
-                    if not event: abort(403, "EventID doesn't exist")
+            if 'eventID' in data:
+                # We grant access if the token bearer can have control over eventID
+                # I.e. if the user is an admin of the soc that's hosting this event
+                # WE need this because socID and eventID dont always come
+                event = Event.query.filter_by(id=data['eventID']).first()
+                if not event: abort(403, "EventID doesn't exist")
 
-                    society = event.getHostSoc()
+                society = event.getHostSoc()
+                if allowSocMember:
+                    members = society.getMembersIDs()
+                    if token_data['zID'] not in members: abort(403, "You are not a member of this society")
+                    return func(token_data=token_data, *args, **kwargs)
+
+                if allowSocAdmin:
                     admins = society.getAdminsIDs()
                     if token_data['zID'] not in admins: abort(403, "You are not an admin of this society")
 
+                    # TODO: Fix up the authorised data
                     return func(token_data=token_data, *args, **kwargs)
+
 
             data = None
             if request.get_json() != None:

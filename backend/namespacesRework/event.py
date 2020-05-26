@@ -26,7 +26,7 @@ class EventRoute(Resource):
         print("event.py" + str(data.start))
         db.session.add(data)
         db.session.commit()
-        return jsonify({"id": data.id})
+        return jsonify({"status": "success", "data": [{"id": data.id}]})
     
     @api.doc(description='''
         Get the event described by the given eventID
@@ -50,11 +50,13 @@ class EventRoute(Resource):
     ''')
     @api.param('eventID', 'The eventID of the event to remove')
     @api.expect(authModel)
+    @validateArgsWith(EventIDSchema)
     @auth_services.check_authorization(level=2, allowSocStaff=True)
-    def delete(self, token_data):
-        #TODO
-        pass
-    
+    def delete(self, token_data, data):
+        Event.deleteEvent()
+
+        return jsonify({"status": "success"})
+
     @api.doc(description='''
         Updates the given event (eventID can be query or body) with the given data.
         <h3>Authorization Details:</h3>

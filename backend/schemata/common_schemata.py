@@ -21,7 +21,7 @@ eventID = fields.UUID()
 
 eventIDRequired = fields.UUID(required=True)
 
-societyID = fields.Str(error='Malformed societyID')
+societyID = fields.UUID(error='Malformed societyID')
 
 societyIDRequired = fields.Str(required=True, error='Malformed societyID')
 

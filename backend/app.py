@@ -26,6 +26,7 @@ from namespaces.auth import api as auth
 from namespacesRework.auth import api as authRework
 from namespacesRework.event import api as eventRework
 from namespacesRework.user import api as userRework
+from namespacesRework.society import api as socRework
 
 api.add_namespace(event, path='/api/event')
 api.add_namespace(stats, path='/api/stats')
@@ -36,6 +37,7 @@ api.add_namespace(auth, path='/api/auth')
 api.add_namespace(authRework, path='/api/rework/auth')
 api.add_namespace(eventRework, path='/api/rework/event')
 api.add_namespace(userRework, path='/api/rework/user')
+api.add_namespace(socRework, path='/api/rework/soc')
 
 if (app.config['ENV'] == 'development'):
     @app.route('/assets/images/<path:path>')
