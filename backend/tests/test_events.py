@@ -1,30 +1,12 @@
 import unittest
 from app import app
-from tests.utils import fetch
+from tests.utils import fetch, PointrTest
 from pprint import pprint
 from nose2.tools import params
 from datetime import datetime, timezone
 import json
 import dateutil.parser
-
-class PointrTest(unittest.TestCase):
-
-    def setUp(self):
-        app.config['SQLALCHEMY_ECHO'] = False
-        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-        pass
-
-    def tearDown(self):
-        pass
-
-    def assertOK(self, response):
-        try:
-            self.assertEqual(response.status_code, 200)
-        except AssertionError as e:
-            print("Response returned:")
-            print(str(response.data))
-            raise AssertionError
-
+import uuid
 
 class TestEvents(PointrTest):
 
@@ -36,14 +18,34 @@ class TestEvents(PointrTest):
     def tearDown(self):
         pass
 
-    @params({})
-    def test400(self, value):
-        c = app.test_client()
-        response = fetch(c, "POST", "/api/rework/event", data=value)
-        self.assertEqual(response.status_code, 400)
+    def postValidEvent(self, c):
 
-    def testUnawareDatetime(self):
-        pass
+        sentData = {
+            "name": "Gamersoc Minecraft Night",
+            "start": str(datetime.now(timezone.utc)),
+            "end": str(datetime.now(timezone.utc)),
+
+            "location": "My place",
+
+            "status": 0,
+            "tags": [0, 1],
+
+            "hasQR": True,
+            "hasAccessCode": True,
+            "hasAdminSignin": True
+        }
+
+        postResponse = fetch(c, "POST", "/api/rework/event", data=sentData)
+        self.assertOK(postResponse)
+
+        data = json.loads(postResponse.data)
+
+        return data['data']['id']
+
+    def getEvent(self, c, id):
+        return fetch(c, "GET", "/api/rework/event", queries={
+            "eventID": id
+        })
 
     def testCreateEvent(self):
         c = app.test_client()
@@ -68,7 +70,8 @@ class TestEvents(PointrTest):
         self.assertOK(postResponse)
 
         data = json.loads(postResponse.data)
-        id = data['id']
+        pprint(data)
+        id = data['data']['id']
 
         # GET the data
         getResponse = fetch(c, "GET", "/api/rework/event", queries={
@@ -104,7 +107,7 @@ class TestEvents(PointrTest):
         self.assertOK(postResponse)
 
         data = json.loads(postResponse.data)
-        id = data['id']
+        id = data['data']['id']
 
         # send patch
         patchData = {
@@ -132,3 +135,26 @@ class TestEvents(PointrTest):
 
         # Whatever the get returned should contain the patch
         self.assertDictContainsSubset(patchData, returnedData)
+
+    def testInvalidEventID(self):
+        c = app.test_client()
+
+        id = self.postValidEvent(c)
+
+        response1 = self.getEvent(c, "1")
+        self.assert400(response1)
+        
+        response1Data = json.loads(response1.data)
+        print(response1Data)
+        self.assertEqual(response1Data, {"message": {"eventID": ["Not a valid UUID."]}})
+
+        response2 = self.getEvent(c, uuid.uuid4().hex)
+        self.assert400(response2)
+
+        response2Data = json.loads(response2.data)
+
+        print(response2Data)
+
+        self.assertEqual(response2Data, {"message": {"eventID": ["That Event ID does not exist"]}})
+
+

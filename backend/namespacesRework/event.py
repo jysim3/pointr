@@ -24,14 +24,22 @@ class EventRoute(Resource):
     #@auth_services.check_authorization(level=2, allowSocStaff=True)
     @validateArgsWith(SocietyIDSchema)
     @validateWith(EventCreationSchema)
+<<<<<<< Updated upstream
     def post(self, data, argsData):
         print("event.py" + str(data.start))
         argsData.hosting.append(data)
+=======
+    def post(self, data):
+>>>>>>> Stashed changes
         db.session.add(data)
         db.session.add(argsData)
         db.session.commit()
+<<<<<<< Updated upstream
 
         return jsonify({"status": "success", "data": [{"id": data.id}]})
+=======
+        return jsonify({"status": "success", "data": {"id": data.id}})
+>>>>>>> Stashed changes
     
     @api.doc(description='''
         Get the event described by the given eventID
@@ -43,10 +51,7 @@ class EventRoute(Resource):
     # @auth_services.check_authorization(level=1)
     @validateArgsWith(EventIDSchema)
     def get(self, argsData):
-        if argsData:
-            return argsData.getEventJSON()
-        else:
-            abort(400, "Invalid eventID")
+        return argsData.getEventJSON()
     
     @api.doc(description='''
         Delete the event described by the given eventID. 
@@ -57,8 +62,9 @@ class EventRoute(Resource):
     @api.expect(authModel)
     @validateArgsWith(EventIDSchema)
     @auth_services.check_authorization(level=2, allowSocStaff=True)
-    def delete(self, token_data, data):
-        Event.deleteEvent()
+    def delete(self, token_data, data, argsData):
+        
+        Event.deleteEvent(argsData)
 
         return jsonify({"status": "success"})
 
@@ -73,17 +79,14 @@ class EventRoute(Resource):
     @validateWith(EventPatchSchema)
     # @auth_services.check_authorization(level=2, allowSocStaff=True)
     def patch(self, argsData, data):
-        if argsData:
 
-            for key,value in data.items():
-                setattr(argsData,key,value)
+        for key,value in data.items():
+            setattr(argsData,key,value)
 
-            db.session.add(argsData)
-            db.session.commit()
+        db.session.add(argsData)
+        db.session.commit()
 
-            return argsData.getEventJSON()
-        else:
-            abort(400, "Invalid eventID")
+        return argsData.getEventJSON()
         
 
 @api.route('/test')

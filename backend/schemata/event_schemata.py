@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields, ValidationError, validates, validate, post_load
 from models.event import CompositeEvent, Event
+from flask import abort
 from schemata import common_schemata
 from constants import constants as c
 import uuid
@@ -26,7 +27,6 @@ class EventCreationSchema(Schema):
     @post_load
     def makeEvent(self, data, **kwargs):
         data['id'] = uuid.uuid4().hex
-        print(data['id'])
         return Event(**data)
 
     @validates('tags')
@@ -64,8 +64,13 @@ class EventIDSchema(Schema):
 
     @post_load
     def makeEvent(self, data, **kwargs):
+        
         data['eventID'] = data['eventID'].hex
-        return Event.getEvent(data['eventID'])
+        event = Event.getEvent(data['eventID'])
+
+        if not event:
+            abort(400, {'eventID': ['That Event ID does not exist']})
+        return event
     
 class AttendSchema(Schema):
     eventID = common_schemata.eventIDRequired
