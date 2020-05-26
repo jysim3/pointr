@@ -23,6 +23,7 @@ class EventRoute(Resource):
     #@auth_services.check_authorization(level=2, allowSocStaff=True)
     @validateWith(EventCreationSchema)
     def post(self, data):
+        print("event.py" + str(data.start))
         db.session.add(data)
         db.session.commit()
         return jsonify({"id": data.id})
@@ -77,6 +78,24 @@ class EventRoute(Resource):
         else:
             abort(400, "Invalid eventID")
         
+
+@api.route('/test')
+class Test(Resource):
+
+    def post(self):
+        return {"method": "post"}
+
+    def get(self):
+        return {"method": "get"}
+
+    def patch(self):
+        return {"method": "patch"}
+
+    def delete(self):
+        return {"method": "delete"}
+    
+    def put(self):
+        return {"method": "put"}
 
 @api.route('/attend')
 class AttendRoute(Resource):

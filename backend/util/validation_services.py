@@ -24,7 +24,7 @@ def validateWith(schema):
         def wrapper(*args, **kwargs):
 
             if not request.json:
-                abort(400, 'Malformed Request')
+                abort(400, 'Request is not JSON')
             
             # Validate data
             try:
