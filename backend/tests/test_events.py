@@ -7,7 +7,26 @@ from datetime import datetime, timezone
 import json
 import dateutil.parser
 
-class TestEvents(unittest.TestCase):
+class PointrTest(unittest.TestCase):
+
+    def setUp(self):
+        app.config['SQLALCHEMY_ECHO'] = False
+        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        pass
+
+    def tearDown(self):
+        pass
+
+    def assertOK(self, response):
+        try:
+            self.assertEqual(response.status_code, 200)
+        except AssertionError as e:
+            print("Response returned:")
+            print(str(response.data))
+            raise AssertionError
+
+
+class TestEvents(PointrTest):
 
     def setUp(self):
         app.config['SQLALCHEMY_ECHO'] = False
@@ -28,7 +47,9 @@ class TestEvents(unittest.TestCase):
 
     def testCreateEvent(self):
         c = app.test_client()
-        initialData = {
+
+        # POST data
+        sentData = {
             "name": "Gamersoc Minecraft Night",
             "start": str(datetime.now(timezone.utc)),
             "end": str(datetime.now(timezone.utc)),
@@ -43,26 +64,71 @@ class TestEvents(unittest.TestCase):
             "hasAdminSignin": True
         }
 
-        response = fetch(c, "POST", "/api/rework/event", data=initialData)
+        postResponse = fetch(c, "POST", "/api/rework/event", data=sentData)
+        self.assertOK(postResponse)
 
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.data)
+        data = json.loads(postResponse.data)
         id = data['id']
 
-        response = fetch(c, "GET", "/api/rework/event", queries={
+        # GET the data
+        getResponse = fetch(c, "GET", "/api/rework/event", queries={
+            "eventID": id
+        })
+        self.assertOK(getResponse)
+
+        returnedData = json.loads(getResponse.data)
+        
+        # Check that the returned data contains the sent data (as some fields were left out)
+        self.assertDictContainsSubset(sentData, returnedData)
+
+    def testPatchEvent(self):
+        c = app.test_client()
+
+        # send original data
+        sentData = {
+            "name": "Gamersoc Minecraft Night",
+            "start": str(datetime.now(timezone.utc)),
+            "end": str(datetime.now(timezone.utc)),
+
+            "location": "My place",
+
+            "status": 0,
+            "tags": [0, 1],
+
+            "hasQR": True,
+            "hasAccessCode": True,
+            "hasAdminSignin": True
+        }
+
+        postResponse = fetch(c, "POST", "/api/rework/event", data=sentData)
+        self.assertOK(postResponse)
+
+        data = json.loads(postResponse.data)
+        id = data['id']
+
+        # send patch
+        patchData = {
+            "name": "Gamersoc Minecraft Night: The reckoning",
+            "start": str(datetime.now(timezone.utc)),
+            "end": str(datetime.now(timezone.utc))
+        }
+        patchResponse = fetch(c, "PATCH", "/api/rework/event", data=patchData, queries={
             "eventID": id
         })
 
-        returnedData = json.loads(response.data)
+        self.assertOK(patchResponse)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertDictContainsSubset(initialData, returnedData)
+        patchReturnedData = json.loads(patchResponse.data)
+        
+        # get the event now
+        getResponse = fetch(c, "GET", "/api/rework/event", queries={
+            "eventID": id
+        })
+        self.assertOK(getResponse)
+        returnedData = json.loads(getResponse.data)
 
-    def testPatchEvent(self):
-        pass
+        # Whatever the patch returned and the get returned should be the same
+        self.assertDictEqual(patchReturnedData, returnedData)
 
-    def testGet(self):
-        c = app.test_client()
-        response = fetch(c, "GET", "/api/rework/event/test")
-        pprint(response.data)
+        # Whatever the get returned should contain the patch
+        self.assertDictContainsSubset(patchData, returnedData)
