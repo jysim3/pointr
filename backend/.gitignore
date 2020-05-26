@@ -8,7 +8,6 @@ filesChanged
 UNSW-Hall_zID.csv
 zIDList.csv
 csvFiles
-test*
 csvFiles/*
 .vscode
 .vscoed/*
