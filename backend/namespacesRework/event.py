@@ -24,13 +24,12 @@ class EventRoute(Resource):
     #@auth_services.check_authorization(level=2, allowSocStaff=True)
     @validateArgsWith(SocietyIDSchema)
     @validateWith(EventCreationSchema)
-    def post(self, data, argsData):
-        print("event.py" + str(data.start))
-        argsData.hosting.append(data)
+    def post(self, data):
         db.session.add(data)
         db.session.add(argsData)
         db.session.commit()
-        return jsonify({"status": "success", "data": {"id": data.id}})
+
+        return jsonify({"status": "success", "data": [{"id": data.id}]})
     
     @api.doc(description='''
         Get the event described by the given eventID
