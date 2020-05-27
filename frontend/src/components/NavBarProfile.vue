@@ -1,19 +1,26 @@
 <template>
-<div class="routes-more-wrapper">
+<div class="routes-more-wrapper" 
+              ref="routes-more"
+              @blur="toggleMore(false)"
+>
           <i
-            @click="toggleMore"
+            @click="toggleMore(false)"
             class="material-icons routes-display-more"
-          >{{ displayMore ? 'expand_less' : 'expand_more' }}</i>
+            v-if="displayMore"
+          >expand_less</i>
+          <i
+            @click="toggleMore(true)"
+            class="material-icons routes-display-more"
+            v-else
+          >expand_more</i>
 
           <transition name="slide-fade">
             <div
-              ref="routes-more"
               class="routes-more"
-              v-if="displayMore"
-              @focusout="toggleMore"
+              v-show="displayMore"
               tabindex="0"
             >
-              <router-link :to="'/user/' + this.zID" class="routes-more-profile">
+              <router-link :to="'/user/' + this.zID" @click="toggleMore(false)" class="routes-more-profile">
                 <img
                   src="https://st3.depositphotos.com/6672868/14376/v/450/depositphotos_143767633-stock-illustration-user-profile-group.jpg"
                 />
@@ -23,8 +30,8 @@
                 </div>
               </router-link>
               <hr />
-              <div class="routes-more-link">Profile</div>
-              <router-link :to="{name:'changePassword'}" class="routes-more-link">Change Password</router-link>
+              <router-link @click="toggleMore(false)" :to="'/user/' + this.zID" class="routes-more-link">Profile</router-link>
+              <router-link @click="toggleMore(false)" :to="{name:'changePassword'}" class="routes-more-link">Change Password</router-link>
               <div @click="signOut" class="routes-more-link">Log out</div>
             </div>
           </transition>
@@ -48,13 +55,14 @@ export default {
             this.$router.go('/')
           })
         },
-        toggleMore() {
-        this.displayMore = !this.displayMore;
-        this.$nextTick(() => {
-            console.log(this.displayMore); //eslint-disable-line
-            if (this.displayMore) this.$refs["routes-more"].focus();
-        });
-        }
+        toggleMore(b){
+          this.displayMore = b
+          this.$nextTick(() => {
+            if (this.displayMore) {
+              this.$refs["routes-more"].focus();
+            }
+          })
+        },
     }
     
 }

@@ -10,7 +10,7 @@ const store = new Vuex.Store({
     status: 'success'
   },
   mutations: {
-    // loading: (state, status) => status ? state.status = 'loading' : state.status = 'success',
+    loading: (state, status) => status ? state.status = 'loading' : state.status = 'success',
   },
   getters: {
     isAuthenticated: state => !!state.auth.token,

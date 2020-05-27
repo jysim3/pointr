@@ -81,6 +81,15 @@ a.link:hover {
   border: 0;
 }
 
+/* general */
+.d-flex {
+  display: flex;
+}
+.container {
+  width: 80%;
+  margin: auto;
+}
+
 .card {
   background-color: white;
   padding: 3rem 6rem;

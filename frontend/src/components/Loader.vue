@@ -1,5 +1,8 @@
 <template>
-    <div class="loader"></div>
+    <div class="loader-wrap">
+      <div class="loader"></div>
+
+    </div>
 </template>
 <script>
 export default {
@@ -7,17 +10,34 @@ export default {
 }
 </script>
 <style scoped>
+.loader-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .loader {
-  border: 16px solid #f3f3f3; /* Light grey */
-  border-top: 16px solid #3498db; /* Blue */
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+}
+.loader:after {
+  content: " ";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
   border-radius: 50%;
-  width: 120px;
-  height: 120px;
-  animation: spin 2s linear infinite;
+  border: 6px solid #fff;
+  border-color: var(--c-primary) transparent var(--c-primary) transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
 </style>

@@ -1,19 +1,26 @@
 <template>
   <div id="app">
+    <Loader v-show="isLoading" />
+    <div v-show="!isLoading">
     <NavBar />
     <transition name="fade" mode="out-in">
       <router-view />
     </transition>
+    </div>
   </div>
 </template>
 
 <script>
 import NavBar from "@/components/NavBar.vue";
+import Loader from "@/components/Loader.vue";
 
 export default {
   name: "app",
   components: {
-    NavBar
+    NavBar, Loader
+  },
+  computed: {
+    isLoading () { return this.$store.getters.isLoading},
   }
 };
 </script>
