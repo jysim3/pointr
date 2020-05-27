@@ -5,12 +5,17 @@ from constants.constants import SOCIETY_TYPE
 from uuid import uuid4
 from models.society import Societies
 from flask import abort
+from models.user import Users
 
 class ZIDSchema(Schema):
     zID = common_schemata.zidRequired
-    
+
     class Meta:
         unknown = EXCLUDE
+
+    @post_load
+    def makeUser(self, data, **kwargs):
+        return Users.findUser(data['zID'])
     
 class EventIDSchema(Schema):
     eventID = common_schemata.eventIDRequired

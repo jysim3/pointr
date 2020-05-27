@@ -97,16 +97,43 @@ class Users(db.Model):
         interested in will send them notifications (probably, to be decided on the exact
         functionality)
         """
-        # TODO:
-        pass
+        self.interested.append(event)
+
+        db.session.add(self)
+        db.session.commit()
 
     def addFollow(self, society):
         """
         Allows an user to follow a particular society, events hosted by socs they follow
-        will be shown to them automatically
+        will be shown to them automatically (NOTE: NOT IMPLEMENTED FOR THIS VERSION)
         """
         # TODO:
         pass
+
+    def getUpcoming(self, show=5):
+        """
+        Returns all the events that this user's joined societies that are being hosted
+        in the future, default to 5 events
+        """
+        events = []
+        for i in self.staff:
+            events.extend(i.society.getUpcomingEvents())
+
+        events = sorted(events, key=lambda event: event.start)
+        return events[:show]
+
+    def getUpcomingJSONs(self, show=5):
+        """
+        Same as getUpcoming() except that we return event preview jsons instead
+        of event objects
+        """
+        events = []
+        for i in self.staff:
+            events.extend(i.society.getUpcomingEvents())
+
+        events = sorted(events, key=lambda event: event.start)
+
+        return [i.getPreview() for i in events]
 
     @staticmethod
     def findUser(zID):

@@ -114,13 +114,10 @@ class AttendRoute(Resource):
     @validateArgsWith(EventIDSchema)
     @checkAuthorization(allowSocMember=True)
     def post(self, token_data, argsData):
-        user = Users.query.filter_by(zID=token_data['zID']).first()
-        newAttend = Attendance(time=datetime.now(timezone('utc')))
-        newAttend.user = user
-        newAttend.event = argsData
-
-        db.session.add(newAttend)
-        db.session.commit()
+        user = Users.findUser(token_data['zID'])
+        status = argsData.addAttendance(user)
+        if status:
+            abort(405, status)
 
         return jsonify({"status": "success"})
 
@@ -130,11 +127,12 @@ class AttendRoute(Resource):
     @api.expect(authModel)
     @validateArgsWith(ZIDSchema)
     @validateWith(EventIDSchema)
-    @auth_services.check_authorization(allowSocStaff=True)
-    def delete(self, token_data, argsData, data):
-        # TODO: Abstract this away into post_load functions
-        user = Users.query.filter_by(zID=argsData['zID']).first()
-        data.deleteAttendance(user)
+    #@checkAuthorization(allowSocAdmin=True)
+    #def delete(self, token_data, argsData, data):
+    def delete(self, argsData, data):
+        status = data.deleteAttendance(argsData)
+        if status:
+            abort(405, status)
 
         return jsonify({"status": "success"})
 
@@ -168,7 +166,10 @@ class UpcomingRoute(Resource):
     @api.expect(authModel, toQuery(api, OffsetSchema))
     @auth_services.check_authorization(level=1)
     def get(self, token_data):
-        pass
+        user = Users.findUser(token_data['zID'])
+        events = user.getUpcomingJSONs()
+
+        return jsonify({'status': 'success', 'data': events})
 
 @api.route('/composite')
 class CompositeRoute(Resource):
@@ -182,14 +183,6 @@ class CompositeRoute(Resource):
     def post(self):
         pass
 
-    @api.doc(description='''
-        Requests that the event specified as subEvent becomes a event within the event specfied by eventID
-        <h3>Authorization:</h3>
-        The token bearer must be an admin of eventID
-    ''')
-    @api.expect(authModel)
-    def get(self):
-        pass
 
     @api.doc(description='''
         Accepts that the event specified as compositeEvent is now the container for eventID.

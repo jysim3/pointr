@@ -229,6 +229,7 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
 def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowSuperAdmin=False, allowSocAdmin=False, allowSocMember=False):
     def decorator(func):
         def wrapper(*args, **kwargs):
+            print("AJSDHASKJDHASKDSJ")
 
             args_data = {}
             data = {}
@@ -283,10 +284,12 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
                     admins = society.getAdminsIDs()
                     if token_data['zID'] not in admins: abort(403, "You are not an admin of this society")
 
-                    # TODO: Fix up the authorised data
                     return func(token_data=token_data, *args, **kwargs)
 
             if 'eventID' in data:
+                print("""
+                ENTERED HERE
+                """)
                 # We grant access if the token bearer can have control over eventID
                 # I.e. if the user is an admin of the soc that's hosting this event
                 # WE need this because socID and eventID dont always come
@@ -299,13 +302,13 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
                 if allowSocMember:
                     members = society[0].getMembersIDs()
                     if token_data['zID'] not in members: abort(403, "You are not a member of this society")
+
                     return func(token_data=token_data, *args, **kwargs)
 
                 if allowSocAdmin:
                     admins = society[0].getAdminsIDs()
                     if token_data['zID'] not in admins: abort(403, "You are not an admin of this society")
 
-                    # TODO: Fix up the authorised data
                     return func(token_data=token_data, *args, **kwargs)
 
 

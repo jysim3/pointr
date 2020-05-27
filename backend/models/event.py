@@ -158,9 +158,11 @@ class Event(db.Model):
         db.session.commit()
 
     def deleteAttendance(self, student):
-        self.attendees.remove(student)
+        attend = Attendance.query.filter_by(user=student, event=self).first()
+        if not attend:
+            return "This user has not attended this event"
 
-        db.session.add(self)
+        db.session.delete(attend)
         db.session.commit()
 
     def addInterested(self, student):
