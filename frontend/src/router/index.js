@@ -59,40 +59,29 @@ const router = new VueRouter({
 });
 
 // For more info regarding this visit:
-// https://www.digitalocean.com/community/tutorials/how-to-set-up-vue-js-authentication-and-route-handling-using-vue-router
+// https://scotch.io/tutorials/handling-authentication-in-vue-using-vuex
 router.beforeResolve(async (to, from, next) => {
-  // TODO: what if user goes sign in -> sign up from link in sign in form, then they may not end up at original, intended path
-  // TODO: signed in user should not be able to go to sign in or sign up
   // EXAMPLE: user with no account scans QR code on Event page
-  await store.dispatch('user/initAuth');
-  
-  // Prevents normal users going on prevent page etc.
-  // TODO: need to decide how to handle requiresAdmin for event pages
-  if (to.matched.some(record => record.meta.requiresAdmin)) {
-    if (!store.state.user.isAdmin) {
-      next({ name: 'home' })
-    } else {
-      next()
+  if (store.getters.isAuthenticated) {
+    if (store.getters['user/status'] === null) {
+      store.dispatch('user/getUserInfo')
     }
   }
-
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!store.getters.user.isAuthenticated) {
+    if (!store.getters.isAuthenticated) {
       next({
         path: '/signin',
-        query: {redirect: to.fullPath}, // https://stackoverflow.com/questions/45856929/redirect-to-requested-page-after-login-using-vue-router
-        params: { nextUrl: to.fullPath } //FIXME: needs to actually work
+        query: {redirect: to.fullPath}, 
       });
-    } else if (store.state.user.info.permission < 1) {
-      // If user is not activated yet ask them to activate account
-      next({ path: '/activate' });
-    } else {
-      next();
-    }
-  } else {
-    next();
+      return 
+    } 
+    // else if (store.state.user.info.permission < 1) {
+    //   // If user is not activated yet ask them to activate account
+    //   next({ path: '/activate' });
+    //   return
+    // }
   }
-  store.commit('user/setIsLoading', false);
+  next();
 });
 
 

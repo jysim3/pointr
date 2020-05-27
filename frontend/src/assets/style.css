@@ -17,6 +17,9 @@ html {
   --font-stack: 'Public Sans', Arial, Helvetica, sans-serif;
   --border-radius: 5px;
 }
+.primary {
+  color: var(--c-primary)
+}
 
 body {
   font-family: var(--font-stack);

@@ -24,7 +24,6 @@
 
 <script>
 import { mapActions } from 'vuex';
-import { fetchAPI } from "@/util";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import Input from "@/components/input/Input.vue";
@@ -50,23 +49,15 @@ export default {
     ...mapActions('user', [
       'authenticateUser'
     ]),
-    async submitSignInForm() {
-      try {
-        const response = await fetchAPI("/api/auth/login", "POST", {
-          zID: this.zID,
-          password: this.password
-        })
-
-        this.$router.push(this.$route.query.redirect || { name: 'home' });
-        this.authenticateUser(response.data.token);
-      } catch(error) {
-        const errorResponse = error.response;
-        if (errorResponse.status === 403) {
-          this.error = "Please check your sign in credentials"
-        } else {
-          this.error = "There was an error when trying to sign you in."
-        }
+    submitSignInForm() {
+      const data = {
+        zID: this.zID,
+        password: this.password
       }
+      this.$store.dispatch('auth/login', data)
+      .then(() => {
+        this.$router.push('/')
+      })
     }
   }
 };

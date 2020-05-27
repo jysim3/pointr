@@ -42,7 +42,12 @@ export default {
         name () { return this.$store.getters['user/name'] }
     },
     methods: {
-        signOut() { this.$store.dispatch('user/signOut')},
+        signOut() { 
+          this.$store.dispatch('auth/logout')
+          .then(() => {
+            this.$router.go('/')
+          })
+        },
         toggleMore() {
         this.displayMore = !this.displayMore;
         this.$nextTick(() => {

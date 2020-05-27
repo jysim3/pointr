@@ -18,6 +18,7 @@
 import Loader from "@/components/Loader.vue";
 import DashboardEventView from "@/components/EventList.vue";
 import EventEnterCode from "@/components/eventSign/EventEnterCode.vue";
+import axios from 'axios';
 export default {
   name: "DashboardUser",
   components: {
@@ -39,6 +40,17 @@ export default {
       }
     };
   },
+  mounted() {
+    axios({
+      url:'/api/event/getAllEvents'
+    }).then(r => {
+      this.allEvents.data = r.data
+    })
+    .finally(() => {
+      this.allEvents.isLoading = false
+
+    })
+  }
 };
 </script>
 

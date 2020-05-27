@@ -16,12 +16,11 @@
 
         <FormError v-if="eventData.length === 0" msg="Seems like there is no events at the moment"/> 
         <div v-else class="event-cards " :class="viewAllData ? 'viewAllCards' : ''">
-          <EventCard v-for="(event, index) in showEventData" :key="index" :eventData="event"></EventCard>
+          <EventCard v-for="(event, index) in formattedCardData" :key="index" :data="event"></EventCard>
         </div>
 
       </div>
       <div class="event-table" v-else-if="listStyle === 'table'">
-
         <div v-if="eventViewTitle" class="event-view-title">
           <h3 class="event-view-title-text" v-once>{{ eventViewTitle }}</h3>
         </div>
@@ -81,6 +80,16 @@ export default {
           return i < 3
         })
       }
+    },
+    formattedCardData() {
+      return this.eventData.map(v => ({
+        title: v.name,
+        subtitle: v.societyName,
+        tags: [
+          v.eventDate, v.location
+        ],
+        _link: `/event/${v.eventID}`
+      }))
     },
     formattedEventData() {
       return this.eventData.map(v => ({

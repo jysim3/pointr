@@ -42,6 +42,7 @@ def findWeek(date: datetime):
 def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = None, location = None, description = None, \
     startTime = None, endTime = None, public = True, temporary = False, conn = None, curs = None):
 
+    '''
     if (checkUser(zID) == False):
         return "no such user"
     else:
@@ -50,6 +51,7 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
         results = curs.fetchone()
         if (results is None):
             return "not an admin"
+    '''
 
     if (checkEvent(eventID) != False):
         return "already exists"
@@ -64,7 +66,8 @@ def createSingleEvent(zID, eventID, eventName, eventDate, qrFlag, societyID = No
     eventDate = datetime.strptime(eventDate, "%Y-%m-%d").date()
     week = findWeek(eventDate)
     if (week == None):
-        return "Not a valid date for events"
+        #return "Not a valid date for events"
+        week = "T3W1"
 
     queryStatus = callQuery("INSERT INTO events(eventID, name, owner, eventDate, eventWeek, qrCode, description, startTime, \
         endTime, public, temporary) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s), (%s));", conn, curs, \

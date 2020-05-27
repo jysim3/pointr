@@ -1,19 +1,20 @@
 <template>
-  <div @click="goToEvent" :class="{ 'event-card-clickable': isAdminOfEvent }" class="event-card">
+  <div @click="clickedCard" :class="{ 'event-card-clickable': data._link !== undefined }" class="event-card">
     <!-- TODO: going to an event should only be available to admin? -->
-    <!-- <router-link :to="`/event/${eventData.eventID}`">
-      <h3>{{ eventData.eventName }}</h3>
-      <p class="event-info">by {{ eventData.societyName }} @ <b>{{ eventData.location }}</b></p>
-      <p class="event-info">On {{ eventData.eventDate }}</p>
+    <!-- <router-link :to="`/event/${data.eventID}`">
+      <h3>{{ data.eventName }}</h3>
+      <p class="event-info">by {{ data.societyName }} @ <b>{{ data.location }}</b></p>
+      <p class="event-info">On {{ data.eventDate }}</p>
     </router-link> -->
     <!-- TODO: check backend, eventName/name doesn't seem to be consistent depending on request -->
     <!-- TODO: if  -->
-    <div  class="when-where-div">
-      <p class="when">{{ eventData.eventDate }}</p>
-      <p class="where">@ {{ eventData.location }}</p>
+    <div  class="tags" v-if="data.tags">
+      <div class="primary">{{ data.tags[0] }}</div>
+
+      <div>@ {{ data.tags[1] }}</div>
     </div>
-    <h3 class="name">{{ eventData.name }}</h3>
-    <p class="society">{{ eventData.societyName }}</p>
+    <h3 class="title">{{ data.title }}</h3>
+    <p class="subtitle">{{ data.subtitle }}</p>
   </div>
 </template>
 
@@ -21,22 +22,15 @@
 export default {
   name: "EventCard",
   props: {
-    eventData: {
+    data: {
       type: Object,
       required: true
     }
   },
-  computed: {
-    isAdminOfEvent() {
-      // TODO: actually check based on event, this depends on whether dashboard shows events attended by an admin
-      return this.$store.state.user.isAdmin;
-    }
-  },
   methods: {
-    goToEvent() {
-      if (this.isAdminOfEvent) {
-        const eventID = this.eventData.eventID;
-        this.$router.push({ name: 'event', params: { eventID } });
+    clickedCard() {
+      if (this.data._link) {
+        this.$router.push(this.data._link);
       }
     }
   }
@@ -79,26 +73,22 @@ export default {
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-.when-where-div {
+.tags {
   margin-bottom: 1rem;
   display: flex;
   flex-wrap: wrap;
 }
 
-.when {
-  color: var(--c-primary);
-}
-
-.where {
+.tags > *:nth-child(n+2) {
   padding-left: 0.5rem;
 }
 
-.name {
+.title {
   color: black;
   margin-bottom: 0.25rem;
 }
 
-.society {
+.subtitle {
   font-size: 1.1rem;
 }
 
