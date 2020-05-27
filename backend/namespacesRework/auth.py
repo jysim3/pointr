@@ -7,6 +7,11 @@ from util import auth_services
 
 api = Namespace('rework/auth', description='Authentication & Authorization Services Rework')
 
+from app import db
+from models.user import Users
+from util.auth_services import generateLoginToken, generateActivationToken
+from util.emailPointr import sendActivationEmail
+
 @api.route('/register')
 class Register(Resource):
     
@@ -17,7 +22,19 @@ class Register(Resource):
     @api.expect(toModel(api, RegisterDetailsSchema))
     @validateWith(RegisterDetailsSchema)
     def post(self, data):
-        pass
+        if Users.query.filter_by(zID=data.zID).first():
+            abort(403, "Invalid Parametres, zID already exists")
+
+        token = generateActivationToken(data.zID)
+        if sendActivationEmail(token, data.zID) != "success":
+            abort(500, "Internal Server Error, Email Service Not Working")
+        print(token)
+
+        db.session.add(data)
+        db.session.commit()
+        #z5214808
+
+        return jsonify({"status": "success"})
 
 @api.route('/login')
 class Login(Resource):
@@ -28,7 +45,14 @@ class Login(Resource):
     @api.expect(toModel(api, LoginDetailsSchema))
     @validateWith(LoginDetailsSchema)
     def post(self, data):
-        pass
+        if not data:
+            abort(403, "Invalid Parametres, zID or password incorrect")
+        elif data.activated == False:
+            abort(405, "Account Not Activated")
+
+        token = generateLoginToken(data)
+
+        return jsonify({"status": "success", "data": {"token": token}})
 
 @api.route('/activate')
 class Activate(Resource):
@@ -40,7 +64,15 @@ class Activate(Resource):
     @api.expect(authModel)
     @auth_services.check_authorization(activationRequired=False, level=0)
     def post(self, token_data):
-        pass
+        user = Users.query.filter_by(zID=token_data['zID']).first()
+        if not user:
+            abort(403, "Invalid Token, how did you know our server secret key?")
+
+        user.activated = True
+        db.session.add(user)
+        db.session.commit()
+
+        return jsonify({"status": "success"})
 
 @api.route('/forgot')
 class Forgot(Resource):
@@ -92,6 +124,12 @@ class Authorize(Resource):
     @auth_services.check_authorization(level=1)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
+
+
+
+
+
+
 
 # Validation functions To be removed
 @api.route('/validateSelf')

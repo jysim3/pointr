@@ -81,7 +81,7 @@ def generateLoginToken(user):
         {
             'exp': datetime.utcnow() + timedelta(seconds=token_exp),
             'iat': datetime.utcnow(),
-            'zID': user.zid,
+            'zID': user.zID,
             'permission': permission,
             'activation': user.activated,
             'type': 'normal'

@@ -26,31 +26,38 @@ class PointrSchema(Schema):
 
 class RegisterDetailsSchema(PointrSchema):
     name = "Registration Details"
+
     zID = common_schemata.zidRequired
     password = common_schemata.passwordRequired
     firstName = common_schemata.nameRequired
     lastName = common_schemata.nameRequired
     preferredName = common_schemata.nameRequired
-    isArc = common_schemata.booleanRequired
-    school = common_schemata.schoolRequired
-    faculty = common_schemata.facultyRequired
-    degree = common_schemata.degreeRequired
-    commencementYear = common_schemata.commencementYearRequired
-    #studentType = common_schemata.registrationType
-    #degreeType = common_schemata.registrationType
 
-    #@post_load
-    #def makeUser(self, data, **kwargs):
-    #    return Users(zid=data['zID'], firstname=data['firstName'], lastname=data['lastName'],
-    #    password=sha256(data['password'].encode('UTF-8')).hexdigest(), isarc=data['isArc'],
-    #    commencementyear=data['commencementYear'], studenttype=data['studentType'],
-    #    degreetype=data['degreeType'], superadmin=False, activated=False, description=None)
+    description = fields.Str()
+    isArc = common_schemata.booleanRequired
+
+    school = fields.Int()
+    faculty = fields.Int()
+    degree = fields.Int()
+    commencementYear = common_schemata.commencementYearRequired
+
+    @post_load
+    def makeUser(self, data, **kwargs):
+        data['password'] = sha256(data['password'].encode('utf-8')).hexdigest()
+        data['activated'] = False
+        data['superadmin'] = False
+        return Users(**data)
 
 class LoginDetailsSchema(Schema):
     name = "Login Details"
     zID = common_schemata.zidRequired
     password = common_schemata.passwordRequired
-    
+
+    @post_load
+    def getUser(self, data, **kwargs):
+        return Users.query.filter_by(zID=data['zID'],
+            password=sha256(data['password'].encode('utf-8')).hexdigest()).first()
+
 class ZIDDetailsSchema(Schema):
     name = "zID"
     zID = common_schemata.zidRequired
