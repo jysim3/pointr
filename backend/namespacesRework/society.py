@@ -9,6 +9,7 @@ api = Namespace('soc', description='Society Attendance Services')
 
 from app import db
 from flask import jsonify
+from models.user import Users
 
 @api.route('')
 class Society(Resource):
@@ -71,6 +72,18 @@ class Society(Resource):
         db.session.commit()
 
         return jsonify({"status": "success"})
+
+@api.route('/join')
+class Join(Resource):
+    @validateArgsWith(SocietyIDSchema)
+    @checkAuthorization()
+    def post(self, token_data, argsData):
+        user = Users.query.filter_by(zID=token_data['zID']).first()
+        status = argsData.addStaff(user)
+        if status:
+            abort(405, f"Invalid Parametres {status}")
+
+        return jsonify({'status': 'success'})
 
 @api.route('/tags')
 class Tags(Resource):

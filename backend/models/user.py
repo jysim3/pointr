@@ -37,15 +37,16 @@ class Users(db.Model):
         # he has expressed an interest for
         return {
             'zID': self.zID,
-            'firstname': self.firstname,
-            'lastname': self.lastname,
+            'firstname': self.firstName,
+            'lastname': self.lastName,
             'preferredName': self.preferredName,
             'description': self.description,
             'photo': self.photo,
-            'isarc': self.isarc,
-            'commencementyear': self.commencementyear,
-            'studenttype': self.studenttype,
-            'degreetype': self.degreetype,
+            'isarc': self.isArc,
+            'commencementyear': self.commencementYear,
+            'school': self.school,
+            'faculty': self.faculty,
+            'degree': self.degree,
             'attended': [i.getPreview() for i in self.attended],
             'interested': [i.getPreview() for i in self.interested]
         }

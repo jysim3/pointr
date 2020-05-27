@@ -21,3 +21,16 @@ class PostPointsSchema(Schema):
     ZID = common_schemata.zidRequired
     eventID = common_schemata.eventIDRequired
     points = common_schemata.pointsRequired
+
+class zIDPatchSchema(Schema):
+    password = common_schemata.password
+    firstName = common_schemata.name
+    lastName = common_schemata.name
+    preferredName = common_schemata.name
+
+    description = fields.Str()
+
+    school = fields.Int()
+    faculty = fields.Int()
+    degree = fields.Int()
+    commencementYear = common_schemata.commencementYear

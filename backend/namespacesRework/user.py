@@ -7,7 +7,7 @@ api = Namespace('rework/user', description='Reworked User Services')
 from app import db
 from models.user import Users
 from util.validation_services import validateArgsWith, validateWith
-from schemata.user_schemata import ZIDSchema, ZIDSchemaNotReq
+from schemata.user_schemata import ZIDSchema, ZIDSchemaNotReq, zIDPatchSchema
 from util.auth_services import checkAuthorization
 
 @api.route('')
@@ -26,11 +26,29 @@ class User(Resource):
     @api.doc(description='''
         Update the token-bearer's information
     ''')
-    def patch(self):
-        pass
+    @validateWith(zIDPatchSchema)
+    @checkAuthorization(allowSelf=True)
+    def patch(self, token_data, data):
+        user = Users.query.filter_by(zID=token_data['zID']).first()
+
+        for key,value in data.items():
+            setattr(user,key,value)
+
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({'status': 'success', 'data': user.getJSON()})
     
-    def delete(self):
-        pass
+    @api.doc(description='''
+        Delete the token-bearer
+    ''')
+    @checkAuthorization(allowSelf=True)
+    def delete(self, token_data):
+        user = Users.query.filter_by(zID=token_data['zID']).first()
+
+        db.session.delete(user)
+        db.session.commit()
+
+        return jsonify({'status': 'success'})
 
 @api.route('/events/upcoming')
 class UpcomingEvents(Resource):

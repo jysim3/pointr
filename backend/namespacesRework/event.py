@@ -6,11 +6,17 @@ from schemata.event_schemata import AttendSchema, EventCreationSchema, EventPatc
 from util import auth_services
 from schemata.models import authModel, offsetModel
 from schemata.event_schemata import OffsetSchema, EventIDSchema
-from schemata.soc_schemata import SocietyIDSchema
+from schemata.soc_schemata import SocietyIDSchema, ZIDSchema
 from pprint import pprint
-from app import db
-from models.event import Event
+
 api = Namespace('rework/event', description='Reworked Event Management Services')
+
+from util.auth_services import checkAuthorization
+from app import db
+from models.event import Event, Attendance
+from models.user import Users
+from datetime import datetime
+from pytz import timezone
 
 @api.route('')
 class EventRoute(Resource):
@@ -25,6 +31,7 @@ class EventRoute(Resource):
     @validateArgsWith(SocietyIDSchema)
     @validateWith(EventCreationSchema)
     def post(self, data, argsData):
+        argsData.hosting.append(data)
         db.session.add(data)
         db.session.add(argsData)
         db.session.commit()
@@ -104,17 +111,32 @@ class AttendRoute(Resource):
         The token bearer is recorded as having attended the given eventID.
     ''')
     @api.expect(authModel)
-    @auth_services.check_authorization(level=1)
-    def post(self, token_data):
-        pass
+    @validateArgsWith(EventIDSchema)
+    @checkAuthorization(allowSocMember=True)
+    def post(self, token_data, argsData):
+        user = Users.query.filter_by(zID=token_data['zID']).first()
+        newAttend = Attendance(time=datetime.now(timezone('utc')))
+        newAttend.user = user
+        newAttend.event = argsData
+
+        db.session.add(newAttend)
+        db.session.commit()
+
+        return jsonify({"status": "success"})
 
     @api.doc(description='''
         The token bearer is no longer recorded as having attended the given eventID.
     ''')
     @api.expect(authModel)
-    @auth_services.check_authorization(level=1)
-    def delete(self, token_data):
-        pass
+    @validateArgsWith(ZIDSchema)
+    @validateWith(EventIDSchema)
+    @auth_services.check_authorization(allowSocStaff=True)
+    def delete(self, token_data, argsData, data):
+        # TODO: Abstract this away into post_load functions
+        user = Users.query.filter_by(zID=argsData['zID']).first()
+        data.deleteAttendance(user)
+
+        return jsonify({"status": "success"})
 
 @api.route('/attend/admin')
 class AttendAdminRoute(Resource):

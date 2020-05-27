@@ -63,7 +63,7 @@ class EventIDSchema(Schema):
     eventID = common_schemata.eventIDRequired
 
     @post_load
-    def makeEvent(self, data, **kwargs):
+    def getEvent(self, data, **kwargs):
         
         data['eventID'] = data['eventID'].hex
         event = Event.getEvent(data['eventID'])

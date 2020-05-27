@@ -1,6 +1,8 @@
 from marshmallow import Schema, fields, ValidationError, validates, validate, EXCLUDE
 import datetime
 
+commencementYear = fields.Int(validate=validate.Range(min=2000, max=datetime.datetime.now().year), error='Enter a valid year')
+
 commencementYearRequired = fields.Int(required=True, validate=validate.Range(min=2000, max=datetime.datetime.now().year), error='Enter a valid year')
 
 zid = fields.Str(validate=validate.Regexp('^[zZ][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$', error='Malformed ZID'))

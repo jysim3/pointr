@@ -18,7 +18,7 @@ createdb pointrDB
 
 ## To run the Flask server
 ```
-python3 run.py [password used for pointr's email][password for your local postgres account] [secret key for JWTs]
+python3 run.py [password used for pointr's email] [password for your local postgres account] [secret key for JWTs]
 ```
 * If you don't know what your postgres account is, you could always do
 ```

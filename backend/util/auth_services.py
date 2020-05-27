@@ -226,7 +226,7 @@ def check_authorization(activationRequired=True, level=0, allowSelf=False, allow
         return wrapper
     return decorator
 
-def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowSocAdmin=False, allowSocMember=False):
+def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowSuperAdmin=False, allowSocAdmin=False, allowSocMember=False):
     def decorator(func):
         def wrapper(*args, **kwargs):
 
@@ -238,7 +238,7 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
                 try:
                     data = AuthSchema().load(request.get_json())
                 except Exception as e:
-                    abort(400, "NO TOKEN")
+                    print(e)
                 token = TokenSchema().load({"token": request.headers.get('Authorization')})
             except ValidationError as err:
                 abort(400, err.messages)
@@ -264,7 +264,11 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
             # Allow oneself to modify data if specified
             if allowSelf:
                 if 'zID' in data and 'zID' == token_data['zID']:
-                    return func(token_data=token_data, authorized_data={'zID':data['zID']}, *args, **kwargs)
+                    return func(token_data=token_data, *args, **kwargs)
+
+            if allowSuperAdmin:
+                if token_data['permission'] == 5:
+                    return func(token_data=token_data, *args, **kwargs)
             
             if 'socID' in data:
                 society = Societies.query.filter_by(id=data['socID']).first()
@@ -286,17 +290,19 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
                 # We grant access if the token bearer can have control over eventID
                 # I.e. if the user is an admin of the soc that's hosting this event
                 # WE need this because socID and eventID dont always come
-                event = Event.query.filter_by(id=data['eventID']).first()
+                event = Event.query.filter_by(id=data['eventID'].hex).first()
                 if not event: abort(403, "EventID doesn't exist")
 
                 society = event.getHostSoc()
+                # FIXME: Error here is caused by the fact a single event
+                # could be hosted by multiple societies
                 if allowSocMember:
-                    members = society.getMembersIDs()
+                    members = society[0].getMembersIDs()
                     if token_data['zID'] not in members: abort(403, "You are not a member of this society")
                     return func(token_data=token_data, *args, **kwargs)
 
                 if allowSocAdmin:
-                    admins = society.getAdminsIDs()
+                    admins = society[0].getAdminsIDs()
                     if token_data['zID'] not in admins: abort(403, "You are not an admin of this society")
 
                     # TODO: Fix up the authorised data

@@ -36,9 +36,9 @@ class RegisterDetailsSchema(PointrSchema):
     description = fields.Str()
     isArc = common_schemata.booleanRequired
 
-    school = fields.Int()
-    faculty = fields.Int()
-    degree = fields.Int()
+    school = fields.Int(required=True)
+    faculty = fields.Int(required=True)
+    degree = fields.Int(required=True)
     commencementYear = common_schemata.commencementYearRequired
 
     @post_load

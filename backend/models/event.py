@@ -157,6 +157,12 @@ class Event(db.Model):
         db.session.add(attend)
         db.session.commit()
 
+    def deleteAttendance(self, student):
+        self.attendees.remove(student)
+
+        db.session.add(self)
+        db.session.commit()
+
     def addInterested(self, student):
         self.interested.append(student)
 
