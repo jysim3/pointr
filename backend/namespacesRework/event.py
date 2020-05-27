@@ -24,12 +24,12 @@ class EventRoute(Resource):
     #@auth_services.check_authorization(level=2, allowSocStaff=True)
     @validateArgsWith(SocietyIDSchema)
     @validateWith(EventCreationSchema)
-    def post(self, data):
+    def post(self, data, argsData):
         db.session.add(data)
         db.session.add(argsData)
         db.session.commit()
 
-        return jsonify({"status": "success", "data": [{"id": data.id}]})
+        return jsonify({"status": "success", "data": {"id": data.id}})
     
     @api.doc(description='''
         Get the event described by the given eventID
@@ -41,7 +41,7 @@ class EventRoute(Resource):
     # @auth_services.check_authorization(level=1)
     @validateArgsWith(EventIDSchema)
     def get(self, argsData):
-        return argsData.getEventJSON()
+        return jsonify({"status": "success", "data": argsData.getEventJSON()})
     
     @api.doc(description='''
         Delete the event described by the given eventID. 
@@ -76,7 +76,7 @@ class EventRoute(Resource):
         db.session.add(argsData)
         db.session.commit()
 
-        return argsData.getEventJSON()
+        return jsonify({"status": "success", "data": argsData.getEventJSON()})
         
 
 @api.route('/test')

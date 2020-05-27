@@ -4,6 +4,7 @@ from constants import constants as c
 from constants.constants import SOCIETY_TYPE
 from uuid import uuid4
 from models.society import Societies
+from flask import abort
 
 class ZIDSchema(Schema):
     zID = common_schemata.zidRequired
@@ -22,8 +23,12 @@ class SocietyIDSchema(Schema):
 
     @post_load
     def getSoc(self, data, **kwargs):
-        print(data)
-        return Societies.findSociety(data['societyID'])
+        data['societyID'] = data['societyID'].hex
+        society = Societies.findSociety(data['societyID'])
+
+        if not society:
+            abort(400, {'societyID': ['That Society ID does not exist']})
+        return society
 
 class SocietyIDAndZIDSchema(Schema):
     societyID = common_schemata.societyIDRequired
@@ -54,8 +59,8 @@ class SocietyPatchSchema(Schema):
 
     name = common_schemata.name
 
-    description = fields.Str(missing="No Description", default="No Description")
-    previewDescription = fields.Str(missing="No Description", default="No Description")
+    description = fields.Str()
+    previewDescription = fields.Str()
 
     type = fields.Int()
 

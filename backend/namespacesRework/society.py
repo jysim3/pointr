@@ -22,7 +22,7 @@ class Society(Resource):
     @validateArgsWith(SocietyIDSchema)
     #@checkAuthorization()
     def get(self, argsData):
-        return jsonify({"status": "success", "data": [argsData.getSocietyJSON()]})
+        return jsonify({"status": "success", "data": argsData.getSocietyJSON()})
 
     @api.doc(description='''
         Make a society using the given data
@@ -33,10 +33,11 @@ class Society(Resource):
     @api.expect(authModel)
     @validateWith(SocietyCreationScheme)
     def post(self, data):
+        print("asdsa")
         db.session.add(data)
         db.session.commit()
 
-        return jsonify({"status": "success", "data": [{"id": data.id}]})
+        return jsonify({"status": "success", "data": {"id": data.id}})
 
     @api.doc(description='''
         Update a society using the given data
@@ -48,16 +49,14 @@ class Society(Resource):
     @validateWith(SocietyPatchSchema)
     #@checkAuthorization(allowSocAdmin=True)
     def patch(self, argsData, data):
-        if argsData:
-            for key, value in data.items():
-                setattr(argsData,key,value)
 
-            db.session.add(argsData)
-            db.session.commit()
+        for key,value in data.items():
+            setattr(argsData,key,value)
 
-            return jsonify({"status": "success", "payload": [argsData.getSocietyJSON()]})
-        else:
-            abort(400, "Invalid eventID")
+        db.session.add(argsData)
+        db.session.commit()
+
+        return jsonify({"status": "success", "data": argsData.getSocietyJSON()})
     
     @api.doc(description='''
         Get the society described by the given socID

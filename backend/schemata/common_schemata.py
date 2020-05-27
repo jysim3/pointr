@@ -18,12 +18,10 @@ name = fields.Str(validate=validate.Length(min=1, max=256))
 nameRequired = fields.Str(required=True, validate=validate.Length(min=1, max=256))
 
 eventID = fields.UUID()
-
 eventIDRequired = fields.UUID(required=True)
 
-societyID = fields.UUID(error='Malformed societyID')
-
-societyIDRequired = fields.Str(required=True, error='Malformed societyID')
+societyID = fields.UUID()
+societyIDRequired = fields.UUID(required=True)
 
 password = fields.Str(validate=validate.Length(min=8, max=256), error="Enter a valid Password")
 

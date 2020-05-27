@@ -37,7 +37,7 @@ api.add_namespace(auth, path='/api/auth')
 api.add_namespace(authRework, path='/api/rework/auth')
 api.add_namespace(eventRework, path='/api/rework/event')
 api.add_namespace(userRework, path='/api/rework/user')
-api.add_namespace(socRework, path='/api/rework/soc')
+api.add_namespace(socRework, path='/api/rework/society')
 
 if (app.config['ENV'] == 'development'):
     @app.route('/assets/images/<path:path>')

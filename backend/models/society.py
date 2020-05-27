@@ -23,7 +23,7 @@ class Societies(db.Model):
     photo = db.Column(db.Text, nullable=True)
 
     type = db.Column(db.Integer, nullable=False)
-    tags = db.Column(db.ARRAY(db.Integer), nullable=True)
+    tags = db.Column(db.ARRAY(db.Integer))
 
     # TODO: Need something here to indicate the type of society
     # I.e. invitational, etc.
