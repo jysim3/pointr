@@ -53,17 +53,42 @@ class User(Resource):
 @api.route('/events/upcoming')
 class UpcomingEvents(Resource):
 
-    def get(self):
-        pass
+    @api.doc(description='''
+        Get events (in preview JSON format) visible to token bearer coming up in the future, 
+        the amount of events shown can be specified in args
+    ''')
+    @checkAuthorization()
+    def get(self, token_data):
+        # TODO: Use validateArgs to get the number 
+        user = Users.findUser(token_data['zID'])
+        events = user.getUpcomingJSONs()
+
+        return jsonify({'status': 'success', 'data': events})
     
 @api.route('/events/past')
 class PastEvents(Resource):
 
-    def get(self):
-        pass
+    @api.doc(description='''
+        Get events (in preview JSON format) visible to token bearer, i.e. the events he has attended
+        the amount of events shown can be specified in args
+    ''')
+    @checkAuthorization()
+    def get(self, token_data):
+        user = Users.findUser(token_data['zID'])
+        events = user.getPastJSONs()
+
+        return jsonify({'status': 'success', 'data': events})
 
 @api.route('/societies')
 class Societies(Resource):
 
-    def get(self):
-        pass
+    @api.doc(description='''
+        Get events (in preview JSON format) visible to token bearer, i.e. the events he has attended
+        the amount of events shown can be specified in args
+    ''')
+    @checkAuthorization()
+    def get(self, token_data):
+        user = Users.findUser(token_data['zID'])
+        socs = user.getSocs(json=True)
+
+        return jsonify({'status': 'success', 'data': socs})

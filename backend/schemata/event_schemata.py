@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, ValidationError, validates, validate, post_load
+from marshmallow import Schema, fields, ValidationError, validates, validate, post_load, EXCLUDE
 from models.event import CompositeEvent, Event
 from flask import abort
 from schemata import common_schemata
@@ -62,6 +62,9 @@ class RecurringEventSchema(Schema):
 class EventIDSchema(Schema):
     eventID = common_schemata.eventIDRequired
 
+    class Meta:
+        unknown = EXCLUDE
+
     @post_load
     def getEvent(self, data, **kwargs):
         
@@ -86,3 +89,6 @@ class OffsetSchema(Schema):
     name = "Search Offset"
     pos = pos
     number = number
+
+class EventNumberSchema(Schema):
+    number = fields.Int()

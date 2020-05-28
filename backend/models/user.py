@@ -1,5 +1,6 @@
 from app import db
 from models.event import interest
+from models.society import Staff
 
 class Users(db.Model):
     __tablename__ = 'users'
@@ -119,7 +120,7 @@ class Users(db.Model):
         for i in self.staff:
             events.extend(i.society.getUpcomingEvents())
 
-        events = sorted(events, key=lambda event: event.start)
+        events.sort(key=lambda event: event.start)
         return events[:show]
 
     def getUpcomingJSONs(self, show=5):
@@ -131,9 +132,44 @@ class Users(db.Model):
         for i in self.staff:
             events.extend(i.society.getUpcomingEvents())
 
-        events = sorted(events, key=lambda event: event.start)
+        events.sort(key=lambda event: event.start)
 
         return [i.getPreview() for i in events]
+
+    def getPast(self, show=5):
+        """
+        Returns all the events that this user has attended
+        default to 5 events
+        """
+        events = self.attended
+
+        events.sort(key=lambda event: event.end, reversed=True)
+        return events[:show]
+
+    def getPastJSONs(self, show=5):
+        """
+        Same as getUpcoming() except that we return event preview jsons instead
+        of event objects
+        """
+        events = self.attended
+
+        events.sort(key=lambda event: event.end, reversed=True)
+        return events[:show]
+
+    def getSocs(self, json=False):
+        """
+        Returns a list of all socs that this user is participating in
+        """
+        members = Staff.query.filter_by(user=self, rank=0).all()
+        admins = Staff.query.filter(Staff.user==self, Staff.rank>0).all()
+
+        if json:
+            members = [i.society.getSocietyJSON() for i in members]
+            admins = [i.society.getSocietyJSON() for i in admins]
+        else:
+            members = [i.society for i in members]
+            admins = [i.society for i in admins]
+        return {'members': members, 'admins': admins}
 
     @staticmethod
     def findUser(zID):

@@ -22,7 +22,11 @@ class EventIDSchema(Schema):
     
     class Meta:
         unknown = EXCLUDE
-    
+
+class ZIDAndEventIDSchema(Schema):
+    zID = common_schemata.zidRequired
+    eventID = common_schemata.eventIDRequired
+
 class SocietyIDSchema(Schema):
     societyID = common_schemata.societyIDRequired
 

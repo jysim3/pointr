@@ -5,8 +5,8 @@ from util.validation_services import toModel
 from schemata.event_schemata import AttendSchema, EventCreationSchema, EventPatchSchema
 from util import auth_services
 from schemata.models import authModel, offsetModel
-from schemata.event_schemata import OffsetSchema, EventIDSchema
-from schemata.soc_schemata import SocietyIDSchema, ZIDSchema
+from schemata.event_schemata import OffsetSchema, EventIDSchema, EventNumberSchema
+from schemata.soc_schemata import SocietyIDSchema, ZIDSchema, ZIDAndEventIDSchema
 from pprint import pprint
 
 api = Namespace('rework/event', description='Reworked Event Management Services')
@@ -103,6 +103,9 @@ class Test(Resource):
     def put(self):
         return {"method": "put"}
 
+"""
+FIXME: CHUCK ALL THIS INTO ARGS STRING, CHECK ARGS STRING, WORK ON VALIDATEARGSWITH
+"""
 @api.route('/attend')
 class AttendRoute(Resource):
 
@@ -142,33 +145,53 @@ class AttendAdminRoute(Resource):
         If the token bearer is an admin of the event, the zID given is recorded as having 
         attended the event.
     ''')
+    @validateArgs(ZIDSchema, 'user')
+    @validateArgs(EventIDSchema, 'event')
     @api.expect(authModel)
-    @auth_services.check_authorization(level=2, allowSocStaff=True)
-    def post(self, token_data):
-        pass
+    @checkAuthorization(allowSocAdmin=True)
+    def post(self, token_data, user, event):
+        if not user or not event:
+            abort(403, "Invalid Parameter, no such user or event")
+
+        status = event.addAttendance(user)
+
+        if status:
+            abort(403, status)
+
+        return jsonify({'status': 'success'})
 
     @api.doc(description='''
         If the token bearer is an admin of the event, the zID given is recorded as 
         no longer having attended the event.
     ''')
+    @validateArgs(ZIDSchema, 'user')
+    @validateArgs(EventIDSchema, 'event')
     @api.expect(authModel)
-    @auth_services.check_authorization(level=2, allowSocStaff=True)
-    def delete(self, token_data):
-        pass
+    @checkAuthorization(allowSocAdmin=True)
+    def delete(self, token_data, user, event):
+        if not user or not event:
+            abort(403, "Invalid Parameter, no such user or event")
+
+        status = event.deleteAttendance(user)
+
+        if status:
+            abort(403, status)
+
+        return jsonify({'status': 'success'})
 
 @api.route('/upcoming')
 class UpcomingRoute(Resource):
 
     @api.doc(description='''
-        Get events visible to token bearer coming up in the next days amount of days from offset inclusive (0 = today) 
+        Get an amount of all the upcoming events (amount specified in the query string)
     ''')
     @api.expect(authModel, toQuery(api, OffsetSchema))
-    @auth_services.check_authorization(level=1)
-    def get(self, token_data):
-        user = Users.findUser(token_data['zID'])
-        events = user.getUpcomingJSONs()
-
-        return jsonify({'status': 'success', 'data': events})
+    @validateArgsWith(EventNumberSchema)
+    # NOTE: Do we want the public to see upcoming events as well?
+    @checkAuthorization(level=1)
+    def get(self, token_data, argsData):
+        number = argsData['number'] if 'number' in argsData else 5
+        return jsonify({'status': 'success', 'data': Event.getAllUpcomingEventsJSONs(number)})
 
 @api.route('/composite')
 class CompositeRoute(Resource):

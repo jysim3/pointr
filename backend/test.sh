@@ -15,4 +15,4 @@ if test -z "$SQLPassword"; then
     return
 fi
 
-nose2 -v tests.test_societies tests.test_events
+python3 -m nose2 -v tests.test_societies tests.test_events
