@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="container">
-      <div class="wrapper">
+    <div class="landing-background">
+      <div class="container wrapper">
         <!-- <img src="../assets/logo.png" /> -->
         <div>
           <h1 class="heading">Welcome to Pointr!</h1>
@@ -53,15 +53,13 @@ export default {
 
 <style scoped>
 .wrapper {
-  width: 80%;
-  margin: auto;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
   text-align: center;
   padding: 25% 0;
 }
-.container-alt,.container {
+.landing-background {
   background-image: url('~@/assets/unsw.jpg');
   background-repeat: no-repeat;
   background-clip: content-box;
