@@ -1,8 +1,8 @@
-from flask import request, jsonify, send_from_directory, send_file, abort
-from flask_restx import Namespace, Resource
+from flask import request, jsonify, send_from_directory, send_file
+from flask_restx import Namespace, Resource, abort
 from util import auth_services
 
-api = Namespace('user', description='Reworked User Services')
+api = Namespace('rework/user', description='Reworked User Services')
 
 from app import db
 from models.user import Users

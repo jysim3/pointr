@@ -5,7 +5,7 @@ from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, To
 from schemata.models import authModel
 from util import auth_services
 
-api = Namespace('auth', description='Authentication & Authorization Services Rework')
+api = Namespace('rework/auth', description='Authentication & Authorization Services Rework')
 
 from app import db
 from models.user import Users

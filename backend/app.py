@@ -4,26 +4,28 @@ from flask_restx import Api
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from util.general import tick
+from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
-api = Api(app, version='1.0.1', title='Pointr backend',
+api = Api(app, version='3.0.0', title='Pointr backend',
     description='Backend for pointr.live',
 )
 
-from namespaces.event import api as event
-from namespaces.stats import api as stats
-from namespaces.user import api as user
-from namespaces.soc import api as soc
-from namespaces.other import api as other
-from namespaces.auth import api as auth
+app.config['SQLALCHEMY_ECHO'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{os.environ.get('SQLPassword')}@localhost/pointrDB"
+db = SQLAlchemy(app)
 
-api.add_namespace(event, path='/api/event')
-api.add_namespace(stats, path='/api/stats')
-api.add_namespace(user, path='/api/user')
-api.add_namespace(soc, path='/api/soc')
-api.add_namespace(other, path='/api/other')
+from namespaces.auth import api as auth
+from namespaces.event import api as event
+from namespaces.user import api as user
+from namespaces.society import api as soc
+
 api.add_namespace(auth, path='/api/auth')
+api.add_namespace(event, path='/api/event')
+api.add_namespace(user, path='/api/user')
+api.add_namespace(soc, path='/api/society')
 
 if (app.config['ENV'] == 'development'):
     @app.route('/assets/images/<path:path>')
@@ -46,11 +48,8 @@ def updateAccessCodes():
     # Added a background scheduler to update access codes for all events that are currently running
     tick()
 
-scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(updateAccessCodes, trigger='interval', seconds=20)
-scheduler.start()
+# scheduler = BackgroundScheduler(daemon=True)
+# scheduler.add_job(updateAccessCodes, trigger='interval', seconds=20)
+# scheduler.start()
 
 CORS(app)
-
-if __name__ == '__main__':
-    app.run()

@@ -2,21 +2,21 @@ from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort
 from util.validation_services import validateArgsWith, validateWith, toQuery, validateArgs, validateBody
 from util.validation_services import toModel
-from schemata.event_schemata import EventCreationSchema, EventPatchSchema
+from schemata.event_schemata import AttendSchema, EventCreationSchema, EventPatchSchema
 from util import auth_services
 from schemata.models import authModel, offsetModel
-from schemata.event_schemata import EventIDSchema, EventNumberSchema
-from schemata.soc_schemata import SocietyIDSchema
-from schemata.user_schemata import ZIDSchema
+from schemata.event_schemata import OffsetSchema, EventIDSchema, EventNumberSchema
+from schemata.soc_schemata import SocietyIDSchema, ZIDSchema, ZIDAndEventIDSchema
 from pprint import pprint
 
-api = Namespace('event', description='Reworked Event Management Services')
+api = Namespace('rework/event', description='Reworked Event Management Services')
 
 from util.auth_services import checkAuthorization
 from app import db
 from models.event import Event, Attendance
 from models.user import Users
 from datetime import datetime
+from pytz import timezone
 
 @api.route('')
 class EventRoute(Resource):
@@ -30,7 +30,6 @@ class EventRoute(Resource):
     #@auth_services.check_authorization(level=2, allowSocStaff=True)
     @validateArgs(SocietyIDSchema, 'society')
     @validateBody(EventCreationSchema, 'event')
-    @api.expect(toModel(api, EventCreationSchema))
     def post(self, event, society):
         society.hosting.append(event)
         db.session.add(event)
@@ -186,7 +185,7 @@ class UpcomingRoute(Resource):
     @api.doc(description='''
         Get an amount of all the upcoming events (amount specified in the query string)
     ''')
-    @api.expect(authModel)
+    @api.expect(authModel, toQuery(api, OffsetSchema))
     @validateArgsWith(EventNumberSchema)
     # NOTE: Do we want the public to see upcoming events as well?
     @checkAuthorization(level=1)

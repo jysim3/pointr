@@ -1,4 +1,3 @@
-from util.events import getCurrentlyRunningEvents, updateAccessCode
 from random import SystemRandom
 import string
 

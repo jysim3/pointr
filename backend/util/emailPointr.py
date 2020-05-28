@@ -11,23 +11,22 @@ app.config.update(
     MAIL_SERVER = "smtp.gmail.com",
     MAIL_PORT = 465,
     MAIL_USE_SSL = True,
-    MAIL_USERNAME = "pointr.help@gmail.com",
+    MAIL_USERNAME = "shenthemaster@gmail.com",
+    #MAIL_USERNAME = "pointr.help@gmail.com",
     MAIL_PASSWORD = os.environ.get("POINTR_EMAIL_PASSWORD")
-    #MAIL_USERNAME = "stevenshen1871@gmail.com",
-    #MAIL_PASSWORD = "990928ss"
 )
 mail = Mail(app)
 
 
 def sendActivationEmail(stringToSend, emailToSend):
     message = f"""\
-Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nHave fun accumulating your room points :).\n\nPlease activate your account now: {site+stringToSend}"""
+Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nHave fun accumulating your room points :).\n\nPlease activate your account now: {site}/{stringToSend}"""
 
     try:
         msg = mail.send_message(
             'Activate Your Pointr Account',
             sender=app.config['MAIL_USERNAME'],
-            recipients=[emailToSend],
+            recipients=[f"{emailToSend}@student.unsw.edu.au"],
             body=message
         )
     except Exception:
