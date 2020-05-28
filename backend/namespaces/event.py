@@ -1,350 +1,227 @@
 from flask import request, jsonify, send_file
-from flask_restx import Namespace, Resource, abort, reqparse
-from schemata.event_schemata import AttendSchema
-from util import events, participation, utilFunctions, auth_services, societies, users, validation_services
-from util.sanitisation_services import sanitize
-from datetime import datetime
-import uuid
-from dateutil import tz
+from flask_restx import Namespace, Resource, abort
+from util.validation_services import validateArgsWith, validateWith, toQuery, validateArgs, validateBody
+from util.validation_services import toModel
+from schemata.event_schemata import EventCreationSchema, EventPatchSchema
+from util import auth_services
+from schemata.models import authModel, offsetModel
+from schemata.event_schemata import EventIDSchema, EventNumberSchema
+from schemata.soc_schemata import SocietyIDSchema
+from schemata.user_schemata import ZIDSchema
+from pprint import pprint
 
-api = Namespace('event', description='Event Management Services')
+api = Namespace('event', description='Reworked Event Management Services')
 
-from models.event import *
-from models.user import *
-from models.society import *
+from util.auth_services import checkAuthorization
 from app import db
+from models.event import Event, Attendance
+from models.user import Users
+from datetime import datetime
 
-def generateID(number = None):
-    return str(uuid.uuid4().hex).upper()[:5]
-
-# For creating a recurrent event
-# Usage: 
-# POST /api/event
-# Takes:
-# { zID: "z5214808", name: "Coffee Night", location: "UNSW Hall", eventDate: "2020-01-01", endDate: "2020-04-04", recurType: "day", recurInterval: 6, "socID": "1DASD", "isRecur": "True"}
-# NOTE: isRecur needs to be 1 for this to be a recurrentEvent creation, 0 for single instance event
-# NOTE: For single instance events, everything after startDate is not required
-# Date is in YYYY-MM-DD
-'''
-    # Currently, accept four different recurrent parametres, startDate and endDate to indicate how muuch this recurrence will be
-    # recurType indicates what kind of recurrence this is (accepts: "day", "week", "month")
-    # recurInterval indicates how many of said recurType is inbetween each interval (accepts any int less than 365)
-    # Example: startDate = 2020-01-30, endDate = 2020-05-30, recurType = "day", recurInterval = 14 
-    # Example Cont.: The above indicates this event occurs every fortnightly starting with 30/1/2020 to 30/5/2020
-'''
-# Returns:
-# { status: "success", "msg": [{"date": 2020-04-04, "eventID": "1FAEA00001"}, {...}}
-# or
-# { status: "ERROR MESSAGE"}
-# TODO: Ask user when they create an event if they want to enable temporary access code
-# TODO: Make just ''
-
-
-@api.route('/accessCode')
-class accessCode(Resource):
-    def get(self):
-        eventID = request.args.get('eventID')
-        code = events.getAccessCode(eventID)
-        if not code or code == "Event not found": abort(400, "Event not found")
-
-        return jsonify({"accessCode": code})
-
-@api.route('/onthisday')
-class OnThisDay(Resource):
-    # Will probably be involved in some kind of a "today's events" type of thing
-    # GET /api/events/onthisday?date=2020-04-04&socID=1AEF0 (Note: socID optional)
-    # Returns:
-    # [{"eventID": "1239", "name": "Test Event 0", "society": "UNSW Hall", "eventDate": "2019-11-19"}, {"eventID": "1240", "name": "Coffee Night", "society": "UNSW Hall", "eventDate": "2019-11-20"}]
-    def get(self):
-        date = request.args.get('date')
-        socID = request.args.get('socID')
-
-        if (date is None):
-            return jsonify({"status": "Failed", "msg": "No date provided"})
-
-        return jsonify(utilFunctions.onThisDay(date)) if socID == None else jsonify(utilFunctions.onThisDay(date, socID))
-
-@api.route('/attend')
-class Attend(Resource):
-    # For adding a user to an event
-    # Usage:
-    # /api/attend?token=2132.23133.21332
-    # Takes: 
-    # {eventID': "12332", 'time': "2020-04-04 11:55:59 (i.e. YYYY-MM-DD HH:MM:DD)"}
-    @api.response(400, "Malformed Request")
-    @api.response(403, "Attendance registration currently not possible for this event")
-    @auth_services.check_authorization(level=1)
-    def post(self, token_data):
-        data = request.get_json()
-        payload = {}
-
-        zID = token_data['zID']
-        if ('eventID' not in data):
-            abort(400, "Malformed Request")
-
-        accessCode = data['accessCode'] if 'accessCode' in data else None
-
-        #time = utilFunctions.getAESTTime()
-        time = datetime.now()
-        status = participation.register(zID, sanitize(data['eventID']), time, accessCode)
-        if (status != "success"):
-            abort(403, status)
-        payload['status'] = "success"
-
-        return jsonify(payload)
-        
-    @auth_services.check_authorization(level=2, allowSelf=True, allowSocStaff=True)
-    @validation_services.validate_args_with(AttendSchema)
-    @api.doc(description="If no zID given in query then will default to attending the token's owner. If zID given in query then will only let that person attend if token owner is that zID or if that zID is an admin of the society")
-    def delete(self, token_data, args_data):
-        payload = {}
-        if ('zID' in args_data):
-            payload['status'] = participation.deleteUserAttendance(args_data['zID'], args_data['eventID'])
-        else:
-            payload['status'] = participation.deleteUserAttendance(token_data['zID'], args_data['eventID'])
-        return jsonify(payload)
-
-@api.route('/signAttendanceAdmin')
-class adminAttendance(Resource):
-    # Takes:
-    # Requires an society admin token to work
-    # {"eventID": "MEMES", "zID": "z5959595"}
-    @auth_services.check_authorization(level=1)
-    def post(self, token_data):
-        data = request.get_json()
-        payload = {}
-
-        zID = token_data['zID']
-        societyID = societies.getSocIDFromEventID(data['eventID'])
-        if (societyID == None):
-            abort(403, "Malformed Request, most likely event doesn't exist")
-        if societies.checkAdmin(societyID, zID) == False:
-            abort(403, "Not signed in as admin")
-
-        # Check whether or not an account exists"
-        result = users.checkUser(data['zID'])
-        if (result == False):
-            abort(403, "This account has not been created")
-
-        results = societies.joinSoc(data['zID'], societyID)
-        if (results == "failed"):
-            abort(400, "Database problem, joinSoc not successful")
-
-        status = participation.register(data['zID'], data['eventID'], datetime.now())
-        if (status != "success"):
-            abort(403, "Attendance registration currently not possible for this event")
-        payload['status'] = "success"
-        return jsonify(payload)
-
-
-# Accepts /api/event/getAttendance?eventID=SOMETHING
-# Returns the CSV file of the attendance info
-@api.route('/getAttendance')
-class getAttendance(Resource):
-    @api.response(400, "Cannot find file")
-    @api.response(400, "Malformed Response")
-    @auth_services.check_authorization(level=0)
-    def get(self, token_data):
-        eventID = request.args.get('eventID')
-        try:
-            return send_file(participation.getAttendanceCSV(eventID), as_attachment=True)
-        except Exception as e:
-            abort(400, "Cannot find file")
-
-# This returns all the eventID in place right now (that hasnt happened yet)
-@api.route('/getAllEventID')
-class getAllEventID(Resource):
-    def get(self):
-        result = events.getAllEventID()
-        if (result == None):
-            abort(400, "Something went wrong, no events found")
-        return jsonify(result)
-
-# This returns all the past events (for all socs the person is participating for)
-
-# This returns all the events (including all of their event infomation)
-# NOTE: DEFUNCT ROUTE (WILL NOT BE MAINTAINED FURTHER)
-@api.route('/getAllEvents')
-class getAllEvents(Resource):
-    def get(self):
-        result = events.getAllEvents()
-        if (result == None):
-            abort(400, "Something went wrong, no events found")
-        return jsonify(result)
-
-# This deletes a event (removing all the attendance info with it)
-@api.route('/deleteEvent')
-class deleteEvent(Resource):
-    @auth_services.check_authorization(level=1)
-    def delete(self, token_data):
-        eventID = request.get_json()['eventID']
-        socID = societies.getSocIDFromEventID(eventID)
-        results = societies.checkAdmin(socID, token_data['zID'])
-        if (results == False): abort (403, "Not an admin of the society that's hosting this event")
-        results = events.deleteEvent(eventID)
-        if (results != "success"):
-            abort (400, results)
-        return jsonify({"msg": results})
-
-# This closes the input eventID for further attendance marking
-@api.route('/closeEvent')
-class closeEvent(Resource):
-    @auth_services.check_authorization(level=1)
-    def post(self, token_data):
-        eventID = request.get_json()['eventID']
-
-        socID = societies.getSocIDFromEventID(eventID)
-        if (societies.checkAdmin(socID, token_data['zID']) == False):
-            abort(403, "This user is not an admin of the society which is hosting this event")
-
-        results = events.closeEvent(eventID)
-        if (results != "success"):
-            abort(400, results)
-        return jsonify({"msg": results})
-
-@api.route('/openEvent')
-class openEvent(Resource):
-    @auth_services.check_authorization(level=1)
-    def post(self, token_data):
-        eventID = request.get_json()['eventID']
-
-        socID = societies.getSocIDFromEventID(eventID)
-        if (societies.checkAdmin(socID, token_data['zID']) == False):
-            abort(403, "This user is not an admin of the society which is hosting this event")
-
-        results = events.openEvent(eventID)
-        if (results != "success"):
-            abort(400, results)
-        return jsonify({"msg": results})
-
-@api.route("/upcomingEvents")
-class upcoming(Resource):
-    #@auth_services.check_authorization(level=1)
-    def get(self):
-        limit = 10 if request.args.get('limit') == None else request.args.get('limit')
-        upcoming = events.getAllUpcomingEvents(limit)
-
-        return jsonify(upcoming)
-
-'''
-@api.route('/reopenEvent')
-class reopenEvent(Resource):
-    @areopenEventces.check_authorization(level=1)
-    def post(self, token_data):
-        eventID = request.get_json()['eventID']
-
-        socID = societies.getSocIDFromEventID()
-        if (societies.checkAdmin(socID, token_data['zID']) == False):
-            abort(403, "This user is not an admin of the society which is hosting this event")
-
-        results = events.reopenEvent(eventID)
-        if (results != "success"):
-            abort(400, results)
-        return jsonify({"msg": results})
-'''
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@api.route("/dummy")
-class dummy(Resource):
-    def post(self):
-        from datetime import datetime
-        society = Societies(id="999", name="Rome", type=1)
+@api.route('')
+class EventRoute(Resource):
+    
+    @api.doc(description='''
+        Creates an event with data given body data for the society specified (as either query or in body)
+        <h3>Authorization Details:</h3>
+        Requires the token bearer to be an admin of one of the specified societies
+    ''')
+    #@api.expect(toModel(api, EventCreationSchema))
+    #@auth_services.check_authorization(level=2, allowSocStaff=True)
+    @validateArgs(SocietyIDSchema, 'society')
+    @validateBody(EventCreationSchema, 'event')
+    @api.expect(toModel(api, EventCreationSchema))
+    def post(self, event, society):
+        society.hosting.append(event)
+        db.session.add(event)
         db.session.add(society)
         db.session.commit()
 
-        testComposite = CompositeEvent(id="123", name="mem", start=datetime.utcnow(),
-        end=datetime.utcnow(), status=0)
-
-        db.session.add(testComposite)
-
-        testBase0 = Event(id="000", name="mem", start=datetime.utcnow(),
-        end=datetime.utcnow(), status=0, hasQR=False, hasAccessCode=False,
-        hasAdminSignin=False, compositeID="123")
-        #society.hosting.append(testBase0)
-        testBase0.hosting.append(society)
-
-        testBase1 = Event(id="001", name="mem", start=datetime.utcnow(),
-        end=datetime.utcnow(), status=0, hasQR=False, hasAccessCode=False,
-        hasAdminSignin=False, compositeID="123")
-        db.session.add(testBase0)
-        db.session.add(testBase1)
-
-        newUser = Users(zID="z5161616", firstname="Steven", lastname="Shen",
-        password="12345678", isarc=True, commencementyear=2000, studenttype="undergraduate",
-        degreetype="bachelors", superadmin=False, activated=True)
-        db.session.add(newUser)
-
-        newSoc = Societies(id="1234", name="Test Society", type=0)
-        db.session.add(newSoc)
-        db.session.commit()
-
-    @api.param
-    def get(self):
-        event = CompositeEvent.query.filter_by(id="123").first()
-        for i in event.getEvents():
-            print(i)
-
-@api.route("/dummy2")
-class dummy2(Resource):
-    def post(self):
-        event = Event.query.filter_by(id="000").first()
-        user = Users.query.filter_by(zID="z5161616").first()
-        event.addAttendance(user)
-        event.addInterested(user)
-        print(event.getAttended())
-        #print(event.getInterested())
-        #print(user.getAttended())
-        return -1
-        #return jsonify(event.getAttendeeCSV())
-
-    def get(self):
-        return -1
-
-@api.route("/dummy3")
-class dummy3(Resource):
-    def post(self):
-        society = Societies.query.filter_by(id="1234").first()
-        user = Users.query.filter_by(zID="z5161616").first()
-        society.addStaff(user, 1)
-        print(society.getAdmins())
-        return -1
-
-@api.route("/dummy4")
-class dummy4(Resource):
-    def post(self):
-        """
-        Used to test event creation flow
-        """
-        society = Societies.query.filter_by(id="999").first()
-        society.getEventsIDs()
-
-@api.route("/dummy5")
-class dummy5(Resource):
-    def post(self):
-        testBase1 = Event(**{'id': "001", 'name': "mem",
-        'start': datetime.utcnow(), 'end': datetime.utcnow(),
-        'status': 'open', 'hasQR': False, 'hasAccessCode': False,
-        'hasAdminSignin':False, 'compositeID':"123"})
-        db.session.add(testBase1)
-        db.session.commit()
-
-@api.route("/dummy6")
-class dummy6(Resource):
-    def post(self):
-        event = Event.findEvent('000')
+        return jsonify({"status": "success", "data": {"id": event.id}})
+    
+    @api.doc(description='''
+        Get the event described by the given eventID
+        <h3>Authorization Details:</h3>
+        Only returns full list of attendees if super admin or admin of event
+    ''')
+    @api.param('eventID', 'The eventID of the event to get')
+    @api.expect(authModel)
+    # @auth_services.check_authorization(level=1)
+    @validateArgs(EventIDSchema, 'event')
+    def get(self, event):
+        return jsonify({"status": "success", "data": event.getEventJSON()})
+    
+    @api.doc(description='''
+        Delete the event described by the given eventID. 
+        <h3>Authorization Details:</h3>
+        Requires the token bearer to be super admin or admin of event
+    ''')
+    @api.param('eventID', 'The eventID of the event to remove')
+    @api.expect(authModel)
+    @validateArgs(EventIDSchema, 'event')
+    def delete(self, event):
+        
         Event.deleteEvent(event)
+
+        return jsonify({"status": "success"})
+
+    @api.doc(description='''
+        Updates the given event (eventID can be query or body) with the given data.
+        <h3>Authorization Details:</h3>
+        Requires the token bearer to be super admin or admin of event
+    ''')
+    @api.param('eventID', 'The eventID of the event to update')
+    @api.expect(authModel)
+    @validateArgs(EventIDSchema, 'event')
+    @validateBody(EventPatchSchema, 'patchData')
+    # @auth_services.check_authorization(level=2, allowSocStaff=True)
+    def patch(self, event, patchData):
+
+        for key,value in patchData.items():
+            setattr(event,key,value)
+
+        db.session.add(event)
+        db.session.commit()
+
+        return jsonify({"status": "success", "data": event.getEventJSON()})
+        
+
+@api.route('/test')
+class Test(Resource):
+
+    def post(self):
+        return {"method": "post"}
+
+    def get(self):
+        return {"method": "get"}
+
+    def patch(self):
+        return {"method": "patch"}
+
+    def delete(self):
+        return {"method": "delete"}
+    
+    def put(self):
+        return {"method": "put"}
+
+"""
+FIXME: CHUCK ALL THIS INTO ARGS STRING, CHECK ARGS STRING, WORK ON VALIDATEARGSWITH
+"""
+@api.route('/attend')
+class AttendRoute(Resource):
+
+    @api.doc(description='''
+        The token bearer is recorded as having attended the given eventID.
+    ''')
+    @api.expect(authModel)
+    @validateArgsWith(EventIDSchema)
+    @checkAuthorization(allowSocMember=True)
+    def post(self, token_data, argsData):
+        user = Users.findUser(token_data['zID'])
+        status = argsData.addAttendance(user)
+        if status:
+            abort(405, status)
+
+        return jsonify({"status": "success"})
+
+    @api.doc(description='''
+        The token bearer is no longer recorded as having attended the given eventID.
+    ''')
+    @api.expect(authModel)
+    @validateArgsWith(ZIDSchema)
+    @validateWith(EventIDSchema)
+    #@checkAuthorization(allowSocAdmin=True)
+    #def delete(self, token_data, argsData, data):
+    def delete(self, argsData, data):
+        status = data.deleteAttendance(argsData)
+        if status:
+            abort(405, status)
+
+        return jsonify({"status": "success"})
+
+@api.route('/attend/admin')
+class AttendAdminRoute(Resource):
+
+    @api.doc(description='''
+        If the token bearer is an admin of the event, the zID given is recorded as having 
+        attended the event.
+    ''')
+    @validateArgs(ZIDSchema, 'user')
+    @validateArgs(EventIDSchema, 'event')
+    @api.expect(authModel)
+    @checkAuthorization(allowSocAdmin=True)
+    def post(self, token_data, user, event):
+        if not user or not event:
+            abort(403, "Invalid Parameter, no such user or event")
+
+        status = event.addAttendance(user)
+
+        if status:
+            abort(403, status)
+
+        return jsonify({'status': 'success'})
+
+    @api.doc(description='''
+        If the token bearer is an admin of the event, the zID given is recorded as 
+        no longer having attended the event.
+    ''')
+    @validateArgs(ZIDSchema, 'user')
+    @validateArgs(EventIDSchema, 'event')
+    @api.expect(authModel)
+    @checkAuthorization(allowSocAdmin=True)
+    def delete(self, token_data, user, event):
+        if not user or not event:
+            abort(403, "Invalid Parameter, no such user or event")
+
+        status = event.deleteAttendance(user)
+
+        if status:
+            abort(403, status)
+
+        return jsonify({'status': 'success'})
+
+@api.route('/upcoming')
+class UpcomingRoute(Resource):
+
+    @api.doc(description='''
+        Get an amount of all the upcoming events (amount specified in the query string)
+    ''')
+    @api.expect(authModel)
+    @validateArgsWith(EventNumberSchema)
+    # NOTE: Do we want the public to see upcoming events as well?
+    @checkAuthorization(level=1)
+    def get(self, token_data, argsData):
+        number = argsData['number'] if 'number' in argsData else 5
+        return jsonify({'status': 'success', 'data': Event.getAllUpcomingEventsJSONs(number)})
+
+@api.route('/composite')
+class CompositeRoute(Resource):
+
+    @api.doc(description='''
+        Requests that the event specified as subEvent becomes a event within the event specfied by eventID
+        <h3>Authorization:</h3>
+        The token bearer must be an admin of eventID
+    ''')
+    @api.expect(authModel)
+    def post(self):
+        pass
+
+
+    @api.doc(description='''
+        Accepts that the event specified as compositeEvent is now the container for eventID.
+        <h3>Authorization:</h3>
+        The token bearer must be an admin of eventID
+    ''')
+    @api.expect(authModel)
+    def get(self):
+        pass
+
+    
+    @api.doc(description='''
+        Removes the composition connection between eventID and subEventID
+        <h3>Authorization:</h3>
+        The token bearer must be an admin of either eventID or subEventID
+    ''')
+    @api.expect(authModel)
+    def delete(self):
+        pass

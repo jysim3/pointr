@@ -15,20 +15,7 @@ class TestEvents(PointrTest):
         c = app.test_client()
 
         # Data to send
-        initialData = {
-            "name": "Gamersoc Minecraft Night",
-            "start": str(datetime.now(timezone.utc)),
-            "end": str(datetime.now(timezone.utc)),
-
-            "location": "My place",
-
-            "status": 0,
-            "tags": [0, 1],
-
-            "hasQR": True,
-            "hasAccessCode": True,
-            "hasAdminSignin": True
-        }
+        initialData = self.getMockEventData()
         societyID = self.postValidSociety(c, "Gamersoc")
 
         response = fetch(c, "POST", "/event", data=initialData, queries={
@@ -74,8 +61,6 @@ class TestEvents(PointrTest):
         # Whatever the get returned should contain the patch
         self.assertDictContainsSubset(patchData, returnedData)
 
-        
-
     def testInvalidEventID(self):
         c = app.test_client()
 
@@ -94,6 +79,26 @@ class TestEvents(PointrTest):
         response2Data = json.loads(response2.data)
 
         self.assertEqual(response2Data, {"message": {"eventID": ["That Event ID does not exist"]}})
+
+
+    def testPostEventInvalidSocietyID(self):
+        c = app.test_client()
+
+        self.postValidSociety(c, "Gamersoc")
+
+        response = fetch(c, 'POST', '/event', data=self.getMockEventData(), queries={
+            'societyID': "1"
+        })
+        self.assert400(response)
+        payload = json.loads(response.data)
+        self.assertContains(payload, "message", {"societyID": ["Not a valid UUID."]})
+
+        response = fetch(c, 'POST', '/event', data=self.getMockEventData(), queries={
+            'societyID': uuid.uuid4().hex
+        })
+        self.assert400(response)
+        payload = json.loads(response.data)
+        self.assertContains(payload, "message", {"societyID": ["That Society ID does not exist"]})
 
 
     def testDeleteEvent(self):

@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
-api = Api(app, version='1.0.1', title='Pointr backend',
+api = Api(app, version='3.0.0', title='Pointr backend',
     description='Backend for pointr.live',
 )
 
@@ -17,29 +17,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{os.environ.get('SQLPassword')}@localhost/pointrDB"
 db = SQLAlchemy(app)
 
-from namespaces.event import api as event
-from namespaces.stats import api as stats
-from namespaces.user import api as user
-from namespaces.soc import api as soc
-from namespaces.other import api as other
 from namespaces.auth import api as auth
-from namespacesRework.auth import api as authRework
-from namespacesRework.event import api as eventRework
-from namespacesRework.user import api as userRework
-from namespacesRework.society import api as socRework
+from namespaces.event import api as event
+from namespaces.user import api as user
+from namespaces.society import api as soc
 
-'''
-api.add_namespace(event, path='/api/event')
-api.add_namespace(stats, path='/api/stats')
-api.add_namespace(user, path='/api/user')
-api.add_namespace(soc, path='/api/soc')
-api.add_namespace(other, path='/api/other')
 api.add_namespace(auth, path='/api/auth')
-'''
-api.add_namespace(authRework, path='/api/rework/auth')
-api.add_namespace(eventRework, path='/api/rework/event')
-api.add_namespace(userRework, path='/api/rework/user')
-api.add_namespace(socRework, path='/api/rework/society')
+api.add_namespace(event, path='/api/event')
+api.add_namespace(user, path='/api/user')
+api.add_namespace(soc, path='/api/society')
 
 if (app.config['ENV'] == 'development'):
     @app.route('/assets/images/<path:path>')

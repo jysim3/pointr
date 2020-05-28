@@ -4,9 +4,30 @@ import uuid
 from app import app, db
 from datetime import datetime, timezone
 
-URL_BASE = '/api/rework'
+URL_BASE = '/api'
 
 class PointrTest(unittest.TestCase):
+
+    mockEventData = {
+        "name": "Gamersoc Minecraft Night",
+        "start": str(datetime.now(timezone.utc)),
+        "end": str(datetime.now(timezone.utc)),
+
+        "location": "My place",
+
+        "status": 0,
+        "tags": [0, 1],
+
+        "hasQR": True,
+        "hasAccessCode": True,
+        "hasAdminSignin": True
+    }
+
+    mockSocietyData = {
+        "name": "Gamersoc",
+        "type": 1,
+        "tags": [1]
+    }
 
     def setUp(self):
         app.config['SQLALCHEMY_ECHO'] = False
@@ -34,26 +55,22 @@ class PointrTest(unittest.TestCase):
             print(str(response.data))
             raise AssertionError
 
+    def assertContains(self, dict, key, value):
+        self.assertEqual(dict.get(key), value)
+
+    def assertSuccess(self, dict):
+        self.assertContains(dict, "status", "success")
+
+    def assertFailed(self, dict):
+        self.assertContains(dict, "status", "failed")
+
     def postValidEvent(self, c, societyID=None):
         
         if societyID == None:
             societyID = self.postValidSociety(c, "Gamersoc")
             
-        sentData = {
-            "name": "Gamersoc Minecraft Night",
-            "start": str(datetime.now(timezone.utc)),
-            "end": str(datetime.now(timezone.utc)),
-
-            "location": "My place",
-
-            "status": 0,
-            "tags": [0, 1],
-
-            "hasQR": True,
-            "hasAccessCode": True,
-            "hasAdminSignin": True
-        }
-
+        sentData = self.getMockEventData()
+        
         response = fetch(c, "POST", "/event", data=sentData, queries={
             "societyID": str(societyID)
         })
@@ -86,11 +103,7 @@ class PointrTest(unittest.TestCase):
 
     def postValidSociety(self, c, name):
 
-        response = fetch(c, "POST", "/society", data={
-            "name": name,
-            "type": 1,
-            "tags": [1]
-        })
+        response = fetch(c, "POST", "/society", data=self.getMockSocietyData(name))
         self.assertOK(response)
 
         payload =  json.loads(response.data)
@@ -106,6 +119,14 @@ class PointrTest(unittest.TestCase):
         payload = json.loads(response.data)
 
         return payload['data']
+    
+    def getMockEventData(self):
+        return self.mockEventData
+
+    def getMockSocietyData(self, name):
+        data = self.mockSocietyData
+        data['name'] = name
+        return data
 
 def fetch(c, method, route, queries=None, data=None, headers=None):
     if (method == 'GET'):

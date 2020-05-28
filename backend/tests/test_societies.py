@@ -57,19 +57,15 @@ class TestSocieties(PointrTest):
 
         id = self.postValidSociety(c, "Gamersoc")
 
-        response1 = self.getSociety(c, "1")
-        self.assert400(response1)
-        
-        response1Data = json.loads(response1.data)
+        response = self.getSociety(c, "1")
+        self.assert400(response)
+        payload = json.loads(response.data)
+        self.assertContains(payload, "message", {"societyID": ["Not a valid UUID."]})
 
-        self.assertEqual(response1Data, {"message": {"societyID": ["Not a valid UUID."]}})
-
-        response2 = self.getSociety(c, uuid.uuid4().hex)
-        self.assert400(response2)
-
-        response2Data = json.loads(response2.data)
-
-        self.assertEqual(response2Data, {"message": {"societyID": ["That Society ID does not exist"]}})
+        response = self.getSociety(c, uuid.uuid4().hex)
+        self.assert400(response)
+        payload = json.loads(response.data)
+        self.assertContains(payload, "message", {"societyID": ["That Society ID does not exist"]})
 
     def testDeleteSociety(self):
         c = app.test_client()

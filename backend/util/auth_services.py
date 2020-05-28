@@ -1,7 +1,5 @@
 import jwt
 from datetime import datetime, date, time, timedelta
-from util.users import checkUserInfo, checkUser, createUser, checkActivation
-from util.societies import getSocIDFromEventID, getAdminsForSoc
 from flask_restx import abort
 from flask import request
 from schemata.auth_schemata import TokenSchema, AuthSchema

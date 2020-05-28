@@ -1,144 +1,139 @@
 from flask import request, jsonify
-from flask_restx import Namespace, Resource, abort, reqparse
-from util import auth_services, users, utilFunctions, societies
-from util.auth_services import ADMIN, USER
+from flask_restx import Namespace, Resource, abort, fields
+from util.validation_services import toModel, validateWith, validateArgsWith
 from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema, ZIDDetailsSchema, PasswordSchema
-from marshmallow import Schema, fields, ValidationError, validates, validate
-from util.validation_services import validate_with, validate_args_with
-import pprint
-import uuid
+from schemata.models import authModel
+from util import auth_services
 
-# SQLAlchemy
+api = Namespace('auth', description='Authentication & Authorization Services Rework')
+
 from app import db
 from models.user import Users
-from hashlib import sha256
-#from smtplib import SMTPConnectError, SMTPServerDisconnected
-
-api = Namespace('auth', description='Authentication & Authorization Services')
+from util.auth_services import generateLoginToken, generateActivationToken
+from util.emailPointr import sendActivationEmail
 
 @api.route('/register')
 class Register(Resource):
-    @api.response(400, 'Malformed Request')
-    @api.response(403, 'Invalid Credentials')
-    @api.response(409, 'Username Taken')
-    @validate_with(RegisterDetailsSchema)
-    # NOTE: As of 20/05/2020, data is now a object of type Users
-    # We can load this directly into the db
+    
+    @api.doc(description='''
+        Registers a user, sends an email to the specified student's university email
+        with a token to activate that needs to be sent to `/api/auth/activate`
+    ''')
+    @api.expect(toModel(api, RegisterDetailsSchema))
+    @validateWith(RegisterDetailsSchema)
     def post(self, data):
-        from util.emailPointr import sendActivationEmail
-        # Step 1, check for validity of the zID
-        if Users.query.filter_by(zid=data.zid).first():
-            abort(409, "username taken")
+        if Users.query.filter_by(zID=data.zID).first():
+            abort(403, "Invalid Parametres, zID already exists")
 
-        # Step 2, try sending an email, if error occurs, abort
-        token = auth_services.generateActivationToken(data.zid)
-        results = sendActivationEmail(f"/activate/{token}", f"{data.zid}@student.unsw.edu.au")
-        if (results != "success"):
-            # This only happens if we have some kind of SMTP error, most likely due to security measures on unrecognised devices
-            abort(400, "Sending Email Not Successful")
+        token = generateActivationToken(data.zID)
+        if sendActivationEmail(token, data.zID) != "success":
+            abort(500, "Internal Server Error, Email Service Not Working")
+        print(token)
 
-        # Step 3, inject the user into the database
         db.session.add(data)
         db.session.commit()
+        #z5214808
 
         return jsonify({"status": "success"})
 
 @api.route('/login')
 class Login(Resource):
-    @api.response(400, 'Malformed Request')
-    @api.response(403, 'Invalid Credentials')
-    @validate_with(LoginDetailsSchema)
+    
+    @api.doc(description='''
+        Authorizes a user and returns a timestamped token
+    ''')
+    @api.expect(toModel(api, LoginDetailsSchema))
+    @validateWith(LoginDetailsSchema)
     def post(self, data):
-        user = Users.query.filter_by(zid=data['zID'], 
-            password=sha256(data['password'].encode('UTF-8')).hexdigest()).first()
+        if not data:
+            abort(403, "Invalid Parametres, zID or password incorrect")
+        elif data.activated == False:
+            abort(405, "Account Not Activated")
 
-        if not user: abort(403, 'Invalid Credentials / Account Not Activated')
+        token = generateLoginToken(data)
 
-        token = auth_services.generateLoginToken(user)
-        return jsonify({"token": token})
+        return jsonify({"status": "success", "data": {"token": token}})
 
-# NOTE: DEFUNCT
 @api.route('/activate')
 class Activate(Resource):
-    @api.header('Authorization', description='Activation token sent to email after call to /api/auth/register', type='String', required=True)
-    @api.response(400, "Malformed Request")
-    @api.response(403, "Already activated")
-    @api.doc(responses={})
+
+    @api.doc(description='''
+        Takes token that was emailed to student when they registered using `/api/auth/register` 
+        and now gives them 'activated' status from now on.      
+    ''')
+    @api.expect(authModel)
     @auth_services.check_authorization(activationRequired=False, level=0)
     def post(self, token_data):
+        user = Users.query.filter_by(zID=token_data['zID']).first()
+        if not user:
+            abort(403, "Invalid Token, how did you know our server secret key?")
 
-        result = users.activateAccount(token_data['zID'].lower())
-        if (result == "failed"):
-            abort(400, "Malformed Request")
-        elif (result == "already activated"):
-            abort(403, "Already activated")
+        user.activated = True
+        db.session.add(user)
+        db.session.commit()
+
         return jsonify({"status": "success"})
 
 @api.route('/forgot')
 class Forgot(Resource):
-    
-    @api.response(400, 'Malformed Request')
-    @api.response(403, 'Invalid Credentials')
-    @validate_with(ZIDDetailsSchema)
+
+    @api.doc(description='''
+        Sends an email to the given zIDs student email with a temporary token that can be used in
+        `/api/auth/reset` to reset the password
+    ''')
+    @api.expect(toModel(api, ZIDDetailsSchema))
+    @validateWith(ZIDDetailsSchema)
     def post(self, data):
-        
-        # Login and if successful return the token otherwise invalid credentials
-        token = auth_services.generateForgotToken(data['zID'])
-        
-        from util.emailPointr import sendForgotEmail
-        results = sendForgotEmail(f"/resetPassword/{token}", data['zID'], f"{data['zID']}@student.unsw.edu.au")  
-        if (results != "success"):
-            abort(400, "Sending Email Not Successful")
-        return jsonify({"msg": "success"})
+        pass
         
 @api.route('/reset')
 class Reset(Resource):
     
-    @api.response(400, 'Malformed Request')
-    @api.response(403, 'Invalid Credentials')
+    @api.doc(description='''
+        Takes a token in the header that was generated in `/api/auth/forgot` and emailed
+        to the student
+        Expects new password in body
+    ''')
+    @api.expect(toModel(api, PasswordSchema), authModel)
     @auth_services.check_authorization(level=0, activationRequired=False)
-    @validate_with(PasswordSchema)
-    @api.doc(description="When given a password in body and a token created through /api/auth/forgot and retrived through emails in the Authorization header, this endpoint will update the password of the token's owner")
+    @validateWith(PasswordSchema)
     def post(self, token_data, data):
-        # TODO make check_authorization also take in type
-        if (not token_data['type'] == 'forgot'):
-            abort('403', 'Invalid Credentials')
-        if (users.changePassword(token_data['zID'], data['password']) == 'failed'):
-            abort('400', "Invalid")
-        return jsonify({"status": "success"})
+        pass
 
-@api.route('/changePassword')
+@api.route('/change')
 class changePassword(Resource):
-    @auth_services.check_authorization(level = 1)
-    def post(self, token_data):
-        data = request.get_json()
-        if 'password' not in data or 'oldPassword' not in data:
-            abort(400, "No password provided")
-        if (users.changePassword(token_data['zID'], data['oldPassword'], data['password']) == 'failed'):
-            abort(400, "Server Error, check backend log")
-        return jsonify({"status": "success"})
 
-@api.route('/permission')
-class Permission(Resource):
-    
-    @api.response(400, 'Malformed Request')
-    @api.response(403, 'Invalid Credentials')
-    @auth_services.check_authorization(activationRequired=False, level=0)
+    @api.doc(description='''
+        Takes in a password for the user 
+        TODO should probably also take old password
+    ''')
+    @api.expect(toModel(api, PasswordSchema), authModel)
+    @auth_services.check_authorization(level = 1)
+    @validateWith(PasswordSchema)
     def post(self, token_data):
-        return jsonify({"permission": token_data['permission']})
+        pass
 
 @api.route('/validate')
 @api.param('token', description='User Token', type='String', required='True')
 class Authorize(Resource):
 
-    @api.response(400, 'Malformed Request')
+    @api.doc(description='''
+        Status 200 if valid token
+    ''')
+    @api.expect(authModel)
     @auth_services.check_authorization(level=1)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
 
-# Validation functions
+
+
+
+
+
+
+# Validation functions To be removed
 @api.route('/validateSelf')
-@api.param('token', description='User Token', type='String', required='True')
+@api.param('token', description='User Token', type='String', required='True', location='headers')
 class Authorize(Resource):
 
     @api.response(400, 'Malformed Request')

@@ -25,7 +25,7 @@ class PointrSchema(Schema):
         return ret
 
 class RegisterDetailsSchema(PointrSchema):
-    name = "Registration Details"
+    __schema_name__ = "Registration Details"
 
     zID = common_schemata.zidRequired
     password = common_schemata.passwordRequired
@@ -49,7 +49,7 @@ class RegisterDetailsSchema(PointrSchema):
         return Users(**data)
 
 class LoginDetailsSchema(Schema):
-    name = "Login Details"
+    __schema_name__ = "Login Details"
     zID = common_schemata.zidRequired
     password = common_schemata.passwordRequired
 
@@ -59,11 +59,11 @@ class LoginDetailsSchema(Schema):
             password=sha256(data['password'].encode('utf-8')).hexdigest()).first()
 
 class ZIDDetailsSchema(Schema):
-    name = "zID"
+    __schema_name__ = "zID"
     zID = common_schemata.zidRequired
 
 class PasswordSchema(Schema):
-    name = "Password"
+    __schema_name__ = "Password"
     password = common_schemata.passwordRequired
 
 class TokenSchema(Schema):

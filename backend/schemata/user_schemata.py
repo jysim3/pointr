@@ -1,9 +1,16 @@
-from marshmallow import Schema, fields, ValidationError, validates, validate, post_load
+from marshmallow import Schema, fields, ValidationError, validates, validate, post_load, EXCLUDE
 from schemata import common_schemata
 from models.user import Users
 
 class ZIDSchema(Schema):
     zID = common_schemata.zidRequired
+
+    class Meta:
+        unknown = EXCLUDE
+
+    @post_load
+    def makeUser(self, data, **kwargs):
+        return Users.findUser(data['zID'])
 
 class ZIDSchemaNotReq(Schema):
     zID = common_schemata.zid
@@ -12,15 +19,6 @@ class ZIDSchemaNotReq(Schema):
     def getUser(self, data, **kwargs):
         user = Users.findUser(data['zID'])
         return user if user else None
-
-class DeletePointsSchema(Schema):
-    ZID = common_schemata.zid
-    eventID = common_schemata.eventIDRequired
-    
-class PostPointsSchema(Schema):
-    ZID = common_schemata.zidRequired
-    eventID = common_schemata.eventIDRequired
-    points = common_schemata.pointsRequired
 
 class zIDPatchSchema(Schema):
     password = common_schemata.password

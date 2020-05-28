@@ -6,7 +6,7 @@ from constants import constants as c
 import uuid
 
 class EventCreationSchema(Schema):
-    name = "Event Form"
+    __schema_name__ = "Event Form"
 
     name = common_schemata.nameRequired
     start = common_schemata.dateRequired
@@ -35,7 +35,7 @@ class EventCreationSchema(Schema):
             raise ValidationError('Requires at least one tag')
     
 class EventPatchSchema(Schema):
-    name = "Event Patch Form"
+    __schema_name__ = "Event Patch Form"
 
     name = common_schemata.name
     start = common_schemata.date
@@ -53,12 +53,6 @@ class EventPatchSchema(Schema):
     hasAccessCode = fields.Boolean()
     hasAdminSignin = fields.Boolean()
 
-class RecurringEventSchema(Schema):
-    pass
-    #endDate = common_schemata.dateRequired
-    #recurType = fields.Str(required=True, validate=validate.Regexp('^day$|^week$|^month$'), error='Must be one of [day, week, month]')
-    #recurInterval = fields.Int(required=True, validate=validate.Range(min=1, max=365), error='Must be more than 1 and less than 365')
-
 class EventIDSchema(Schema):
     eventID = common_schemata.eventIDRequired
 
@@ -74,21 +68,6 @@ class EventIDSchema(Schema):
         if not event:
             abort(400, {'eventID': ['That Event ID does not exist']})
         return event
-    
-class AttendSchema(Schema):
-    eventID = common_schemata.eventIDRequired
-    zID = common_schemata.zid
-
-pos = fields.Int(default=0, validate=validate.Length(min=0))
-pos.description = "Position from start"
-
-number = fields.Int(default=1, validate=validate.Length(min=1))
-number.description = "Number from position"
-
-class OffsetSchema(Schema):
-    name = "Search Offset"
-    pos = pos
-    number = number
 
 class EventNumberSchema(Schema):
     number = fields.Int()

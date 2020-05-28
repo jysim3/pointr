@@ -127,13 +127,22 @@ def toModel(api, schema):
         # TODO add more documentation
         schemaField = schemaFields[schemaFieldName]
 
-        modelFields[schemaFieldName] = schemaNameToModel[type(schemaField).__name__](
-            required=schemaField.required,
-            description=(schemaField.description if hasattr(schemaField,'description') else 'No description'),
-            example=(schemaField.example if hasattr(schemaField,'example') else None),
-        )
+        if type(schemaField).__name__ == 'List':
+            innerField = schemaNameToModel[type(schemaFields[schemaFieldName].inner).__name__]
+            
+            modelFields[schemaFieldName] = schemaNameToModel[type(schemaField).__name__]( innerField,
+                required=schemaField.required,
+                description=(schemaField.description if hasattr(schemaField,'description') else 'No description'),
+                example=(schemaField.example if hasattr(schemaField,'example') else None),
+            )
+        else:
+            modelFields[schemaFieldName] = schemaNameToModel[type(schemaField).__name__](
+                required=schemaField.required,
+                description=(schemaField.description if hasattr(schemaField,'description') else 'No description'),
+                example=(schemaField.example if hasattr(schemaField,'example') else None),
+            )
 
-    return api.model(schema.name, modelFields)
+    return api.model(schema.__schema_name__, modelFields)
 
 def toQuery(api, schema):
 

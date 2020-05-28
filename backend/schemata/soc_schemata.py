@@ -7,26 +7,6 @@ from models.society import Societies
 from flask import abort
 from models.user import Users
 
-class ZIDSchema(Schema):
-    zID = common_schemata.zidRequired
-
-    class Meta:
-        unknown = EXCLUDE
-
-    @post_load
-    def makeUser(self, data, **kwargs):
-        return Users.findUser(data['zID'])
-    
-class EventIDSchema(Schema):
-    eventID = common_schemata.eventIDRequired
-    
-    class Meta:
-        unknown = EXCLUDE
-
-class ZIDAndEventIDSchema(Schema):
-    zID = common_schemata.zidRequired
-    eventID = common_schemata.eventIDRequired
-
 class SocietyIDSchema(Schema):
     societyID = common_schemata.societyIDRequired
 
@@ -42,15 +22,8 @@ class SocietyIDSchema(Schema):
             abort(400, {'societyID': ['That Society ID does not exist']})
         return society
 
-class SocietyIDAndZIDSchema(Schema):
-    societyID = common_schemata.societyIDRequired
-    zID = common_schemata.zidRequired
-    
-    class Meta:
-        unknown = EXCLUDE
-
-class SocietyCreationScheme(Schema):
-    name = "Society Form"
+class SocietyCreationSchema(Schema):
+    __schema_name__ = "Society Form"
 
     name = common_schemata.nameRequired
 
@@ -67,7 +40,7 @@ class SocietyCreationScheme(Schema):
         return Societies(**data)
 
 class SocietyPatchSchema(Schema):
-    name = "Society Patch Form"
+    __schema_name__ = "Society Patch Form"
 
     name = common_schemata.name
 

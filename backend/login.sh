@@ -2,7 +2,7 @@
 if test $# != 3
 then
     echo "Execute as '. $0 '[POINTR_EMAIL_PASSWORD]' '[POINTR_SERVER_SECRET]' '[SQLPassword]'' "
-    exit 1
+    return 1
 fi
 
 export POINTR_EMAIL_PASSWORD="$1"
