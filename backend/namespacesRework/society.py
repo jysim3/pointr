@@ -1,14 +1,14 @@
-from flask_restx import Namespace, Resource, abort
+from flask_restx import Namespace, Resource
 from util.validation_services import validateArgsWith, validateWith, validateBody, validateArgs
 from util.auth_services import checkAuthorization
 from schemata.soc_schemata import *
 from schemata.models import authModel
 from constants import constants
 
-api = Namespace('soc', description='Society Attendance Services')
+api = Namespace('rework/soc', description='Society Attendance Services')
 
 from app import db
-from flask import jsonify
+from flask import jsonify, abort
 from models.user import Users
 
 @api.route('')
@@ -77,10 +77,24 @@ class Join(Resource):
     @validateArgsWith(SocietyIDSchema)
     @checkAuthorization()
     def post(self, token_data, argsData):
+        # FIXME: WE NEED TO CHECK WHETHER OR NOT THIS SOCIETY ALLOWS PEOPLE TO JOIN
         user = Users.query.filter_by(zID=token_data['zID']).first()
         status = argsData.addStaff(user)
         if status:
             abort(405, f"Invalid Parametres {status}")
+
+        return jsonify({'status': 'success'})
+
+@api.route('/leave')
+class Leave(Resource):
+    @validateArgs(SocietyIDSchema, 'society')
+    @checkAuthorization(allowSocMember=True)
+    def post(self, token_data, society):
+        user = Users.query.filter_by(zID=token_data['zID']).first()
+ 
+        status = society.deleteStaff(user)
+        if status:
+            abort(405, status)
 
         return jsonify({'status': 'success'})
 
@@ -136,11 +150,53 @@ class Past(Resource):
 @api.route('/admin')
 class Admin(Resource):
 
-    def post(self):
-        pass
+    @api.doc(description='''
+        Promotes a soc member to a given rank, requires a socAdmin account bearer
+        for that society
+        <h4> Authorization Details: </h4>
+        Requires a socAdmin
+    ''')
+    @validateBody(SocietyIDSchema, 'society')
+    @validateBody(SocietyRankSchema, 'rank')
+    @validateBody(ZIDSchema, 'user')
+    @checkAuthorization(allowSocAdmin=True)
+    def post(self, society, rank, user, token_data):
+        if not society:
+            abort(403, "Invalid Parameters, no such society")
 
-    def get(self):
-        pass
+        status = society.addStaff(user, rank)
+        if status:
+            abort(405, status)
 
-    def delete(self):
-        pass
+        return jsonify({'status': 'success'})
+
+    @api.doc(description='''
+        Returns a list of all admins of a given society
+    ''')
+    @validateBody(SocietyIDSchema, 'society')
+    @checkAuthorization()
+    def get(self, token_data, society):
+        if not society:
+            abort(403, "Invalid Parameters, no such society")
+
+        return jsonify({'status': 'success', 'data': society.getAdmins()})
+
+    @api.doc(description='''
+        Demotes a soc member to a given rank (or remove from society if a rank is not specified), 
+        requires a socAdmin account bearer for that society
+        <h4> Authorization Details: </h4>
+        Requires a socAdmin
+    ''')
+    @validateBody(SocietyIDSchema, 'society')
+    @validateBody(SocietyRankSchema, 'rank')
+    @validateBody(ZIDSchema, 'user')
+    @checkAuthorization(allowSocAdmin=True)
+    def delete(self, token_data, society, rank, user):
+        if not society:
+            abort(403, "Invalid Parameters, no such society")
+
+        status = society.deleteStaff(user, rank)
+        if status:
+            abort(405, status)
+
+        return jsonify({'status': 'success'})

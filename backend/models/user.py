@@ -54,8 +54,8 @@ class Users(db.Model):
 
     def getPreview(self):
         return {
-            'firstname': self.firstname,
-            'lastname': self.lastname,
+            'firstname': self.firstName,
+            'lastname': self.lastName,
             'photo': self.photo,
         }
 

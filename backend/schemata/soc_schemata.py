@@ -30,6 +30,9 @@ class ZIDAndEventIDSchema(Schema):
 class SocietyIDSchema(Schema):
     societyID = common_schemata.societyIDRequired
 
+    class Meta:
+        unknown = EXCLUDE
+
     @post_load
     def getSoc(self, data, **kwargs):
         data['societyID'] = data['societyID'].hex
@@ -77,3 +80,9 @@ class SocietyPatchSchema(Schema):
 
 class SocietyTagSchema(Schema):
     tag = fields.Int()
+
+class SocietyRankSchema(Schema):
+    rank = fields.Int(validate=validate.Range(0, 5))
+
+    class Meta:
+        unknown = EXCLUDE

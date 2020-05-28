@@ -52,13 +52,31 @@ class Societies(db.Model):
         }
 
     def addStaff(self, user, role=0):
-        if Staff.query.filter_by(user=user, society=self).first():
+        staff = Staff.query.filter_by(user=user, society=self).first()
+        if staff:
+            if role:
+                staff.role = role
+                db.session.add(staff)
+                db.session.commit()
+                return
             return "Already a member of the society"
 
         newStaff = Staff(rank=role, user=user, society=self)
 
         db.session.add(newStaff)
         db.session.commit()
+
+    def deleteStaff(self, user, role=None):
+        staff = Staff.query.filter_by(user=user, society=self).first()
+
+        if not staff:
+            return "Not a member of this society"
+
+        if not role:
+            db.session.delete(staff)
+            db.session.commit()
+        else:
+            staff.rank = role
 
     def getMembers(self):
         """
@@ -125,7 +143,6 @@ class Societies(db.Model):
             if i.end < currentTime:
                 events.append(i)
         return events
-
 
     @staticmethod
     def findSociety(id):
