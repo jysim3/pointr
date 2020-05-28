@@ -79,6 +79,11 @@ class PointrTest(unittest.TestCase):
             "eventID": id
         })
 
+    def getSociety(self, c, id):
+        return fetch(c, "GET", "/society", queries={
+            "societyID": id
+        })
+
     def postValidSociety(self, c, name):
 
         response = fetch(c, "POST", "/society", data={

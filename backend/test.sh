@@ -12,4 +12,4 @@ export POINTR_SERVER_SECRET="$2"
 export SQLPassword="$3"
 export FLASK_APP=app.py 
 # export FLASK_DEBUG=1
-nose2 -v tests.test_events
+nose2 -v tests.test_societies
