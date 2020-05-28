@@ -59,6 +59,56 @@ def validateArgsWith(schema):
         return wrapper
     return decorator
 
+def validateArgs(schema, name='argsData'):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            # Validate data
+            try:
+                data = schema().load(request.args)
+            except ValidationError as err:
+                abort(400, err.messages)
+           
+            validatedData = {
+                name: data
+            }
+
+            kwargs.update(validatedData)
+
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+def validateBody(schema, name='data'):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            # Validate data
+            try:
+                data = schema().load(request.get_json())
+            except ValidationError as err:
+                abort(400, err.messages)
+           
+            validatedData = {
+                name: data
+            }
+
+            kwargs.update(validatedData)
+
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+def validateArgsWith(schema):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            # Validate data
+            try:
+                data = schema().load(request.args)
+            except ValidationError as err:
+                abort(400, err.messages)
+            return func(argsData=data, *args, **kwargs)
+        return wrapper
+    return decorator
+
 schemaNameToModel = {
     'String': fields.String,
     'Integer': fields.Integer,

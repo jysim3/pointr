@@ -38,7 +38,7 @@ class PointrTest(unittest.TestCase):
         
         if societyID == None:
             societyID = self.postValidSociety(c, "Gamersoc")
-
+            
         sentData = {
             "name": "Gamersoc Minecraft Night",
             "start": str(datetime.now(timezone.utc)),

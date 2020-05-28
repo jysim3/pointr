@@ -30,7 +30,7 @@ class TestEvents(PointrTest):
             "hasAdminSignin": True
         }
         societyID = self.postValidSociety(c, "Gamersoc")
-        print(f"received {societyID}")
+
         response = fetch(c, "POST", "/event", data=initialData, queries={
             "societyID": societyID
         })
@@ -96,3 +96,18 @@ class TestEvents(PointrTest):
         self.assertEqual(response2Data, {"message": {"eventID": ["That Event ID does not exist"]}})
 
 
+    def testDeleteEvent(self):
+        c = app.test_client()
+        societyID = self.postValidSociety(c, "Gamersoc")
+        id = self.postValidEvent(c, societyID)
+        response = fetch(c, "DELETE", "/event", queries={
+            "eventID": id
+        })
+        self.assertOK(response)
+        payload = json.loads(response.data)
+        self.assertEqual(payload, {'status': 'success'})
+
+        response = self.getEvent(c, id)
+        payload = json.loads(response.data)
+        
+        self.assertEqual(payload, {"message": {"eventID": ["That Event ID does not exist"]}})

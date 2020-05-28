@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource, abort
-from util.validation_services import validateArgsWith, validateWith
+from util.validation_services import validateArgsWith, validateWith, validateBody, validateArgs
 from util.auth_services import checkAuthorization
 from schemata.soc_schemata import *
 from schemata.models import authModel
@@ -20,10 +20,10 @@ class Society(Resource):
         Requires a socMember
     ''')
     @api.expect(authModel)
-    @validateArgsWith(SocietyIDSchema)
+    @validateArgs(SocietyIDSchema, 'society')
     #@checkAuthorization()
-    def get(self, argsData):
-        return jsonify({"status": "success", "data": argsData.getSocietyJSON()})
+    def get(self, society):
+        return jsonify({"status": "success", "data": society.getSocietyJSON()})
 
     @api.doc(description='''
         Make a society using the given data
@@ -32,13 +32,12 @@ class Society(Resource):
     ''')
     #@checkAuthorization(level=2)
     @api.expect(authModel)
-    @validateWith(SocietyCreationScheme)
-    def post(self, data):
-        print("asdsa")
-        db.session.add(data)
+    @validateBody(SocietyCreationScheme, 'society')
+    def post(self, society):
+        db.session.add(society)
         db.session.commit()
 
-        return jsonify({"status": "success", "data": {"id": data.id}})
+        return jsonify({"status": "success", "data": {"id": society.id}})
 
     @api.doc(description='''
         Update a society using the given data
@@ -46,18 +45,18 @@ class Society(Resource):
         Requires a superadmin
     ''')
     @api.expect(authModel)
-    @validateArgsWith(SocietyIDSchema)
-    @validateWith(SocietyPatchSchema)
+    @validateArgs(SocietyIDSchema, 'society')
+    @validateBody(SocietyPatchSchema, 'patchData')
     #@checkAuthorization(allowSocAdmin=True)
-    def patch(self, argsData, data):
+    def patch(self, society, patchData):
 
-        for key,value in data.items():
-            setattr(argsData,key,value)
+        for key,value in patchData.items():
+            setattr(society,key,value)
 
-        db.session.add(argsData)
+        db.session.add(society)
         db.session.commit()
 
-        return jsonify({"status": "success", "data": argsData.getSocietyJSON()})
+        return jsonify({"status": "success", "data": society.getSocietyJSON()})
     
     @api.doc(description='''
         Get the society described by the given socID
@@ -65,10 +64,10 @@ class Society(Resource):
         Requires a socMember
     ''')
     @api.expect(authModel)
-    @validateArgsWith(SocietyIDSchema)
+    @validateArgs(SocietyIDSchema, 'society')
     #@checkAuthorization()
-    def delete(self, argsData):
-        db.session.delete(argsData)
+    def delete(self, society):
+        db.session.delete(society)
         db.session.commit()
 
         return jsonify({"status": "success"})

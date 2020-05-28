@@ -1,6 +1,6 @@
 from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort
-from util.validation_services import validateArgsWith, validateWith, toQuery
+from util.validation_services import validateArgsWith, validateWith, toQuery, validateArgs, validateBody
 from util.validation_services import toModel
 from schemata.event_schemata import AttendSchema, EventCreationSchema, EventPatchSchema
 from util import auth_services
@@ -28,15 +28,15 @@ class EventRoute(Resource):
     ''')
     #@api.expect(toModel(api, EventCreationSchema))
     #@auth_services.check_authorization(level=2, allowSocStaff=True)
-    @validateArgsWith(SocietyIDSchema)
-    @validateWith(EventCreationSchema)
-    def post(self, data, argsData):
-        argsData.hosting.append(data)
-        db.session.add(data)
-        db.session.add(argsData)
+    @validateArgs(SocietyIDSchema, 'society')
+    @validateBody(EventCreationSchema, 'event')
+    def post(self, event, society):
+        society.hosting.append(event)
+        db.session.add(event)
+        db.session.add(society)
         db.session.commit()
 
-        return jsonify({"status": "success", "data": {"id": data.id}})
+        return jsonify({"status": "success", "data": {"id": event.id}})
     
     @api.doc(description='''
         Get the event described by the given eventID
@@ -46,9 +46,9 @@ class EventRoute(Resource):
     @api.param('eventID', 'The eventID of the event to get')
     @api.expect(authModel)
     # @auth_services.check_authorization(level=1)
-    @validateArgsWith(EventIDSchema)
-    def get(self, argsData):
-        return jsonify({"status": "success", "data": argsData.getEventJSON()})
+    @validateArgs(EventIDSchema, 'event')
+    def get(self, event):
+        return jsonify({"status": "success", "data": event.getEventJSON()})
     
     @api.doc(description='''
         Delete the event described by the given eventID. 
@@ -57,11 +57,10 @@ class EventRoute(Resource):
     ''')
     @api.param('eventID', 'The eventID of the event to remove')
     @api.expect(authModel)
-    @validateArgsWith(EventIDSchema)
-    @auth_services.check_authorization(level=2, allowSocStaff=True)
-    def delete(self, token_data, data, argsData):
+    @validateArgs(EventIDSchema, 'event')
+    def delete(self, event):
         
-        Event.deleteEvent(argsData)
+        Event.deleteEvent(event)
 
         return jsonify({"status": "success"})
 
@@ -72,18 +71,18 @@ class EventRoute(Resource):
     ''')
     @api.param('eventID', 'The eventID of the event to update')
     @api.expect(authModel)
-    @validateArgsWith(EventIDSchema)
-    @validateWith(EventPatchSchema)
+    @validateArgs(EventIDSchema, 'event')
+    @validateBody(EventPatchSchema, 'patchData')
     # @auth_services.check_authorization(level=2, allowSocStaff=True)
-    def patch(self, argsData, data):
+    def patch(self, event, patchData):
 
-        for key,value in data.items():
-            setattr(argsData,key,value)
+        for key,value in patchData.items():
+            setattr(event,key,value)
 
-        db.session.add(argsData)
+        db.session.add(event)
         db.session.commit()
 
-        return jsonify({"status": "success", "data": argsData.getEventJSON()})
+        return jsonify({"status": "success", "data": event.getEventJSON()})
         
 
 @api.route('/test')

@@ -70,3 +70,18 @@ class TestSocieties(PointrTest):
         response2Data = json.loads(response2.data)
 
         self.assertEqual(response2Data, {"message": {"societyID": ["That Society ID does not exist"]}})
+
+    def testDeleteSociety(self):
+        c = app.test_client()
+        id = self.postValidSociety(c, "Gamersoc")
+        response = fetch(c, "DELETE", "/society", queries={
+            "societyID": id
+        })
+        self.assertOK(response)
+        payload = json.loads(response.data)
+        self.assertEqual(payload, {'status': 'success'})
+
+        response = self.getEvent(c, id)
+        payload = json.loads(response.data)
+        
+        self.assertEqual(payload, {"message": {"eventID": ["That Event ID does not exist"]}})
