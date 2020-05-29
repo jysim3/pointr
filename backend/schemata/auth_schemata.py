@@ -36,10 +36,10 @@ class RegisterDetailsSchema(PointrSchema):
     description = fields.Str()
     isArc = common_schemata.booleanRequired
 
-    school = fields.Int(required=True)
-    faculty = fields.Int(required=True)
-    degree = fields.Int(required=True)
-    commencementYear = common_schemata.commencementYearRequired
+    school = fields.Int(required=False)
+    faculty = fields.Int(required=False)
+    degree = fields.Int(required=False)
+    commencementYear = common_schemata.commencementYear
 
     @post_load
     def makeUser(self, data, **kwargs):

@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, abort
 from flask_restx import Namespace, Resource, fields
 from util.validation_services import toQuery, toModel, validateArgs, validateBody
 from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema, ZIDDetailsSchema, PasswordSchema
