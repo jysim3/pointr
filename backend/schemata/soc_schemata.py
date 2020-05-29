@@ -37,6 +37,10 @@ class SocietyCreationSchema(Schema):
 
     @post_load
     def makeSoc(self, data, **kwargs):
+
+        if Societies.getSocietyByName(data['name']):
+            abort(400, {'name': 'A society with that name already exists.'})
+
         data['id'] = uuid4().hex
         return Societies(**data)
 

@@ -11,8 +11,7 @@ import uuid
 class TestEvents(PointrTest):
 
     def testCreateEvent(self):
-        
-        c = app.test_client()
+        c = self.c
 
         # Data to send
         initialData = self.getMockEventData()
@@ -31,7 +30,7 @@ class TestEvents(PointrTest):
         self.assertDictContainsSubset(initialData, returnedData)
 
     def testEventPatch(self):
-        c = app.test_client()
+        c = self.c
 
         # make Event
         id = self.postValidEvent(c)
@@ -62,7 +61,7 @@ class TestEvents(PointrTest):
         self.assertDictContainsSubset(patchData, returnedData)
 
     def testEventInvalidID(self):
-        c = app.test_client()
+        c = self.c
 
         id = self.postValidEvent(c)
 
@@ -82,7 +81,7 @@ class TestEvents(PointrTest):
 
 
     def testEventPostInvalidSocietyID(self):
-        c = app.test_client()
+        c = self.c
 
         self.postValidSociety(c, "Gamersoc")
 
@@ -102,7 +101,7 @@ class TestEvents(PointrTest):
 
 
     def testDeleteEvent(self):
-        c = app.test_client()
+        c = self.c
         societyID = self.postValidSociety(c, "Gamersoc")
         id = self.postValidEvent(c, societyID)
         response = fetch(c, "DELETE", "/event", queries={

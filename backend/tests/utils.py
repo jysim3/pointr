@@ -4,12 +4,19 @@ import uuid
 from app import app, db
 from datetime import datetime, timezone
 import os
+from models.user import Users
+from hashlib import sha256
 
 URL_BASE = '/api'
 
 SERVER_TEST_SECRET = 'secret'
 
 class PointrTest(unittest.TestCase):
+
+    userSuperAdmin = {
+        'zID': 'z1111111',
+        'password': 'password'
+    }
 
     mockEventData = {
         "name": "Gamersoc Minecraft Night",
@@ -39,6 +46,8 @@ class PointrTest(unittest.TestCase):
         db.session.commit()
         db.drop_all()
         db.create_all()
+        self.c = app.test_client()
+        self.registerUsers()
 
     def tearDown(self):
         pass
@@ -132,6 +141,30 @@ class PointrTest(unittest.TestCase):
         data['name'] = name
         return data
 
+    def loginValidUser(loginDetails):
+        c = self.c
+        response = fetch(c, 'POST', '/auth/login', data=loginDetails)
+        payload = json.loads(response.data)
+        return payload['data']['token']
+
+    def createUser(self, details):
+        user = Users(**details)
+        db.session.add(user)
+        db.session.commit()
+
+    def registerUsers(self):
+        superAdmin = {
+            "firstName": "Harrison",
+            "lastName": "Steyn",
+            "zID": "z1111111",
+            "isArc": True,
+            "password": sha256("password".encode('utf-8')).hexdigest(),
+            "superadmin": False,
+            "activated": True
+        }
+
+        self.createUser(superAdmin)
+
 def fetch(c, method, route, queries=None, data=None, headers=None):
     if (method == 'GET'):
         return c.get(URL_BASE + route + query(queries))
@@ -145,9 +178,6 @@ def fetch(c, method, route, queries=None, data=None, headers=None):
         return c.put(URL_BASE + route + query(queries), data=data)
     else:
         print("INVALID METHOD")
-
-def generateToken():
-    pass
 
 def query(data):
     if data == None:
