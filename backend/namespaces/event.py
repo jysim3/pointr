@@ -1,7 +1,6 @@
 from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort
-from util.validation_services import validateArgsWith, validateWith, toQuery, validateArgs, validateBody
-from util.validation_services import toModel
+from util.validation_services import toQuery, toModel, validateArgs, validateBody
 from schemata.event_schemata import EventCreationSchema, EventPatchSchema
 from util import auth_services
 from schemata.models import authModel, offsetModel
@@ -85,25 +84,6 @@ class EventRoute(Resource):
 
         return jsonify({"status": "success", "data": event.getEventJSON()})
         
-
-@api.route('/test')
-class Test(Resource):
-
-    def post(self):
-        return {"method": "post"}
-
-    def get(self):
-        return {"method": "get"}
-
-    def patch(self):
-        return {"method": "patch"}
-
-    def delete(self):
-        return {"method": "delete"}
-    
-    def put(self):
-        return {"method": "put"}
-
 """
 FIXME: CHUCK ALL THIS INTO ARGS STRING, CHECK ARGS STRING, WORK ON VALIDATEARGSWITH
 """
@@ -114,11 +94,11 @@ class AttendRoute(Resource):
         The token bearer is recorded as having attended the given eventID.
     ''')
     @api.expect(authModel)
-    @validateArgsWith(EventIDSchema)
+    @validateArgs(EventIDSchema, 'event')
     @checkAuthorization(allowSocMember=True)
-    def post(self, token_data, argsData):
+    def post(self, token_data, event):
         user = Users.findUser(token_data['zID'])
-        status = argsData.addAttendance(user)
+        status = event.addAttendance(user)
         if status:
             abort(405, status)
 
@@ -128,12 +108,12 @@ class AttendRoute(Resource):
         The token bearer is no longer recorded as having attended the given eventID.
     ''')
     @api.expect(authModel)
-    @validateArgsWith(ZIDSchema)
-    @validateWith(EventIDSchema)
+    @validateArgs(ZIDSchema, 'user')
+    @validateBody(EventIDSchema, 'event')
     #@checkAuthorization(allowSocAdmin=True)
     #def delete(self, token_data, argsData, data):
-    def delete(self, argsData, data):
-        status = data.deleteAttendance(argsData)
+    def delete(self, user, event):
+        status = event.deleteAttendance(user)
         if status:
             abort(405, status)
 
@@ -187,7 +167,7 @@ class UpcomingRoute(Resource):
         Get an amount of all the upcoming events (amount specified in the query string)
     ''')
     @api.expect(authModel)
-    @validateArgsWith(EventNumberSchema)
+    @validateArgs(EventNumberSchema)
     # NOTE: Do we want the public to see upcoming events as well?
     @checkAuthorization(level=1)
     def get(self, token_data, argsData):

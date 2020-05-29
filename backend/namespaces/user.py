@@ -6,7 +6,7 @@ api = Namespace('user', description='Reworked User Services')
 
 from app import db
 from models.user import Users
-from util.validation_services import validateArgsWith, validateWith
+from util.validation_services import toQuery, toModel, validateArgs, validateBody
 from schemata.user_schemata import ZIDSchema, ZIDSchemaNotReq, zIDPatchSchema
 from util.auth_services import checkAuthorization
 
@@ -18,20 +18,20 @@ class User(Resource):
         Everybody's profile is public
     ''')
     # FIXME: Might change the publicity of profiles later on
-    @validateArgsWith(ZIDSchemaNotReq)
+    @validateArgs(ZIDSchemaNotReq, 'user')
     #@checkAuthorization()
-    def get(self, argsData):
-        return jsonify({'status': 'success', 'data': argsData.getJSON()})
+    def get(self, user):
+        return jsonify({'status': 'success', 'data': user.getJSON()})
 
     @api.doc(description='''
         Update the token-bearer's information
     ''')
-    @validateWith(zIDPatchSchema)
+    @validateBody(zIDPatchSchema, 'patchData')
     @checkAuthorization(allowSelf=True)
-    def patch(self, token_data, data):
+    def patch(self, token_data, patchData):
         user = Users.query.filter_by(zID=token_data['zID']).first()
 
-        for key,value in data.items():
+        for key,value in patchData.items():
             setattr(user,key,value)
 
         db.session.add(user)

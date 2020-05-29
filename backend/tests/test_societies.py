@@ -11,7 +11,7 @@ import uuid
 class TestSocieties(PointrTest):
 
     # Test to create a society that just has the barebone requirements
-    def testCreateValidSociety(self):
+    def testSocietyValidCreate(self):
         c = app.test_client()
 
         # Data to send
@@ -31,7 +31,7 @@ class TestSocieties(PointrTest):
         self.assertDictContainsSubset(initialData, returnedData)
 
     # Attempts to create a society and 
-    def testPatchValidSociety(self):
+    def testSocietyValidPatch(self):
         c = app.test_client()
 
         societyID = self.postValidSociety(c, "Gamersoc")
@@ -52,7 +52,7 @@ class TestSocieties(PointrTest):
 
         self.assertDictContainsSubset(patchData, returnedData)
         
-    def testInvalidSocietyID(self):
+    def testSocietyInvalidID(self):
         c = app.test_client()
 
         id = self.postValidSociety(c, "Gamersoc")
@@ -67,7 +67,7 @@ class TestSocieties(PointrTest):
         payload = json.loads(response.data)
         self.assertContains(payload, "message", {"societyID": ["That Society ID does not exist"]})
 
-    def testDeleteSociety(self):
+    def testSocietyDelete(self):
         c = app.test_client()
         id = self.postValidSociety(c, "Gamersoc")
         response = fetch(c, "DELETE", "/society", queries={

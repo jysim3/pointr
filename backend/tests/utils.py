@@ -3,8 +3,11 @@ import unittest
 import uuid
 from app import app, db
 from datetime import datetime, timezone
+import os
 
 URL_BASE = '/api'
+
+SERVER_TEST_SECRET = 'secret'
 
 class PointrTest(unittest.TestCase):
 
@@ -32,6 +35,7 @@ class PointrTest(unittest.TestCase):
     def setUp(self):
         app.config['SQLALCHEMY_ECHO'] = False
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        os.environ['POINTR_SERVER_SECRET'] = SERVER_TEST_SECRET
         db.session.commit()
         db.drop_all()
         db.create_all()
@@ -141,6 +145,9 @@ def fetch(c, method, route, queries=None, data=None, headers=None):
         return c.put(URL_BASE + route + query(queries), data=data)
     else:
         print("INVALID METHOD")
+
+def generateToken():
+    pass
 
 def query(data):
     if data == None:
