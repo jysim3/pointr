@@ -60,3 +60,6 @@ class SocietyRankSchema(Schema):
 
     class Meta:
         unknown = EXCLUDE
+
+class SocietyLogoSchema(Schema):
+    logo = fields.Raw(required=True)

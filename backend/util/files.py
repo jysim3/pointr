@@ -3,7 +3,7 @@ from flask import request, abort
 import os
 import uuid
 
-ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg'}
+ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg', 'bitmap', 'tiff'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
