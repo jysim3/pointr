@@ -68,18 +68,17 @@ def generateForgotToken(zID):
 def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowSuperAdmin=False, allowSocAdmin=False, allowSocMember=False):
     def decorator(func):
         def wrapper(*args, **kwargs):
-            print("AJSDHASKJDHASKDSJ")
 
             args_data = {}
             data = {}
 
+
+            token = TokenSchema().load({"token": request.headers.get('Authorization')})
             try:
-                args_data = AuthSchema().load(request.args)
-                try:
+                if request.args:
+                    args_data = AuthSchema().load(request.args)
+                if request.get_json():
                     data = AuthSchema().load(request.get_json())
-                except Exception as e:
-                    print(e)
-                token = TokenSchema().load({"token": request.headers.get('Authorization')})
             except ValidationError as err:
                 abort(400, err.messages)
 

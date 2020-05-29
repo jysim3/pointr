@@ -11,6 +11,7 @@ from app import db
 from models.user import Users
 from util.auth_services import generateLoginToken, generateActivationToken
 from util.emailPointr import sendActivationEmail
+from util.auth_services import checkAuthorization
 
 @api.route('/register')
 class Register(Resource):
@@ -61,8 +62,8 @@ class Activate(Resource):
         Takes token that was emailed to student when they registered using `/api/auth/register` 
         and now gives them 'activated' status from now on.      
     ''')
-    @api.expect(authModel)
-    # @auth_services.check_authorization(activationRequired=False, level=0)
+    #@api.expect(authModel)
+    @checkAuthorization(activationRequired=False, level=0)
     def post(self, token_data):
         user = Users.query.filter_by(zID=token_data['zID']).first()
         if not user:
