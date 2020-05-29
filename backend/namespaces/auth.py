@@ -30,7 +30,7 @@ class Register(Resource):
             abort(500, "Internal Server Error, Email Service Not Working")
         print(token)
 
-        db.session.add(details)
+        db.session.add(user)
         db.session.commit()
         #z5214808
 
@@ -48,7 +48,7 @@ class Login(Resource):
         if not details:
             abort(403, "Invalid Parametres, zID or password incorrect")
         elif details.activated == False:
-            abort(405, "Account Not Activated")
+            abort(403, "Account Not Activated")
 
         token = generateLoginToken(details)
 

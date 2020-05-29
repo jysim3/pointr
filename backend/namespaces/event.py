@@ -100,7 +100,7 @@ class AttendRoute(Resource):
         user = Users.findUser(token_data['zID'])
         status = event.addAttendance(user)
         if status:
-            abort(405, status)
+            abort(403, status)
 
         return jsonify({"status": "success"})
 
@@ -115,7 +115,7 @@ class AttendRoute(Resource):
     def delete(self, user, event):
         status = event.deleteAttendance(user)
         if status:
-            abort(405, status)
+            abort(403, status)
 
         return jsonify({"status": "success"})
 

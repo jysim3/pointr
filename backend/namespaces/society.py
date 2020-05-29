@@ -124,7 +124,7 @@ class Join(Resource):
         user = Users.query.filter_by(zID=token_data['zID']).first()
         status = society.addStaff(user)
         if status:
-            abort(405, f"Invalid Parametres {status}")
+            abort(403, f"Invalid Parametres {status}")
 
         return jsonify({'status': 'success'})
 
@@ -137,7 +137,7 @@ class Leave(Resource):
  
         status = society.deleteStaff(user)
         if status:
-            abort(405, status)
+            abort(403, status)
 
         return jsonify({'status': 'success'})
 
@@ -209,7 +209,7 @@ class Admin(Resource):
 
         status = society.addStaff(user, rank)
         if status:
-            abort(405, status)
+            abort(403, status)
 
         return jsonify({'status': 'success'})
 
@@ -240,6 +240,6 @@ class Admin(Resource):
 
         status = society.deleteStaff(user, rank)
         if status:
-            abort(405, status)
+            abort(403, status)
 
         return jsonify({'status': 'success'})

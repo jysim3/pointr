@@ -35,13 +35,13 @@ def generateLoginToken(user):
     ) 
     return token.decode("utf-8")
     
-def generateActivationToken(zID):
+def generateActivationToken(user):
     global activationTokenTimeout
     token = jwt.encode(
         {
             'exp': datetime.utcnow() + timedelta(seconds=activationTokenTimeout),
             'iat': datetime.utcnow(),
-            'zID': zID,
+            'zID': user.zID,
             'permission': 0,
             'activation': 0,
             'type': 'activation'
