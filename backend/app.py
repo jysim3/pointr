@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
-api = Api(app, version='3.0.0', title='Pointr backend',
+api = Api(app, version='3.0.1', title='Pointr backend',
     description='Backend for pointr.live',
 )
 
