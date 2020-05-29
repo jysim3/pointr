@@ -17,6 +17,9 @@ html {
   --font-stack: 'Public Sans', Arial, Helvetica, sans-serif;
   --border-radius: 5px;
 }
+.warning {
+  color: var(--c-warning)
+}
 .primary {
   color: var(--c-primary)
 }
@@ -62,6 +65,7 @@ h4 {
 
 a {
   text-decoration: none;
+  cursor: pointer;
 }
 a.link {
   transition: box-shadow 0.2s;
@@ -79,6 +83,61 @@ a.link:hover {
 
 ::-moz-focus-inner {
   border: 0;
+}
+table 			      { 
+  border-spacing: 1; 
+  border-collapse: collapse; 
+  background: transparent;
+  border-radius:6px;
+  overflow:hidden;
+  max-width:800px; 
+  width:100%;
+  margin:0 auto;
+  position:relative;
+  
+}
+table td,th           { 
+  padding-left:8px
+}
+
+table th        { 
+  height:60px;
+  background: var(--c-primary);
+  font-size:16px;
+  color: white;
+}
+
+table tr        { 
+    height:48px; 
+    margin-left: 1rem;
+    border-bottom: 2px solid var(--c-secondary);
+    transition: 0.2s;
+    background: white;
+}
+table tr.link:hover{ 
+    background: #e3f2fd;
+    cursor: pointer;
+    transform: translate(0, -2px);
+    transition: 0.2s;
+}
+table tr:last-child  { 
+  border:0; 
+}
+
+table td,th { 
+  text-align:left;
+}
+td .material-icons {
+  text-align: center;
+}
+
+/* general */
+.d-flex {
+  display: flex;
+}
+.container {
+  width: 80%;
+  margin: auto;
 }
 
 .card {

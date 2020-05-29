@@ -1,32 +1,75 @@
 <template>
-  <div id="attendance">
+  <div id="attendance" class="container">
     <!-- <h2 id="attendance-header">Attendance<span v-if="!hasAttendees"> ({{ attendees.length }})</span></h2> -->
     <h2 id="attendance-header">Attendance ({{ attendees.length }})</h2>
-    <div id="attendees-container" v-if="attendees.length != 0">
-      <EventAttendee
-        v-for="(attendee, index) in attendees"
-        :key="index"
-        :eventID="eventID"
-        :attendee="attendee"
-        class="attendee"
-      />
-      <!-- TODO: be able to select mutliple attendees so don't have to delete/edit one by one -->
-    </div>
+        <table v-if="attendees.length != 0">
+          <tr>
+            <th></th>
+            <th v-for="(n, i) in fields" :key="i">{{n}}</th>
+          </tr>
+          <tr 
+          v-for="(attendee, index) in attendeesData" 
+          :key="index" 
+          >
+          <!-- class="link" -->
+          <td></td>
+                <td 
+                v-for="(n, i) in fields"
+                :key="i" >
+                  <a @click="deleteAttendee()" v-if="n === 'Actions'" class="material-icons warning"> delete </a>
+                  <i v-else-if="n === 'isArcMember'" class="material-icons">{{ attendee[n] ? 'check' : 'close'}}</i>
+                  <span v-else> {{ attendee[n] }} </span>
+                </td>
+                
+          </tr>
+        </table> 
     <h3 v-else id="no-attendees-msg">All attendees will appear here.</h3>
   </div>
 </template>
 
 <script>
-import EventAttendee from "@/components/event/EventAttendee.vue";
+import axios from 'axios'
 
 export default {
   name: "EventAttendance",
   components: {
-    EventAttendee
+  },
+  computed: {
+    attendeesData() {
+      return this.attendees.map(a => ({
+          "Name": a.userName,
+          "zID": a.attendanceTime,
+          "isArcMember": a.isArcMember
+        }))
+    }
+  },
+  data() {
+    return {
+      fields: ['Name','zID','isArcMember','Actions'],
+      attendees: [],
+    }
+  },
+  methods: {
+
+    deleteAttendee() {
+      // const data = {
+      //   zID: this.attendee.zID,
+      //   eventID: this.eventID
+      // };
+      // axios.post(`/api/event/attend?zID=${this.attendee.zID}&eventID=${this.eventID}`);
+    }
+  },
+
+  mounted() {
+        axios.get(`/api/event/?eventID=${this.eventID}`)
+        .then(r => {
+          console.log(r.data)
+          this.attendees = r.data.attendance
+        })
+
   },
   props: {
     eventID: String,
-    attendees: Array
   }
 };
 </script>
@@ -43,10 +86,7 @@ export default {
 }
 
 #attendance {
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  font-size: 1rem;
 }
 
 #attendance-header {
@@ -57,14 +97,5 @@ export default {
   text-align: center;
   font-weight: 400;
   margin: 1rem 0;
-}
-
-#attendees-container {
-  width: 100%;
-  margin: 1rem 0 2rem 0;
-}
-
-.attendee + .attendee {
-  border-top: 4px solid var(--c-secondary); /* TODO: change to better colour or change to margin instead of border */
 }
 </style>

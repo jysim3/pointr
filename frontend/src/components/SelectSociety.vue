@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container">
         
         <div   class="form-container">
             <div class="form">
@@ -22,7 +22,8 @@
             >View {{viewAllData ? 'less' : 'more'}}</a> -->
         </div>
 
-        <FormError v-if="societies.length === 0" msg="Seems like there is no events at the moment"/> 
+        <Loader v-if="loading"/>
+        <FormError v-else-if="societies.length === 0" msg="Seems like there is no events at the moment"/> 
         <div v-else class="event-cards " >
           <Card v-for="(society, index) in cardData" :key="index" :data="society" />
         </div>
@@ -31,15 +32,17 @@
 <script>
 import Card from '@/components/EventCard.vue'
 import FormError from '@/components/FormError.vue'
+import Loader from '@/components/Loader.vue'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
 export default {
     name: "SelectSociety",
     components: {
-        Card, FormError
+        Card, FormError, Loader
     },
     data() {
         return {
+            loading: false,
             societies: [],
             selectedSociety: ''
         }
@@ -60,12 +63,13 @@ export default {
         }
     },
     mounted() {
+        this.loading = true
         axios({
             url:'api/soc/getAllSocs'
         }).then(r => {
             this.societies = r.data
             console.log(r)
-        })
+        }).finally(() => this.loading = false)
     },
     methods: {
         selectSociety() {

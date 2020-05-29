@@ -31,7 +31,7 @@ export default {
       upcomingEvents: {
         title: "Upcoming events",
         data: [],
-        isLoading: true
+        isLoading: false
       },
       allEvents: {
         title: "Browse events",

@@ -18,7 +18,7 @@
                     </div>
                 </div>
                 <!-- TODO: Let user modify -->
-                <img v-if="userData" :src="apiURL + userData.image" />
+                <img v-if="userData" :src="userImage" />
                 <div class="profile-buttons">
                     <i class="material-icons profile-info-button">favorite</i>
                     </div>
@@ -86,6 +86,12 @@ export default {
     this.updateUserData()
   },
   computed: {
+    userImage() {
+      if (this.userData.image) {
+        return this.apiURL + this.userData.image
+      }
+      return "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-vector-default-avatar-profile-icon-social-media-user-vector-portrait-176194876.jpg"
+    },
     ...mapGetters('user', [
     ]),
     stats () {

@@ -16,7 +16,7 @@
       <EventAdminAttendance :eventID="this.eventID" />
     </div>
     <div id="event-attendance-container">
-      <EventAttendance class="attendee" :eventID="eventID" :attendees="reversedParticipants" />
+      <EventAttendance class="attendee" :eventID="eventID" />
       <FormError v-show="error" :msg="error" />
       <!-- TODO: only show last 10 people who have joined? Click 'view all' to show all participants? -->
     </div>
