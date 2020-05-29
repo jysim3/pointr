@@ -4,62 +4,6 @@ from marshmallow import ValidationError
 from marshmallow.utils import missing
 from json import loads, dumps
 
-def validate_with(schema):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-
-            if not request.json:
-                abort(400, 'Malformed Request')
-            
-            # Validate data
-            try:
-                data = schema().load(request.get_json())
-            except ValidationError as err:
-                abort(400, err.messages)
-            return func(data=data, *args, **kwargs)
-        return wrapper
-    return decorator
-
-def validateWith(schema):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-
-            if not request.json:
-                abort(400, 'Request is not JSON')
-            
-            # Validate data
-            try:
-                data = schema().load(request.get_json())
-            except ValidationError as err:
-                abort(400, err.messages)
-            return func(data=data, *args, **kwargs)
-        return wrapper
-    return decorator
-    
-def validate_args_with(schema):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            # Validate data
-            try:
-                data = schema().load(request.args)
-            except ValidationError as err:
-                abort(400, err.messages)
-            return func(args_data=data, *args, **kwargs)
-        return wrapper
-    return decorator
-
-def validateArgsWith(schema):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            # Validate data
-            try:
-                data = schema().load(request.args)
-            except ValidationError as err:
-                abort(400, err.messages)
-            return func(argsData=data, *args, **kwargs)
-        return wrapper
-    return decorator
-
 def validateArgs(schema, name='argsData'):
     def decorator(func):
         def wrapper(*args, **kwargs):
@@ -95,33 +39,6 @@ def validateBody(schema, name='data'):
             kwargs.update(validatedData)
 
             return func(*args, **kwargs)
-        return wrapper
-    return decorator
-
-def validateArgsWith(schema):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            # Validate data
-            try:
-                data = schema().load(request.args)
-            except ValidationError as err:
-                abort(400, err.messages)
-            return func(argsData=data, *args, **kwargs)
-        return wrapper
-    return decorator
-
-def validateFormWith(schema):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            if not request.form:
-                abort(400, "Missing Parametres")
-
-            try:
-                formData = schema().load(loads(dumps(dict(request.form))))
-            except ValidationError as error:
-                abort(400, error.messages)
-
-            return func(data=formData, *args, **kwargs)
         return wrapper
     return decorator
 

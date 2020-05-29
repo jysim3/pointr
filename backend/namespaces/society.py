@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource
-from util.validation_services import validateArgsWith, validateWith, validateBody, validateArgs, toModel, toQuery
+from util.validation_services import toQuery, toModel, validateArgs, validateBody
 from util.auth_services import checkAuthorization
 from schemata.soc_schemata import *
 from schemata.user_schemata import ZIDSchema
@@ -117,12 +117,12 @@ class SocLogo(Resource):
 
 @api.route('/join')
 class Join(Resource):
-    @validateArgsWith(SocietyIDSchema)
     @checkAuthorization()
-    def post(self, token_data, argsData):
+    @validateArgs(SocietyIDSchema, 'society')
+    def post(self, token_data, society):
         # FIXME: WE NEED TO CHECK WHETHER OR NOT THIS SOCIETY ALLOWS PEOPLE TO JOIN
         user = Users.query.filter_by(zID=token_data['zID']).first()
-        status = argsData.addStaff(user)
+        status = society.addStaff(user)
         if status:
             abort(405, f"Invalid Parametres {status}")
 
@@ -156,11 +156,11 @@ class Tag(Resource):
     @api.doc(description='''
         Returns preview of societies with the given tags (multiple tags are OR'd)
     ''')
-    @validateArgsWith(SocietyTagSchema)
+    @validateArgs(SocietyTagSchema, 'tags')
     @api.expect(authModel)
     #@checkAuthorization()
-    def get(self, argsData):
-        socs = Societies.getSocietiesByTag(argsData['tag'])
+    def get(self, tags):
+        socs = Societies.getSocietiesByTag(tags['tag'])
         socs = [i.getSocietyJSON() for i in socs]
         return jsonify({"status": "success", "data": socs})
 
@@ -170,10 +170,10 @@ class Upcoming(Resource):
     @api.doc(description='''
         Returns previews of upcoming events of society
     ''')
-    @validateArgsWith(SocietyIDSchema)
+    @validateArgs(SocietyIDSchema, 'society')
     @api.expect(authModel)
-    def get(self, argsData):
-        events = argsData.getUpcomingEvents()
+    def get(self, society):
+        events = society.getUpcomingEvents()
         events = [i.getPreview() for i in events]
         return jsonify({"status": "success", "data": events})
 
@@ -183,10 +183,10 @@ class Past(Resource):
     @api.doc(description='''
         Returns previews of past events of society
     ''')
-    @validateArgsWith(SocietyIDSchema)
+    @validateArgs(SocietyIDSchema, 'society')
     @api.expect(authModel)
-    def get(self, argsData):
-        events = argsData.getPastEvents()
+    def get(self, society):
+        events = society.getPastEvents()
         events = [i.getPreview() for i in events]
         return jsonify({"status": "success", "data": events})
 

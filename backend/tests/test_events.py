@@ -30,7 +30,7 @@ class TestEvents(PointrTest):
 
         self.assertDictContainsSubset(initialData, returnedData)
 
-    def testPatchEvent(self):
+    def testEventPatch(self):
         c = app.test_client()
 
         # make Event
@@ -61,7 +61,7 @@ class TestEvents(PointrTest):
         # Whatever the get returned should contain the patch
         self.assertDictContainsSubset(patchData, returnedData)
 
-    def testInvalidEventID(self):
+    def testEventInvalidID(self):
         c = app.test_client()
 
         id = self.postValidEvent(c)
@@ -81,7 +81,7 @@ class TestEvents(PointrTest):
         self.assertEqual(response2Data, {"message": {"eventID": ["That Event ID does not exist"]}})
 
 
-    def testPostEventInvalidSocietyID(self):
+    def testEventPostInvalidSocietyID(self):
         c = app.test_client()
 
         self.postValidSociety(c, "Gamersoc")
