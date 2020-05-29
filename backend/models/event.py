@@ -214,15 +214,15 @@ class Event(db.Model):
         return events
 
     @staticmethod
-    def getAllUpcomingEvents():
+    def getAllUpcomingEvents(offset=5):
         events = Event.query.filter(Event.start>datetime.now(timezone.utc)).all()
-        return events
+        return events[:offset]
 
     @staticmethod
-    def getAllUpcomingEventsJSONs():
+    def getAllUpcomingEventsJSONs(offset=5):
         events = Event.query.filter(Event.start>datetime.now(timezone.utc)).all()
         events.sort(key=lambda event: event.start)
-        return [event.getPreview() for event in events]
+        return [event.getPreview() for event in events][:offset]
 
     @staticmethod
     def getAllEventsPreviews():
