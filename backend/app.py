@@ -12,11 +12,12 @@ api = Api(app, version='3.0.1', title='Pointr backend',
     description='Backend for pointr.live',
 )
 
-app.config['SQLALCHEMY_ECHO'] = True
+app.config['SQLALCHEMY_ECHO'] = False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{os.environ.get('SQLPassword')}@localhost/pointrDB"
 db = SQLAlchemy(app)
 
+# FIXME: Change this to production when we relaunch pointr
 app.config['ENV'] = 'development'
 
 from namespaces.auth import api as auth
@@ -37,8 +38,7 @@ if (app.config['ENV'] == 'development'):
 if (app.config['ENV'] == 'development'):
     app.config['UPLOAD_FOLDER'] = f"{os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))}/assets/images/"
 elif (app.config['ENV'] in ['production','test']):
-    app.config['UPLOAD_FOLDER'] = f"/var/www/static/assets/images/"
-#app.config['UPLOAD_FOLDER'] = "../assets/images/"
+    app.config['UPLOAD_FOLDER'] = "/var/www/static/assets/images/"
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 if (os.path.exists(app.config['UPLOAD_FOLDER']) == False):

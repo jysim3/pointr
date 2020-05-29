@@ -15,10 +15,10 @@ class Users(db.Model):
     description = db.Column(db.Text, nullable=True)
     isArc = db.Column(db.Boolean, nullable=False)
 
-    school = db.Column(db.Integer, nullable=False)
-    faculty = db.Column(db.Integer, nullable=False)
-    degree = db.Column(db.Integer, nullable=False)
-    commencementYear = db.Column(db.Integer, nullable=False)
+    school = db.Column(db.Integer, nullable=True)
+    faculty = db.Column(db.Integer, nullable=True)
+    degree = db.Column(db.Integer, nullable=True)
+    commencementYear = db.Column(db.Integer, nullable=True)
 
     superadmin = db.Column(db.Boolean, nullable=False)
     activated = db.Column(db.Boolean, nullable=False)
