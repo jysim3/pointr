@@ -285,9 +285,6 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
                     return func(token_data=token_data, *args, **kwargs)
 
             if 'eventID' in data:
-                print("""
-                ENTERED HERE
-                """)
                 # We grant access if the token bearer can have control over eventID
                 # I.e. if the user is an admin of the soc that's hosting this event
                 # WE need this because socID and eventID dont always come
