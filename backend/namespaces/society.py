@@ -9,8 +9,9 @@ from constants import constants
 api = Namespace('society', description='Society Attendance Services')
 
 from app import db
-from flask import jsonify, abort
+from flask import jsonify, abort, request
 from models.user import Users
+from util.files import uploadImages
 
 @api.route('')
 class Society(Resource):
@@ -76,17 +77,43 @@ class Society(Resource):
 
 @api.route('/logo')
 class SocLogo(Resource):
-    def get(self):
-        pass
+    @api.doc(description='''
+        Get the photo path of the soc logo provided by the query string
+    ''')
+    @api.expect(authModel)
+    @validateArgs(SocietyIDSchema, 'society')
+    def get(self, society):
+        logo = society.getLogo()
+        if not logo:
+            abort(403, "No logo has been uploaded for this society")
 
-    def post(self):
-        pass
+        return jsonify({'status': 'success', 'data': logo})
 
-    def patch(self):
-        pass
+    @api.doc(description='''
+        Upload a new logo for the soc specified by the query string 
+    ''')
+    @api.expect(authModel)
+    @validateArgs(SocietyIDSchema, 'society')
+    def patch(self, society):
+        if not request.files:
+            abort(400, "Missing Parametres (no logo supplied)")
 
-    def delete(self):
-        pass
+        status = uploadImages(request.files['logo'])
+        if not isinstance(status, tuple):
+            abort(403, status)
+
+        society.setLogo(status[0])
+        return jsonify({'status': 'success'})
+
+    @api.doc(description='''
+        Delete the logo of the soc specified by the query string
+    ''')
+    @api.expect(authModel)
+    @validateArgs(SocietyIDSchema, 'society')
+    def delete(self, society):
+        logo = society.removeLogo()
+
+        return jsonify({'status': 'success'})
 
 @api.route('/join')
 class Join(Resource):

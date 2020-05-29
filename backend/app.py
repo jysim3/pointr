@@ -17,6 +17,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{os.environ.get('SQLPassword')}@localhost/pointrDB"
 db = SQLAlchemy(app)
 
+app.config['ENV'] = 'development'
+
 from namespaces.auth import api as auth
 from namespaces.event import api as event
 from namespaces.user import api as user
@@ -32,10 +34,6 @@ if (app.config['ENV'] == 'development'):
     def send_images(path):
             return send_from_directory('../assets/images/', path)
 
-    if (os.path.exists("../assets/images/") == False):
-        os.mkdir("../assets")
-        os.mkdir("../assets/images")
-
 if (app.config['ENV'] == 'development'):
     app.config['UPLOAD_FOLDER'] = f"{os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))}/assets/images/"
 elif (app.config['ENV'] in ['production','test']):
@@ -43,6 +41,8 @@ elif (app.config['ENV'] in ['production','test']):
 #app.config['UPLOAD_FOLDER'] = "../assets/images/"
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
+if (os.path.exists(app.config['UPLOAD_FOLDER']) == False):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 def updateAccessCodes():
     # Added a background scheduler to update access codes for all events that are currently running

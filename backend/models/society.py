@@ -19,7 +19,6 @@ class Societies(db.Model):
     
     previewDescription = db.Column(db.Text, nullable=True)
 
-    # TODO String Array
     photo = db.Column(db.Text, nullable=True)
 
     type = db.Column(db.Integer, nullable=False)
@@ -143,6 +142,27 @@ class Societies(db.Model):
             if i.end < currentTime:
                 events.append(i)
         return events
+
+    def getLogo(self):
+        """
+        Returns the path of which the soc logo is located at
+        """
+        return self.photo
+
+    def removeLogo(self):
+        """
+        Clear the path of the soc logo (i.e. delete the soc logo)
+        """
+        self.photo = None
+
+        db.session.add(self)
+        db.session.commit()
+
+    def setLogo(self, logo):
+        self.photo = logo
+
+        db.session.add(self)
+        db.session.commit()
 
     @staticmethod
     def findSociety(id):
