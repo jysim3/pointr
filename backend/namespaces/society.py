@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource
-from util.validation_services import validateArgsWith, validateWith, validateBody, validateArgs, toModel
+from util.validation_services import validateArgsWith, validateWith, validateBody, validateArgs, toModel, toQuery
 from util.auth_services import checkAuthorization
 from schemata.soc_schemata import *
 from schemata.user_schemata import ZIDSchema
@@ -22,6 +22,7 @@ class Society(Resource):
     ''')
     @api.expect(authModel)
     @validateArgs(SocietyIDSchema, 'society')
+    @api.expect(authModel, toModel(api, SocietyIDSchema))
     #@checkAuthorization()
     def get(self, society):
         return jsonify({"status": "success", "data": society.getSocietyJSON()})
@@ -72,6 +73,20 @@ class Society(Resource):
         db.session.commit()
 
         return jsonify({"status": "success"})
+
+@api.route('/logo')
+class SocLogo(Resource):
+    def get(self):
+        pass
+
+    def post(self):
+        pass
+
+    def patch(self):
+        pass
+
+    def delete(self):
+        pass
 
 @api.route('/join')
 class Join(Resource):
