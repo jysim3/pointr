@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, ValidationError, validates, validate, EXCLUDE, post_load
+from marshmallow import Schema, fields, ValidationError, validates, validate, EXCLUDE, post_load, pre_load
 from schemata import common_schemata
 from constants import constants as c
 from constants.constants import SOCIETY_TYPE
@@ -8,6 +8,7 @@ from flask import abort
 from models.user import Users
 
 class SocietyIDSchema(Schema):
+    __schema_name__ = "SocietyID Form"
     societyID = common_schemata.societyIDRequired
 
     class Meta:

@@ -2,6 +2,7 @@ from flask import request, abort, jsonify
 from flask_restx import fields
 from marshmallow import ValidationError
 from marshmallow.utils import missing
+from json import loads, dumps
 
 def validate_with(schema):
     def decorator(func):
@@ -109,13 +110,50 @@ def validateArgsWith(schema):
         return wrapper
     return decorator
 
+def validateFormWith(schema):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            if not request.form:
+                abort(400, "Missing Parametres")
+
+            try:
+                formData = schema().load(loads(dumps(dict(request.form))))
+            except ValidationError as error:
+                abort(400, error.messages)
+
+            return func(data=formData, *args, **kwargs)
+        return wrapper
+    return decorator
+
+def validateForm(schema, name="formData"):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            if not request.form:
+                abort(400, "Missing Parametres")
+
+            try:
+                formData = schema().load(loads(dumps(dict(request.form))))
+            except ValidationError as error:
+                abort(400, error.messages)
+
+            validatedData = {
+                name: formData
+            }
+
+            kwargs.update(validatedData)
+
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
 schemaNameToModel = {
     'String': fields.String,
     'Integer': fields.Integer,
     'DateTime': fields.DateTime,
     'AwareDateTime': fields.DateTime,
     'Boolean': fields.Boolean,
-    'List': fields.List
+    'List': fields.List,
+    'UUID': fields.String
 }
 
 def toModel(api, schema):
@@ -152,9 +190,10 @@ def toQuery(api, schema):
     for schemaFieldName in schemaFields:
         # TODO add more documentation
         schemaField = schemaFields[schemaFieldName]
-        
+
         parser.add_argument(schemaFieldName, 
             required=schemaField.required,
+            type=type(schemaField).__name__,
             help=(schemaField.description if hasattr(schemaField,'description') else None),
             default=(schemaField.default if not schemaField.default == missing else None),
         )
