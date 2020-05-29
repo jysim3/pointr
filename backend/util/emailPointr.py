@@ -1,6 +1,7 @@
 import os
 from app import app
-from flask_mail import Mail
+from flask_mail import Mail, Message
+from threading import Thread
 
 if app.config['ENV'] == 'development':
     site = 'http://localhost:8000'
@@ -17,51 +18,42 @@ app.config.update(
 )
 mail = Mail(app)
 
+def sendAsyncMail(app, msg):
+    with app.app_context():
+        try:
+            mail.send(msg)
+        except Exception as e:
+            return str(e)
 
 def sendActivationEmail(stringToSend, emailToSend):
-    message = f"""\
+    message = Message('Activate Your Pointr Account', sender=app.config['MAIL_USERNAME'],
+    recipients=[f"{emailToSend}@student.unsw.edu.au"])
+    message.body = f"""\
 Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nHave fun accumulating your room points :).\n\nPlease activate your account now: {site}/{stringToSend}"""
 
-    try:
-        msg = mail.send_message(
-            'Activate Your Pointr Account',
-            sender=app.config['MAIL_USERNAME'],
-            recipients=[f"{emailToSend}@student.unsw.edu.au"],
-            body=message
-        )
-    except Exception:
-        return str(Exception)
+    # Async version
+    Thread(target=sendAsyncMail, args=(app, message)).start()
+    #mail.send(message)
     return "success"
 
 
 def sendForgotEmail(link, zID, emailToSend):
-    message = f"""\
+    message = Message('Reset Your Pointr Password', sender=app.config['MAIL_USERNAME'],
+    recipients=[f"{emailToSend}@student.unsw.edu.au"])
+    message.body = f"""\
 Hi,{zID}\nYou have requested to reset your password.\nFollow this link to reset your password: {site+link}"""
 
-    try:
-        msg = mail.send_message(
-            'Reset Your Pointr Password',
-            sender=app.config['MAIL_USERNAME'],
-            recipients=[emailToSend],
-            body=message
-        )
-    except Exception:
-        return str(Exception)
+    # Async version
+    Thread(target=sendAsyncMail, args=(app, message)).start()
     return "success"
 
 def sendEnquiry(subject, message):
     recipients=["stevenshen1999@hotmail.com", "steynharrison1@gmail.com", "junyang.0607@gmail.com", "hello@ivanvelickovic.com"]
-    #recipients=["stevenshen1999@hotmail.com", "shenthemaster@gmail.com"]
+    message = Message('Enquire Email For Pointr', sender=app.config['MAIL_USERNAME'],
+    recipients=recipients)
 
-    try:
-        msg = mail.send_message(
-            subject,
-            sender=app.config['MAIL_USERNAME'],
-            recipients=recipients,
-            body=message
-        )
-    except Exception:
-        return str(Exception)
+    # Async version
+    Thread(target=sendAsyncMail, args=(app, message)).start()
     return "success"
 
 '''
