@@ -24,7 +24,7 @@ if __name__ == "__main__":
     db.create_all()
 
     from fillDB import addSoc, addEvent
-    if len(sys.argv) == 5:
+    if len(sys.argv) == 5 and sys.argv[4].lower() == 'true':
         addSoc()
         addEvent()
         print("Database Initialised")

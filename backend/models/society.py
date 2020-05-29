@@ -15,7 +15,7 @@ class Societies(db.Model):
 
     id = db.Column(db.Text, primary_key=True)
     description = db.Column(db.Text, nullable=True)
-    name = db.Column(db.Text, nullable=False, unique=True)
+    name = db.Column(db.Text, nullable=False)
     
     previewDescription = db.Column(db.Text, nullable=True)
 
@@ -167,6 +167,11 @@ class Societies(db.Model):
     @staticmethod
     def findSociety(id):
         society = Societies.query.filter_by(id=id).first()
+        return None if not society else society
+
+    @staticmethod
+    def getSocietyByName(name):
+        society = Societies.query.filter_by(name=name).first()
         return None if not society else society
 
     @staticmethod
