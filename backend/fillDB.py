@@ -4,7 +4,7 @@ from uuid import uuid4
 import random
 from models.event import db
 
-socIDs = []
+socs = []
 
 def addSoc():
     # Data Sanitation
@@ -13,7 +13,7 @@ def addSoc():
             i = i.split(',')
             results = Societies(id=uuid4().hex, description=i[1], name=i[1],
             type=random.randint(0, 8))
-            socIDs.append(results)
+            socs.append(results)
             db.session.add(results)
 
     db.session.commit()
@@ -30,6 +30,7 @@ def addEvent():
             hasAccessCode=True if i[5] == 'true' else False,
             hasAdminSignin=True if i[6] == 'true' else False, 
             status=random.randint(0,2))
+            result.hosting.append(socs[random.randint(0, 74)])
             db.session.add(result)
 
     db.session.commit()

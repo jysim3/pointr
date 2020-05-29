@@ -1,7 +1,7 @@
 # TODOs
 
 ## 28/05/2020
-* Add in photo support for when creating a society (i.e. the logo)
+* Add in photo support for when creating a society (i.e. the logo) (Completed in commit: `1955ca7918c40927b485c0c380a02efcbea961b4`)
 * Add in photo support for when creating an event, OPTIONAL
 
 * Add in support for temporary access codes to be issued per server tick
