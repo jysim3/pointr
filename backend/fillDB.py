@@ -11,7 +11,7 @@ def addSoc():
     with open("mockDataNoDup.csv", "r") as file:
         for i in file:
             i = i.split(',')
-            results = Societies(id=uuid4().hex, description=i[1], name=i[1],
+            results = Societies(id=uuid4().hex, description=i[1], name=i[0],
             type=random.randint(0, 8))
             socs.append(results)
             db.session.add(results)
