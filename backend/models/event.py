@@ -3,6 +3,7 @@ from datetime import datetime
 from models.society import host
 from datetime import datetime, timezone, timedelta
 import dateutil
+from dateutil import parser
 
 class Attendance(db.Model):
     __tablename__ = 'attend'
@@ -131,8 +132,8 @@ class Event(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'start': str(dateutil.parser.parse(str(self.start)).astimezone(timezone.utc)),
-            'end': str(dateutil.parser.parse(str(self.end)).astimezone(timezone.utc)),
+            'start': str(parser.parse(str(self.start)).astimezone(timezone.utc)),
+            'end': str(parser.parse(str(self.end)).astimezone(timezone.utc)),
             'photos': self.photos,
             'description': self.description,
             'preview': self.preview,

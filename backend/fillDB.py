@@ -25,7 +25,7 @@ def addEvent():
         for i in file:
             i = i.strip()
             i = i.split(',')
-            result = Event(id=str(uuid4().hex).upper()[:5], name=i[0], description=i[1],
+            result = Event(id=uuid4().hex, name=i[0], description=i[1],
             start=i[2], end=i[3], hasQR=True if i[4] == 'true' else False, 
             hasAccessCode=True if i[5] == 'true' else False,
             hasAdminSignin=True if i[6] == 'true' else False, 
