@@ -12,7 +12,7 @@ class TestSocieties(PointrTest):
 
     # Test to create a society that just has the barebone requirements
     def testSocietyValidCreate(self):
-        c = app.test_client()
+        c = self.c
 
         # Data to send
         initialData = {
@@ -32,7 +32,7 @@ class TestSocieties(PointrTest):
 
     # Attempts to create a society and 
     def testSocietyValidPatch(self):
-        c = app.test_client()
+        c = self.c
 
         societyID = self.postValidSociety(c, "Gamersoc")
 
@@ -53,7 +53,7 @@ class TestSocieties(PointrTest):
         self.assertDictContainsSubset(patchData, returnedData)
         
     def testSocietyInvalidID(self):
-        c = app.test_client()
+        c = self.c
 
         id = self.postValidSociety(c, "Gamersoc")
 
@@ -68,7 +68,8 @@ class TestSocieties(PointrTest):
         self.assertContains(payload, "message", {"societyID": ["That Society ID does not exist"]})
 
     def testSocietyDelete(self):
-        c = app.test_client()
+        c = self.c
+
         id = self.postValidSociety(c, "Gamersoc")
         response = fetch(c, "DELETE", "/society", queries={
             "societyID": id
@@ -81,3 +82,16 @@ class TestSocieties(PointrTest):
         payload = json.loads(response.data)
         
         self.assertEqual(payload, {"message": {"eventID": ["That Event ID does not exist"]}})
+
+    def testSocietyDuplicateName(self):
+        c = self.c
+
+        response = fetch(c, 'POST', '/society', data=self.getMockSocietyData('Gamersoc'))
+        self.assertOK(response)
+        
+        response = fetch(c, 'POST', '/society', data=self.getMockSocietyData('Gamersoc'))
+        payload = json.loads(response.data)
+
+        self.assertContains(payload['message'], 'name', 'A society with that name already exists.')
+
+

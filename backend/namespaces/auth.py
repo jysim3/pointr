@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, abort
 from flask_restx import Namespace, Resource, fields
 from util.validation_services import toQuery, toModel, validateArgs, validateBody
 from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema, ZIDDetailsSchema, PasswordSchema
@@ -20,13 +20,13 @@ class Register(Resource):
         with a token to activate that needs to be sent to `/api/auth/activate`
     ''')
     @api.expect(toModel(api, RegisterDetailsSchema))
-    @validateBody(RegisterDetailsSchema, 'details')
-    def post(self, details):
-        if Users.query.filter_by(zID=details.zID).first():
-            abort(403, "Invalid Parametres, zID already exists")
+    @validateBody(RegisterDetailsSchema, 'user')
+    def post(self, user):
+        if Users.query.filter_by(zID=user.zID).first():
+            abort(403, {"zID": "Already registered user"})
 
-        token = generateActivationToken(details.zID)
-        if sendActivationEmail(token, details.zID) != "success":
+        token = generateActivationToken(user)
+        if sendActivationEmail(token, user.zID) != "success":
             abort(500, "Internal Server Error, Email Service Not Working")
         print(token)
 
@@ -123,12 +123,6 @@ class Authorize(Resource):
     # @auth_services.check_authorization(level=1)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
-
-
-
-
-
-
 
 # Validation functions To be removed
 @api.route('/validateSelf')

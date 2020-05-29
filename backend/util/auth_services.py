@@ -13,8 +13,6 @@ from models.event import Event
 token_exp = 1000*60
 activationTokenTimeout = 1000*60
 forgotTokenTimeout = 1000*60
-ADMIN = 'Admin'
-USER = 'User'
 
 if (os.environ.get('POINTR_SERVER_SECRET') == None):
     print("Missing environment secret key for email address. Set env variable POINT_EMAIL_PASSWORD to the password.")
