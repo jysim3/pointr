@@ -31,7 +31,7 @@ class RegisterDetailsSchema(PointrSchema):
     password = common_schemata.passwordRequired
     firstName = common_schemata.nameRequired
     lastName = common_schemata.nameRequired
-    preferredName = common_schemata.nameRequired
+    preferredName = common_schemata.name
 
     description = fields.Str()
     isArc = common_schemata.booleanRequired
