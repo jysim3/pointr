@@ -46,7 +46,8 @@ def addUser():
             i = i.strip()
             i = i.split(',')
             user = Users(zID=f"z{''.join(random.choices(digits, k=7))}",
-            password=sha256(''.join(random.choices(ascii_uppercase + digits, k=8)).encode()).hexdigest(),
+            #password=sha256(''.join(random.choices(ascii_uppercase + digits, k=8)).encode()).hexdigest(),
+            password=sha256('00000000'.encode()).hexdigest(),
             firstName=i[0], lastName=i[1], isArc=True if i[2] == 'true' else False, superadmin=False, activated=True)
             db.session.add(user)
 

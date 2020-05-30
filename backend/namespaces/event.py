@@ -176,8 +176,7 @@ class UpcomingRoute(Resource):
     @api.expect(authModel)
     @validateArgs(EventNumberSchema)
     # NOTE: Do we want the public to see upcoming events as well?
-    @checkAuthorization(level=1)
-    def get(self, token_data, argsData):
+    def get(self, argsData):
         number = argsData['number'] if 'number' in argsData else 5
         return jsonify({'status': 'success', 'data': Event.getAllUpcomingEventsJSONs(number)})
 
