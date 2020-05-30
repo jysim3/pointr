@@ -135,7 +135,10 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
                 # FIXME: Error here is caused by the fact a single event
                 # could be hosted by multiple societies
                 if allowSocMember:
+                    # TODO: Fix this double get
                     members = society[0].getMembersIDs()
+                    admins = society[0].getAdminsIDs()
+                    members.extend(admins)
                     if token_data['zID'] not in members: abort(403, "You are not a member of this society")
 
                     return func(token_data=token_data, *args, **kwargs)

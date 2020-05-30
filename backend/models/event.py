@@ -143,7 +143,8 @@ class Event(db.Model):
             'hasAccessCode': self.hasAccessCode,
             'hasAdminSignin': self.hasAdminSignin,
             'tags': self.tags,
-            'status': self.status
+            'status': self.status,
+            'society': [i.id for i in self.hosting]
         }
 
     def addAttendance(self, student):
@@ -153,7 +154,7 @@ class Event(db.Model):
         elif Attendance.query.filter_by(user=student, event=self).first():
             return "Already Attended"
 
-        attend = Attendance(time=datetime.utcnow(),
+        attend = Attendance(time=datetime.now(timezone.utc),
             user=student, event=self)
 
         db.session.add(attend)
