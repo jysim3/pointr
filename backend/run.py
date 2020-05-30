@@ -23,10 +23,11 @@ from app import db, app
 if __name__ == "__main__":
     db.create_all()
 
-    from fillDB import addSoc, addEvent
+    from fillDB import addSoc, addEvent, addUser
     if len(sys.argv) == 5 and sys.argv[4].lower() == 'true':
         addSoc()
         addEvent()
+        addUser()
         print("Database Initialised")
         exit(0)
 

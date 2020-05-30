@@ -13,3 +13,4 @@ csvFiles/*
 .vscoed/*
 images/*
 *.bak
+.cache

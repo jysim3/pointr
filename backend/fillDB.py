@@ -1,9 +1,11 @@
 from models.event import Event
 from models.society import Societies
+from models.user import Users
 from uuid import uuid4
 import random
 from models.event import db
 from string import ascii_uppercase, digits
+from hashlib import sha256
 
 socs = []
 
@@ -37,6 +39,20 @@ def addEvent():
 
     db.session.commit()
     print("Added 300 random events")
+
+def addUser():
+    with open("mockUsersNoDup.csv", "r") as file:
+        for i in file:
+            i = i.strip()
+            i = i.split(',')
+            user = Users(zID=f"z{''.join(random.choices(digits, k=7))}",
+            #password=sha256(''.join(random.choices(ascii_uppercase + digits, k=8)).encode()).hexdigest(),
+            password=sha256('00000000'.encode()).hexdigest(),
+            firstName=i[0], lastName=i[1], isArc=True if i[2] == 'true' else False, superadmin=False, activated=True)
+            db.session.add(user)
+
+    db.session.commit()
+    print("Added in 1000 users")
 
 def removeDuplicates(inputName, outputName):
     with open(inputName, "r") as inFile, open(outputName, "w") as outFIle:
