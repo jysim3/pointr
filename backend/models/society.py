@@ -175,8 +175,12 @@ class Societies(db.Model):
         return None if not society else society
 
     @staticmethod
-    def getAllSocieties():
+    def getAllSocieties(json=False):
         societies = Societies.query.all()
+
+        if json:
+            return [i.getSocietyJSON() for i in societies]
+
         return societies
 
     @staticmethod

@@ -10,6 +10,7 @@ def addSoc():
     # Data Sanitation
     with open("mockDataNoDup.csv", "r") as file:
         for i in file:
+            i = i.strip()
             i = i.split(',')
             results = Societies(id=uuid4().hex, description=i[1], name=i[0],
             type=random.randint(0, 8))

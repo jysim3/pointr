@@ -11,6 +11,7 @@ api = Namespace('society', description='Society Attendance Services')
 from app import db
 from flask import jsonify, abort, request
 from models.user import Users
+from models.society import Societies
 from util.files import uploadImages
 
 @api.route('')
@@ -189,6 +190,14 @@ class Past(Resource):
         events = society.getPastEvents()
         events = [i.getPreview() for i in events]
         return jsonify({"status": "success", "data": events})
+
+@api.route('/all')
+class AllSocs(Resource):
+    @api.doc(description='''
+        Returns jsons for all socs on the db
+    ''')
+    def get(self):
+        return jsonify({'status': 'success', 'data': Societies.getAllSocieties(True)})
 
 @api.route('/admin')
 class Admin(Resource):
