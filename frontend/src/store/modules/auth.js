@@ -10,10 +10,9 @@ const mutations = {
     auth_request(state){
         state.status = 'loading'
     },
-    auth_success(state, token, user){
+    auth_success(state, token){
         state.status = 'success'
         state.token = token
-        state.user = user
         axios.defaults.headers.common['Authorization'] = token
     },
     auth_error(state){
@@ -25,6 +24,10 @@ const mutations = {
     },
 }
 const actions = {
+    validate(){ 
+        return
+
+    },
     login({commit}, loginDetails) {
         return new Promise((resolve, reject) => {
             commit('auth_request')
@@ -35,11 +38,9 @@ const actions = {
                 method: 'POST'
             })
             .then( r => {
-                console.log(r)
-                const token = r.data.token
-                const user = r.data.user
+                const token = r.data.data.token
                 localStorage.setItem('token', token)
-                commit('auth_success', token, user)
+                commit('auth_success', token)
                 resolve(r)
             })
             .catch(e => {
@@ -52,24 +53,6 @@ const actions = {
 
         })
     },
-//   async initAuth({ state, commit, dispatch }) {
-//     if (state.token) {
-//       try {
-//         const response = await fetchAPI("/api/auth/validate", "POST");
-//         // FIXME: backend returns 'true', this is possibly bad for future.
-//         if (response.data.valid === "true") {
-//           // Now that we now the token is valid we can authenticate the user and validate them.
-//           // However, we only want to do this if they aren't already authenticated. This is to prevent many requests from going out unnecessarily.
-//           if (state.token) {
-//             await dispatch('authenticateUser', state.token);
-//           }
-//         }
-//       } catch (error) {
-//         commit('resetState')
-//       }
-//     }
-//     commit('setIsLoading', false);
-//   },
   logout({ commit }) {
       return new Promise((resolve) => {
         commit('resetState')
