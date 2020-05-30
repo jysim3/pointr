@@ -4,6 +4,8 @@ from flask import abort
 from schemata import common_schemata
 from constants import constants as c
 import uuid
+import random
+from string import ascii_uppercase, digits
 
 class EventCreationSchema(Schema):
     __schema_name__ = "Event Form"
@@ -26,7 +28,7 @@ class EventCreationSchema(Schema):
 
     @post_load
     def makeEvent(self, data, **kwargs):
-        data['id'] = uuid.uuid4().hex
+        data['id'] = ''.join(random.choices(ascii_uppercase + digits, k=5))
         return Event(**data)
 
     @validates('tags')
@@ -62,7 +64,6 @@ class EventIDSchema(Schema):
     @post_load
     def getEvent(self, data, **kwargs):
         
-        data['eventID'] = data['eventID'].hex
         event = Event.getEvent(data['eventID'])
 
         if not event:

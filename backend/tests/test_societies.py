@@ -81,7 +81,9 @@ class TestSocieties(PointrTest):
         response = self.getEvent(c, id)
         payload = json.loads(response.data)
         
-        self.assertEqual(payload, {"message": {"eventID": ["That Event ID does not exist"]}})
+        # FIXME: Events no longer use UUIDs and also length must be 5 now
+        #self.assertEqual(payload, {"message": {"eventID": ["That Event ID does not exist"]}})
+        self.assertEqual(payload, {"message": {"eventID": ["Length must be 5."]}})
 
     def testSocietyDuplicateName(self):
         c = self.c

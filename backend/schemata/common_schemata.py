@@ -19,8 +19,8 @@ name = fields.Str(validate=validate.Length(min=1, max=256))
 
 nameRequired = fields.Str(required=True, validate=validate.Length(min=1, max=256))
 
-eventID = fields.UUID()
-eventIDRequired = fields.UUID(required=True)
+eventID = fields.Str(validate=validate.Length(equal=5))
+eventIDRequired = fields.Str(required=True, validate=validate.Length(equal=5))
 
 societyID = fields.UUID()
 societyIDRequired = fields.UUID(required=True)

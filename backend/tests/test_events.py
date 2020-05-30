@@ -68,11 +68,16 @@ class TestEvents(PointrTest):
         response1 = self.getEvent(c, "1")
         self.assert400(response1)
         
+        # FIXME: Event IDs are no longer UUIDs
+        '''
         response1Data = json.loads(response1.data)
 
         self.assertEqual(response1Data, {"message": {"eventID": ["Not a valid UUID."]}})
+        '''
 
-        response2 = self.getEvent(c, uuid.uuid4().hex)
+        from random import choices
+        from string import ascii_uppercase, digits
+        response2 = self.getEvent(c, ''.join(choices(ascii_uppercase + digits, k=5)))
         self.assert400(response2)
 
         response2Data = json.loads(response2.data)
