@@ -19,8 +19,9 @@ class Attendance(db.Model):
         return {
             'zID': self.zID,
             'time': str(self.time),
-            'firstname': self.user.firstname,
-            'lastname': self.user.lastname
+            'firstname': self.user.firstName,
+            'lastname': self.user.lastName,
+            'isArc': self.user.isArc
         }
 
 interest = db.Table('interested',
@@ -172,10 +173,8 @@ class Event(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def getAttendedCSV(self):
+    def getAttendanceJSON(self):
         results = [i.jsonifySelf() for i in self.attendees]
-        # TODO: COnver this to a CSV file, save it on the local directory and then
-        # Serve up the path
         return results
 
     def getAttended(self):

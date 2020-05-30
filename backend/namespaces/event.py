@@ -40,8 +40,6 @@ class EventRoute(Resource):
     
     @api.doc(description='''
         Get the event described by the given eventID
-        <h3>Authorization Details:</h3>
-        Only returns full list of attendees if super admin or admin of event
     ''')
     @api.param('eventID', 'The eventID of the event to get')
     @api.expect(authModel)
@@ -118,6 +116,15 @@ class AttendRoute(Resource):
             abort(403, status)
 
         return jsonify({"status": "success"})
+
+    @api.doc(description='''
+        Get the list of people who attended this event in the format {zID, firstName, lastName, isArc, time}
+    ''')
+    @api.expect(authModel, toModel(api, EventIDSchema))
+    @validateArgs(EventIDSchema, 'event')
+    @checkAuthorization(allowSocAdmin=True)
+    def get(self, token_data, event):
+        return jsonify({'status': 'success', 'data': event.getAttendanceJSON()})
 
 @api.route('/attend/admin')
 class AttendAdminRoute(Resource):

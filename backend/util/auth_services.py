@@ -128,7 +128,7 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
                 # We grant access if the token bearer can have control over eventID
                 # I.e. if the user is an admin of the soc that's hosting this event
                 # WE need this because socID and eventID dont always come
-                event = Event.query.filter_by(id=data['eventID'].hex).first()
+                event = Event.query.filter_by(id=data['eventID']).first()
                 if not event: abort(403, "EventID doesn't exist")
 
                 society = event.getHostSoc()

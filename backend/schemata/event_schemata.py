@@ -56,6 +56,8 @@ class EventPatchSchema(Schema):
     hasAdminSignin = fields.Boolean()
 
 class EventIDSchema(Schema):
+    __schema_name__ = "Event ID Form"
+
     eventID = common_schemata.eventIDRequired
 
     class Meta:
