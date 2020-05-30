@@ -129,6 +129,18 @@ class Join(Resource):
 
         return jsonify({'status': 'success'})
 
+@api.route('/members')
+class Members(Resource):
+    @api.expect(authModel, toModel(api, SocietyIDSchema))
+    @validateArgs(SocietyIDSchema, 'society')
+    @checkAuthorization()
+    def get(self, token_data, society):
+        # TODO: Might change this to return user jsons as opposed to just a number
+        if not society:
+            abort(403, "Invalid Parametres, no such soc")
+
+        return jsonify({'status': 'success', 'data': society.getMembersCount()})
+
 @api.route('/leave')
 class Leave(Resource):
     @validateArgs(SocietyIDSchema, 'society')

@@ -84,6 +84,9 @@ class Societies(db.Model):
         members = Staff.query.filter_by(rank=0).all()
         return [i.user.getPreview() for i in members]
 
+    def getMembersCount(self):
+        return len(Staff.query.filter(Staff.rank>=0).all())
+
     def getMembersIDs(self):
         """
         Returns a list of user zIDs in string format which are members of this society)

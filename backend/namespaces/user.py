@@ -83,8 +83,7 @@ class PastEvents(Resource):
 class Societies(Resource):
 
     @api.doc(description='''
-        Get events (in preview JSON format) visible to token bearer, i.e. the events he has attended
-        the amount of events shown can be specified in args
+        Get a list of all society JSONs that this user is a part of
     ''')
     @checkAuthorization()
     def get(self, token_data):
