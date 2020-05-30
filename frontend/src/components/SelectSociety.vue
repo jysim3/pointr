@@ -8,7 +8,7 @@
                 <select class="input--select select--admin"  v-model="selectedSociety" name="society-select">
                 <option value="" >Select a society</option>
                 <option
-                    v-for="(society, index) in joinedSocieties"
+                    v-for="(society, index) in societies"
                     :key="index"
                     :value="society.societyID"
                 >{{ society.societyName }}{{ isStaff(society.societyID) ? ' (Admin)' : null}}</option>
@@ -49,25 +49,25 @@ export default {
     },
     computed: {
         ...mapGetters('user', [
-        'joinedSocieties', 'staffSocieties'
+            'staffSocieties'
         ]),
         cardData() {
             console.log( this.societies.map(s => ({
-                title: s.societyName,
-                _link: `/society/${s.societyID}`
+                title: s.name,
+                _link: `/society/${s.id}`
             })))
             return this.societies.map(s => ({
-                title: s.societyName,
-                _link: `/society/${s.societyID}`
+                title: s.name,
+                _link: `/society/${s.id}`
             }))
         }
     },
     mounted() {
         this.loading = true
         axios({
-            url:'api/soc/getAllSocs'
+            url:'api/society/all'
         }).then(r => {
-            this.societies = r.data
+            this.societies = r.data.data
             console.log(r)
         }).finally(() => this.loading = false)
     },

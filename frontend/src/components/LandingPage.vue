@@ -25,7 +25,6 @@
 
 <script>
 import EventList from '@/components/EventList.vue'
-import { fetchAPI } from '@/util.js'
 export default {
   name: "LandingPage",
   components: {
@@ -39,14 +38,14 @@ export default {
   },
   mounted() {
       this.eventDataLoading = true
-      fetchAPI(`/api/event/upcomingEvents`, "GET")
-      .then(v => {
-        this.eventData = v.data
-        this.eventDataLoading = false
-      })
-      .catch(e => {
-        console.log(e) // eslint-disable-line
-      })
+      // fetchAPI(`/api/event/upcoming`, "GET")
+      // .then(v => {
+      //   this.eventData = v.data
+      //   this.eventDataLoading = false
+      // })
+      // .catch(e => {
+      //   console.log(e) // eslint-disable-line
+      // })
   }
 };
 </script>

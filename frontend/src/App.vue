@@ -13,6 +13,7 @@
 <script>
 import NavBar from "@/components/NavBar.vue";
 import Loader from "@/components/Loader.vue";
+import axios from 'axios'
 
 export default {
   name: "app",
@@ -21,6 +22,16 @@ export default {
   },
   computed: {
     isLoading () { return this.$store.getters.isLoading},
+  },
+  created: function() {
+    axios.interceptors.response.use(undefined, function (err) {
+      return new Promise(function () {
+        if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
+          this.$store.dispatch('logout')
+        }
+        throw err
+      })
+    })
   }
 };
 </script>

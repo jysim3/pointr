@@ -30,6 +30,7 @@ import EventCodeDisplay from "@/components/event/EventCodeDisplay.vue";
 import EventAdminAttendance from "@/components/event/EventAdminAttendance.vue";
 import FormError from "@/components/FormError.vue";
 import { fetchAPI } from "@/util.js";
+import axios from 'axios'
 
 export default {
   name: "EventHost",
@@ -52,10 +53,7 @@ export default {
     };
   },
   created() {
-    this.fetchAttendees();
-    setInterval(() => {
-      this.fetchAttendees();
-    }, 5000);
+    this.getEventInfo();
   },
   computed: {
     eventURL() {
@@ -78,12 +76,14 @@ export default {
         fileLink.click();
       })
     },
-    async fetchAttendees() {
+    async getEventInfo() {
       try {
-        const response = await fetchAPI(`/api/event/?eventID=${this.eventID}`);
-        this.participants = response.data.attendance;
-        this.name = response.data.eventName;
-        this.description = response.data.description;
+        const response = await axios.get(`/api/event?eventID=${this.eventID}`);
+        const data = response.data.data
+        console.log(data)
+        this.participants = data.attendance;
+        this.name = data.name;
+        this.description = data.description;
 
 
       } catch (error) {
