@@ -62,6 +62,8 @@ const router = new VueRouter({
 // https://scotch.io/tutorials/handling-authentication-in-vue-using-vuex
 router.beforeResolve(async (to, from, next) => {
   // EXAMPLE: user with no account scans QR code on Event page
+
+  store.dispatch('auth/validate')
   if (store.getters.isAuthenticated) {
     if (store.getters['user/status'] === null) {
       store.dispatch('user/getUserInfo')

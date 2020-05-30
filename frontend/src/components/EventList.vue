@@ -40,7 +40,7 @@ import Table from "@/components/Table.vue";
 import Loader from "@/components/Loader.vue";
 
 export default {
-  name: "DashboardEventView",
+  name: "EventList",
   components: {
     EventCard, FormError,  Table, Loader
   },
@@ -86,18 +86,18 @@ export default {
         title: v.name,
         subtitle: v.societyName,
         tags: [
-          v.eventDate, v.location
+          v.startTime, v.location === null ? '' : v.location
         ],
-        _link: `/event/${v.eventID}`
+        _link: `/event/${v.id}`
       }))
     },
     formattedEventData() {
       return this.eventData.map(v => ({
-        Date: v.eventDate,
-        ID: v.eventID,
-        Location: v.location,
+        Date: v.startTime,
+        ID: v.id,
+        Location: v.location === null ? '' : v.location,
         'Event Name': v.name,
-        _link: `/event/${v.eventID}`
+        _link: `/event/${v.id}`
       }))
     }
   }

@@ -9,6 +9,7 @@
 
       <Input v-model="userInfo.firstName" type="text" label="First Name"/>
       <Input v-model="userInfo.lastName" type="text" label="Last Name"/>
+      <Input v-model="userInfo.preferredName" type="text" label="Preferred Name"/>
 
       <InputPassword v-model="password"  />
       <!-- TODO: fix :class on repeatPassword input -->
@@ -80,6 +81,7 @@ export default {
       userInfo: {
         firstName: "",
         lastName: "",
+        preferredName: "",
         commencmentYear: "",
         studentType: "",
         degreeType: "",
@@ -135,10 +137,11 @@ export default {
         zID: this.zID,
         firstName: this.userInfo.firstName,
         lastName: this.userInfo.lastName,
+        preferredName: this.userInfo.preferredName,
         password: this.password,
         commencementYear: this.userInfo.commencmentYear,
-        studentType: this.userInfo.studentType,
-        degreeType: this.userInfo.degreeType,
+        // studentType: this.userInfo.studentType,
+        // degreeType: this.userInfo.degreeType,
         isArc: this.userInfo.isArcMember
       }).then(r => {
           // In the case of a successful response, want to store token and redirect to home

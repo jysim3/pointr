@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import { fetchAPI } from "@/util";
 import FormError from "@/components/FormError.vue";
 
 export default {
@@ -30,10 +29,10 @@ export default {
     };
   },
   created() {
-    fetchAPI("/api/event/getAllEventID")
-    .then(r => {
-      this.allEventID = r.data
-    })
+    // fetchAPI("/api/event/getAllEventID")
+    // .then(r => {
+    //   this.allEventID = r.data
+    // })
   },
   methods: {
     submitEventCodeForm() {

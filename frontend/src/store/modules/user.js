@@ -5,22 +5,32 @@ import axios from 'axios';
 // Currently the validity of a user's token will only be checked once,
 // this is to prevent a lot of requests to the backend.
 
-const state = {
-  status: null,
-  zID: "",
-  firstName: "",
-  lastName: "",
-  attendedEvents: [],
-  events: [],
-  societies: {
-    member: [],
-    staff: []
-  },
-  permission: 0
+const getDefaultState = () => {
+    return {
+    attended: [],
+    status: null,
+    commencementyear: null,
+    degree: null,
+    description: null,
+    faculty: null,
+    firstname: "",
+    interested: [],
+    isarc: false,
+    lastname: "",
+    photo: null,
+    preferredName: "",
+    school: null,
+    zID: "",
+    societies: {
+      member: [],
+      staff: []
+    },
+  }
 };
+const state = getDefaultState()
 
 const getters = {
-  name: (state) => `${state.firstName} ${state.lastName}`,
+  name: (state) => `${state.firstname} ${state.lastname}`,
   zID: (state) => state.zID,
   status: state => state.status,
   memberSocieties(state) {
@@ -37,46 +47,39 @@ const getters = {
       return []
     }
   },
-  joinedSocieties(state) {
-    if (state.societies) {
-      return state.societies.member.concat(state.societies.staff);
-    } else {
-      return []
-    }
-  },
   isSocietyAdmin: (state) => socID => {
-    console.log(socID) // eslint-disable-line
-    console.log(state.societies.staff) // eslint-disable-line
     return state.societies.staff.some(v => v.societyID === socID)
-  },
-  // https://vuex.vuejs.org/guide/getters.html#method-style-access
-  allSocietyEvents: (state) => socIDs => {
-    return state.events.filter(v => v.societyID.includes(socIDs))
-  },
-  event: (state) => eventID => {
-    return state.events.find(v => v.eventID === eventID)
-  },
-  allEvents: (state) => state.events,
-  staffEvents(state, getters) {
-    const staffSocIDs = state.societies.staff.reduce((a, society) => a.concat(society.societyID), [])
-    return getters.allSocietyEvents(state, staffSocIDs)
   },
 
 };
 
 const mutations = {
   userInfo(state, userInfo) {
+
+    state.attended = userInfo.attended
+    state.commencementyear = userInfo.commencementyear
+    state.degree = userInfo.degree
     state.description = userInfo.description
-    state.events = userInfo.events
-    state.firstName = userInfo.firstName
-    state.image = userInfo.image
-    state.lastName = userInfo.lastName
-    state.societies = userInfo.societies
+    state.faculty = userInfo.faculty
+    state.firstname = userInfo.firstname
+    state.interested = userInfo.interested
+    state.isarc = userInfo.isarc
+    state.lastname = userInfo.lastname
+    state.photo = userInfo.photo
+    state.preferredName = userInfo.preferredName
+    state.school = userInfo.school
     state.zID = userInfo.zID
+    state.status = 'success'
+  },
+  societyInfo(state, societyInfo) {
+    console.log(societyInfo)
   },
   eventInfo(state, eventInfo) {
     state.events = eventInfo
   },
+  clearUserInfo(state) {
+    Object.assign(state, getDefaultState())
+  }
 };
 
 const actions = {
@@ -86,24 +89,36 @@ const actions = {
     await dispatch('userInfo');
     commit('setIsAdmin');
   },
-  async getUserInfo({ commit }) {
+  async getUserInfo({ commit, rootGetters }) {
     try {
+      console.log(rootGetters.zID)
       const requests = [
         {
-          url: '/api/user/',
+          url: '/api/user',
+          params: {
+            zID: rootGetters.zID
+          },
           method: 'GET'
         },
         {
-          url: '/api/user/getUpcomingEvents',
+          url: '/api/user/events/upcoming',
+          method: 'GET'
+        },
+        {
+          url:  'api/user/societies',
           method: 'GET'
         }
       ];
+      console.log('hihi')
       const [
         infoResponse,
-        eventResponse
+        eventResponse,
+        societyResponse
       ] = await Promise.all(requests.map(r => axios(r)))
-      commit('userInfo', infoResponse.data)
-      commit('eventInfo', eventResponse.data)
+      console.log(infoResponse.data)
+      commit('userInfo', infoResponse.data.data)
+      commit('societyInfo', societyResponse.data.data)
+      commit('eventInfo', eventResponse.data.data)
     } catch (error) {
       console.log(error); //eslint-disable-line
       console.log(error.response); //eslint-disable-line

@@ -42,13 +42,22 @@ export default {
   },
   mounted() {
     axios({
-      url:'/api/event/getAllEvents'
+      url:'/api/user/events/upcoming'
     }).then(r => {
-      this.allEvents.data = r.data
+      console.log(r.data.data)
+      this.upcomingEvents.data = r.data.data
+    })
+    .finally(() => {
+      this.upcomingEvents.isLoading = false
+    })
+    axios({
+      url:'/api/event/upcoming'
+    }).then(r => {
+      console.log(r.data.data)
+      this.allEvents.data = r.data.data
     })
     .finally(() => {
       this.allEvents.isLoading = false
-
     })
   }
 };

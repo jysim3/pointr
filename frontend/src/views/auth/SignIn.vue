@@ -54,7 +54,7 @@ export default {
         zID: this.zID,
         password: this.password
       }
-      this.$store.dispatch('auth/login', data)
+      this.$store.dispatch('login', data)
       .then(() => {
         this.$router.push('/')
       })
