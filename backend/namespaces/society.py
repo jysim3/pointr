@@ -118,6 +118,10 @@ class SocLogo(Resource):
 
 @api.route('/join')
 class Join(Resource):
+    @api.doc('''
+        Join the target society as the token bearer
+    ''')
+    @api.expect(authModel, toModel(api, SocietyIDSchema))
     @checkAuthorization()
     @validateArgs(SocietyIDSchema, 'society')
     def post(self, token_data, society):
@@ -125,12 +129,15 @@ class Join(Resource):
         user = Users.query.filter_by(zID=token_data['zID']).first()
         status = society.addStaff(user)
         if status:
-            abort(403, f"Invalid Parametres {status}")
+            abort(409, f"Invalid Parametres {status}")
 
         return jsonify({'status': 'success'})
 
 @api.route('/members')
 class Members(Resource):
+    @api.doc('''
+        Get the number of staff in the target society
+    ''')
     @api.expect(authModel, toModel(api, SocietyIDSchema))
     @validateArgs(SocietyIDSchema, 'society')
     @checkAuthorization()
