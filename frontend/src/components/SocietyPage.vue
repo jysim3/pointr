@@ -31,7 +31,10 @@
         </div>
         <div class="main">
             <SocietyEvents v-if="activeTab == 0" :socID="socID" :socData="socData"/>
-            <MakeAdmin v-if="activeTab == 1 && isSocietyAdmin" :socID="socID" />
+            <div v-if="activeTab == 1 && isSocietyAdmin"> 
+                <router-link :to="{name:'create'}" class="btn btn-primary">Create event</router-link>
+                <MakeAdmin :socID="socID" />
+            </div>
         </div>
 
     </div>

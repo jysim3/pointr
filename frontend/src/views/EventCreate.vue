@@ -22,7 +22,7 @@
         <InputModule required 
         label="Society" 
         type="select" 
-        :options="availableSocieties.map(s=>({value: s.societyID, label:s.societyName}))"
+        :options="availableSocieties"
         v-model="society" />
 
         <InputModule required 
@@ -40,23 +40,6 @@
         type="time" 
         v-model="endTime" />
 
-        <InputModule 
-        label="Repeat" 
-        type="select" 
-        :options="repeatOptions"
-        v-model="repeat" />
-
-        <InputModule required 
-        v-if="repeat"
-        label="End Date" 
-        type="date" 
-        v-model="endDate" />
-
-      <InputModule
-        label="Public Event?"
-        v-model="publicEvent"
-        type="checkbox"
-        />
         <!-- <label class="label" for>Set default points</label>
         <input class="input" v-model="point" type="number" min="0" required />
         <label class="label" for>Show QR Code/Event link</label>
@@ -68,7 +51,7 @@
 </template>
 
 <script>
-import { fetchAPI } from "@/util.js";
+import axios from 'axios'
 import InputModule from "@/components/input/Input.vue";
 
 export default {
@@ -82,77 +65,36 @@ export default {
       location: "",
       society: "",
       date: "",
-      endDate: "",
-      repeat: "",
       description: "",
       startTime: "",
       endTime: "",
-      point: 1,
-      publicEvent: "",
-      availableSocieties: [],
-      repeatOptions: [
-        {
-          value: "",
-          label: "No Repeat"
-        },
-        {
-          value: "day",
-          label: "Every day"
-        },
-        {
-          value: "week",
-          label: "Every week"
-        },
-        {
-          value: "month",
-          label: "Every month"
-        },
-      ]
+      availableSocieties: this.$store.getters['user/societies'].admins.map(s=> ({value: s.id, label:s.name})),
     };
-  },
-  created() {
-    this.availableSocieties = this.$store.getters['user/staffSocieties'];
   },
   methods: {
     async submitEventForm() {
       const data = {
-        zID: this.$store.state.user.info.zID,
         name: this.title,
-        location: this.location,
-        eventDate: this.date,
-        socID: this.society,
+        start: new Date(this.date + " " + this.startTime),
+        end: new Date(this.date + " " + this.endTime),
         description: this.description,
-        startTime: this.startTime,
-        endTime: this.endTime,
+        location: this.location,
+        status: 0,
+        tags: [0],
+        hasQR: true,
+        hasAccessCode: false,
+        hasAdminSignin: true,
         public: this.publicEvent
       };
-      if (this.repeat !== "") {
-        data.endDate = this.endDate;
-        data.recurType = this.repeat;
-        data.recurInterval = 6;
-        data.isRecur = 1;
-      } else {
-        data.isRecur = 0;
-      }
-
-      //  const data = {
-      //  zID: "z5111111",
-      //  name: "Coffee Night",
-      //  location: "CSESoc",
-      //  eventDate: "2020-01-01",
-      //  endDate: "2020-04-04",
-      //  recurType: "day",
-      //  recurInterval: 6,
-      //  "socID": "8EF48",
-      //  "isRecur": "True"
-      //  }
-
-      try {
-        const response = await fetchAPI("/api/event/", "POST", data);
+      axios.post('/api/event',data, {
+        params: {
+          societyID: this.society,
+        }
+      }).then(response => {
         this.$router.push({ name: "event", params: { eventID: response.data.msg } });
-      } catch (error) {
+      }) . catch(error => {
         console.log(error.response) //eslint-disable-line
-      }
+      })
     }
   }
 };

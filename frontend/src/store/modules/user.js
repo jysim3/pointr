@@ -33,6 +33,7 @@ const getters = {
   name: (state) => `${state.firstname} ${state.lastname}`,
   zID: (state) => state.zID,
   status: state => state.status,
+  societies: (state) => state.societies,
   isSocietyMember: (state) => socID => {
     if (Array.isArray(socID)){
       return state.societies.members.some(v => socID.includes(v.id))

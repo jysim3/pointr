@@ -25,7 +25,6 @@ import EventQRCode from "@/components/event/EventQRCode.vue";
 import EventCodeDisplay from "@/components/event/EventCodeDisplay.vue";
 import EventAdminAttendance from "@/components/event/EventAdminAttendance.vue";
 import FormError from "@/components/FormError.vue";
-import { fetchAPI } from "@/util.js";
 
 export default {
   name: "EventHost",
@@ -56,19 +55,6 @@ export default {
       return participantsCopy.reverse();
     }
   },
-  methods: {
-    downloadCsv() {
-      fetchAPI(`/api/event/getAttendance?eventID=${this.eventID}`)
-      .then(r => {
-        var fileURL = window.URL.createObjectURL(new Blob([r.data]));
-        var fileLink = document.createElement('a');
-        fileLink.href = fileURL;
-        fileLink.setAttribute('download', `${this.name}.csv`);
-        document.body.appendChild(fileLink);
-        fileLink.click();
-      })
-    },
-  }
 };
 </script>
 
