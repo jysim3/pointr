@@ -1,7 +1,6 @@
 <template>
 <div class="routes-more-wrapper" 
-              ref="routes-more"
-              @blur="toggleMore(false)"
+              @focusout="toggleMore(false)"
 >
           <i
             @click="toggleMore(false)"
@@ -16,6 +15,7 @@
 
           <transition name="slide-fade">
             <div
+              ref="routes-more"
               class="routes-more"
               v-show="displayMore"
               tabindex="0"

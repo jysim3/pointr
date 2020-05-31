@@ -147,6 +147,17 @@ td .material-icons {
   width: 80%;
   margin: auto;
 }
+.box {
+  background-color: white;
+  padding: 3rem 6rem;
+  color: var(--c-secondary-dark);
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch; /* TODO: fix this for sign in form, not center aligned  */
+}
 
 .card {
   background-color: white;

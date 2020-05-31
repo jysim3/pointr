@@ -11,6 +11,7 @@
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "express": "^4.17.1",
+    "file-saver": "^2.0.2",
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
     "qrcode": "^1.4.4",

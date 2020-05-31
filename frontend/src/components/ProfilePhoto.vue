@@ -10,6 +10,7 @@
         @error="imgAlt"
         />
         <div class="edit"
+        v-if="updateURL"
         @click="changePhoto"
         > 
             
@@ -29,7 +30,6 @@ export default {
         },
         updateURL: {
             type: String,
-            required: true
         },
         updateFieldName: {
             type: String,
@@ -43,7 +43,6 @@ export default {
     },
     methods: {
         imgAlt(event) {
-            console.log(event.target.src)
             event.target.src = "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-vector-default-avatar-profile-icon-social-media-user-vector-portrait-176194876.jpg"
         },
         changePhoto(){
@@ -54,8 +53,7 @@ export default {
             const fd = new FormData()
             fd.append(this.updateFieldName, selectedFile, selectedFile.name)
             axios.patch(this.updateURL,fd, )
-            .then(v => {
-                console.log(v)
+            .then(() => {
                 this.$emit('update')
             })
 

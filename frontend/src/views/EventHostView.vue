@@ -8,15 +8,11 @@
     <div id="qr-and-form-container">
       <div style="display:flex;flex-direction:column;">
       <EventQRCode :eventID="this.eventID" />
-          <button
-            class="btn btn-primary"
-            @click="downloadCsv"
-          >Download csv</button>
       </div>
       <EventAdminAttendance :eventID="this.eventID" />
     </div>
     <div id="event-attendance-container">
-      <EventAttendance class="attendee" :eventID="eventID" />
+      <EventAttendance :eventName="this.eventData.name" class="attendee" :eventID="eventID" />
       <FormError v-show="error" :msg="error" />
       <!-- TODO: only show last 10 people who have joined? Click 'view all' to show all participants? -->
     </div>

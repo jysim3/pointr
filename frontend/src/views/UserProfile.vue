@@ -8,20 +8,20 @@
               <div class="profile" >
 
                 <div class="profile-info">
-                    <div class="profile-info-group">
+                    <!-- <div class="profile-info-group">
                         <span class="profile-info-numbers">50</span>
                         <span class="profile-info-subtitle">followers</span>
                     </div>
                     <div class="profile-info-group">
                         <span class="profile-info-numbers">10</span>
                         <span class="profile-info-subtitle">events went</span>
-                    </div>
+                    </div> -->
                 </div>
                 <!-- TODO: Let user modify -->
                 <ProfilePhoto class="profile-photo" v-if="userData" :src="userImage" />
-                <div class="profile-buttons">
+                <!-- <div class="profile-buttons">
                     <i class="material-icons profile-info-button">favorite</i>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             
@@ -52,7 +52,6 @@
 <script>
 import ProfilePhoto from "@/components/ProfilePhoto"
 import Loader from "@/components/Loader.vue";
-import { mapGetters } from 'vuex'
 import axios from 'axios'
 
 export default {
@@ -91,10 +90,7 @@ export default {
       }
       return ""
     },
-    ...mapGetters('user', [
-    ]),
     stats () {
-
         const stat = this.statsData
         if (this.userData.societies > 0) {
             stat.push(
@@ -102,7 +98,6 @@ export default {
                 icon: 'home',
                 text: 'Admin for ' + this.userData.societies.staff.map(v => v.societyName).join(', ')
             })
-
         }
           return stat
     }
@@ -115,6 +110,7 @@ export default {
       this.loading = true
       axios.get(`/api/user?zID=${this.zID}`)
       .then(v => {
+        console.log(v)
         const data = v.data.data
         this.userData.firstname = data.firstname
         this.userData.lastname = data.lastname

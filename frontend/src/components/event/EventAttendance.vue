@@ -1,35 +1,52 @@
 <template>
-    <div id="attendance" class="container">
+    <div id="" class="container attendance-container">
         <!-- <h2 id="attendance-header">Attendance<span v-if="!hasAttendees"> ({{ attendees.length }})</span></h2> -->
         <h2 id="attendance-header">Attendance ({{ attendees.length }})</h2>
-        <table v-if="attendees.length != 0">
-            <tr>
-                <th></th>
-                <th v-for="(n, i) in fields" :key="i">{{n}}</th>
-            </tr>
-            <tr v-for="(attendee, index) in attendeesData" :key="index">
-                <!-- class="link" -->
-                <td></td>
-                <td v-for="(n, i) in fields" :key="i">
-                    <a
-                        @click="deleteAttendee()"
-                        v-if="n === 'Actions'"
-                        class="material-icons warning"
-                    >delete</a>
-                    <i
-                        v-else-if="n === 'isArcMember'"
-                        class="material-icons"
-                    >{{ attendee[n] ? 'check' : 'close'}}</i>
-                    <span v-else>{{ attendee[n] }}</span>
-                </td>
-            </tr>
-        </table>
+        <div class="d-flex attendance-container-data">
+          <div class="box">
+            <div class="fieldGroup" v-for="(field, index) in allFields" :key="index">
+            <input 
+              v-model="checkedFields"
+              :value="field"
+              type="checkbox"
+              />
+            <label class="label">{{field}}</label>
+            </div>
+          <button
+            class="btn btn-primary"
+            @click="downloadCsv"
+          >Download csv</button>
+          </div>
+          <table v-if="attendees.length != 0">
+              <tr>
+                  <th></th>
+                  <th v-for="(n, i) in fields" :key="i">{{n}}</th>
+              </tr>
+              <tr v-for="(attendee, index) in attendeesData" :key="index">
+                  <!-- class="link" -->
+                  <td></td>
+                  <td v-for="(n, i) in fields" :key="i">
+                      <a
+                          @click="deleteAttendee(attendee.zID)"
+                          v-if="n === 'Actions'"
+                          class="material-icons warning "
+                      >delete</a>
+                      <i
+                          v-else-if="n === 'isArcMember'"
+                          class="material-icons"
+                      >{{ attendee[n] ? 'check' : 'close'}}</i>
+                      <span v-else>{{ attendee[n] }}</span>
+                  </td>
+              </tr>
+          </table>
         <h3 v-else id="no-attendees-msg">All attendees will appear here.</h3>
+        </div>
     </div>
 </template>
 
 <script>
 import axios from 'axios'
+import { saveAs } from 'file-saver'
 
 export default {
   name: "EventAttendance",
@@ -43,21 +60,42 @@ export default {
           "Attend time": a.time,
           "isArcMember": a.isArc
         }))
+    },
+    fields() {
+      return this.allFields.filter(e => this.checkedFields.includes(e)).concat(['Actions'])
     }
   },
   data() {
     return {
-      fields: ['Name','zID','Attend time','isArcMember','Actions'],
+      allFields: ['Name','zID','Attend time','isArcMember'],
+      checkedFields: ['Name','zID','Attend time','isArcMember'],
       attendees: [],
     }
   },
   methods: {
-    deleteAttendee() {
-      // const data = {
-      //   zID: this.attendee.zID,
-      //   eventID: this.eventID
-      // };
-      // axios.post(`/api/event/attend?zID=${this.attendee.zID}&eventID=${this.eventID}`);
+    deleteAttendee(zID) {
+      axios.delete('/api/event/attend/admin',{
+        params: {
+          zID,
+          eventID: this.eventID
+        }
+      })
+    },
+    downloadCsv() {
+      const data = this.attendeesData.map(attendee => {
+        return this.allFields.reduce((a, c) => {
+          if (this.checkedFields.includes(c)){
+            a.push(attendee[c])
+          }
+          return a
+        }, [])
+      })
+      const csvContent = "data:text/csv;charset=utf-8,"
+      + this.allFields.filter(f => this.checkedFields.includes(f)) + "\n"
+      + data.join("\n")
+      saveAs(encodeURI(csvContent), `${this.eventName}.csv`)
+
+
     }
   },
 
@@ -75,7 +113,14 @@ export default {
 
   },
   props: {
-    eventID: String,
+    eventID: {
+      required: true,
+      type: String,
+    },
+    eventName: {
+      required: true,
+      type: String
+    }
   }
 };
 </script>
@@ -91,7 +136,7 @@ export default {
     border-bottom-left-radius: var(--border-radius);
 }
 
-#attendance {
+.attendance-container {
     font-size: 1rem;
 }
 
@@ -103,5 +148,19 @@ export default {
     text-align: center;
     font-weight: 400;
     margin: 1rem 0;
+}
+.box {
+  padding: 1rem ;
+  margin-right: 1rem;
+}
+.fieldGroup {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: baseline; 
+
+}
+.fieldGroup .label {
+  padding-left: 1rem;
 }
 </style>
