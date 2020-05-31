@@ -1,13 +1,15 @@
 <template>
-  <div id="app">
-    <Loader v-show="isLoading" />
-    <div v-show="!isLoading">
-    <NavBar />
-    <transition name="fade" mode="out-in">
-      <router-view />
-    </transition>
-    <Footer />
+  <div>
+    <div id="app">
+      <Loader v-show="isLoading" />
+      <div v-show="!isLoading">
+      <NavBar />
+      <transition name="fade" mode="out-in">
+        <router-view />
+      </transition>
+      </div>
     </div>
+    <Footer />
   </div>
 </template>
 
@@ -41,6 +43,9 @@ export default {
 
 <style>
 @import "./assets/style.css";
+#app {
+  min-height: calc(100vh - 50px);
+}
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s;

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="status === 'success'">
+    <div class="society-page" v-if="status === 'success'">
         <div class="container header">
             <div class="profile">
                 <div class="profile-info">
@@ -9,7 +9,10 @@
                     <!-- TODO: MAKE THIS 'JOIN SOCIETY' -->
                     <p>{{ socData.description }}</p>
                 </div>
-                <img v-if="socData" :src="apiURL + socData.logo" />
+                <ProfilePhoto v-if="socData" 
+                :updateURL="`/api/society/logo?societyID=${this.socID}`"
+                :src="apiURL + socData.photo" 
+                @update="updateSocietyData"/>
             </div>
             <div class="profile-buttons">
                 <i class="material-icons profile-buttons-followers">person</i>
@@ -22,48 +25,32 @@
         <div class="container">
             <div class="tabs-wrapper">
                 <ul class="tabs">
-                    <li class="tabs-item tabs-item--active">Home</li>
-                    <li class="tabs-item">TBC</li>
-                    <li class="tabs-item">TBC</li>
-                    <li class="tabs-item">TBC</li>
+                    <li @click="changeTab(index)" v-for="(text, index) in tabs" :key="index" :class="['tabs-item', {'tabs-item--active':activeTab==index}]">{{text}}</li>
                 </ul>
             </div>
         </div>
-
         <div class="main">
-            <div class="container">
-                <EventList
-                    :eventViewTitle="'Upcoming Events for ' + socData.name"
-                    :eventData="upcomingSocietyEvents"
-                    listStyle="table"
-                />
-                <EventList
-                    :eventViewTitle="'Past Events for ' + socData.name"
-                    :eventData="pastSocietyEvents"
-                    listStyle="table"
-                    :loading="pastEventsLoading"
-                />
-                <MakeAdmin v-if="isSocietyAdmin" :socID="socID" />
-                <!--- TODO: more features for admins-->
-            </div>
+            <SocietyEvents v-if="activeTab == 0" :socID="socID" :socData="socData"/>
+            <MakeAdmin v-if="activeTab == 1 && isSocietyAdmin" :socID="socID" />
         </div>
+
     </div>
 </template>
 <script>
-import EventList from "@/components/EventList.vue";
 import MakeAdmin from "@/components/MakeAdmin.vue";
+import SocietyEvents from "@/components/SocietyEvents.vue";
+import ProfilePhoto from '@/components/ProfilePhoto.vue'
 import axios from "axios";
 
 export default {
     components: {
         MakeAdmin,
-        EventList
+        SocietyEvents,
+        ProfilePhoto
     },
     props: ["socID"],
     data() {
         return {
-            pastSocietyEvents: [],
-            upcomingSocietyEvents: [],
             pastEventsLoading: false,
             status: null,
             socData: {
@@ -75,6 +62,8 @@ export default {
                 tags: null,
                 type: 0,
             },
+            tabs: ['Events','Admin Tools'],
+            activeTab: 0,
             members: 0,
             apiURL: require("@/util").apiURL,
             isSocietyMember: this.$store.getters['user/isSocietyMember'](this.socID), 
@@ -89,6 +78,9 @@ export default {
         isSocietyAdmin() { return this.$store.getters['user/isSocietyAdmin'](this.socID) },
     },
     methods: {
+        changeTab(index) {
+            this.activeTab = index
+        },
         joinSociety() {
             axios({
                 url: !this.isSocietyMember?'/api/society/join': '/api/society/leave',
@@ -100,7 +92,7 @@ export default {
                 this.isSocietyMember = !this.isSocietyMember
                 if (this.isSocietyMember) {
                     this.members++
-                } else{
+                } else {
                     this.members--
                 }
             })
@@ -113,8 +105,6 @@ export default {
             this.$store.commit("loading", true);
             const urls = [
                 '/api/society',
-                '/api/society/events/upcoming',
-                '/api/society/events/past',
                 '/api/society/members'
             ]
             Promise.all(urls.map(u => axios.get(u,{
@@ -122,11 +112,8 @@ export default {
                     societyID: this.socID
                 }
             })))
-            .then(([socData, upcomingSocietyEvents, pastSocietyEvents, members]) => {
+            .then(([socData, members]) => {
                 Object.assign(this.socData,socData.data.data)
-                console.log(pastSocietyEvents)
-                Object.assign(this.pastSocietyEvents,pastSocietyEvents.data.data)
-                Object.assign(this.upcomingSocietyEvents,upcomingSocietyEvents.data.data)
                 this.members = members.data.data
                 this.status = 'success'
 
@@ -137,6 +124,10 @@ export default {
 };
 </script>
 <style scoped>
+.society-page {
+    display: flex;
+    flex-direction: column;
+}
 .header {
     margin-top: 4rem;
 }
@@ -164,15 +155,6 @@ h2 {
 .profile-info-button {
     margin-left: 1rem;
     cursor: pointer;
-}
-.profile > img {
-    width: 150px;
-    object-fit: cover;
-    height: 150px;
-    box-shadow: 0 0rem 2rem 0rem rgba(59, 59, 95, 0.3);
-    border-radius: 150px;
-    margin: 0 3rem 2rem 3rem;
-    flex-shrink: 0;
 }
 span.profile-buttons-followers {
     margin-right: 1rem;
@@ -216,7 +198,6 @@ span.profile-buttons-followers {
 .main {
     width: 100%;
     left: 0;
-    position: absolute;
     background: white;
     padding: 0 3rem;
 }

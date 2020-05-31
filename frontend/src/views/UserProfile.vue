@@ -18,7 +18,7 @@
                     </div>
                 </div>
                 <!-- TODO: Let user modify -->
-                <img v-if="userData" :src="userImage" />
+                <ProfilePhoto class="profile-photo" v-if="userData" :src="userImage" />
                 <div class="profile-buttons">
                     <i class="material-icons profile-info-button">favorite</i>
                     </div>
@@ -50,9 +50,7 @@
 
 
 <script>
-// import MakeAdmin from "@/components/MakeAdmin.vue";
-// import SelectSociety from "@/components/SelectSociety.vue";
-// import EventList from "@/components/EventList.vue";
+import ProfilePhoto from "@/components/ProfilePhoto"
 import Loader from "@/components/Loader.vue";
 import { mapGetters } from 'vuex'
 import axios from 'axios'
@@ -65,7 +63,8 @@ export default {
     }
   },
   components: {
-      Loader
+      Loader,
+      ProfilePhoto
   },
   data() {
     return {
@@ -90,7 +89,7 @@ export default {
       if (this.userData.image) {
         return this.apiURL + this.userData.image
       }
-      return "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-vector-default-avatar-profile-icon-social-media-user-vector-portrait-176194876.jpg"
+      return ""
     },
     ...mapGetters('user', [
     ]),
@@ -171,7 +170,7 @@ export default {
 .profile-info-subtitle {
     padding-top: 0.5rem;
 }
-.profile > img {
+.profile-photo {
   width: 150px;
   object-fit: cover;
   height: 150px;
@@ -182,6 +181,7 @@ export default {
   bottom: 0;
   transform: translateX(-50%);
   z-index: 1;
+  margin: auto;
 }
 .tabs-wrapper, .tabs {
   width: 100%;
