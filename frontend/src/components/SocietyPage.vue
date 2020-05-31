@@ -32,7 +32,10 @@
         <div class="main">
             <SocietyEvents v-if="activeTab == 0" :socID="socID" :socData="socData"/>
             <div v-if="activeTab == 1 && isSocietyAdmin"> 
-                <router-link :to="{name:'create'}" class="btn btn-primary">Create event</router-link>
+                <div class="box">
+                    <h2> Create an event </h2>
+                    <router-link :to="{name:'create'}" class="btn btn-primary">Create</router-link>
+                </div>
                 <MakeAdmin :socID="socID" />
             </div>
         </div>
@@ -209,5 +212,9 @@ span.profile-buttons-followers {
         flex-direction: column-reverse;
         text-align: center;
     }
+}
+.box {
+    margin: auto;
+    max-width: 200px;
 }
 </style>

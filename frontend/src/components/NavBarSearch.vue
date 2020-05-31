@@ -7,13 +7,13 @@
         type="text"
         v-model="searchText"
         placeholder="Search for events/societies"
-        @focusin="showSuggested = true"
+        @focusin="searchAction"
         @focusout="showSuggested = false"
         />
         <transition name="fade">
             <div v-show="showSuggested" class="autocomplete-items">
                 <div @click="selectSuggested(m)" v-for="(m, i) in matched" :key="i">
-                    <strong>{{m}}</strong>
+                    <strong>{{m.label}}</strong>
                 </div>
             </div>
         </transition>
@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     name: "NavBarSearch",
     components: {
@@ -36,15 +37,42 @@ export default {
     computed: {
 
         matched() {
-            return [
-            'hihi',
-            'boop']
+            if (this.searchText === '') {
+                return
+            }
+            return this.searchData
+            .filter(v => v.label.toUpperCase().includes(this.searchText.toUpperCase()))
+            .sort().slice(0,5)
         }
     },
     methods: {
+        searchAction() {
+            if (this.searchData.length === 0 ) {
+                const url = [
+                    '/api/event/upcoming',
+                    '/api/society/all'
+                ]
+                Promise.all(url.map(v => axios.get(v)))
+                .then(([events, societies]) => {
+                    const eventData = events.data
+                    const societiesData = societies.data
+                    this.searchData = this.searchData.concat(eventData.data.map(v => ({
+                        label: v.name,
+                        _link: `/event/${v.id}`
+                    })))
+                    this.searchData = this.searchData.concat(societiesData.data.map(v => ({
+                        label: v.name,
+                        _link: `/society/${v.id}`
+                    })))
+                })
+            }
+            this.showSuggested = true
+
+        },
         selectSuggested(v) {
             this.showSuggested = false
-            this.searchText = v
+            this.searchText = v.label
+            this.$router.push(v._link)
         },
     },
     
