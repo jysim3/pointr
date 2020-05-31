@@ -149,46 +149,7 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
 
                     return func(token_data=token_data, *args, **kwargs)
 
-
-            data = None
-            if request.get_json() != None:
-                data = request.get_json()
-            
-            if (activationRequired and not token_data['activation']):
-                abort(403, 'Activation Required')
-
-            # Check if eventID exists in query then check
-            if (allowSocAdmin and 'eventID' in data):
-                societyID = getSocIDFromEventID(data['eventID'])
-                admins = getAdminsForSoc(societyID)
-                if (token_data['zID'].lower() in admins):
-                    return func(token_data=token_data, *args, **kwargs)
-
-
-            # if societyID exists in query
-            if (allowSocAdmin and 'societyID' in args_data):
-
-                # check if zID is admin of society
-                admins = getAdminsForSoc(args_data['societyID'])
-
-                pprint.pprint(admins)
-                if (token_data['zID'].lower() in admins):
-                    # if so allow
-                    return func(token_data=token_data, *args, **kwargs)
-            elif (allowSocAdmin and 'societyID' in data) or (allowSocAdmin and 'socID' in data):
-                admins = getAdminsForSoc(data['societyID']) if 'societyID' in data else getAdminsForSoc(data['socID'])
-                if (token_data['zID'].lower() in admins):
-                    return func(token_data=token_data, *args, **kwargs)
-
-            # Check permissions on token
-            if (int(token_data['permission']) >= level):
-                return func(token_data=token_data, *args, **kwargs)
-                # Allow a token of a zID access data pertaining to that zID
-            elif (allowSelf and 'zID' in args_data and token_data['zID'].lower() == args_data['zID'].lower()):
-                return func(token_data=token_data, *args, **kwargs)
-            else:
-                abort(401, "Permission Denied")
-            abort(400, 'Malformed Request')
+            return func(token_data=token_data, *args, **kwargs)
 
         return wrapper
     return decorator

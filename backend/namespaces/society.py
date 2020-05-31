@@ -228,7 +228,7 @@ class Admin(Resource):
         if not society:
             abort(403, "Invalid Parameters, no such society")
 
-        status = society.addStaff(user, rank)
+        status = society.addStaff(user, rank['rank'])
         if status:
             abort(403, status)
 
