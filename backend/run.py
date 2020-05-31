@@ -11,7 +11,7 @@ elif (not os.environ.get('TAUCETI_SECRET_KEY')):
 '''
 
 if len(sys.argv) < 4:
-    print("Usage: python3 run.py [SQLPassword] [POINTR_SECRET_KEY] [SQLPassword] [init=False]")
+    print("Usage: python3 run.py [POINTR_EMAIL_PASSWORD] [POINTR_SECRET_KEY] [SQLPassword] [init=False]")
     exit(1)
 
 os.environ['POINTR_EMAIL_PASSWORD'] = sys.argv[1]

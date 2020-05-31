@@ -48,7 +48,7 @@ class Users(db.Model):
             'school': self.school,
             'faculty': self.faculty,
             'degree': self.degree,
-            'attended': [i.getPreview() for i in self.attended],
+            'attended': [i.event.getPreview() for i in self.attended],
             'interested': [i.getPreview() for i in self.interested]
         }
 
