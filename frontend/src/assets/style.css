@@ -84,6 +84,11 @@ a.link:hover {
 ::-moz-focus-inner {
   border: 0;
 }
+hr {
+  border: 3px solid var(--c-primary);
+  border-radius: var(--border-radius);
+  margin: 1rem;
+}
 table 			      { 
   border-spacing: 1; 
   border-collapse: collapse; 
@@ -334,6 +339,11 @@ input[type="date"], input[type="time"], textarea, option{
   --c-btn-bgc: var(--c-secondary);
   color: var(--c-primary);
   border: 3px solid var(--c-primary);
+}
+
+.btn-warning {
+  --c-btn-bgc: var(--c-warning);
+  color: white;
 }
 
 /* GENERAL CLASSES */

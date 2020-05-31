@@ -38,15 +38,16 @@ export default {
   computed: {
     attendeesData() {
       return this.attendees.map(a => ({
-          "Name": a.userName,
-          "zID": a.attendanceTime,
-          "isArcMember": a.isArcMember
+          "Name": `${a.firstname} ${a.lastname}`,
+          "zID": a.zID,
+          "Attend time": a.time,
+          "isArcMember": a.isArc
         }))
     }
   },
   data() {
     return {
-      fields: ['Name','zID','isArcMember','Actions'],
+      fields: ['Name','zID','Attend time','isArcMember','Actions'],
       attendees: [],
     }
   },
@@ -68,7 +69,7 @@ export default {
         })
         .then(r => {
           console.log(r.data)
-          this.attendees = r.data.attendance
+          this.attendees = r.data.data
         })
         .catch(() => {})
 

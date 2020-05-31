@@ -32,7 +32,7 @@
 
             <div class="main wrapper">
                 <div class="main-name">
-                    <h2 class="main-name-title" v-once>{{userData.firstName}} {{userData.lastName}}</h2>
+                    <h2 class="main-name-title" v-once>{{userData.firstname}} {{userData.lastname}}</h2>
                     <span class="main-name-subtitle" v-once>{{userData.zID}}</span>
                 </div>
 
@@ -55,10 +55,10 @@
 // import EventList from "@/components/EventList.vue";
 import Loader from "@/components/Loader.vue";
 import { mapGetters } from 'vuex'
-import { fetchAPI } from '@/util.js'
+import axios from 'axios'
 
 export default {
-  name: 'Society',
+  name: 'User',
   props: {
     zID: {
       type: String
@@ -97,7 +97,7 @@ export default {
     stats () {
 
         const stat = this.statsData
-        if (this.userData.societies.staff.length > 0) {
+        if (this.userData.societies > 0) {
             stat.push(
             {
                 icon: 'home',
@@ -114,11 +114,11 @@ export default {
         return
       }
       this.loading = true
-      fetchAPI(`/api/user/?zID=${this.zID}`, "GET")
+      axios.get(`/api/user?zID=${this.zID}`)
       .then(v => {
-        const data = v.data
-        this.userData.firstName = data.firstName
-        this.userData.lastName = data.lastName
+        const data = v.data.data
+        this.userData.firstname = data.firstname
+        this.userData.lastname = data.lastname
         this.userData.image = data.image
         this.userData.societies = data.societies
         this.userData.description = data.description

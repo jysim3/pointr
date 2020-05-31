@@ -66,7 +66,7 @@ router.beforeResolve(async (to, from, next) => {
   store.dispatch('auth/validate')
   if (store.getters.isAuthenticated) {
     if (store.getters['user/status'] === null) {
-      store.dispatch('user/getUserInfo')
+      await store.dispatch('user/getUserInfo')
     }
   }
   if (to.matched.some(record => record.meta.requiresAuth)) {

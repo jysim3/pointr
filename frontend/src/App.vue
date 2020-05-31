@@ -6,11 +6,13 @@
     <transition name="fade" mode="out-in">
       <router-view />
     </transition>
+    <Footer />
     </div>
   </div>
 </template>
 
 <script>
+import Footer from '@/components/Footer'
 import NavBar from "@/components/NavBar.vue";
 import Loader from "@/components/Loader.vue";
 import axios from 'axios'
@@ -18,7 +20,8 @@ import axios from 'axios'
 export default {
   name: "app",
   components: {
-    NavBar, Loader
+    NavBar, Loader,
+    Footer
   },
   computed: {
     isLoading () { return this.$store.getters.isLoading},

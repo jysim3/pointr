@@ -8,7 +8,7 @@
       <Loader v-if="loading" />
       <div v-else class="form">
         <h2>Sign attendance</h2>
-        <EventCard :data="cardData" />
+        <EventCard size="lrg" :data="cardData" />
         <button
           v-if="!eventSignSuccess"
           class="btn btn-primary"
@@ -25,7 +25,7 @@
   </div>
 </template>
 <script>
-import { fetchAPI } from "@/util.js";
+import axios from 'axios'
 import EventCard from "@/components/EventCard.vue";
 import Loader from "@/components/Loader.vue";
 
@@ -35,6 +35,10 @@ export default {
     eventID: {
       type: String,
       required: true
+    },
+    eventData: {
+      type: Object,
+      required: true
     }
   },
   components: {
@@ -43,10 +47,7 @@ export default {
   },
   data() {
     return {
-      loading: true,
-      eventData: {
-        eventID: this.eventID
-      },
+      loading: false,
       eventSignSuccess: false,
       eventAlreadySigned: false
     };
@@ -55,40 +56,24 @@ export default {
     cardData() {
       return {
         title: this.eventData.name,
-        subtitle: this.eventData.societyName,
+        subtitle: this.eventData.description,
         tags: [
-          this.eventData.eventDate, this.eventData.location
+          this.eventData.start, this.eventData.location
         ],
         _link: `/event/${this.eventData.eventID}`
       }
     }
   },
-  created() {
-    fetchAPI(`/api/event/?eventID=${this.eventID}`, "GET").then(j => {
-      this.eventData.eventDate = j.data.eventDate;
-      this.eventData.name = j.data.eventName;
-      this.eventData.location = j.data.location;
-      this.eventData.societyName = j.data.societyName;
-      this.loading = false;
-    });
-
-    /* TODO: deleting this check to make sure it's smoother
-    // Checking if this event's ID matches with an event the user is already a part of.
-    this.eventAlreadySigned = this.$store.getters['user/allEvents'].some(
-      event => event.eventID === this.eventData.eventID
-    );
-    */
-  },
   methods: {
     submitEventSignAttendance() {
-      fetchAPI("/api/event/attend", "POST", {
-        zID: this.zID,
-        eventID: this.eventID
-      })
-        .then(r => {
-          if (r.status === 200) {
-            this.eventSignSuccess = true;
-          }
+      axios({
+        url: "/api/event/attend", 
+        method: "POST", 
+        params: {
+          eventID: this.eventID
+        }
+      }).then(() => {
+          this.eventSignSuccess = true;
         })
         .catch(e => console.log(e)); //eslint-disable-line
     }

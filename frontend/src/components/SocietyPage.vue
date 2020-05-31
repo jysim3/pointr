@@ -4,7 +4,8 @@
             <div class="profile">
                 <div class="profile-info">
                     <h2 class="profile-info-title" >{{ socData.name }}</h2>
-                    <i class="material-icons profile-info-button">favorite</i>
+                    <button v-if="!isSocietyAdmin" @click="joinSociety" class="btn btn-primary profile-info-button">{{ !isSocietyMember ? 'Join' : 'Leave'}}</button>
+                    <button v-else class="btn btn-warning profile-info-button">Admin</button>
                     <!-- TODO: MAKE THIS 'JOIN SOCIETY' -->
                     <p>{{ socData.description }}</p>
                 </div>
@@ -12,7 +13,7 @@
             </div>
             <div class="profile-buttons">
                 <i class="material-icons profile-buttons-followers">person</i>
-                <span class="profile-buttons-followers">{{ socData.membersCount}} members</span>
+                <span class="profile-buttons-followers">{{ members }} members</span>
                 <!-- <i class="material-icons profile-buttons-followers" style="color: purple">trending_up</i>
                 <span class="profile-buttons-followers">150 weekly active users</span>-->
             </div>
@@ -33,7 +34,7 @@
             <div class="container">
                 <EventList
                     :eventViewTitle="'Upcoming Events for ' + socData.name"
-                    :eventData="societyEvents"
+                    :eventData="upcomingSocietyEvents"
                     listStyle="table"
                 />
                 <EventList
@@ -42,7 +43,7 @@
                     listStyle="table"
                     :loading="pastEventsLoading"
                 />
-                <MakeAdmin v-if="isStaff" :socID="socID" />
+                <MakeAdmin v-if="isSocietyAdmin" :socID="socID" />
                 <!--- TODO: more features for admins-->
             </div>
         </div>
@@ -52,7 +53,6 @@
 import EventList from "@/components/EventList.vue";
 import MakeAdmin from "@/components/MakeAdmin.vue";
 import axios from "axios";
-import { mapGetters } from "vuex";
 
 export default {
     components: {
@@ -63,7 +63,7 @@ export default {
     data() {
         return {
             pastSocietyEvents: [],
-            societyEvents: [],
+            upcomingSocietyEvents: [],
             pastEventsLoading: false,
             status: null,
             socData: {
@@ -75,7 +75,9 @@ export default {
                 tags: null,
                 type: 0,
             },
-            apiURL: require("@/util").apiURL
+            members: 0,
+            apiURL: require("@/util").apiURL,
+            isSocietyMember: this.$store.getters['user/isSocietyMember'](this.socID), 
         };
     },
     created() {
@@ -84,50 +86,52 @@ export default {
         }
     },
     computed: {
-        ...mapGetters("user", [
-            "staffSocieties",
-        ]),
-        isStaff() {
-            return this.staffSocieties.some(e => e.societyID === this.socID);
-        },
+        isSocietyAdmin() { return this.$store.getters['user/isSocietyAdmin'](this.socID) },
     },
     methods: {
+        joinSociety() {
+            axios({
+                url: !this.isSocietyMember?'/api/society/join': '/api/society/leave',
+                method: "POST",
+                params:{
+                        societyID: this.socID
+                }
+            }).then(() => {
+                this.isSocietyMember = !this.isSocietyMember
+                if (this.isSocietyMember) {
+                    this.members++
+                } else{
+                    this.members--
+                }
+            })
+        },
         updateSocietyData() {
             if (!this.socID) {
                 return;
             }
             this.loading = true;
             this.$store.commit("loading", true);
-            axios
-                .get(`/api/society`, {
-                    params: {
-                        societyID: this.socID
-                    }
-                })
-                .then(v => {
-                    const data = v.data.data;
-                    Object.assign(this.socData,data)
-                    this.status = v.data.status
-                })
-                .catch(e => {
-                    console.log(e); // eslint-disable-line
-                })
-                .finally(() => this.$store.commit("loading", false));
+            const urls = [
+                '/api/society',
+                '/api/society/events/upcoming',
+                '/api/society/events/past',
+                '/api/society/members'
+            ]
+            Promise.all(urls.map(u => axios.get(u,{
+                params: {
+                    societyID: this.socID
+                }
+            })))
+            .then(([socData, upcomingSocietyEvents, pastSocietyEvents, members]) => {
+                Object.assign(this.socData,socData.data.data)
+                console.log(pastSocietyEvents)
+                Object.assign(this.pastSocietyEvents,pastSocietyEvents.data.data)
+                Object.assign(this.upcomingSocietyEvents,upcomingSocietyEvents.data.data)
+                this.members = members.data.data
+                this.status = 'success'
 
-            this.pastEventsLoading = true;
-            axios
-                .get(`/api/society/events/past`, {
-                    params: {
-                        societyID: this.socID
-                    }
-                })
-                .then(v => {
-                    this.pastSocietyEvents = v.data.data;
-                })
-                .catch(e => {
-                    console.log(e); // eslint-disable-line
-                })
-                .finally(() => (this.pastEventsLoading = false));
+
+            }).finally(() => this.$store.commit("loading", false));
         }
     }
 };
@@ -158,6 +162,7 @@ h2 {
     padding-top: 1rem;
 }
 .profile-info-button {
+    margin-left: 1rem;
     cursor: pointer;
 }
 .profile > img {

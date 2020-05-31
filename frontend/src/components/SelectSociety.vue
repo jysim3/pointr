@@ -1,31 +1,18 @@
 <template>
     <div class="container">
         
-        <div   class="form-container">
-            <div class="form">
-
-                <h2>Choose your society</h2>
-                <select class="input--select select--admin"  v-model="selectedSociety" name="society-select">
-                <option value="" >Select a society</option>
-                <option
-                    v-for="(society, index) in societies"
-                    :key="index"
-                    :value="society.societyID"
-                >{{ society.societyName }}{{ isStaff(society.societyID) ? ' (Admin)' : null}}</option>
-                </select>
-                <button @click="selectSociety" class="btn btn-primary">Next</button>
-            </div>
-        </div>
         <div class="event-view-title">
-          <h3 class="event-view-title-text" v-once>Societies</h3>
-          <!-- <a class="event-view-more link" @click="viewAllData = !viewAllData"
-            >View {{viewAllData ? 'less' : 'more'}}</a> -->
+          <h3 class="event-view-title-text">Your Societies</h3>
+        </div>
+        <div  class="event-cards " >
+            <Card v-for="(society, index) in userSocietyData" :key="index" :data="society" />
         </div>
 
+        <h3>Browse Societies</h3>
         <Loader v-if="loading"/>
         <FormError v-else-if="societies.length === 0" msg="Seems like there is no events at the moment"/> 
         <div v-else class="event-cards " >
-          <Card v-for="(society, index) in cardData" :key="index" :data="society" />
+          <Card v-for="(society, index) in allSocietyData" :key="index" :data="society" />
         </div>
     </div>
 </template>
@@ -33,7 +20,6 @@
 import Card from '@/components/EventCard.vue'
 import FormError from '@/components/FormError.vue'
 import Loader from '@/components/Loader.vue'
-import { mapGetters } from 'vuex'
 import axios from 'axios'
 export default {
     name: "SelectSociety",
@@ -48,16 +34,23 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('user', [
-            'staffSocieties'
-        ]),
-        cardData() {
-            console.log( this.societies.map(s => ({
+        userSocietyData() {
+            return this.societies
+            .filter(k => this.$store.getters['user/isSocietyAdmin'](k.id))
+            .map(s => ({
                 title: s.name,
+                subtitle: s.description,
+                tags: s.tags,
                 _link: `/society/${s.id}`
-            })))
-            return this.societies.map(s => ({
+            }))
+        },
+        allSocietyData() {
+            return this.societies
+            .filter(k => !this.$store.getters['user/isSocietyAdmin'](k.id))
+            .map(s => ({
                 title: s.name,
+                subtitle: s.description,
+                tags: s.tags,
                 _link: `/society/${s.id}`
             }))
         }
@@ -75,9 +68,7 @@ export default {
         selectSociety() {
             this.$router.push({ name: "society", params: { socID: this.selectedSociety } });
         },
-        isStaff(socID) {
-            return this.staffSocieties.some(e => e.societyID === socID)
-        }
+        isStaff(socID) { return this.$store.getters['user/isSocietyAdmin'](socID)}
     }
 }
 </script>
