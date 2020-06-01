@@ -133,7 +133,7 @@ class Societies(db.Model):
         for i in self.hosting:
             if i.start > currentTime:
                 events.append(i)
-        return events
+        return sorted(events, key=lambda event: event.start)
 
     def getPastEvents(self):
         """
@@ -142,9 +142,9 @@ class Societies(db.Model):
         currentTime = datetime.now(timezone('utc'))
         events = []
         for i in self.hosting:
-            if i.end < currentTime:
+            if i.start < currentTime:
                 events.append(i)
-        return events
+        return sorted(events, key=lambda event: event.start, reverse=True)
 
     def getLogo(self):
         """

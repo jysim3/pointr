@@ -204,7 +204,6 @@ class Past(Resource):
         Returns previews of past events of society
     ''')
     @validateArgs(SocietyIDSchema, 'society')
-    @api.expect(authModel)
     def get(self, society):
         events = society.getPastEvents()
         events = [i.getPreview() for i in events]

@@ -15,6 +15,9 @@ api = Api(app, version='3.0.1', title='Pointr backend',
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
+# FIXME: Change this to production when we relaunch pointr
+app.config['ENV'] = 'development'
+
 database_name = "pointrDB"
 if (app.config['ENV'] == 'development'):
     @app.route('/assets/images/<path:path>')
@@ -34,8 +37,6 @@ if (os.path.exists(app.config['UPLOAD_FOLDER']) == False):
 app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{os.environ.get('SQLPassword')}@localhost/{database_name}"
 db = SQLAlchemy(app)
 
-# FIXME: Change this to production when we relaunch pointr
-app.config['ENV'] = 'development'
 
 from namespaces.auth import api as auth
 from namespaces.event import api as event

@@ -8,7 +8,14 @@ from app import db
 from models.user import Users
 from util.validation_services import toQuery, toModel, validateArgs, validateBody
 from schemata.user_schemata import ZIDSchema, ZIDSchemaNotReq, zIDPatchSchema
+from schemata.models import authModel
 from util.auth_services import checkAuthorization
+from util.files import uploadImages
+from werkzeug import FileStorage
+
+photoModel = api.parser()
+photoModel.add_argument('photo', required=True, help="User's new profile photo", type=FileStorage, location="files")
+photoModel.add_argument('zID', required=True, help="The user's profile to be changed", type=str, location="args")
 
 @api.route('')
 class User(Resource):
@@ -48,6 +55,34 @@ class User(Resource):
         db.session.delete(user)
         db.session.commit()
 
+        return jsonify({'status': 'success'})
+
+@api.route('/photo')
+class ProfilePhoto(Resource):
+
+    @api.doc(description='''
+        Update the token bearer's profile photo, alternatively, update someone else's
+        profile photo if the token bearer is a superadmin.
+
+        NOTE: Requires the zID of the profile to be changed for both token bearer update
+        and superadmin update
+    ''')
+    @api.expect(photoModel)
+    @validateArgs(ZIDSchema, 'user')
+    @checkAuthorization(allowSelf=True, allowSuperAdmin=True)
+    def patch(self, token_data, user):
+        if not user:
+            abort(405, "No such user")
+
+        photo = request.files['photo']
+        if not photo:
+            abort(400, "No photo provided")
+
+        status = uploadImages(photo)
+        if not isinstance(status, tuple):
+            abort(400, status)
+
+        user.updatePhoto(status[0])
         return jsonify({'status': 'success'})
 
 @api.route('/events/upcoming')
