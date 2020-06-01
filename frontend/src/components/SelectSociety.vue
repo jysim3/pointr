@@ -78,6 +78,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 3rem;
   margin-bottom: 1rem;
 }
 .event-cards {

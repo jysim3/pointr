@@ -8,15 +8,18 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    status: 'success'
+    status: 'success',
+    navBar: true
   },
   mutations: {
     loading: (state, status) => status ? state.status = 'loading' : state.status = 'success',
+    navBar: (state, navBar) => state.navBar = navBar
   },
   getters: {
     isAuthenticated: state => !!state.auth.token,
     isLoading: state => state.status === 'loading',
-    zID: state => state.auth.token ? jwt.decode(state.auth.token)['zID'] : ''
+    navBar: state => state.navBar,
+    zID: state => state.auth.token ? jwt.decode(state.auth.token)['zID'] : '',
   },
   actions: {
     login({dispatch}, loginDetails) {
