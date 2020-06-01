@@ -1,18 +1,22 @@
 <template>
-    <div v-if="status === 'success'">
+    <div class="society-page" v-if="status === 'success'">
         <div class="container header">
             <div class="profile">
                 <div class="profile-info">
                     <h2 class="profile-info-title" >{{ socData.name }}</h2>
-                    <i class="material-icons profile-info-button">favorite</i>
+                    <button v-if="!isSocietyAdmin" @click="joinSociety" class="btn btn-primary profile-info-button">{{ !isSocietyMember ? 'Join' : 'Leave'}}</button>
+                    <button v-else class="btn btn-warning profile-info-button">Admin</button>
                     <!-- TODO: MAKE THIS 'JOIN SOCIETY' -->
                     <p>{{ socData.description }}</p>
                 </div>
-                <img v-if="socData" :src="apiURL + socData.logo" />
+                <ProfilePhoto v-if="socData" 
+                :updateURL="`/api/society/logo?societyID=${this.socID}`"
+                :src="apiURL + socData.photo" 
+                @update="updateSocietyData"/>
             </div>
             <div class="profile-buttons">
                 <i class="material-icons profile-buttons-followers">person</i>
-                <span class="profile-buttons-followers">{{ socData.membersCount}} members</span>
+                <span class="profile-buttons-followers">{{ members }} members</span>
                 <!-- <i class="material-icons profile-buttons-followers" style="color: purple">trending_up</i>
                 <span class="profile-buttons-followers">150 weekly active users</span>-->
             </div>
@@ -21,49 +25,38 @@
         <div class="container">
             <div class="tabs-wrapper">
                 <ul class="tabs">
-                    <li class="tabs-item tabs-item--active">Home</li>
-                    <li class="tabs-item">TBC</li>
-                    <li class="tabs-item">TBC</li>
-                    <li class="tabs-item">TBC</li>
+                    <li @click="changeTab(index)" v-for="(text, index) in tabs" :key="index" :class="['tabs-item', {'tabs-item--active':activeTab==index}]">{{text}}</li>
                 </ul>
             </div>
         </div>
-
         <div class="main">
-            <div class="container">
-                <EventList
-                    :eventViewTitle="'Upcoming Events for ' + socData.name"
-                    :eventData="societyEvents"
-                    listStyle="table"
-                />
-                <EventList
-                    :eventViewTitle="'Past Events for ' + socData.name"
-                    :eventData="pastSocietyEvents"
-                    listStyle="table"
-                    :loading="pastEventsLoading"
-                />
-                <MakeAdmin v-if="isStaff" :socID="socID" />
-                <!--- TODO: more features for admins-->
+            <SocietyEvents v-if="activeTab == 0" :socID="socID" :socData="socData"/>
+            <div v-if="activeTab == 1 && isSocietyAdmin"> 
+                <div class="box">
+                    <h2> Create an event </h2>
+                    <router-link :to="{name:'create'}" class="btn btn-primary">Create</router-link>
+                </div>
+                <MakeAdmin :socID="socID" />
             </div>
         </div>
+
     </div>
 </template>
 <script>
-import EventList from "@/components/EventList.vue";
 import MakeAdmin from "@/components/MakeAdmin.vue";
+import SocietyEvents from "@/components/SocietyEvents.vue";
+import ProfilePhoto from '@/components/ProfilePhoto.vue'
 import axios from "axios";
-import { mapGetters } from "vuex";
 
 export default {
     components: {
         MakeAdmin,
-        EventList
+        SocietyEvents,
+        ProfilePhoto
     },
     props: ["socID"],
     data() {
         return {
-            pastSocietyEvents: [],
-            societyEvents: [],
             pastEventsLoading: false,
             status: null,
             socData: {
@@ -75,7 +68,11 @@ export default {
                 tags: null,
                 type: 0,
             },
-            apiURL: require("@/util").apiURL
+            tabs: ['Events','Admin Tools'],
+            activeTab: 0,
+            members: 0,
+            apiURL: require("@/util").apiURL,
+            isSocietyMember: this.$store.getters['user/isSocietyMember'](this.socID), 
         };
     },
     created() {
@@ -84,55 +81,59 @@ export default {
         }
     },
     computed: {
-        ...mapGetters("user", [
-            "staffSocieties",
-        ]),
-        isStaff() {
-            return this.staffSocieties.some(e => e.societyID === this.socID);
-        },
+        isSocietyAdmin() { return this.$store.getters['user/isSocietyAdmin'](this.socID) },
     },
     methods: {
+        changeTab(index) {
+            this.activeTab = index
+        },
+        joinSociety() {
+            axios({
+                url: !this.isSocietyMember?'/api/society/join': '/api/society/leave',
+                method: "POST",
+                params:{
+                        societyID: this.socID
+                }
+            }).then(() => {
+                this.isSocietyMember = !this.isSocietyMember
+                if (this.isSocietyMember) {
+                    this.members++
+                } else {
+                    this.members--
+                }
+            })
+        },
         updateSocietyData() {
             if (!this.socID) {
                 return;
             }
             this.loading = true;
             this.$store.commit("loading", true);
-            axios
-                .get(`/api/society`, {
-                    params: {
-                        societyID: this.socID
-                    }
-                })
-                .then(v => {
-                    const data = v.data.data;
-                    Object.assign(this.socData,data)
-                    this.status = v.data.status
-                })
-                .catch(e => {
-                    console.log(e); // eslint-disable-line
-                })
-                .finally(() => this.$store.commit("loading", false));
+            const urls = [
+                '/api/society',
+                '/api/society/members'
+            ]
+            Promise.all(urls.map(u => axios.get(u,{
+                params: {
+                    societyID: this.socID
+                }
+            })))
+            .then(([socData, members]) => {
+                Object.assign(this.socData,socData.data.data)
+                this.members = members.data.data
+                this.status = 'success'
 
-            this.pastEventsLoading = true;
-            axios
-                .get(`/api/society/events/past`, {
-                    params: {
-                        societyID: this.socID
-                    }
-                })
-                .then(v => {
-                    this.pastSocietyEvents = v.data.data;
-                })
-                .catch(e => {
-                    console.log(e); // eslint-disable-line
-                })
-                .finally(() => (this.pastEventsLoading = false));
+
+            }).finally(() => this.$store.commit("loading", false));
         }
     }
 };
 </script>
 <style scoped>
+.society-page {
+    display: flex;
+    flex-direction: column;
+}
 .header {
     margin-top: 4rem;
 }
@@ -158,16 +159,8 @@ h2 {
     padding-top: 1rem;
 }
 .profile-info-button {
+    margin-left: 1rem;
     cursor: pointer;
-}
-.profile > img {
-    width: 150px;
-    object-fit: cover;
-    height: 150px;
-    box-shadow: 0 0rem 2rem 0rem rgba(59, 59, 95, 0.3);
-    border-radius: 150px;
-    margin: 0 3rem 2rem 3rem;
-    flex-shrink: 0;
 }
 span.profile-buttons-followers {
     margin-right: 1rem;
@@ -211,7 +204,6 @@ span.profile-buttons-followers {
 .main {
     width: 100%;
     left: 0;
-    position: absolute;
     background: white;
     padding: 0 3rem;
 }
@@ -220,5 +212,9 @@ span.profile-buttons-followers {
         flex-direction: column-reverse;
         text-align: center;
     }
+}
+.box {
+    margin: auto;
+    max-width: 200px;
 }
 </style>

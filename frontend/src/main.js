@@ -9,7 +9,13 @@ const token = localStorage.getItem('token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = token
 }
-axios.defaults.baseURL = 'http://localhost:5000'
+if (process.env.NODE_ENV === 'development'){
+  axios.defaults.baseURL = 'http://localhost:5000'
+} else if (process.env.NODE_ENV === 'production') {
+  axios.defaults.baseURL = 'https://pointr.live';
+} else {
+  axios.defaults.baseURL = 'http://test.pointr.live';
+}
 
 
 new Vue({

@@ -10,6 +10,7 @@ class Users(db.Model):
     firstName = db.Column(db.Text, nullable=False)
     lastName = db.Column(db.Text, nullable=False)
     preferredName = db.Column(db.Text, nullable=True)
+    discordName = db.Column(db.Text, nullable=True)
 
     photo = db.Column(db.Text, nullable=True)
     description = db.Column(db.Text, nullable=True)
@@ -170,6 +171,12 @@ class Users(db.Model):
             members = [i.society for i in members]
             admins = [i.society for i in admins]
         return {'members': members, 'admins': admins}
+
+    def updatePhoto(self, path):
+        self.photo = path
+
+        db.session.add(self)
+        db.session.commit()
 
     @staticmethod
     def findUser(zID):

@@ -1,19 +1,29 @@
 <template>
     <div>
+
         <EventEnterCode v-if="!eventID" />
-        <!-- <div v-else-if="isAdmin"> -->
-            <EventHostView :eventID="eventID"/>
-        <!-- </div>
-        <div v-else> 
-            <EventSign :eventID="eventID" />
-        </div> -->
+        <div v-else>
+
+            <EventHostView 
+            v-if="isAdmin"
+            :eventID="eventID"
+            :eventData="eventData"
+            />
+            <EventSign 
+            v-else
+            :eventID="eventID" 
+            :eventData="eventData"
+            />
+        </div>
+        <div > 
+        </div>
     </div>
 </template>
 <script>
 import EventEnterCode from "@/components/eventSign/EventEnterCode.vue";
-// import EventSign from "@/components/eventSign/EventSign.vue";
+import EventSign from "@/components/eventSign/EventSign.vue";
 import EventHostView from "@/views/EventHostView.vue"
-// import axios from 'axios'
+import axios from 'axios'
 export default {
     name: "Event",
     props: {
@@ -21,17 +31,56 @@ export default {
     },
     components: {
         EventHostView, 
-        // EventSign, 
+        EventSign, 
         EventEnterCode
     },
     data() {
         return {
-            eventData: {} ,
+            eventData: {
+                description: "",
+                end: "",
+                hasAccessCode: false,
+                hasAdminSignin: false,
+                hasQR: false,
+                id: "",
+                location: null,
+                name: "",
+                photos: null,
+                preview: null,
+                society: [""],
+                start: "",
+                status: 0,
+            } ,
             loading: false,
-            isAdmin: false
+            name: '',
+            description: '',
+            isAdmin: false,
         }
     },
-    created() {
+    methods: {
+
+        getEventInfo() { 
+            if (!this.eventID){
+                return
+            }
+        
+
+            this.$store.commit('loading',true)
+            axios.get(`/api/event?eventID=${this.eventID}`)
+            .then(response => {
+                const data = response.data.data
+                Object.assign(this.eventData, data)
+                console.log(data)
+                this.isAdmin = this.$store.getters['user/isSocietyAdmin'](data.society)
+            })
+            .catch(c => console.log(c))
+            .finally(() => this.$store.commit('loading',false))
+            
+        }
+    },
+    
+    mounted() {
+        this.getEventInfo()
     },
 }
 </script>

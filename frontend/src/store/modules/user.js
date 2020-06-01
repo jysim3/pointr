@@ -22,8 +22,8 @@ const getDefaultState = () => {
     school: null,
     zID: "",
     societies: {
-      member: [],
-      staff: []
+      members: [],
+      admins: []
     },
   }
 };
@@ -33,22 +33,18 @@ const getters = {
   name: (state) => `${state.firstname} ${state.lastname}`,
   zID: (state) => state.zID,
   status: state => state.status,
-  memberSocieties(state) {
-    if (state.societies) {
-      return state.societies.member;
-    } else {
-      return []
+  societies: (state) => state.societies,
+  isSocietyMember: (state) => socID => {
+    if (Array.isArray(socID)){
+      return state.societies.members.some(v => socID.includes(v.id))
     }
-  },
-  staffSocieties(state) {
-    if (state.societies) {
-      return state.societies.staff;
-    } else {
-      return []
-    }
+    return state.societies.members.some(v => v.id === socID)
   },
   isSocietyAdmin: (state) => socID => {
-    return state.societies.staff.some(v => v.societyID === socID)
+    if (Array.isArray(socID)){
+      return state.societies.admins.some(v => socID.includes(v.id))
+    }
+    return state.societies.admins.some(v => v.id === socID)
   },
 
 };
@@ -72,7 +68,7 @@ const mutations = {
     state.status = 'success'
   },
   societyInfo(state, societyInfo) {
-    console.log(societyInfo)
+    Object.assign(state.societies, societyInfo)
   },
   eventInfo(state, eventInfo) {
     state.events = eventInfo
@@ -91,7 +87,6 @@ const actions = {
   },
   async getUserInfo({ commit, rootGetters }) {
     try {
-      console.log(rootGetters.zID)
       const requests = [
         {
           url: '/api/user',
@@ -109,13 +104,11 @@ const actions = {
           method: 'GET'
         }
       ];
-      console.log('hihi')
       const [
         infoResponse,
         eventResponse,
         societyResponse
       ] = await Promise.all(requests.map(r => axios(r)))
-      console.log(infoResponse.data)
       commit('userInfo', infoResponse.data.data)
       commit('societyInfo', societyResponse.data.data)
       commit('eventInfo', eventResponse.data.data)

@@ -13,7 +13,6 @@
 import SocietyPage from "@/components/SocietyPage.vue";
 import SelectSociety from "@/components/SelectSociety.vue";
 import Loader from "@/components/Loader.vue";
-import { mapGetters } from 'vuex'
 
 export default {
   name: 'Society',
@@ -33,15 +32,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', [
-    'staffSocieties', 'joinedSocieties', 'allSocietyEvents'
-    ]),
-    isStaff() {
-        return this.staffSocieties.some(e => e.societyID === this.socID)
-    },
-    societyEvents() {
-      return this.allSocietyEvents(this.socID)
-    }
   },
 }
 </script>

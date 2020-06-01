@@ -1,8 +1,10 @@
 from marshmallow import Schema, fields, ValidationError, validates, validate, post_load, EXCLUDE
 from schemata import common_schemata
 from models.user import Users
+from werkzeug import FileStorage
 
 class ZIDSchema(Schema):
+    __schema_name__ = "ZID form"
     zID = common_schemata.zidRequired
 
     class Meta:

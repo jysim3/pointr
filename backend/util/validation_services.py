@@ -30,7 +30,7 @@ def validateBody(schema, name='data'):
             try:
                 data = schema().load(request.get_json())
             except ValidationError as err:
-                abort(400, f"Usually means that the input is of wrong type {err.messages}")
+                abort(400, err.messages)
            
             validatedData = {
                 name: data

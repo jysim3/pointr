@@ -1,5 +1,5 @@
 <template>
-  <div @click="clickedCard" :class="{ 'event-card-clickable': data._link !== undefined }" class="event-card">
+  <div @click="clickedCard" :class="[{ 'event-card-clickable': data._link !== undefined },size === 'sml' ? 'sml' : 'lrg' ]" class="event-card">
     <!-- TODO: going to an event should only be available to admin? -->
     <!-- <router-link :to="`/event/${data.eventID}`">
       <h3>{{ data.eventName }}</h3>
@@ -22,6 +22,10 @@
 export default {
   name: "EventCard",
   props: {
+    size: {
+      type: String,
+      default: "sml"
+    },
     data: {
       type: Object,
       required: true
@@ -55,18 +59,25 @@ export default {
   margin: 1rem 0.5rem ;
   padding: 1rem 1rem 1.25rem 1rem;
   border-radius: var(--border-radius);
-  display: flexbox;
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
   transition: 0.2s box-shadow;
   background: white;
 
 
-  flex: 1 1 auto;
-  white-space: nowrap;
-  max-width: 250px;
+  flex: 1 0 auto;
   height: 100px;
+  width: 250px;
+  white-space: nowrap;
   overflow: hidden;
+}
+.sml {
+  max-width: 250px;
+}
+.lrg {
+  width: 600px;
+  white-space: pre-wrap; 
 }
 
 .event-card:hover {
@@ -86,10 +97,12 @@ export default {
 .title {
   color: black;
   margin-bottom: 0.25rem;
+  white-space: pre-wrap;
 }
 
 .subtitle {
   font-size: 1.1rem;
+  white-space: pre-wrap;
 }
 
 .event-card-clickable {

@@ -1,22 +1,18 @@
 <template>
   <div id="event-host-view-wrapper">
-    <EventCodeDisplay :eventID="eventID" />
-    <h1 id="welcome-header">Welcome to {{ this.name }}</h1>
-    <p class="description">{{ this.description }}</p>
-    <!-- TODO: add more event information here -->
-    <h2 id="mark-attendance-header">Sign your attendance</h2>
+        <EventCodeDisplay :eventID="eventID" />
+        <h1 id="welcome-header">Welcome to {{ this.eventData.name }}</h1>
+        <p class="description">{{ this.eventData.description }}</p>
+        <!-- TODO: add more event information here -->
+        <h2 id="mark-attendance-header">Sign your attendance</h2>
     <div id="qr-and-form-container">
       <div style="display:flex;flex-direction:column;">
       <EventQRCode :eventID="this.eventID" />
-          <button
-            class="btn btn-primary"
-            @click="downloadCsv"
-          >Download csv</button>
       </div>
       <EventAdminAttendance :eventID="this.eventID" />
     </div>
     <div id="event-attendance-container">
-      <EventAttendance class="attendee" :eventID="eventID" />
+      <EventAttendance :eventName="this.eventData.name" class="attendee" :eventID="eventID" />
       <FormError v-show="error" :msg="error" />
       <!-- TODO: only show last 10 people who have joined? Click 'view all' to show all participants? -->
     </div>
@@ -29,13 +25,12 @@ import EventQRCode from "@/components/event/EventQRCode.vue";
 import EventCodeDisplay from "@/components/event/EventCodeDisplay.vue";
 import EventAdminAttendance from "@/components/event/EventAdminAttendance.vue";
 import FormError from "@/components/FormError.vue";
-import { fetchAPI } from "@/util.js";
-import axios from 'axios'
 
 export default {
   name: "EventHost",
   props: {
-    eventID: String
+    eventID: String,
+    eventData: Object
   },
   components: {
     EventQRCode,
@@ -46,14 +41,10 @@ export default {
   },
   data() {
     return {
-      name: "",
-      participants: [],
-      error: "",
-      description: ""
-    };
+      error: ""
+    }
   },
   created() {
-    this.getEventInfo();
   },
   computed: {
     eventURL() {
@@ -64,33 +55,6 @@ export default {
       return participantsCopy.reverse();
     }
   },
-  methods: {
-    downloadCsv() {
-      fetchAPI(`/api/event/getAttendance?eventID=${this.eventID}`)
-      .then(r => {
-        var fileURL = window.URL.createObjectURL(new Blob([r.data]));
-        var fileLink = document.createElement('a');
-        fileLink.href = fileURL;
-        fileLink.setAttribute('download', `${this.name}.csv`);
-        document.body.appendChild(fileLink);
-        fileLink.click();
-      })
-    },
-    async getEventInfo() {
-      try {
-        const response = await axios.get(`/api/event?eventID=${this.eventID}`);
-        const data = response.data.data
-        console.log(data)
-        this.participants = data.attendance;
-        this.name = data.name;
-        this.description = data.description;
-
-
-      } catch (error) {
-        console.log(error.response) //eslint-disable-line
-      }
-    }
-  }
 };
 </script>
 

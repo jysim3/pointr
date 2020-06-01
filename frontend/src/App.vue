@@ -1,16 +1,20 @@
 <template>
-  <div id="app">
-    <Loader v-show="isLoading" />
-    <div v-show="!isLoading">
-    <NavBar />
-    <transition name="fade" mode="out-in">
-      <router-view />
-    </transition>
+  <div>
+    <div id="app">
+      <Loader v-show="isLoading" />
+      <div v-show="!isLoading">
+      <NavBar />
+      <transition name="fade" mode="out-in">
+        <router-view />
+      </transition>
+      </div>
     </div>
+    <Footer />
   </div>
 </template>
 
 <script>
+import Footer from '@/components/Footer'
 import NavBar from "@/components/NavBar.vue";
 import Loader from "@/components/Loader.vue";
 import axios from 'axios'
@@ -18,7 +22,8 @@ import axios from 'axios'
 export default {
   name: "app",
   components: {
-    NavBar, Loader
+    NavBar, Loader,
+    Footer
   },
   computed: {
     isLoading () { return this.$store.getters.isLoading},
@@ -38,6 +43,9 @@ export default {
 
 <style>
 @import "./assets/style.css";
+#app {
+  min-height: calc(100vh - 50px);
+}
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s;

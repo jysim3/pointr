@@ -43,16 +43,6 @@ export default {
     changeBeingEdited() {
       this.beingEdited = !this.beingEdited;
     },
-    edit() {
-      const data = {
-        zID: this.attendee.zID,
-        eventID: this.eventID,
-        points: parseInt(this.newPoints)
-      };
-      fetchAPI("/api/user/points", "POST", data);
-      this.changeBeingEdited();
-      // TODO: error handling, improve delay by sending another request after edited?
-    },
     del() {
       const data = {
         zID: this.attendee.zID,

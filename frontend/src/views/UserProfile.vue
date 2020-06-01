@@ -8,20 +8,20 @@
               <div class="profile" >
 
                 <div class="profile-info">
-                    <div class="profile-info-group">
+                    <!-- <div class="profile-info-group">
                         <span class="profile-info-numbers">50</span>
                         <span class="profile-info-subtitle">followers</span>
                     </div>
                     <div class="profile-info-group">
                         <span class="profile-info-numbers">10</span>
                         <span class="profile-info-subtitle">events went</span>
-                    </div>
+                    </div> -->
                 </div>
                 <!-- TODO: Let user modify -->
-                <img v-if="userData" :src="userImage" />
-                <div class="profile-buttons">
+                <ProfilePhoto class="profile-photo" v-if="userData" :src="userImage" />
+                <!-- <div class="profile-buttons">
                     <i class="material-icons profile-info-button">favorite</i>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             
@@ -32,7 +32,7 @@
 
             <div class="main wrapper">
                 <div class="main-name">
-                    <h2 class="main-name-title" v-once>{{userData.firstName}} {{userData.lastName}}</h2>
+                    <h2 class="main-name-title" v-once>{{userData.firstname}} {{userData.lastname}}</h2>
                     <span class="main-name-subtitle" v-once>{{userData.zID}}</span>
                 </div>
 
@@ -50,22 +50,20 @@
 
 
 <script>
-// import MakeAdmin from "@/components/MakeAdmin.vue";
-// import SelectSociety from "@/components/SelectSociety.vue";
-// import EventList from "@/components/EventList.vue";
+import ProfilePhoto from "@/components/ProfilePhoto"
 import Loader from "@/components/Loader.vue";
-import { mapGetters } from 'vuex'
-import { fetchAPI } from '@/util.js'
+import axios from 'axios'
 
 export default {
-  name: 'Society',
+  name: 'User',
   props: {
     zID: {
       type: String
     }
   },
   components: {
-      Loader
+      Loader,
+      ProfilePhoto
   },
   data() {
     return {
@@ -90,20 +88,16 @@ export default {
       if (this.userData.image) {
         return this.apiURL + this.userData.image
       }
-      return "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-vector-default-avatar-profile-icon-social-media-user-vector-portrait-176194876.jpg"
+      return ""
     },
-    ...mapGetters('user', [
-    ]),
     stats () {
-
         const stat = this.statsData
-        if (this.userData.societies.staff.length > 0) {
+        if (this.userData.societies > 0) {
             stat.push(
             {
                 icon: 'home',
                 text: 'Admin for ' + this.userData.societies.staff.map(v => v.societyName).join(', ')
             })
-
         }
           return stat
     }
@@ -114,11 +108,12 @@ export default {
         return
       }
       this.loading = true
-      fetchAPI(`/api/user/?zID=${this.zID}`, "GET")
+      axios.get(`/api/user?zID=${this.zID}`)
       .then(v => {
-        const data = v.data
-        this.userData.firstName = data.firstName
-        this.userData.lastName = data.lastName
+        console.log(v)
+        const data = v.data.data
+        this.userData.firstname = data.firstname
+        this.userData.lastname = data.lastname
         this.userData.image = data.image
         this.userData.societies = data.societies
         this.userData.description = data.description
@@ -171,7 +166,7 @@ export default {
 .profile-info-subtitle {
     padding-top: 0.5rem;
 }
-.profile > img {
+.profile-photo {
   width: 150px;
   object-fit: cover;
   height: 150px;
@@ -182,6 +177,7 @@ export default {
   bottom: 0;
   transform: translateX(-50%);
   z-index: 1;
+  margin: auto;
 }
 .tabs-wrapper, .tabs {
   width: 100%;
