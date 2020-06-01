@@ -100,7 +100,7 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
             except jwt.DecodeError:
                 abort(403, 'Invalid Credentials')
 
-            user = Users.query.filter_by(zID=token_data['zID'])
+            user = Users.query.filter_by(zID=token_data['zID']).first()
             if not user:
                 abort(403, "Not a valid user")
             elif user.activated == False and activationRequired == True:
