@@ -8,6 +8,7 @@ import pprint
 import os, sys
 from models.society import Societies
 from models.event import Event
+from models.user import Users
 
 # Expiration time on tokens - 60 minutes 
 token_exp = 1000*60
@@ -27,8 +28,7 @@ def generateLoginToken(user):
             'exp': datetime.utcnow() + timedelta(seconds=token_exp),
             'iat': datetime.utcnow(),
             'zID': user.zID,
-            'permission': permission,
-            'activation': user.activated,
+            'permission': 0 if user.activated == False else 1 if user.superadmin == False else 5,
             'type': 'normal'
         }, 
         jwt_secret, algorithm='HS256' 
@@ -99,6 +99,14 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
                 abort(401, 'Expired Token')
             except jwt.DecodeError:
                 abort(403, 'Invalid Credentials')
+
+            user = Users.query.filter_by(zID=token_data['zID'])
+            if not user:
+                abort(403, "Not a valid user")
+            elif user.activated == False and activationRequired == True:
+                abort(401, "notActivated")
+            elif token_data['permission'] < level:
+                abort(403, "Not allowed, not enough permission")
             
             # Allow oneself to modify data if specified
             if allowSelf:
