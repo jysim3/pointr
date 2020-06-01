@@ -42,11 +42,13 @@ from namespaces.auth import api as auth
 from namespaces.event import api as event
 from namespaces.user import api as user
 from namespaces.society import api as soc
+from namespaces.other import api as other
 
 api.add_namespace(auth, path='/api/auth')
 api.add_namespace(event, path='/api/event')
 api.add_namespace(user, path='/api/user')
 api.add_namespace(soc, path='/api/society')
+api.add_namespace(other, path='/api/other')
 
 def updateAccessCodes():
     # Added a background scheduler to update access codes for all events that are currently running
