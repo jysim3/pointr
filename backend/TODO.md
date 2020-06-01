@@ -11,5 +11,10 @@
 * Add in support for events to have event specific information (provided as a JSON)
 
 * Add in support for composite events
+
 * Add in support for adding events to composite events
+
 * Add in support for removing events from composite events
+
+## 1/6/2020
+* Add in caching for some of the most used routes

@@ -32,6 +32,7 @@ class RegisterDetailsSchema(PointrSchema):
     firstName = common_schemata.nameRequired
     lastName = common_schemata.nameRequired
     preferredName = common_schemata.name
+    discordName = common_schemata.name
 
     description = fields.Str()
     isArc = common_schemata.booleanRequired
