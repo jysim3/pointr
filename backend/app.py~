@@ -17,6 +17,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # FIXME: Change this to production when we relaunch pointr
 #app.config['ENV'] = 'development'
+print('haha',app.config['ENV'])
 
 database_name = "pointrDB"
 if (app.config['ENV'] == 'development'):
