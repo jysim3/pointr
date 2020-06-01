@@ -20,11 +20,15 @@
         />
       </div>
     </div>
+    <div>
+      <h1> How it works </h1>
+    </div>
   </div>
 </template>
 
 <script>
 import EventList from '@/components/EventList.vue'
+import axios from 'axios'
 export default {
   name: "LandingPage",
   components: {
@@ -38,14 +42,14 @@ export default {
   },
   mounted() {
       this.eventDataLoading = true
-      // fetchAPI(`/api/event/upcoming`, "GET")
-      // .then(v => {
-      //   this.eventData = v.data
-      //   this.eventDataLoading = false
-      // })
-      // .catch(e => {
-      //   console.log(e) // eslint-disable-line
-      // })
+      axios.get('/api/event/upcoming')
+      .then(v => {
+        this.eventData = v.data.data
+        this.eventDataLoading = false
+      })
+      .catch(e => {
+        console.log(e) // eslint-disable-line
+      })
   }
 };
 </script>

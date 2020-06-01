@@ -3,13 +3,13 @@
     <div id="app">
       <Loader v-show="isLoading" />
       <div v-show="!isLoading">
-      <NavBar />
+      <NavBar v-show="navBar" />
       <transition name="fade" mode="out-in">
         <router-view />
       </transition>
       </div>
     </div>
-    <Footer />
+    <Footer v-show="navBar" />
   </div>
 </template>
 
@@ -27,6 +27,7 @@ export default {
   },
   computed: {
     isLoading () { return this.$store.getters.isLoading},
+    navBar () { return this.$store.getters.navBar},
   },
   created: function() {
     axios.interceptors.response.use(undefined, function (err) {

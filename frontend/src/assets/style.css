@@ -3,6 +3,15 @@
 /* Global */
 @import url('https://fonts.googleapis.com/css?family=Public+Sans:400,500,600');
 
+@font-face {
+  font-family: KollectifBold;
+  src: url('Kollektif-Bold.ttf')
+}
+@font-face {
+  font-family: Kollectif;
+  src: url('Kollektif.ttf')
+}
+
 *,
 html {
   margin: 0;
@@ -14,14 +23,14 @@ html {
   --c-secondary-dark: #4d4d4d;
   --c-warning: #d45d79;
   --c-success: #4caf50;
-  --font-stack: 'Public Sans', Arial, Helvetica, sans-serif;
+  --font-stack:  Kollectif,'Public Sans', Arial, Helvetica, sans-serif;
   --border-radius: 5px;
 }
 .warning {
-  color: var(--c-warning)
+  color: var(--c-warning) !important;
 }
 .primary {
-  color: var(--c-primary)
+  color: var(--c-primary) !important;
 }
 
 body {
@@ -91,6 +100,7 @@ hr {
   border: 3px solid var(--c-primary);
   border-radius: var(--border-radius);
   margin: 1rem;
+  background-color: var(--c-primary);
 }
 table 			      { 
   border-spacing: 1; 
@@ -333,6 +343,7 @@ input[type="date"], input[type="time"], textarea, option{
   -webkit-appearance: none;
   -moz-appearance: none;
   background-color: var(--c-btn-bgc);
+  vertical-align: middle;
 }
 
 .btn:hover {
@@ -358,6 +369,9 @@ input[type="date"], input[type="time"], textarea, option{
 .btn-warning {
   --c-btn-bgc: var(--c-warning);
   color: white;
+}
+i.material-icons {
+  vertical-align: middle;
 }
 
 /* GENERAL CLASSES */

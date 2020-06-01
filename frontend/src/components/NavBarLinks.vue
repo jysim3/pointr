@@ -44,7 +44,12 @@ export default {
                 text: "Societies",
                 to: "/society",
                 icon: "pages"
-                }
+                },
+                {
+                text: "Create",
+                to: "/create",
+                icon: "add"
+                },
             ],
             adminDashboardLinks: [
                 {
