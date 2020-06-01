@@ -172,6 +172,12 @@ class Users(db.Model):
             admins = [i.society for i in admins]
         return {'members': members, 'admins': admins}
 
+    def updatePhoto(self, path):
+        self.photo = path
+
+        db.session.add(self)
+        db.session.commit()
+
     @staticmethod
     def findUser(zID):
         user = Users.query.filter_by(zID=zID).first()
