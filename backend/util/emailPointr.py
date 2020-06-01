@@ -29,7 +29,7 @@ def sendActivationEmail(stringToSend, emailToSend):
     message = Message('Activate Your Pointr Account', sender=app.config['MAIL_USERNAME'],
     recipients=[f"{emailToSend}@student.unsw.edu.au"])
     message.body = f"""\
-Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nHave fun accumulating your room points :).\n\nPlease activate your account now: {site}/{stringToSend}"""
+Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nHave fun accumulating your room points :).\n\nPlease activate your account now: {site}/activate/{stringToSend}"""
 
     # Async version
     Thread(target=sendAsyncMail, args=(app, message)).start()
@@ -47,10 +47,20 @@ Hi,{zID}\nYou have requested to reset your password.\nFollow this link to reset 
     Thread(target=sendAsyncMail, args=(app, message)).start()
     return "success"
 
-def sendEnquiry(subject, message):
+def sendEnquiry(sender, content):
     recipients=["stevenshen1999@hotmail.com", "steynharrison1@gmail.com", "junyang.0607@gmail.com", "hello@ivanvelickovic.com"]
+    #recipients=['stevenshen1999@hotmail.com']
     message = Message('Enquire Email For Pointr', sender=app.config['MAIL_USERNAME'],
     recipients=recipients)
+
+    message.body = f"""
+        Hello there,
+        {sender} has send an enquiry about pointr:
+
+        {content}
+
+        Regards
+    """
 
     # Async version
     Thread(target=sendAsyncMail, args=(app, message)).start()
