@@ -2,6 +2,7 @@ from flask import request, jsonify, abort
 from flask_restx import Namespace, Resource, fields
 from util.validation_services import toQuery, toModel, validateArgs, validateBody
 from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema, ZIDDetailsSchema, PasswordSchema
+from schemata.user_schemata import ZIDSchema
 from schemata.models import authModel
 from util import auth_services
 
@@ -48,8 +49,6 @@ class Login(Resource):
     def post(self, details):
         if not details:
             abort(403, "Invalid Parametres, zID or password incorrect")
-        elif details.activated == False:
-            abort(403, "Account Not Activated")
 
         token = generateLoginToken(details)
 
@@ -72,6 +71,25 @@ class Activate(Resource):
         user.activated = True
         db.session.add(user)
         db.session.commit()
+
+        return jsonify({"status": "success"})
+
+@api.route('/activate/resend')
+class ReActivate(Resource):
+    @api.doc(description='''
+        Resend activation token to the account owner
+    ''')
+    @api.expect(toModel(api, ZIDSchema))
+    @validateArgs(ZIDSchema, 'user')
+    def post(self, user):
+        if not user:
+            abort(403, "Not a valid user")
+        elif user.activated == True:
+            abort(403, "Already activated")
+
+        token = generateActivationToken(user)
+        if sendActivationEmail(token, user.zID) != "success":
+            abort(500, "Internal Server Error, Email Service Not Working")
 
         return jsonify({"status": "success"})
 
@@ -124,6 +142,8 @@ class Authorize(Resource):
     # @auth_services.check_authorization(level=1)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
+
+
 
 # Validation functions To be removed
 @api.route('/validateSelf')
