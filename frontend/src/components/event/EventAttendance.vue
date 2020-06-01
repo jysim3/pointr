@@ -149,9 +149,14 @@ export default {
     font-weight: 400;
     margin: 1rem 0;
 }
+.attendance-container-data {
+  align-items: flex-start;
+}
 .box {
   padding: 1rem ;
   margin-right: 1rem;
+  display: flex;
+  justify-content: flex-start;
 }
 .fieldGroup {
   display: flex;

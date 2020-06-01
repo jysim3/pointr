@@ -40,7 +40,10 @@ const getters = {
     }
     return state.societies.members.some(v => v.id === socID)
   },
-  isSocietyAdmin: (state) => socID => {
+  isSocietyAdmin: (state, getters, rootState, rootGetters) => socID => {
+    if (rootGetters.tokenInfo && rootGetters.tokenInfo['permission'] === 5){
+      return true
+    }
     if (Array.isArray(socID)){
       return state.societies.admins.some(v => socID.includes(v.id))
     }

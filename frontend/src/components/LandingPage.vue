@@ -20,8 +20,38 @@
         />
       </div>
     </div>
-    <div>
-      <h1> How it works </h1>
+    <div class="user-tutorial container-fluid">
+      <div class="container">
+        <div class="user-tutorial-left"> 
+          <img src="@/assets/userTutorial.png"/>
+        </div>
+        <div class="user-tutorial-right"> 
+          <h1> How it works </h1>
+          <p> Sign in to any events by just scanning the QR code! It’s that simple! </p>
+          <div>
+            <router-link to="/signin" class="btn btn-primary" > Try it now </router-link>
+            <router-link to="/event" class="btn btn-secondary" >View events</router-link>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="admin-tutorial container-fluid">
+        <h1> How it works </h1>
+        <hr style="width: 10rem;"/>
+        <div class="admin-tutorial-steps">
+          <div>
+            <img src="@/assets/adminTutorial1.png" />
+            <p>1. Create an event through your society page</p>
+          </div>
+          <div>
+            <img src="@/assets/adminTutorial2.png" />
+            <p>2. Share the QR code to your members </p>
+          </div>
+          <div>
+            <img src="@/assets/adminTutorial3.png" />
+            <p>3. Download the attendance list according to your needs!</p>
+          </div>
+        </div>
     </div>
   </div>
 </template>
@@ -60,7 +90,7 @@ export default {
   justify-content: space-between;
   flex-direction: column;
   text-align: center;
-  padding: 25% 0;
+  padding: 10rem 0;
 }
 .landing-background {
   background-image: url('~@/assets/unsw.jpg');
@@ -84,6 +114,58 @@ export default {
   display: flex;
   justify-content: center;
 }
+.user-tutorial {
+  background-color: white;
+  padding: 5rem ;
+  background: url('~@/assets/userTutorialBackground.png');
+}
+.user-tutorial .container {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: space-between;
+}
+img {
+  max-width: 300px;
+
+}
+.user-tutorial-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.user-tutorial-right * {
+  text-align: right;
+}
+.user-tutorial-right h1 {
+  margin-bottom: 2rem;
+}
+.user-tutorial-right div {
+  margin: 3rem 0;
+}
+.admin-tutorial {
+  background-color: white;
+  padding: 5rem ;
+}
+.admin-tutorial-steps {
+  padding-top: 5rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+}
+.admin-tutorial-steps > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  width: 400px;
+}
+.admin-tutorial-steps > div > p {
+  text-align: center;
+  white-space: normal;
+}
+
+
 @media only screen and (max-width: 600px) {
   .left {
     display: none;
