@@ -85,37 +85,36 @@ const actions = {
     await dispatch('userInfo');
     commit('setIsAdmin');
   },
-  async getUserInfo({ commit, rootGetters }) {
-    try {
-      const requests = [
-        {
-          url: '/api/user',
-          params: {
-            zID: rootGetters.zID
+  getUserInfo({ commit, rootGetters }) {
+    return new Promise((resolve,reject) => {
+        const requests = [
+          {
+            url: '/api/user',
+            params: {
+              zID: rootGetters.zID
+            },
+            method: 'GET'
           },
-          method: 'GET'
-        },
-        {
-          url: '/api/user/events/upcoming',
-          method: 'GET'
-        },
-        {
-          url:  'api/user/societies',
-          method: 'GET'
-        }
-      ];
-      const [
-        infoResponse,
-        eventResponse,
-        societyResponse
-      ] = await Promise.all(requests.map(r => axios(r)))
-      commit('userInfo', infoResponse.data.data)
-      commit('societyInfo', societyResponse.data.data)
-      commit('eventInfo', eventResponse.data.data)
-    } catch (error) {
-      console.log(error); //eslint-disable-line
-      console.log(error.response); //eslint-disable-line
-    }
+          {
+            url: '/api/user/events/upcoming',
+            method: 'GET'
+          },
+          {
+            url:  'api/user/societies',
+            method: 'GET'
+          }
+        ];
+        Promise.all(requests.map(r => axios(r)))
+        .then(([ infoResponse, eventResponse, societyResponse]) => {
+        commit('userInfo', infoResponse.data.data)
+        commit('societyInfo', societyResponse.data.data)
+        commit('eventInfo', eventResponse.data.data)
+        resolve([ infoResponse, eventResponse, societyResponse])
+      }).catch ((error) => {
+        reject(error)
+      })
+
+    })
   },
 };
 

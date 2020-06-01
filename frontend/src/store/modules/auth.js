@@ -1,9 +1,10 @@
 import axios from 'axios'
+import jwt from "jsonwebtoken";
+import router from '@/router/index';
 const state = {
   token: localStorage.getItem('token') || '',
 }
 const getters = {
-//   isAuthenticated: state => !!state.token,
 }
 const mutations = {
 
@@ -56,8 +57,17 @@ const actions = {
                 data: loginDetails,
                 method: 'POST'
             })
-            .then( r => {
+            .then(r => {
                 const token = r.data.data.token
+                const decodedToken = jwt.decode(token)
+                if (decodedToken['permission'] === 0) {
+                    router.push({
+                        name: 'activate', 
+                        params: {givenzID: decodedToken['zID']}
+                    })
+                    reject(r)
+                    return r
+                }
                 localStorage.setItem('token', token)
                 commit('auth_success', token)
                 resolve(r)
@@ -65,6 +75,7 @@ const actions = {
             .catch(e => {
                 commit('auth_error')
                 localStorage.removeItem('token')
+                console.log('fail')
                 reject(e)
             }).finally(() => {
                 commit('loading', false, { root: true})

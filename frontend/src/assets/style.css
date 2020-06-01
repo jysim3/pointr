@@ -332,6 +332,7 @@ input[type="date"], input[type="time"], textarea, option{
 
 .btn {
   padding: 0.75rem 1.0rem;
+  margin: 1rem;
   transition: box-shadow 0.2s;
   font-weight: 500;
   font-family: var(--font-stack);

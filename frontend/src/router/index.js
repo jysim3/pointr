@@ -76,12 +76,7 @@ router.beforeResolve(async (to, from, next) => {
         query: {redirect: to.fullPath}, 
       });
       return 
-    } 
-    // else if (store.state.user.info.permission < 1) {
-    //   // If user is not activated yet ask them to activate account
-    //   next({ path: '/activate' });
-    //   return
-    // }
+    }
   }
   next();
 });

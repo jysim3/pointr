@@ -24,7 +24,7 @@ export default {
         return {
             defaultLinks: [
                 {
-                to: "/events",
+                to: "/event",
                 text: "Events",
                 icon: "calendar_today"
                 },
@@ -51,18 +51,6 @@ export default {
                 icon: "add"
                 },
             ],
-            adminDashboardLinks: [
-                {
-                text: "Create",
-                to: "/create",
-                icon: "add",
-                },
-                {
-                text: "Societies",
-                to: "/society",
-                icon: "pages"
-                },
-            ]
         }
     },
     computed: {

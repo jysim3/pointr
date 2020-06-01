@@ -16,7 +16,7 @@ const store = new Vuex.Store({
     navBar: (state, navBar) => state.navBar = navBar
   },
   getters: {
-    isAuthenticated: state => !!state.auth.token,
+    isAuthenticated: (state) => !!state.auth.token,
     isLoading: state => state.status === 'loading',
     navBar: state => state.navBar,
     zID: state => state.auth.token ? jwt.decode(state.auth.token)['zID'] : '',
@@ -25,10 +25,6 @@ const store = new Vuex.Store({
     login({dispatch}, loginDetails) {
       return dispatch('auth/login', loginDetails)
         .then(() => dispatch('user/getUserInfo'))
-        .catch(error => {
-          console.log(error); //eslint-disable-line
-          console.log(error.response); //eslint-disable-line
-        })
     },
     logout({commit, dispatch}) {
       return new Promise(async (resolve,reject) => {
