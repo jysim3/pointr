@@ -7,10 +7,7 @@
         Thanks for activating your account, you may now close this window or
         <router-link to="/signin">sign in</router-link>.
       </p>
-      <p class="msg" v-else-if="isActivatedStatus === 403">
-        Your account has already been activated! You can sign in
-        <router-link to="/signin">here</router-link>
-      </p>
+      <p class="msg" v-else-if="isActivatedStatus === 'loading'"> Activating... </p>
       <p
         class="msg"
         v-else
@@ -26,10 +23,6 @@ import axios from "axios";
 export default {
   name: "AccountActivation",
   props: {
-    zID: {
-      type: String,
-      default: ''
-    },
     activateToken: {
       type: String,
       required: false
@@ -38,25 +31,27 @@ export default {
   data() {
     return {
       // name: "",
+      zID: '',
       isActivatedStatus: "",
     };
   },
-  async created() {
+  created() {
     if (this.activateToken) {
+      this.isActivatedStatus = "loading"
       try {
         const decodedToken = jwt.decode(this.activateToken);
-        this.zID = decodedToken['zID'];
+        this.zID = decodedToken ? decodedToken['zID'] : '';
 
         // FIXME: VERY HACKY
-        const response = await axios({
+        axios({
           url: `/api/auth/activate`,
           method: "POST",
           headers: {
             Authorization: this.activateToken
           }
+        }).then(r => {
+          this.isActivatedStatus = r.status;
         })
-        this.isActivatedStatus = response.status;
-        this.isActivated.msg = response.data.message;
       } catch (error) {
         this.isActivatedStatus = error.response.status;
       }

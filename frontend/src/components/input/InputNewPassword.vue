@@ -40,7 +40,6 @@ export default {
   methods: {
     checkPassword() {
       
-      console.log(this.value,this.repeatPassword) //eslint-disable-line
     }   
   },
   computed: {

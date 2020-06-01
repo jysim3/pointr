@@ -9,10 +9,12 @@
 
       <Input v-model="userInfo.firstName" type="text" label="First Name"/>
       <Input v-model="userInfo.lastName" type="text" label="Last Name"/>
-      <Input v-model="userInfo.preferredName" type="text" label="Preferred Name"/>
+      <!-- <Input v-model="userInfo.preferredName" type="text" label="Preferred Name"/> -->
 
       <InputPassword v-model="password"  />
-      <!-- TODO: fix :class on repeatPassword input -->
+
+      <Input v-model="userInfo.discord" type="text" label="Discord Username (optional)"/>
+      <!-- TODO: fix :class on repeatPassword input
       <label class="label">Year began study</label>
       <input
         v-model.number="userInfo.commencmentYear"
@@ -23,20 +25,18 @@
         :class="commencmentYearValid"
         required
       />
-      <!-- Degree type input -->
       <Input required 
         label="Degree Type" 
         type="radio" 
         :options="degreeTypeOptions"
         name="degree-type"
         v-model="userInfo.degreeType" />
-      <!-- Student type input -->
       <Input required 
         label="Student Type" 
         type="radio" 
         :options="studentTypeOptions"
         name="degree-type"
-        v-model="userInfo.studentType" />
+        v-model="userInfo.studentType" /> -->
 
       <!-- Arc member input -->
       <Input required
@@ -46,14 +46,13 @@
         />
 
       <!-- TODO: gender input? -->
-      <button type="submit" class="btn btn-primary">Sign Up</button>
+      <button type="submit" :class="['btn', formErrorMessage ? 'btn-warning' : 'btn-primary']">Sign Up</button>
     </form>
   </div>
 </div>
 </template>
 
 <script>
-import { fetchAPI } from "@/util.js";
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import Input from "@/components/input/Input.vue";
@@ -82,7 +81,7 @@ export default {
         firstName: "",
         lastName: "",
         preferredName: "",
-        commencmentYear: "",
+        commencmentYear: this.currentYear,
         studentType: "",
         degreeType: "",
         isArcMember: false
@@ -98,20 +97,7 @@ export default {
       formErrorMessage: "",
     };
   },
-  created() {
-    this.userInfo.commencmentYear = this.currentYear;
-  },
   computed: {
-    passwordTooShort() {
-      return this.password.length < 8
-    },
-    passwordsNotEqual() {
-      // Only want to make input invalid after user has started typing
-      if (!this.repeatPassword) {
-        return false;
-      }
-      return this.password !== this.repeatPassword;
-    },
     currentYear() {
       const date = new Date();
       return date.getFullYear();
@@ -119,47 +105,27 @@ export default {
     commencmentYearValid() {
       const year = this.userInfo.commencmentYear;
       let isInvalid = year > 2020 || year < 2000;
-
       return { "input--invalid": isInvalid };
-      // TODO: should computed return a class or should classes be dealth with in the template after computed returns value?
     }
   },
   methods: {
     submitSignUpForm() {
-      if (this.passwordTooShort) {
-
-        this.formErrorMessage = "Entered password must be eight characters.";
-      } else if (this.passwordsNotEqual) {
-        this.formErrorMessage = "Please check your entered password";
-        return
-      }
-      fetchAPI("/api/auth/register", "POST", {
+      const data = {
         zID: this.zID,
         firstName: this.userInfo.firstName,
         lastName: this.userInfo.lastName,
-        preferredName: this.userInfo.preferredName,
         password: this.password,
         commencementYear: this.userInfo.commencmentYear,
-        // studentType: this.userInfo.studentType,
-        // degreeType: this.userInfo.degreeType,
         isArc: this.userInfo.isArcMember
-      }).then(r => {
+      }
+      this.$store.dispatch('auth/register',data)
+      .then(() => {
           // In the case of a successful response, want to store token and redirect to home
-          if (r.status === 200) {
-            // TODO: signup page vs event page sign up HACK
-            if (this.isPage) {
-              this.$router.push({ name: "activate" , params: {zID: this.zID, name: this.name}});
-            } else {
-              this.$emit('registered', {zID: this.zID, name: this.userInfo.name})
-            }
-          } 
+        this.$router.push({ name: "activate" , params: {zID: this.zID, name: this.name}});
       }).catch(r => {
-            console.log(r.response) //eslint-disable-line
-            if (r.response.data.message["zID"]) {
-              this.formErrorMessage = "Please check your zID";
-            } else {
-              this.formErrorMessage = r.data.message;
-            }
+        console.log(r.response)
+        this.formErrorMessage = Object.values(r.response.data.message)[0]
+        console.log(r.response) //eslint-disable-line
       })
     }
   }

@@ -201,7 +201,7 @@ td .material-icons {
   align-items: stretch; /* TODO: fix this for sign in form, not center aligned  */
 }
 
-.form .btn-primary {
+.form .btn {
   display: block;
   margin: 2rem auto 0 auto;
   font-size: 1.25rem;
