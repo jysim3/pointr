@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { fetchAPI } from "@/util";
+import axios from 'axios';
 import FormMessage from "@/components/FormMessage.vue";
 // import FormError from "@/components/FormError.vue";
 
@@ -41,12 +41,11 @@ export default {
   },
   methods: {
     submitZID() {
-        const data = {
-            zID: this.zID,
-            societyID: this.socID
-        }
-        fetchAPI("/api/soc/makeAdmin", "POST", data)
-        .then(r => {
+        axios.post('/api/society/admin', {
+          zID: this.zID,
+          societyID: this.socID,
+          rank: 1
+        }) .then(r => {
           this.formStatus.success = true
           this.formStatus.message = r.data.status
         })
