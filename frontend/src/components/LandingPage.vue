@@ -10,14 +10,8 @@
             <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link>
             <router-link tag="button" to="/sign" class="btn btn-secondary">Mark my attendance</router-link>
           </div>
-          <EventList />
         </div>
-        <EventList
-          :eventData="eventData"
-          listStyle="table"
-          eventViewTitle=""
-          :loading="eventDataLoading"
-        />
+        <EventUpcoming />
       </div>
     </div>
     <div class="user-tutorial container-fluid">
@@ -57,29 +51,11 @@
 </template>
 
 <script>
-import EventList from '@/components/EventList.vue'
-import axios from 'axios'
+import EventUpcoming from '@/components/EventUpcoming.vue'
 export default {
   name: "LandingPage",
   components: {
-    EventList
-  },
-  data () {
-    return {
-      eventData: [],
-      eventDataLoading: false
-    }
-  },
-  mounted() {
-      this.eventDataLoading = true
-      axios.get('/api/event/upcoming')
-      .then(v => {
-        this.eventData = v.data.data
-        this.eventDataLoading = false
-      })
-      .catch(e => {
-        console.log(e) // eslint-disable-line
-      })
+    EventUpcoming
   }
 };
 </script>

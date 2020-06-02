@@ -49,7 +49,7 @@ export default {
             availableRequest: [
                 { label: "Add my society", value: "addSoc" },
                 { label: "I'm not an admin to my society", value: "addAdmin" },
-                { label: "There's a bug to ours site", value: "bug" },
+                { label: "There's a bug to our site", value: "bug" },
                 { label: "I want to add/change something", value: "changeRequest/feature" },
                 { label: "Complaint", value: "haters" },
                 { label: "Others", value: "other" },

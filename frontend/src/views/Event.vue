@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <EventEnterCode v-if="!eventID" />
+        <EventSelect v-if="!eventID"/>
         <div v-else>
 
             <EventHostView 
@@ -20,7 +20,7 @@
     </div>
 </template>
 <script>
-import EventEnterCode from "@/components/eventSign/EventEnterCode.vue";
+import EventSelect from '@/components/EventSelect'
 import EventSign from "@/components/eventSign/EventSign.vue";
 import EventHostView from "@/views/EventHostView.vue"
 import axios from 'axios'
@@ -32,7 +32,7 @@ export default {
     components: {
         EventHostView, 
         EventSign, 
-        EventEnterCode
+        EventSelect 
     },
     data() {
         return {
