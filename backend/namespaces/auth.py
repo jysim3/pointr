@@ -127,7 +127,7 @@ class changePassword(Resource):
         TODO should probably also take old password
     ''')
     @api.expect(toModel(api, PasswordSchema), authModel)
-    @auth_services.check_authorization(level=1)
+    @checkAuthorization(level=1)
     def post(self, token_data):
         pass
 
@@ -139,7 +139,7 @@ class Authorize(Resource):
         Status 200 if valid token
     ''')
     @api.expect(authModel)
-    @auth_services.check_authorization(level=1)
+    @checkAuthorization(level=1)
     def post(self, token_data):
         return jsonify({"valid" : "true"})
 
