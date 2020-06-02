@@ -11,7 +11,8 @@
       <div class="routes-container">
         <NavBarLinks />
         <NavBarProfile v-if="this.isAuthenticated" />
-        <router-link v-else to="/signin" class="btn btn-primary btn--nav">Sign in</router-link>
+        <!-- <router-link v-else to="/signin" class="btn btn-primary btn--nav">Sign in</router-link> -->
+        <router-link v-else to="/signup" class="btn btn-primary btn--nav">Sign up</router-link>
       </div>
     </div>
   </div>

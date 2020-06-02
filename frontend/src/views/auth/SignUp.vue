@@ -3,6 +3,10 @@
   <div id="form-container--signup" class="form-container">
     <form @submit.prevent="submitSignUpForm" class="form">
       <h2>Join Pointr</h2>
+      <div class="additional-link">
+        <p>Have an account?</p>
+        <router-link id="need-account-link" to="/signin">Sign in here</router-link>
+      </div>
       <FormError v-if="formErrorMessage" :msg="formErrorMessage" />
 
       <InputZID v-model="zID"  />
@@ -133,4 +137,8 @@ export default {
 </script>
 
 <style scoped>
+.additional-link * {
+  text-align: center;
+
+}
 </style>
