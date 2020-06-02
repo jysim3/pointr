@@ -3,8 +3,13 @@
     <div class="form-container" id="form-container--signin">
         <form @submit.prevent="submitReset" class="form">
         <h1>Reset Password</h1>
-        <InputNewPassword v-model="password"  />
+        <p class="msg" v-if="status === 'success'">
+          Thanks for activating your account, you may now close this window or
+        </p>
+        <div v-else>
+          <InputNewPassword v-model="password"  />
             <button type="submit" class="btn btn-primary">Reset Password</button>
+        </div>
         </form>
     </div>
   </div>
@@ -12,9 +17,7 @@
 
 <script>
 import InputNewPassword from "@/components/input/InputNewPassword.vue";
-import { mapMutations } from "vuex";
-import jwt from "jsonwebtoken";
-import { fetchAPI } from '@/util.js'
+import axios from 'axios'
 
 export default {
   name: "ResetPassword",
@@ -33,34 +36,28 @@ export default {
       password: "",
       oldPassword: "",
       repeatPassword: "",
+      status: '',
 
       error: ""
     };
   },
-  async created() {
-    try {
-      const decodedToken = jwt.decode(this.forgotToken);
-      this.zID = decodedToken['zID'];
-    } catch (error) {
-      this.isActivatedStatus = error.response.status;
-    }
-  },
   methods: {
-    ...mapMutations('user', [
-      'authToken', 'resetState'
-    ]),
       async submitReset() {
           const data = {
             password: this.password
           }
-          this.authToken(this.forgotToken);
-      try {
-        await fetchAPI("/api/auth/reset", "POST", data)
-        this.resetState()
-        this.$router.push({ name: 'home' });
-      } catch(error) {
-        console.log(error.response) //eslint-disable-line
-      }
+          axios({
+            url: `/api/auth/reset`,
+            method: "POST",
+            data: data,
+            headers: {
+              Authorization: this.activateToken
+            }
+          }).then(() => {
+            this.status = 'success'
+          }).catch(e => {
+            console.log(e.response)
+          })
       }
   }
 };

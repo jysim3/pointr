@@ -3,6 +3,7 @@
     <div class="form-container" id="form-container--signin">
         <form @submit.prevent="submitReset" class="form">
         <h1>Change Password</h1>
+        <FormMessage :msg="error" />
         <Input v-model="oldPassword" type="password" label="Old Password" />
         <InputNewPassword v-model="password"  />
             <button type="submit" class="btn btn-primary">Reset Password</button>
@@ -13,13 +14,15 @@
 
 <script>
 import InputNewPassword from "@/components/input/InputNewPassword.vue";
+import FormMessage from '@/components/FormMessage.vue'
 import Input from "@/components/input/Input.vue";
-import { fetchAPI } from '@/util.js'
+import axios from 'axios'
 
 export default {
   name: "ResetPassword",
   components: {
-      InputNewPassword, Input
+      InputNewPassword, Input,
+      FormMessage
   },
   data() {
     return {
@@ -27,7 +30,10 @@ export default {
       oldPassword: "",
       repeatPassword: "",
 
-      error: ""
+      error: {
+        success: null,
+        message: ""
+      }
     };
   },
   methods: {
@@ -36,17 +42,16 @@ export default {
             password: this.password,
             oldPassword: this.oldPassword
           }
-      try {
-        await fetchAPI("/api/auth/changePassword", "POST", data)
-        this.$router.push({ name: 'home' });
-      } catch(error) {
-        const errorResponse = error.response;
-        if (errorResponse.status === 403) {
-          this.error = "Please check your sign in credentials"
-        } else {
-          this.error = "There was an error when trying to sign you in."
-        }
-      }
+          axios.post('/api/auth/change',data)
+          .then(() => {
+            this.error.success = true
+            this.error.message = "Success"
+          })
+          .catch(() => {
+            this.error.success = false
+            this.error.message = "There was an error when trying to sign you in."
+
+          })
       }
   }
 };

@@ -121,7 +121,7 @@ export default {
       this.$store.dispatch('auth/register',data)
       .then(() => {
           // In the case of a successful response, want to store token and redirect to home
-        this.$router.push({ name: "activate" , params: {zID: this.zID, name: this.name}});
+        this.$router.push({ name: "activate" , params: {givenzID: this.zID}});
       }).catch(r => {
         console.log(r.response)
         this.formErrorMessage = Object.values(r.response.data.message)[0]
