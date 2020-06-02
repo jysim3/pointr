@@ -57,8 +57,8 @@ export default {
       this.$store.dispatch('login', data)
       .then(() => {
         this.$router.push('/')
-      }).catch(r => {
-        console.log(r)
+      }).catch(e => {
+        this.error = e.response.data.message
       })
     }
   }

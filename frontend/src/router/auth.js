@@ -34,7 +34,7 @@ export default [
     props: true
   },
   {
-    path: '/resetPassword/:forgotToken',
+    path: '/reset/:forgotToken',
     name: 'resetPassword',
     component: ResetPassword,
     props: true

@@ -4,7 +4,7 @@
         <form @submit.prevent="submitReset" class="form">
         <h1>Reset Password</h1>
         <p class="msg" v-if="status === 'success'">
-          Thanks for activating your account, you may now close this window or
+          Thanks for activating your account, you may now close this window to sign in
         </p>
         <div v-else>
           <InputNewPassword v-model="password"  />
@@ -51,7 +51,7 @@ export default {
             method: "POST",
             data: data,
             headers: {
-              Authorization: this.activateToken
+              Authorization: this.forgotToken
             }
           }).then(() => {
             this.status = 'success'

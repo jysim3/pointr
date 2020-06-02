@@ -2,7 +2,10 @@
   <div class="card-container">
     <div class="card">
       <h1>Hi {{ this.givenzID }}!</h1>
-      <p class="msg" v-if="!activateToken">Check your zID email to activate your account!</p>
+      <div v-if="!activateToken">
+        <p class="msg" >Check your zID email to activate your account!</p>
+        <p class="msg" >Due to UNSW spam filter, your email might take 1-2 minutes to arrive.</p>
+      </div>
       <p class="msg" v-else-if="isActivatedStatus === 200">
         Thanks for activating your account, you may now close this window or
         <router-link to="/signin">sign in</router-link>.
@@ -48,21 +51,19 @@ export default {
   created() {
     if (this.activateToken) {
       this.isActivatedStatus = "loading"
-      try {
-        const decodedToken = jwt.decode(this.activateToken);
-        this.zID = decodedToken ? decodedToken['zID'] : '';
-        axios({
-          url: `/api/auth/activate`,
-          method: "POST",
-          headers: {
-            Authorization: this.activateToken
-          }
-        }).then(r => {
-          this.isActivatedStatus = r.status;
-        })
-      } catch (error) {
-        this.isActivatedStatus = error.response.status;
-      }
+      const decodedToken = jwt.decode(this.activateToken);
+      this.zID = decodedToken ? decodedToken['zID'] : '';
+      axios({
+        url: `/api/auth/activate`,
+        method: "POST",
+        headers: {
+          Authorization: this.activateToken
+        }
+      }).then(r => {
+        this.isActivatedStatus = r.status;
+      }).catch(error => {
+      this.isActivatedStatus = error.response.status;
+      })
     }
   },
   methods: {
@@ -84,5 +85,6 @@ export default {
 <style scoped>
 .msg {
   margin-top: 2rem;
+  text-align: center;
 }
 </style>

@@ -62,7 +62,7 @@ class Activate(Resource):
         and now gives them 'activated' status from now on.      
     ''')
     #@api.expect(authModel)
-    @checkAuthorization()
+    @checkAuthorization(activationRequired=False, level=0)
     def post(self, token_data):
         user = Users.query.filter_by(zID=token_data['zID']).first()
         if not user:
