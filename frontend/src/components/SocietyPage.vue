@@ -32,12 +32,20 @@
         <div class="container-fluid main">
             <div class="continaer">
                 <SocietyEvents v-if="activeTab == 0" :socID="socID" :socData="socData"/>
-                <div v-if="activeTab == 1 && isSocietyAdmin"> 
-                    <div class="box">
-                        <h2> Create an event </h2>
-                        <router-link :to="{name:'create'}" class="btn btn-primary">Create</router-link>
+                <div v-if="activeTab == 1"> 
+                    <div v-if="isSocietyAdmin">
+                        <div class="box">
+                            <h2> Create an event </h2>
+                            <router-link :to="{name:'create'}" class="btn btn-primary">Create</router-link>
+                        </div>
+                        <MakeAdmin :socID="socID" />
                     </div>
-                    <MakeAdmin :socID="socID" />
+                    <div class="box" v-else>
+                        <p>Are you an admin to this society?</p> 
+                        <p>Contact us 
+                        <router-link :to="{name:'request', params:{request:'addAdmin'}}"> here</router-link>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
