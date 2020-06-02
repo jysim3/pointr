@@ -110,7 +110,6 @@ export default {
       this.loading = true
       axios.get(`/api/user?zID=${this.zID}`)
       .then(v => {
-        console.log(v)
         const data = v.data.data
         this.userData.firstname = data.firstname
         this.userData.lastname = data.lastname
@@ -120,7 +119,6 @@ export default {
         // this.userData.events = data.events
 
         this.loading = false
-        console.log(v) // eslint-disable-line
       })
       .catch(e => {
         console.log(e) // eslint-disable-line
