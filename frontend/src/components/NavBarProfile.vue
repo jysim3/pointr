@@ -22,7 +22,7 @@
             >
               <router-link :to="'/user/' + this.zID" @click="toggleMore(false)" class="routes-more-profile">
                 <img
-                  src="https://st3.depositphotos.com/6672868/14376/v/450/depositphotos_143767633-stock-illustration-user-profile-group.jpg"
+                  src="@/assets/defaultUser.jpg"
                 />
                 <div class="routes-more-profile-text">
                   <div class="routes-more-profile-text-title">{{ name }}</div>
