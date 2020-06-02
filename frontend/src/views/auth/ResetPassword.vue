@@ -51,7 +51,7 @@ export default {
             method: "POST",
             data: data,
             headers: {
-              Authorization: this.activateToken
+              Authorization: this.forgotToken
             }
           }).then(() => {
             this.status = 'success'
