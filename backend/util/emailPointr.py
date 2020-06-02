@@ -26,11 +26,11 @@ def sendAsyncMail(app, msg):
             print(e)
             return str(e)
 
-def sendActivationEmail(stringToSend, emailToSend):
+def sendActivationEmail(stringToSend, emailToSend, firstname):
     message = Message('Activate Your Pointr Account', sender=app.config['MAIL_USERNAME'],
     recipients=[f"{emailToSend}@ad.unsw.edu.au"])
     message.body = f"""\
-Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nActivate your account now: {site}/activate/{stringToSend}"""
+Hello {firstname},\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nActivate your account now: {site}/activate/{stringToSend}"""
 
     # Async version
     Thread(target=sendAsyncMail, args=(app, message)).start()

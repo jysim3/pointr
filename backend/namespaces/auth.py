@@ -28,7 +28,7 @@ class Register(Resource):
             abort(403, {"zID": "Already registered user"})
 
         token = generateActivationToken(user)
-        if sendActivationEmail(token, user.zID) != "success":
+        if sendActivationEmail(token, user.zID, user.firstName) != "success":
             abort(500, "Internal Server Error, Email Service Not Working")
         print(token)
 
@@ -88,7 +88,7 @@ class ReActivate(Resource):
             abort(403, "Already activated")
 
         token = generateActivationToken(user)
-        if sendActivationEmail(token, user.zID) != "success":
+        if sendActivationEmail(token, user.zID, user.firstName) != "success":
             abort(500, "Internal Server Error, Email Service Not Working")
 
         return jsonify({"status": "success"})
