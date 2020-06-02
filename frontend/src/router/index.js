@@ -49,7 +49,7 @@ const routes = [
     component: UserProfile,
     props: true,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
     }
   }
 ];

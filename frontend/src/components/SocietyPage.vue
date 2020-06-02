@@ -124,7 +124,7 @@ export default {
                 Object.assign(this.socData,socData.data.data)
                 this.members = members.data.data
                 this.status = 'success'
-
+                document.title = `${this.socData.name} - Pointr`
 
             }).finally(() => this.$store.commit("loading", false));
         }
