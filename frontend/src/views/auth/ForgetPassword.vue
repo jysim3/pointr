@@ -3,7 +3,7 @@
     <div class="form-container" id="form-container--signin">
       <form @submit.prevent="submitForgetPassword" class="form">
         <h2>Reset your password</h2>
-        <FormError v-if="error" :msg="error" />
+        <FormMessage :msg="error" />
         <!-- TODO: style -->
         <InputZID v-model="zID" :zID="zID" />
         <button type="submit" class="btn btn-primary">Reset Password</button>
@@ -18,15 +18,14 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-import { fetchAPI } from "@/util";
-import FormError from "@/components/FormError.vue";
+import axios from 'axios'
+import FormMessage from "@/components/FormMessage.vue";
 import InputZID from "@/components/input/InputZID.vue";
 
 export default {
   name: "ForgetPassword",
   components: {
-    FormError,
+    FormMessage,
     InputZID,
   },
   data() {
@@ -34,27 +33,28 @@ export default {
       zID: "",
       password: "",
       // rememberUser: false,
-      error: ""
+      error: {
+        message:"",
+        success: ""
+      },
+      status: ''
     };
   },
   methods: {
-    ...mapActions('user', [
-      'authenticateUser'
-    ]),
-    async submitForgetPassword() {
-      try {
-        const response = await fetchAPI("/api/auth/forgot", "POST", {
-          zID: this.zID,
-        })
+    submitForgetPassword() {
+      axios.post('/api/auth/forgot', {}, {
+        params:{
+          zID: this.zID
+        }
+      }).then(() => {
 
-        this.$router.push({ name: 'activate' });
-        this.authenticateUser(response.data.token);
-      } catch(error) {
-        // const errorResponse = error.response;
-        // if (errorResponse.status === 403) {
-        // }
-        this.error = "There was an error when trying to reset your password."
-      }
+        this.error.success = true
+        this.error.message = "Success"
+      }) .catch((error) => {
+        console.log(error)
+        this.error.message = "There was an error when trying to reset your password."
+        this.error.success = false
+      })
     }
   }
 };

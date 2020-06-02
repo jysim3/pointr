@@ -57,6 +57,13 @@ export default {
             isAdmin: false,
         }
     },
+    watch: {
+        eventID(v) {
+            if (v) {
+                this.getEventInfo()
+            }
+        }
+    },
     methods: {
 
         getEventInfo() { 
@@ -70,7 +77,6 @@ export default {
             .then(response => {
                 const data = response.data.data
                 Object.assign(this.eventData, data)
-                console.log(data)
                 this.isAdmin = this.$store.getters['user/isSocietyAdmin'](data.society)
             })
             .catch(c => console.log(c))

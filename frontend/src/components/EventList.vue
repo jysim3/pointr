@@ -121,6 +121,11 @@ export default {
   display: flex;
   flex-wrap: nowrap;
 }
+@media only screen and (max-width: 900px) {
+  .event-cards {
+    margin: 0;
+  }
+}
 
 .event-view-title{
   display: flex;

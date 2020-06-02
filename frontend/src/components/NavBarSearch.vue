@@ -118,4 +118,9 @@ export default {
   transform: translateY(-3px);
   opacity: 0;
 }
+@media only screen and (max-width: 900px) {
+  .searchBar {
+    display: none;
+  }
+}
 </style>

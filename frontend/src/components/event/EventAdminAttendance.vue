@@ -58,7 +58,6 @@ export default {
     },
   methods: {
     registered(value) {
-        console.log(value) //eslint-disable-line
         this.zID = value.zID
         this.uname = value.name
         this.submitEventAttendance()

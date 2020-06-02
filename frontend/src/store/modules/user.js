@@ -82,12 +82,6 @@ const mutations = {
 };
 
 const actions = {
-  async authenticateUser({ dispatch, commit }, authToken) {
-    // Currently, this action should only be called if we know that the token is valid.
-    commit('authToken', authToken);
-    await dispatch('userInfo');
-    commit('setIsAdmin');
-  },
   getUserInfo({ commit, rootGetters }) {
     return new Promise((resolve,reject) => {
         const requests = [

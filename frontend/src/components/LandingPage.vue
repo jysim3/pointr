@@ -97,7 +97,6 @@ export default {
 }
 .user-tutorial .container {
   display: flex;
-  flex-wrap: nowrap;
   align-items: stretch;
   justify-content: space-between;
 }
@@ -145,7 +144,18 @@ img {
   text-align: center;
   white-space: normal;
 }
-
+@media only screen and (max-width: 900px) {
+  .user-tutorial .container {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .user-tutorial-right * {
+    text-align: center;
+  }
+  .admin-tutorial-steps {
+    flex-wrap: wrap;
+  }
+}
 
 @media only screen and (max-width: 600px) {
   .left {

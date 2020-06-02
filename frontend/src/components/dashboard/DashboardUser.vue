@@ -44,7 +44,6 @@ export default {
     axios({
       url:'/api/user/events/upcoming'
     }).then(r => {
-      console.log(r.data.data)
       this.upcomingEvents.data = r.data.data
     })
     .finally(() => {
@@ -53,7 +52,6 @@ export default {
     axios({
       url:'/api/event/upcoming'
     }).then(r => {
-      console.log(r.data.data)
       this.allEvents.data = r.data.data
     })
     .finally(() => {

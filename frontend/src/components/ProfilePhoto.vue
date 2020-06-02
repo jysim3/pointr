@@ -43,7 +43,7 @@ export default {
     },
     methods: {
         imgAlt(event) {
-            event.target.src = "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-vector-default-avatar-profile-icon-social-media-user-vector-portrait-176194876.jpg"
+            event.target.src = require("@/assets/defaultUser.jpg")
         },
         changePhoto(){
             this.$refs['fileInput'].click()

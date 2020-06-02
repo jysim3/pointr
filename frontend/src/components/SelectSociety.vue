@@ -64,7 +64,6 @@ export default {
             url:'api/society/all'
         }).then(r => {
             this.societies = r.data.data
-            console.log(r)
         }).finally(() => this.loading = false)
     },
     methods: {

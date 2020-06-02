@@ -106,7 +106,6 @@ export default {
             }
         })
         .then(r => {
-          console.log(r.data)
           this.attendees = r.data.data
         })
         .catch(() => {})

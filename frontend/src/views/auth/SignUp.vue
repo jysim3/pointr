@@ -3,6 +3,10 @@
   <div id="form-container--signup" class="form-container">
     <form @submit.prevent="submitSignUpForm" class="form">
       <h2>Join Pointr</h2>
+      <div class="additional-link">
+        <p>Have an account?</p>
+        <router-link id="need-account-link" to="/signin">Sign in here</router-link>
+      </div>
       <FormError v-if="formErrorMessage" :msg="formErrorMessage" />
 
       <InputZID v-model="zID"  />
@@ -121,7 +125,7 @@ export default {
       this.$store.dispatch('auth/register',data)
       .then(() => {
           // In the case of a successful response, want to store token and redirect to home
-        this.$router.push({ name: "activate" , params: {zID: this.zID, name: this.name}});
+        this.$router.push({ name: "activate" , params: {givenzID: this.zID}});
       }).catch(r => {
         console.log(r.response)
         this.formErrorMessage = Object.values(r.response.data.message)[0]
@@ -133,4 +137,8 @@ export default {
 </script>
 
 <style scoped>
+.additional-link * {
+  text-align: center;
+
+}
 </style>

@@ -11,7 +11,8 @@
       <div class="routes-container">
         <NavBarLinks />
         <NavBarProfile v-if="this.isAuthenticated" />
-        <router-link v-else to="/signin" class="btn btn-primary btn--nav">Sign in</router-link>
+        <!-- <router-link v-else to="/signin" class="btn btn-primary btn--nav">Sign in</router-link> -->
+        <router-link v-else to="/signup" class="btn btn-primary btn--nav">Sign up</router-link>
       </div>
     </div>
   </div>
@@ -78,11 +79,10 @@ export default {
   cursor: pointer;
 }
 
-.btn--nav {
-  margin: 0 2rem 0 2rem;
-  font-size: 1rem;
-}
 @media only screen and (max-width: 900px) {
+  .searchBar {
+    display: none;
+  }
   .routes-icon {
     font-size: 2rem;
   }
@@ -92,13 +92,13 @@ export default {
   .routes-text {
     display: none;
   }
-  .btn--nav {
-    display: none;
-  }
 }
 @media only screen and (max-width: 700px) {
   .box-container {
     flex-direction: column;
+  }
+  .routes-container {
+    justify-content: center;
   }
 }
 </style>
