@@ -10,8 +10,8 @@ api = Namespace('auth', description='Authentication & Authorization Services Rew
 
 from app import db
 from models.user import Users
-from util.auth_services import generateLoginToken, generateActivationToken
-from util.emailPointr import sendActivationEmail
+from util.auth_services import generateLoginToken, generateActivationToken, generateForgotToken
+from util.emailPointr import sendActivationEmail, sendForgotEmail
 from util.auth_services import checkAuthorization
 
 @api.route('/register')
@@ -62,7 +62,7 @@ class Activate(Resource):
         and now gives them 'activated' status from now on.      
     ''')
     #@api.expect(authModel)
-    @checkAuthorization(activationRequired=False, level=0)
+    @checkAuthorization()
     def post(self, token_data):
         user = Users.query.filter_by(zID=token_data['zID']).first()
         if not user:
@@ -100,10 +100,17 @@ class Forgot(Resource):
         Sends an email to the given zIDs student email with a temporary token that can be used in
         `/api/auth/reset` to reset the password
     ''')
-    @api.expect(toModel(api, ZIDDetailsSchema))
-    @validateArgs(ZIDDetailsSchema, 'user')
+    @api.expect(toModel(api, ZIDSchema))
+    @validateArgs(ZIDSchema, 'user')
     def post(self, user):
-        pass
+        if not user:
+            abort(400, "No such user")
+
+        status = sendForgotEmail(generateForgotToken(user.zID), user.zID)
+        if status != "success":
+            abort(500, "Internal Server Error, Email Service Not Working")
+
+        return jsonify({"status": "success"})
         
 @api.route('/reset')
 class Reset(Resource):

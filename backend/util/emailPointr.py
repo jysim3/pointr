@@ -12,8 +12,8 @@ app.config.update(
     MAIL_SERVER = "smtp.gmail.com",
     MAIL_PORT = 465,
     MAIL_USE_SSL = True,
-    #MAIL_USERNAME = "shenthemaster@gmail.com",
-    MAIL_USERNAME = "pointr.help@gmail.com",
+    MAIL_USERNAME = "shenthemaster@gmail.com",
+    #MAIL_USERNAME = "pointr.help@gmail.com",
     MAIL_PASSWORD = os.environ.get("POINTR_EMAIL_PASSWORD")
 )
 mail = Mail(app)
@@ -23,6 +23,7 @@ def sendAsyncMail(app, msg):
         try:
             mail.send(msg)
         except Exception as e:
+            print(e)
             return str(e)
 
 def sendActivationEmail(stringToSend, emailToSend):
@@ -37,11 +38,11 @@ Hello,\nIt's good to have you with us. Thanks again for signing up with Pointr.\
     return "success"
 
 
-def sendForgotEmail(link, zID, emailToSend):
+def sendForgotEmail(link, zID):
     message = Message('Reset Your Pointr Password', sender=app.config['MAIL_USERNAME'],
-    recipients=[f"{emailToSend}@student.unsw.edu.au"])
+    recipients=[f"{zID}@ad.unsw.edu.au"])
     message.body = f"""\
-Hi,{zID}\nYou have requested to reset your password.\nFollow this link to reset your password: {site+link}"""
+Hi,{zID}\nYou have requested to reset your password.\nFollow this link to reset your password: {site}/reset/{link}"""
 
     # Async version
     Thread(target=sendAsyncMail, args=(app, message)).start()

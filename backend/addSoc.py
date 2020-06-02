@@ -9,7 +9,7 @@ if len(sys.argv) < 3:
 
 socName = sys.argv[1]
 socDescription = sys.argv[2]
-socType = 0 if len(sys.argv) < 3 else sys.argv[3]
+socType = 0 if len(sys.argv) == 3 else sys.argv[3]
 
 conn = connect(database="pointrDB")
 curs = conn.cursor()
