@@ -7,7 +7,8 @@ export default  [
     component: EventCreate,
     meta: {
       requiresAuth: true,
-      requiresAdmin: true
+      requiresAdmin: true,
+      title: 'Create Event - Pointr'
     }
   },
   {
@@ -17,6 +18,7 @@ export default  [
     props: true,
     meta: {
       requiresAuth: true,
+      title: 'Event Page - Pointr'
     }
   },
 ]

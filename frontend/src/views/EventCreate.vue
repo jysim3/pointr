@@ -68,7 +68,10 @@ export default {
       description: "",
       startTime: "",
       endTime: "",
-      availableSocieties: this.$store.getters['user/societies'].admins.map(s=> ({value: s.id, label:s.name})),
+      availableSocieties: this.$store.getters['user/societies'].admins.map(s=> ({
+        value: s.id, 
+        label:s.name
+        })),
     };
   },
   methods: {

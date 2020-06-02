@@ -32,6 +32,7 @@
               <hr />
               <router-link @click="toggleMore(false)" :to="'/user/' + this.zID" class="routes-more-link">Profile</router-link>
               <router-link @click="toggleMore(false)" :to="{name:'changePassword'}" class="routes-more-link">Change Password</router-link>
+              <router-link @click="toggleMore(false)" :to="'/request'" class="routes-more-link">Contact</router-link>
               <div @click="signOut" class="routes-more-link">Log out</div>
             </div>
           </transition>

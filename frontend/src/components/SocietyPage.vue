@@ -29,14 +29,16 @@
                 </ul>
             </div>
         </div>
-        <div class="main">
-            <SocietyEvents v-if="activeTab == 0" :socID="socID" :socData="socData"/>
-            <div v-if="activeTab == 1 && isSocietyAdmin"> 
-                <div class="box">
-                    <h2> Create an event </h2>
-                    <router-link :to="{name:'create'}" class="btn btn-primary">Create</router-link>
+        <div class="container-fluid main">
+            <div class="continaer">
+                <SocietyEvents v-if="activeTab == 0" :socID="socID" :socData="socData"/>
+                <div v-if="activeTab == 1 && isSocietyAdmin"> 
+                    <div class="box">
+                        <h2> Create an event </h2>
+                        <router-link :to="{name:'create'}" class="btn btn-primary">Create</router-link>
+                    </div>
+                    <MakeAdmin :socID="socID" />
                 </div>
-                <MakeAdmin :socID="socID" />
             </div>
         </div>
 
@@ -203,9 +205,6 @@ span.profile-buttons-followers {
 
 .main {
     width: 100%;
-    left: 0;
-    background: white;
-    padding: 0 3rem;
 }
 @media only screen and (max-width: 700px) {
     .profile {

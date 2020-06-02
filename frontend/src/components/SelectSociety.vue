@@ -3,6 +3,9 @@
         
         <div class="event-view-title">
           <h3 class="event-view-title-text">Your Societies</h3>
+          <p> Your society is not here? Request it 
+              <router-link :to="{name:'request', params: {request:'addSoc'}}"> here </router-link>
+          </p>
         </div>
         <div  class="event-cards " >
             <Card v-for="(society, index) in userSocietyData" :key="index" :data="society" />

@@ -3,8 +3,8 @@ import VueRouter from 'vue-router';
 import store from '@/store/index';
 import Home from '@/views/Home.vue';
 import EventSign from '@/views/EventSign-DEPRECATE.vue';
-import Contact from '@/views/Contact.vue';
 import UserProfile from '@/views/UserProfile.vue';
+import RequestForm from '@/views/RequestForm.vue'
 
 Vue.use(VueRouter);
 import eventRoutes from './event'
@@ -24,10 +24,11 @@ const routes = [
         title: 'Home - Pointr'
     }
   },
-    // TODO: only the creator of the society/event should be able to access this, need to have function that checks they are authorized after we know they are authenticated.
   {
-    path: '/contact',
-    component: Contact,
+    path: '/request',
+    name: 'request',
+    component: RequestForm,
+    props: true,
     meta: {
         title: 'Contact - Pointr'
     }

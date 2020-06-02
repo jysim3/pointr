@@ -29,7 +29,7 @@ export default {
                 icon: "calendar_today"
                 },
                 {
-                to: "/contact",
+                to: "/request",
                 text: "Contact",
                 icon: "email"
                 }

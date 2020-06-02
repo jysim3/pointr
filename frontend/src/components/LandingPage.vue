@@ -5,7 +5,7 @@
         <!-- <img src="../assets/logo.png" /> -->
         <div>
           <h1 class="heading">Welcome to Pointr!</h1>
-          <h3 class="sub-heading">The event tracking system for UNSW colleges.</h3>
+          <h3 class="sub-heading">The event tracking system for UNSW societies.</h3>
           <div class="btn-container">
             <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link>
             <router-link tag="button" to="/sign" class="btn btn-secondary">Mark my attendance</router-link>
@@ -159,6 +159,11 @@ img {
   justify-content: flex-end;
   align-items: center;
   width: 400px;
+}
+.admin-tutorial-steps > div > img {
+  flex-grow: 1;
+  object-fit: contain;
+
 }
 .admin-tutorial-steps > div > p {
   text-align: center;

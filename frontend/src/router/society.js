@@ -1,14 +1,6 @@
-import SocietyJoin from '@/views/SocietyJoin.vue';
+// import SocietyJoin from '@/views/SocietyJoin.vue';
 import Society from '@/views/Society.vue';
 export default [
-  {
-    path: '/society/join',
-    name: 'joinSociety',
-    component: SocietyJoin,
-    meta: {
-      requiresAuth: true
-    }
-  },
   {
     path: '/society/:socID?',
     name: 'society',
@@ -16,7 +8,8 @@ export default [
     // TODO: make this available for public?
     props: true,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'Society Page - Pointr'
     }
   },
 ]
