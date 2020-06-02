@@ -106,7 +106,9 @@ class Forgot(Resource):
         if not user:
             abort(400, "No such user")
 
-        status = sendForgotEmail(generateForgotToken(user.zID), user.zID)
+        token = generateForgotToken(user.zID)
+        print(token)
+        status = sendForgotEmail(token, user.zID)
         if status != "success":
             abort(500, "Internal Server Error, Email Service Not Working")
 
@@ -121,10 +123,17 @@ class Reset(Resource):
         Expects new password in body
     ''')
     @api.expect(toModel(api, PasswordSchema), authModel)
-    # @auth_services.check_authorization(level=0, activationRequired=False)
+    @checkAuthorization(level=0, activationRequired=False)
     @validateBody(PasswordSchema)
     def post(self, token_data, data):
-        pass
+        from hashlib import sha256
+        user = Users.query.filter_by(zID=token_data['zID']).first()
+        user.password = sha256(data['password'].encode()).hexdigest()
+
+        db.session.add(user)
+        db.session.commit()
+
+        return jsonify({'status': 'success'})
 
 @api.route('/change')
 class changePassword(Resource):
