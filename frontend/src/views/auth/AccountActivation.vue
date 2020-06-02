@@ -48,21 +48,19 @@ export default {
   created() {
     if (this.activateToken) {
       this.isActivatedStatus = "loading"
-      try {
-        const decodedToken = jwt.decode(this.activateToken);
-        this.zID = decodedToken ? decodedToken['zID'] : '';
-        axios({
-          url: `/api/auth/activate`,
-          method: "POST",
-          headers: {
-            Authorization: this.activateToken
-          }
-        }).then(r => {
-          this.isActivatedStatus = r.status;
-        })
-      } catch (error) {
-        this.isActivatedStatus = error.response.status;
-      }
+      const decodedToken = jwt.decode(this.activateToken);
+      this.zID = decodedToken ? decodedToken['zID'] : '';
+      axios({
+        url: `/api/auth/activate`,
+        method: "POST",
+        headers: {
+          Authorization: this.activateToken
+        }
+      }).then(r => {
+        this.isActivatedStatus = r.status;
+      }).catch(error => {
+      this.isActivatedStatus = error.response.status;
+      })
     }
   },
   methods: {
