@@ -57,6 +57,13 @@ export default {
             isAdmin: false,
         }
     },
+    watch: {
+        eventID(v) {
+            if (v) {
+                this.getEventInfo()
+            }
+        }
+    },
     methods: {
 
         getEventInfo() { 

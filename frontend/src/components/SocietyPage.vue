@@ -219,6 +219,11 @@ span.profile-buttons-followers {
         flex-direction: column-reverse;
         text-align: center;
     }
+    .profile-buttons {
+        padding-top: 1rem;
+        display: flex;
+        justify-content: center;
+    }
 }
 .box {
     margin: auto;
