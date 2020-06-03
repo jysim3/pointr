@@ -75,7 +75,7 @@ export default {
           default: true
       }, 
       value: {
-          type: [String, Boolean]
+          type: [String, Boolean, Number]
       }, 
       type: {
           type: String

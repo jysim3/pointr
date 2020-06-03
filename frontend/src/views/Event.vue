@@ -70,8 +70,6 @@ export default {
             if (!this.eventID){
                 return
             }
-        
-
             this.$store.commit('loading',true)
             axios.get(`/api/event?eventID=${this.eventID}`)
             .then(response => {
@@ -81,7 +79,6 @@ export default {
             })
             .catch(c => console.log(c))
             .finally(() => this.$store.commit('loading',false))
-            
         }
     },
     

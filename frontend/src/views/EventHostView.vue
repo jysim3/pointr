@@ -10,6 +10,7 @@
           <!-- TODO: add more event information here -->
           <div class="d-flex fullscreen-btn">
             <button @click="toggleFullScreen(true)" class="btn btn-primary"> Full screen <i class="material-icons">fullscreen</i></button>
+            <router-link :to="{name:'edit',params: {eventID: this.eventID}}" class="btn btn-primary"> Edit event <i class="material-icons">edit</i></router-link>
           </div>
           <h2 id="mark-attendance-header">Sign your attendance</h2>
       <div id="qr-and-form-container">
