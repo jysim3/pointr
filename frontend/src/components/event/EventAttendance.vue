@@ -79,6 +79,9 @@ export default {
           zID,
           eventID: this.eventID
         }
+      }).then(() => {
+        this.attendees = this.attendees.filter(a => a.zID !== zID)
+
       })
     },
     downloadCsv() {

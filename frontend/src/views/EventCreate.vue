@@ -112,7 +112,7 @@ export default {
                     const data = response.data.data;
                     this.name = data.name;
                     this.location = data.location;
-                    this.society = data.society[0];
+                    this.society = data.society[0].id;
                     this.description = data.description;
                     this.startTime = data.start.split(' ')[1].split(':').slice(0,2).join(':')
                     this.startDate = data.start.substr(0,10)

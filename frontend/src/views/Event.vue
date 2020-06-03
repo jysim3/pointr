@@ -75,7 +75,7 @@ export default {
             .then(response => {
                 const data = response.data.data
                 Object.assign(this.eventData, data)
-                this.isAdmin = this.$store.getters['user/isSocietyAdmin'](data.society)
+                this.isAdmin = this.$store.getters['user/isSocietyAdmin'](data.society.map(s => s.id))
             })
             .catch(c => console.log(c))
             .finally(() => this.$store.commit('loading',false))
