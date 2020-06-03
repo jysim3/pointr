@@ -36,8 +36,11 @@ class Societies(db.Model):
     )
 
     def getPreview(self):
-        # TODO
-        return -1
+        return {
+            'id': self.id,
+            'description': self.description,
+            'name': self.name
+        }
 
     def getSocietyJSON(self):
         return {
