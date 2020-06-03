@@ -4,6 +4,7 @@ import AccountActivation from '@/views/auth/AccountActivation.vue';
 import ForgetPassword from '@/views/auth/ForgetPassword.vue';
 import ResetPassword from '@/views/auth/ResetPassword.vue';
 import ChangePassword from '@/views/auth/ChangePassword.vue';
+import SendActivation from '@/views/auth/SendActivation.vue';
 export default [
   {
     path: '/signin',
@@ -20,6 +21,12 @@ export default [
     meta: {
         title: 'Sign Up - Pointr'
     }
+  },
+  {
+    path: '/sendActivationEmail',
+    name: 'sendActivationEmail',
+    component: SendActivation,
+    props: true
   },
   {
     path: '/activate/:activateToken?',

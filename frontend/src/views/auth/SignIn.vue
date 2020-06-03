@@ -58,7 +58,9 @@ export default {
       .then(() => {
         this.$router.push('/')
       }).catch(e => {
-        this.error = e.response.data.message
+        if (e.response) {
+          this.error = e.response.data.message
+        }
       })
     }
   }

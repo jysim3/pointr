@@ -62,7 +62,7 @@ const actions = {
                 const decodedToken = jwt.decode(token)
                 if (decodedToken['permission'] === 0) {
                     router.push({
-                        name: 'activate', 
+                        name: 'sendActivationEmail', 
                         params: {givenzID: decodedToken['zID']}
                     })
                     reject(r)
