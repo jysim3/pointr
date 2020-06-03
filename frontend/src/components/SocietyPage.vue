@@ -10,7 +10,7 @@
                     <p>{{ socData.description }}</p>
                 </div>
                 <ProfilePhoto v-if="socData" 
-                :updateURL="`/api/society/logo?societyID=${this.socID}`"
+                :updateURL="isSocietyAdmin ? `/api/society/logo?societyID=${this.socID}` : null"
                 :src="apiURL + socData.photo" 
                 @update="updateSocietyData"/>
             </div>
