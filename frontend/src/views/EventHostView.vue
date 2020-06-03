@@ -1,17 +1,19 @@
 <template>
   <div>
     <transition name="fade" mode="out-in">
-    <EventFullScreen :name="this.eventData.name" @exitFullScreen="toggleFullScreen(false)" v-if="fullscreen" :eventID="this.eventID" />
+    <EventFullScreen :eventSoc="this.eventSoc" 
+    :name="this.eventData.name" @exitFullScreen="toggleFullScreen(false)" v-if="fullscreen" :eventID="this.eventID" />
     </transition>
     <div v-show="!fullscreen" id="event-host-view-wrapper">
           <EventCodeDisplay :eventID="eventID" />
           <h1 id="welcome-header">Welcome to {{ this.eventData.name }}</h1>
-          <p class="description">{{ this.eventData.description }}</p>
+          by<h3 class="societies">{{ this.eventSoc }}</h3>
           <!-- TODO: add more event information here -->
           <div class="d-flex fullscreen-btn">
             <button @click="toggleFullScreen(true)" class="btn btn-primary"> Full screen <i class="material-icons">fullscreen</i></button>
             <router-link :to="{name:'edit',params: {eventID: this.eventID}}" class="btn btn-primary"> Edit event <i class="material-icons">edit</i></router-link>
           </div>
+          <p class="description">{{ this.eventData.description }}</p>
           <h2 id="mark-attendance-header">Sign your attendance</h2>
       <div id="qr-and-form-container">
         <div style="display:flex;flex-direction:column;">
@@ -56,8 +58,6 @@ export default {
       fullscreen: false
     }
   },
-  created() {
-  },
   methods: {
     toggleFullScreen(fullScreen) {
       this.$store.commit('navBar', !fullScreen)
@@ -66,6 +66,9 @@ export default {
 
   },
   computed: {
+    eventSoc () {
+      return this.eventData.society.map(s => s.name).join(' | ')
+    },
     eventURL() {
       return `${window.location.host}/event/${this.eventID}`;
     },
@@ -83,11 +86,17 @@ export default {
   display: flex;
   flex-direction: column;
   align-content: center;
+  text-align: center;
+}
+.societies {
+  color:rgb(143, 106, 0);
+  margin-top: 1rem;
 }
 #welcome-header {
   margin: 2rem 0;
 }
 .description {
+  margin-top: 2rem;
   text-align: center;
 }
 

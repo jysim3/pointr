@@ -17,6 +17,7 @@
         <h3> Welcome </h3>
         <h3>to</h3>
         <h1>{{name}}</h1>
+        by<h3 class="societies">{{ this.eventSoc }}</h3>
         <hr/>
         <h3> Mark your attendance </h3>
         <h3>@</h3>
@@ -52,6 +53,10 @@ export default {
             required: true,
             type: String
         },
+        eventSoc: {
+            required: true,
+            type: String
+        }
     },
     components: {
         EventQRCode,
@@ -123,6 +128,10 @@ img {
     position: fixed;
     right: 0;
     z-index: -1;
+}
+.societies {
+    color: rgb(143, 106, 0);
+    margin-top: 1rem;
 }
 .right * {
     font-weight: bold;
