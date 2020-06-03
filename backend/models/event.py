@@ -144,7 +144,7 @@ class Event(db.Model):
             'hasAdminSignin': self.hasAdminSignin,
             'tags': self.tags,
             'status': self.status,
-            'society': [i.id for i in self.hosting]
+            'society': [i.getPreview() for i in self.hosting]
         }
 
     def addAttendance(self, student):
