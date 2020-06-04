@@ -16,6 +16,14 @@ if (process.env.NODE_ENV === 'development'){
 } else {
   axios.defaults.baseURL = 'http://test.pointr.live';
 }
+axios.interceptors.response.use(undefined, function (err) {
+  return new Promise(function () {
+    if (err.response.status === 401) {
+      store.dispatch('logout')
+    }
+    throw err
+  })
+})
 
 
 new Vue({
