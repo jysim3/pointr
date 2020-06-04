@@ -5,6 +5,12 @@ const state = {
   token: localStorage.getItem('token') || '',
 }
 const getters = {
+    isAuthenticated:state => {
+        if (!state.token || Date.now() > jwt.decode(state.token)['exp'] * 1000){
+            return false
+        }
+        return true
+    }
 }
 const mutations = {
 
