@@ -84,32 +84,32 @@ class Societies(db.Model):
         """
         Returns a list of objects of type Users which are members/admins of this society
         """
-        members = Staff.query.filter_by(rank=0).all()
+        members = Staff.query.filter_by(rank=0, society=self).all()
         return [i.user.getPreview() for i in members]
 
     def getMembersCount(self):
-        return len(Staff.query.filter(Staff.rank>=0).all())
+        return len(Staff.query.filter(Staff.rank>=0, Staff.society==self).all())
 
     def getMembersIDs(self):
         """
         Returns a list of user zIDs in string format which are members of this society)
         """
-        members = Staff.query.filter_by(rank=0).all()
+        members = Staff.query.filter_by(rank=0, society=self).all()
         return [i.user.zID for i in members]
 
     def getAdmins(self):
-        admins = Staff.query.filter(Staff.rank>=1).all()
+        admins = Staff.query.filter(Staff.rank>=1, Staff.society==self).all()
         return [i.user.getPreview() for i in admins]
 
     def getAdminsIDs(self):
-        admins = Staff.query.filter(Staff.rank>=1).all()
+        admins = Staff.query.filter(Staff.rank>=1, Staff.society==self).all()
         return [i.user.zID for i in admins]
 
     def isMember(self, user):
-        return True if Staff.query.filter(Staff.rank>=0, Staff.user==user).first() else False
+        return True if Staff.query.filter(Staff.rank>=0, Staff.user==user, Staff.society==self).first() else False
 
     def isAdmin(self, user):
-        return True if Staff.query.filter(Staff.rank>=1, Staff.user==user).first() else False
+        return True if Staff.query.filter(Staff.rank>=1, Staff.user==user, Staff.society==self).first() else False
 
     # TODO: COnsider refactoring isMember, isAdmin into one function
     # TODO: Also consider whether or not we should have use a Staff.query or just iterate
