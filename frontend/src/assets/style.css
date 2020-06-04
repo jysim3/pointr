@@ -201,6 +201,9 @@ td .material-icons {
   justify-content: center;
   align-items: stretch; /* TODO: fix this for sign in form, not center aligned  */
 }
+.form > .form-back-link {
+  margin: -1.5rem 3rem 1.5rem -3rem;
+}
 
 .form .btn {
   display: block;

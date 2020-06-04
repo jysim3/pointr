@@ -51,7 +51,6 @@ const actions = {
     login({commit}, loginDetails) {
         return new Promise((resolve, reject) => {
             commit('auth_request')
-            commit('loading', true, { root: true})
             axios({
                 url: '/api/auth/login',
                 data: loginDetails,
@@ -62,7 +61,7 @@ const actions = {
                 const decodedToken = jwt.decode(token)
                 if (decodedToken['permission'] === 0) {
                     router.push({
-                        name: 'activate', 
+                        name: 'sendActivationEmail', 
                         params: {givenzID: decodedToken['zID']}
                     })
                     reject(r)
@@ -77,8 +76,6 @@ const actions = {
                 localStorage.removeItem('token')
                 console.log('fail')
                 reject(e)
-            }).finally(() => {
-                commit('loading', false, { root: true})
             })
 
         })

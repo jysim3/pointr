@@ -79,6 +79,8 @@ export default {
           zID,
           eventID: this.eventID
         }
+      }).then(() => {
+        this.attendees = this.attendees.filter(a => a.zID !== zID)
       })
     },
     downloadCsv() {
@@ -94,22 +96,27 @@ export default {
       + this.allFields.filter(f => this.checkedFields.includes(f)) + "\n"
       + data.join("\n")
       saveAs(encodeURI(csvContent), `${this.eventName}.csv`)
-
-
+    },
+    refreshAttendees() {
+      axios.get(`/api/event/attend`,{
+          params: {
+              eventID: this.eventID
+          }
+      })
+      .then(r => {
+        this.attendees = r.data.data
+      })
+      .catch(() => {})
     }
+    
   },
 
   mounted() {
-        axios.get(`/api/event/attend`,{
-            params: {
-                eventID: this.eventID
-            }
-        })
-        .then(r => {
-          this.attendees = r.data.data
-        })
-        .catch(() => {})
-
+    this.refreshAttendees()
+    setInterval(() => {
+      this.refreshAttendees()
+      
+    }, 5000);
   },
   props: {
     eventID: {

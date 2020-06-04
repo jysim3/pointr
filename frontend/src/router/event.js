@@ -12,6 +12,17 @@ export default  [
     }
   },
   {
+    path: '/edit/:eventID',
+    name: 'edit',
+    component: EventCreate,
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Edit Event - Pointr'
+    }
+  },
+  {
     path: '/event/:eventID?',
     name: 'event',
     component: Event,

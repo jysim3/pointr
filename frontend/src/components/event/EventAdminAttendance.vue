@@ -33,7 +33,7 @@
     </div>
 </template>
 <script>
-import { fetchAPI } from "@/util";
+import axios from 'axios'
 import FormError from "@/components/FormError.vue";
 import Signup from "@/views/auth/SignUp.vue";
 export default {
@@ -64,13 +64,15 @@ export default {
         this.signup = false
     },
     submitEventAttendance() {
-      const data = {
-        zID: this.zID,
-        name: this.uname,
-        eventID: this.eventID
-      };
-      fetchAPI("/api/event/signAttendanceAdmin", "POST", data)
-        .then(() => {
+      axios.post('/api/event/attend/admin', {}, 
+      {
+        params: {
+          zID: this.zID,
+          name: this.uname,
+          eventID: this.eventID
+        }
+
+      }) .then(() => {
           this.zID = "";
           this.uname = "";
         })

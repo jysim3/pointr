@@ -14,6 +14,7 @@
           <option
             v-for="(item) in options"
             :key="item.value"
+            :disabled="disabled"
             :value="item.value"
           >{{item.label}}</option>
      </select>
@@ -23,6 +24,7 @@
       :value="value" 
       @input="sendInput"
       :required="required"
+      :disabled="disabled"
       class="input"
      ></textarea>
      <div 
@@ -39,6 +41,7 @@
             @input="sendInput"
             type="radio"
             :required="required"
+            :disabled="disabled"
             :name="name"
             class="input"
           />
@@ -52,6 +55,7 @@
       :checked="!!value"
       @input="sendInput"
       :type="type"
+      :disabled="disabled"
       :required="required"
     />
     <input
@@ -61,6 +65,7 @@
       :value="value"
       @input="sendInput"
       :type="type"
+      :disabled="disabled"
       :required="required"
     />
   </div>
@@ -75,13 +80,16 @@ export default {
           default: true
       }, 
       value: {
-          type: [String, Boolean]
+          type: [String, Boolean, Number]
       }, 
       type: {
           type: String
       }, 
       label: {
           type: String
+      },
+      disabled: {
+        type: Boolean,
       },
       required: {
             type: Boolean,
