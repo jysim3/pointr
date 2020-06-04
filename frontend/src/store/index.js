@@ -16,7 +16,7 @@ const store = new Vuex.Store({
     navBar: (state, navBar) => state.navBar = navBar
   },
   getters: {
-    isAuthenticated: (state) => !!state.auth.token,
+    isAuthenticated: (state, getters) => getters['auth/isAuthenticated'],
     tokenInfo: (state) => !!state.auth.token && jwt.decode(state.auth.token),
     isLoading: state => state.status === 'loading',
     navBar: state => state.navBar,

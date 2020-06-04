@@ -5,6 +5,7 @@ const state = {
   token: localStorage.getItem('token') || '',
 }
 const getters = {
+    isAuthenticated:state => !!state.token
 }
 const mutations = {
 
