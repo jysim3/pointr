@@ -92,12 +92,16 @@ class AdditionalInfo(Resource):
     @validateArgs(EventIDSchema, "event")
     @checkAuthorization(level=1, allowSocAdmin=True)
     def post(self, additionalInfo, token_data, event):
-        event.addAdditionalInfo(additionalInfo)
+        status = event.addAdditionalInfo(additionalInfo)
+
+        if status:
+            abort(400, status)
 
         return jsonify({'status': 'success'})
 
     @api.doc(description='''
         Update existing questions with new questions (USE THIS ROUTE TO FIX TYPOS AND SHIT)
+        <h4> CURRENTLY NOT IMPLEMENTED </h4>
     ''')
     def patch(self):
         pass
@@ -109,7 +113,11 @@ class AdditionalInfo(Resource):
     @validateBody(EventJSONSchema, 'additionalInfo')
     @validateArgs(EventIDSchema, "event")
     @checkAuthorization(level=1, allowSocAdmin=True)
-    def delete(self, additionalInfo, token_data):
+    def delete(self, additionalInfo, token_data, event):
+        status = event.deleteAdditionalInfo(additionalInfo)
+
+        if status:
+            abort(400, status)
 
         return jsonify({'status': 'success'})
         

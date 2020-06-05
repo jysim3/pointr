@@ -204,13 +204,14 @@ class Event(db.Model):
         return self.hosting
 
     def addAdditionalInfo(self, payload):
-        a = ''
-        if self.additionalInfo == None:
+        if not self.additionalInfo:
             self.additionalInfo = payload
         else:
-            buffer = payload
+            buffer = payload.copy()
             for key in payload.keys():
-                if key in self.additionalInfo:
+                if payload[key] in self.additionalInfo.values():
+                    return "This question is already a part of the event"
+                elif key in self.additionalInfo:
                     # Find how many of said key there are
                     counter = 0
                     for i in self.additionalInfo:
@@ -219,6 +220,7 @@ class Event(db.Model):
                     # We rename the key as key{the number of occurence}
                     buffer[f"{key}{counter}"] = buffer[key]
                     buffer.pop(key)
+
             payload = buffer
             # If we do this without the above lines, if the two have any keys of the exact same name,
             # The new value will write over the old value
@@ -226,6 +228,32 @@ class Event(db.Model):
 
         db.session.add(self)
         db.session.commit()
+
+    def deleteAdditionalInfo(self, payload):
+        if not self.additionalInfo:
+            return "No additional information required for this event"
+        else:
+            buffer = self.additionalInfo.copy()
+            for value in payload.values():
+                if value not in self.additionalInfo.values():
+                    continue
+                else:
+                    for k, v in self.additionalInfo.items():
+                        if v == value:
+                            # We can get away with this since event's won't have the same questions twice
+                            buffer.pop(k)
+                            self.additionalInfo = buffer
+
+                            db.session.add(self)
+                            db.session.commit()
+
+                            return
+
+        return "This event doesn't have this question set yet"
+
+    def updateAdditionalInfo(self, oldPayload, newPayload):
+        # TODO: Finish this route
+        pass
 
     @staticmethod
     def getEventsByTag(tag):
