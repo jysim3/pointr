@@ -8,7 +8,7 @@
 
 * Add in support for a society to ask to be named as co-hosts for an event
 
-* Add in support for events to have event specific information (provided as a JSON)
+* Add in support for events to have event specific information (provided as a JSON) (Completed in commit: `246e25d05900e7884694ff62e1bdc73fefc488dd`)
 
 * Add in support for composite events
 
@@ -18,3 +18,6 @@
 
 ## 1/6/2020
 * Add in caching for some of the most used routes
+
+## 5/6/2020
+* Set up additional information for attendance-related route (Attendance table has already been updated to reflect this change, TODO: Routes, Queries)
