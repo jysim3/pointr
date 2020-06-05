@@ -4,7 +4,7 @@
 * PostgreSQL Installed On Your Machine (`sudo apt-get install postgresql`)
 * Python3 >= 3.6 (`sudo apt-get install python3` for Debian-based distros)
 * All dependencies listed in [`requirements.txt`](requirements.txt) installed (`pip3 install -r requirements.txt`)
-* Run the `setup/psqlSetup.sh` script to install the other dependencies you might need
+* Run the `setup/psqlSetup.sh` script to install the other dependencies you might need (<b>IMPORTANT</b>)
 
 ## Before starting Flask
 * Start the Postgres Server
@@ -16,10 +16,14 @@ sudo service postgresql start
 createdb pointrDB
 ```
 
-## To run the Flask server
+## Set up Environment Variables
+Note: `cd` into the base backend directory first
+Set up the environment variables
 ```
-python3 run.py [password used for pointr's email] [password for your local postgres account] [secret key for JWTs]
+source ./login.sh [password used for pointr's email] [password for your local postgres account] [secret key for JWTs]
 ```
+
+
 * If you don't know what your postgres account is, you could always do
 ```
 psql [any local DB]
@@ -30,4 +34,11 @@ $ \du
 psql [any local DB]
 $ ALTER USER postgres WITH PASSWORD 'somePassword';
 ```
-Note that `postgres` is the default postgresql account
+Note: `postgres` is the default postgresql account
+
+
+## To run the Flask server
+```
+python3 run.py
+```
+
