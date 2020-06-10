@@ -5,7 +5,8 @@
         <!-- <img src="../assets/logo.png" /> -->
         <div>
           <h1 class="heading">Welcome to Pointr!</h1>
-          <h3 class="sub-heading">The event tracking system for UNSW societies.</h3>
+          <h3 class="sub-heading">The attendance tracking system for UNSW Arc Societies.</h3>
+          <p>Mark your members' attendance in seconds and visualize them in informative graphs </p>
           <div class="btn-container">
             <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link>
             <router-link tag="button" to="/sign" class="btn btn-secondary">Mark my attendance</router-link>
@@ -64,9 +65,14 @@ export default {
 .wrapper {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   flex-direction: column;
   text-align: center;
   padding: 10rem 0;
+  /* background: rgba(0,0,0,0.3); */
+}
+.wrapper p{
+  color: #d1d1d1;
 }
 .landing-background {
   background-image: url('~@/assets/unsw.jpg');
@@ -78,6 +84,7 @@ export default {
   color: white;
 }
 .sub-heading {
+  margin: 1rem;
   color: #d1d1d1;
 }
 
