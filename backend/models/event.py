@@ -15,6 +15,8 @@ class Attendance(db.Model):
     user = db.relationship("Users", back_populates="attended")
     event = db.relationship("Event", back_populates="attendees")
 
+    additionalInfo = db.Column(db.JSON, nullable=True)
+
     def jsonifySelf(self):
         return {
             'zID': self.zID,
@@ -95,6 +97,8 @@ class Event(db.Model):
     hasAccessCode = db.Column(db.Boolean, nullable=False)
     accessCode = db.Column(db.Text, nullable=True)
     hasAdminSignin = db.Column(db.Boolean, nullable=False)
+
+    additionalInfo = db.Column(db.JSON, nullable=True)
 
     tags = db.Column(db.ARRAY(db.Integer), nullable=True)
 
@@ -198,6 +202,58 @@ class Event(db.Model):
 
     def getHostSoc(self):
         return self.hosting
+
+    def addAdditionalInfo(self, payload):
+        if not self.additionalInfo:
+            self.additionalInfo = payload
+        else:
+            buffer = payload.copy()
+            for key in payload.keys():
+                if payload[key] in self.additionalInfo.values():
+                    return "This question is already a part of the event"
+                elif key in self.additionalInfo:
+                    # Find how many of said key there are
+                    counter = 0
+                    for i in self.additionalInfo:
+                        if i.find(key) != -1:
+                            counter += 1
+                    # We rename the key as key{the number of occurence}
+                    buffer[f"{key}{counter}"] = buffer[key]
+                    buffer.pop(key)
+
+            payload = buffer
+            # If we do this without the above lines, if the two have any keys of the exact same name,
+            # The new value will write over the old value
+            self.additionalInfo = {**self.additionalInfo, **payload}
+
+        db.session.add(self)
+        db.session.commit()
+
+    def deleteAdditionalInfo(self, payload):
+        if not self.additionalInfo:
+            return "No additional information required for this event"
+        else:
+            buffer = self.additionalInfo.copy()
+            for value in payload.values():
+                if value not in self.additionalInfo.values():
+                    continue
+                else:
+                    for k, v in self.additionalInfo.items():
+                        if v == value:
+                            # We can get away with this since event's won't have the same questions twice
+                            buffer.pop(k)
+                            self.additionalInfo = buffer
+
+                            db.session.add(self)
+                            db.session.commit()
+
+                            return
+
+        return "This event doesn't have this question set yet"
+
+    def updateAdditionalInfo(self, oldPayload, newPayload):
+        # TODO: Finish this route
+        pass
 
     @staticmethod
     def getEventsByTag(tag):

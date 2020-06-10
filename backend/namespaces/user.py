@@ -11,10 +11,10 @@ from schemata.user_schemata import ZIDSchema, ZIDSchemaNotReq, zIDPatchSchema
 from schemata.models import authModel
 from util.auth_services import checkAuthorization
 from util.files import uploadImages
-from werkzeug import FileStorage
+#from werkzeug import FileStorage
 
 photoModel = api.parser()
-photoModel.add_argument('photo', required=True, help="User's new profile photo", type=FileStorage, location="files")
+photoModel.add_argument('photo', required=True, help="WERKZEUG'S FILESTORAGE ISNT WORKING SO STR IS A PLACEHOLDER", type=str, location="files")
 photoModel.add_argument('zID', required=True, help="The user's profile to be changed", type=str, location="args")
 
 @api.route('')

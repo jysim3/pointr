@@ -4,7 +4,7 @@ from util.validation_services import toQuery, toModel, validateArgs, validateBod
 from schemata.event_schemata import EventCreationSchema, EventPatchSchema
 from util import auth_services
 from schemata.models import authModel, offsetModel
-from schemata.event_schemata import EventIDSchema, EventNumberSchema
+from schemata.event_schemata import EventIDSchema, EventNumberSchema, EventJSONSchema, EventJSONAttendanceSchema
 from schemata.soc_schemata import SocietyIDSchema
 from schemata.user_schemata import ZIDSchema
 from pprint import pprint
@@ -81,7 +81,47 @@ class EventRoute(Resource):
         db.session.commit()
 
         return jsonify({"status": "success", "data": event.getEventJSON()})
+
+@api.route("/additional")
+class AdditionalInfo(Resource):
+    @api.doc(description='''
+        Insert additional questions that events should ask their users to fill out (ONE AT A TIME)
+    ''')
+    @api.expect(authModel, toModel(api, EventJSONSchema), toModel(api, EventIDSchema))
+    @validateBody(EventJSONSchema, 'additionalInfo')
+    @validateArgs(EventIDSchema, "event")
+    @checkAuthorization(level=1, allowSocAdmin=True)
+    def post(self, additionalInfo, token_data, event):
+        status = event.addAdditionalInfo(additionalInfo)
+
+        if status:
+            abort(400, status)
+
+        return jsonify({'status': 'success'})
+
+    @api.doc(description='''
+        Update existing questions with new questions (USE THIS ROUTE TO FIX TYPOS AND SHIT)
+        <h4> CURRENTLY NOT IMPLEMENTED </h4>
+    ''')
+    def patch(self):
+        pass
+
+    @api.doc(description='''
+        Delete a previously set question for a particular event
+    ''')
+    @api.expect(authModel, toModel(api, EventJSONSchema), toModel(api, EventIDSchema))
+    @validateBody(EventJSONSchema, 'additionalInfo')
+    @validateArgs(EventIDSchema, "event")
+    @checkAuthorization(level=1, allowSocAdmin=True)
+    def delete(self, additionalInfo, token_data, event):
+        status = event.deleteAdditionalInfo(additionalInfo)
+
+        if status:
+            abort(400, status)
+
+        return jsonify({'status': 'success'})
         
+
 """
 FIXME: CHUCK ALL THIS INTO ARGS STRING, CHECK ARGS STRING, WORK ON VALIDATEARGSWITH
 """

@@ -54,6 +54,12 @@ degreeRequired = fields.Str(required=True, validate=validate.OneOf(degrees))
 
 studentType = ["International", "Domestic"]
 
+questions = fields.Str(required=False)
+answers = fields.Str(required=False)
+
+questionsRequired = fields.Str(required=True)
+answersRequired = fields.Str(required=True)
+
 # General purpose schemas not for auth/event/society/user
 class MessageSchema(Schema):
     __schema_name__ = "Message Form"
