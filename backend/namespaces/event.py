@@ -166,6 +166,13 @@ class AttendRoute(Resource):
     def get(self, token_data, event):
         return jsonify({'status': 'success', 'data': event.getAttendanceJSON()})
 
+    @api.doc(description='''
+        Update the attendace information of this particular user with answers to event specific questions
+    ''')
+    @checkAuthorization(allowSocMember=True)
+    def patch(self, token_data):
+        pass
+
 @api.route('/attend/admin')
 class AttendAdminRoute(Resource):
 
