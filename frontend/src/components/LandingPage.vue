@@ -69,7 +69,7 @@ export default {
   flex-direction: column;
   text-align: center;
   padding: 10rem 0;
-  background: rgba(0,0,0,0.3);
+  /* background: rgba(0,0,0,0.3); */
 }
 .wrapper p{
   color: #d1d1d1;
