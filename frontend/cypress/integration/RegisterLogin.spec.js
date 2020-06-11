@@ -57,7 +57,7 @@ describe('Registering and login', () => {
     cy.log(token)
     cy.visit('/activate/' + token)
     cy.contains(this.userData.zID)
-    cy.contains('Thanks for activating your account')
+    cy.contains('Thanks for activating your account', {timeout: 10000})
   })
   it('login', function() {
       cy.visit('/signin')
