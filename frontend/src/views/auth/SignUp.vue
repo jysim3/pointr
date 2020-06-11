@@ -11,13 +11,13 @@
 
       <InputZID v-model="zID"  />
 
-      <Input v-model="userInfo.firstName" type="text" label="First Name"/>
-      <Input v-model="userInfo.lastName" type="text" label="Last Name"/>
+      <Input name="firstName" v-model="userInfo.firstName" type="text" label="First Name"/>
+      <Input name="lastName" v-model="userInfo.lastName" type="text" label="Last Name"/>
       <!-- <Input v-model="userInfo.preferredName" type="text" label="Preferred Name"/> -->
 
       <InputPassword v-model="password"  />
 
-      <Input v-model="userInfo.discord" type="text" label="Discord Username (optional)"/>
+      <Input name="discord" v-model="userInfo.discord" type="text" label="Discord Username (optional)"/>
       <!-- TODO: fix :class on repeatPassword input
       <label class="label">Year began study</label>
       <input
@@ -43,7 +43,7 @@
         v-model="userInfo.studentType" /> -->
 
       <!-- Arc member input -->
-      <Input required
+      <Input 
         label="Are you an arc member?"
         v-model="userInfo.isArcMember"
         type="checkbox"

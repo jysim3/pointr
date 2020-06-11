@@ -23,6 +23,7 @@
       v-else-if="type === 'textarea'" 
       :value="value" 
       @input="sendInput"
+      :name="name"
       :required="required"
       :disabled="disabled"
       class="input"
@@ -55,6 +56,7 @@
       :checked="!!value"
       @input="sendInput"
       :type="type"
+      :name="name"
       :disabled="disabled"
       :required="required"
     />
@@ -65,6 +67,7 @@
       :value="value"
       @input="sendInput"
       :type="type"
+      :name="name"
       :disabled="disabled"
       :required="required"
     />

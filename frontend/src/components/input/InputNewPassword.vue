@@ -4,12 +4,14 @@
     :value="value"
     @input="$emit('input',$event)"
     :valid="isPasswordValid" 
+    name="password"
     errorMessage="Password must be between 8 to 256 characters"
     />
     <Input label="Repeat Password" type="password" 
     v-model="repeatPassword"
     @input="checkPassword"
     :valid="passwordEqual" 
+    name="repeatPassword"
     errorMessage="Your password and confirmation password do not match."
     />
   </div>

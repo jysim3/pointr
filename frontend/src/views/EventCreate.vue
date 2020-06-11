@@ -7,11 +7,11 @@
                 </div>
                 <h2>{{ this.eventID ? 'Edit' : 'Create an'}} event</h2>
 
-                <InputModule required label="Event title" type="input" v-model="name" />
+                <InputModule required name="title" label="Event title" type="input" v-model="name" />
 
-                <InputModule required label="Location" type="input" v-model="location" />
+                <InputModule required name="location" label="Location" type="input" v-model="location" />
 
-                <InputModule required label="Description" type="textarea" v-model="description" />
+                <InputModule required name="description" label="Description" type="textarea" v-model="description" />
 
                 <InputModule
                     required
@@ -21,13 +21,13 @@
                     v-model="society"
                 />
 
-                <InputModule required label="Start Date" type="date" v-model="startDate" @input="updateDate(startDate)"/>
+                <InputModule required name="startDate" label="Start Date" type="date" v-model="startDate" @input="updateDate(startDate)"/>
 
-                <InputModule required label="Start Time" type="time" v-model="startTime" />
+                <InputModule required name="startTime" label="Start Time" type="time" v-model="startTime" />
 
-                <InputModule required label="Start Date" type="date" v-model="endDate" />
+                <InputModule required name="startDate" label="End Date" type="date" v-model="endDate" />
 
-                <InputModule required label="End Time" type="time" v-model="endTime" />
+                <InputModule required name="endTime" label="End Time" type="time" v-model="endTime" />
 
                 <!-- <label class="label" for>Set default points</label>
         <input class="input" v-model="point" type="number" min="0" required />
@@ -151,7 +151,7 @@ export default {
             }).then(response => {
                     this.$router.push({
                         name: "event",
-                        params: { eventID: response.data.id }
+                        params: { eventID: response.data.data.id }
                     });
                 })
                 .catch(error => {

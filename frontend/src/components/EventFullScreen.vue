@@ -73,7 +73,7 @@ export default {
             })
             .then(v => {
                 v.toBlob(b => {
-                    saveAs(b, 'hi.png')
+                    saveAs(b, `${this.name}.png`)
                 })
             })
 

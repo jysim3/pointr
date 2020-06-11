@@ -5,7 +5,7 @@
         <h2>Sign in to Pointr</h2>
         <FormError v-if="error" :msg="error" />
         <InputZID v-model="zID" :zID="zID" />
-        <Input v-model="password" type="password" label="Password" />
+        <Input v-model="password" type="password" name="password" label="Password" />
         <!-- <div class="label-input-div">
         <label class="label input--checkbox-label">Remember me</label>
         <input v-model="rememberUser" class="input input--checkbox" type="checkbox" />

@@ -4,6 +4,7 @@
   @input="$emit('input', $event)"
   :valid="isZIDValid" 
   errorMessage="Invalid zID"
+  name="zID"
   />
 </template>
 
