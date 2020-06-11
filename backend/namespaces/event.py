@@ -133,7 +133,7 @@ class AttendRoute(Resource):
     ''')
     @api.expect(authModel)
     @validateArgs(EventIDSchema, 'event')
-    @checkAuthorization(allowSocMember=True)
+    @checkAuthorization(level=1)
     def post(self, token_data, event):
         user = Users.findUser(token_data['zID'])
         status = event.addAttendance(user)
@@ -148,9 +148,9 @@ class AttendRoute(Resource):
     @api.expect(authModel)
     @validateArgs(ZIDSchema, 'user')
     @validateBody(EventIDSchema, 'event')
-    #@checkAuthorization(allowSocAdmin=True)
+    @checkAuthorization(allowSocAdmin=True)
     #def delete(self, token_data, argsData, data):
-    def delete(self, user, event):
+    def delete(self, token_data, user, event):
         status = event.deleteAttendance(user)
         if status:
             abort(403, status)
