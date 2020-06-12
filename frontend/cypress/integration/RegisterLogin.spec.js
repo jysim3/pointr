@@ -75,4 +75,13 @@ describe('Registering and login', () => {
     })
 
   })
+  it('Continue after logging in', function() {
+    cy.visit('/event/asdf')
+    cy.location('pathname').should('include','signin')
+    cy.get('input[name=zID]').type(this.userData.zID)
+    cy.get('input[name=password]').type(this.userData.password)
+    cy.get('.btn').contains('Sign In').click()
+    cy.location('pathname').should('eq','/event/asdf')
+    cy.location('pathname').should('eq','/404')
+  })
 })
