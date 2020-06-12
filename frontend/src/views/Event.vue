@@ -77,7 +77,10 @@ export default {
                 Object.assign(this.eventData, data)
                 this.isAdmin = this.$store.getters['user/isSocietyAdmin'](data.society.map(s => s.id))
             })
-            .catch(c => console.log(c))
+            .catch(c => {
+                console.log(c)
+                this.$router.push({name:'404'})
+            })
             .finally(() => this.$store.commit('loading',false))
         }
     },

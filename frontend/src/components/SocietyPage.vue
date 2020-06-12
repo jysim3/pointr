@@ -134,6 +134,9 @@ export default {
                 this.status = 'success'
                 document.title = `${this.socData.name} - Pointr`
 
+            }).catch(c => {
+                console.log(c)
+                this.$router.push({name:'404'})
             }).finally(() => this.$store.commit("loading", false));
         }
     }

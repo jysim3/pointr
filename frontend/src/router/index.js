@@ -5,6 +5,7 @@ import Home from '@/views/Home.vue';
 import EventSign from '@/views/EventSign-DEPRECATE.vue';
 import UserProfile from '@/views/UserProfile.vue';
 import RequestForm from '@/views/RequestForm.vue'
+import MissingPage from '@/views/MissingPage.vue'
 
 Vue.use(VueRouter);
 import eventRoutes from './event'
@@ -51,6 +52,12 @@ const routes = [
     meta: {
       requiresAuth: true,
     }
+  },
+  {
+    path: '/404',
+    alias: '*',
+    name: '404',
+    component: MissingPage,
   }
 ];
 
@@ -73,7 +80,7 @@ router.beforeResolve(async (to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.getters.isAuthenticated) {
       next({
-        path: '/signup',
+        path: '/signin',
         query: {redirect: to.fullPath}, 
       });
       return 

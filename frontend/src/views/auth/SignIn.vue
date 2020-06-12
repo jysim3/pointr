@@ -56,7 +56,8 @@ export default {
       }
       this.$store.dispatch('login', data)
       .then(() => {
-        this.$router.push('/')
+        // console.log(this.$route.query)
+        this.$router.push(this.$route.query.redirect)
       }).catch(e => {
         if (e.response) {
           this.error = e.response.data.message

@@ -72,7 +72,9 @@ export default {
   /* background: rgba(0,0,0,0.3); */
 }
 .wrapper p{
-  color: #d1d1d1;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  font-size: 1.3rem;
+  color: white;
 }
 .landing-background {
   background-image: url('~@/assets/unsw.jpg');
@@ -85,7 +87,9 @@ export default {
 }
 .sub-heading {
   margin: 1rem;
-  color: #d1d1d1;
+  font-size: 1.3rem;
+  color: white;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 .btn {
