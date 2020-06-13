@@ -23,6 +23,7 @@ class Attendance(db.Model):
             'time': str(self.time),
             'firstname': self.user.firstName,
             'lastname': self.user.lastName,
+            'discordname': self.user.discordName if self.user.discordName else None,
             'isArc': self.user.isArc
         }
 
