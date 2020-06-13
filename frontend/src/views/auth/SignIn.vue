@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
 import FormError from "@/components/FormError.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import Input from "@/components/input/Input.vue";
@@ -42,13 +41,20 @@ export default {
       zID: "",
       password: "",
       // rememberUser: false,
+      nextRoute: this.$route.query.redirect || '/',
       error: ""
     };
   },
+  mounted() {
+    if (this.isAuthenticated) {
+      this.$router.push(this.nextRoute)
+    }
+
+  },
+  computed: {
+    isAuthenticated: function() { return this.$store.getters.isAuthenticated } 
+  },
   methods: {
-    ...mapActions('user', [
-      'authenticateUser'
-    ]),
     submitSignInForm() {
       const data = {
         zID: this.zID,
@@ -57,7 +63,7 @@ export default {
       this.$store.dispatch('login', data)
       .then(() => {
         // console.log(this.$route.query)
-        this.$router.push(this.$route.query.redirect)
+        this.$router.push(this.nextRoute)
       }).catch(e => {
         if (e.response) {
           this.error = e.response.data.message

@@ -1,5 +1,6 @@
 import EventCreate from '@/views/EventCreate.vue';
 import Event from '@/views/Event.vue';
+import EventSelect from '@/views/EventSelect.vue';
 export default  [
   {
     path: '/create',
@@ -20,6 +21,16 @@ export default  [
       requiresAuth: true,
       requiresAdmin: true,
       title: 'Edit Event - Pointr'
+    }
+  },
+  {
+    path: '/event',
+    name: 'eventSelect',
+    component: EventSelect,
+    props: true,
+    meta: {
+      requiresAuth: true,
+      title: 'Event Select - Pointr'
     }
   },
   {

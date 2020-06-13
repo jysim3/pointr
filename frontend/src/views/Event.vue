@@ -1,8 +1,6 @@
 <template>
     <div>
 
-        <EventSelect v-if="!eventID"/>
-        <div v-else>
 
             <EventHostView 
             v-if="isAdmin"
@@ -14,13 +12,9 @@
             :eventID="eventID" 
             :eventData="eventData"
             />
-        </div>
-        <div > 
-        </div>
     </div>
 </template>
 <script>
-import EventSelect from '@/components/EventSelect'
 import EventSign from "@/components/eventSign/EventSign.vue";
 import EventHostView from "@/views/EventHostView.vue"
 import axios from 'axios'
@@ -32,7 +26,6 @@ export default {
     components: {
         EventHostView, 
         EventSign, 
-        EventSelect 
     },
     data() {
         return {

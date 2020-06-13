@@ -33,10 +33,11 @@
             <div class="continaer">
                 <SocietyEvents v-if="activeTab == 0" :socID="socID" :socData="socData"/>
                 <div v-if="activeTab == 1"> 
-                    <div v-if="isSocietyAdmin">
+                    <div v-if="isSocietyAdmin" class="adminTab container">
                         <div class="box">
-                            <h2> Create an event </h2>
-                            <router-link :to="{name:'create'}" class="btn btn-primary">Create</router-link>
+                            <h2>Actions</h2>
+                            <router-link :to="{name:'create'}" class="btn btn-primary">Create an event</router-link>
+                            <router-link :to="{name:'editSociety'}" class="btn btn-primary">Edit Society Details</router-link>
                         </div>
                         <MakeAdmin :socID="socID" />
                     </div>
@@ -229,7 +230,12 @@ span.profile-buttons-followers {
     }
 }
 .box {
-    margin: auto;
+    margin: 2rem;
     max-width: 200px;
+}
+.adminTab {
+    display: flex;
+    text-align: center;
+
 }
 </style>

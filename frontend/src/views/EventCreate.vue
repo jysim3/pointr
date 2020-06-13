@@ -149,6 +149,7 @@ export default {
                 },
                 method: this.eventID ? 'PATCH' : 'POST'
             }).then(response => {
+                    console.log(response.data.data)
                     this.$router.push({
                         name: "event",
                         params: { eventID: response.data.data.id }
