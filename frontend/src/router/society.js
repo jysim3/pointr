@@ -1,7 +1,19 @@
 // import SocietyJoin from '@/views/SocietyJoin.vue';
 import Society from '@/views/SocietyPage.vue';
 import SelectSociety from '@/views/SelectSociety.vue';
+import SocietyEdit from '@/views/SocietyEdit'
 export default [
+  {
+    path: '/society/:socID/edit',
+    name: 'editSociety',
+    component: SocietyEdit,
+    // TODO: make this available for public?
+    props: true,
+    meta: {
+      requiresAuth: true,
+      title: 'Edit Society'
+    }
+  },
   {
     path: '/society/:socID',
     name: 'society',
@@ -15,9 +27,8 @@ export default [
   },
   {
     path: '/society',
-    name: 'society',
+    name: 'selectSociety',
     component: SelectSociety,
-    // TODO: make this available for public?
     props: true,
     meta: {
       requiresAuth: true,

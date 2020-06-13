@@ -37,7 +37,7 @@
                         <div class="box">
                             <h2>Actions</h2>
                             <router-link :to="{name:'create'}" class="btn btn-primary">Create an event</router-link>
-                            <router-link :to="{name:'editSoc'}" class="btn btn-primary">Edit Society Details</router-link>
+                            <router-link :to="{name:'editSociety'}" class="btn btn-primary">Edit Society Details</router-link>
                         </div>
                         <MakeAdmin :socID="socID" />
                     </div>
