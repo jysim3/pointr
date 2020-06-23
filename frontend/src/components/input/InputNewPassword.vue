@@ -1,6 +1,7 @@
 <template>
   <div>
     <Input label="Password" type="password" 
+    required
     :value="value"
     @input="$emit('input',$event)"
     :valid="isPasswordValid" 
@@ -8,6 +9,7 @@
     errorMessage="Password must be between 8 to 256 characters"
     />
     <Input label="Repeat Password" type="password" 
+    required
     v-model="repeatPassword"
     @input="checkPassword"
     :valid="passwordEqual" 
