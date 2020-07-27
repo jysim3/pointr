@@ -129,12 +129,19 @@ export default {
 </script>
 
 <style>
+.container {
+    font-family: Arial;
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    color: black
+}
 .container div,p{
+    font-size: 1em;
     margin-top: 1rem;
     color: black
 }
 .container h3 {
+    font-size: 1.5em;
+    margin-top: 1rem;
     color: var(--c-primary)
-}
-
-</style>
+}</style>

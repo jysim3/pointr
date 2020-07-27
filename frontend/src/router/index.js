@@ -7,6 +7,7 @@ import UserProfile from '@/views/UserProfile.vue';
 import RequestForm from '@/views/RequestForm.vue'
 import MissingPage from '@/views/MissingPage.vue'
 import PrivacyPolicy from '@/views/PrivacyPolicy.vue'
+import TnC from '@/views/TnC.vue'
 
 Vue.use(VueRouter);
 import eventRoutes from './event'
@@ -18,6 +19,14 @@ const routes = [
   ...authRoutes,
   ...eventRoutes,
   ...societyRoutes,
+  {
+    path: '/terms',
+    name: 'terms',
+    component: TnC,
+    meta: {
+        title: 'Terms - Pointr'
+    }
+  },
   {
     path: '/privacy',
     name: 'privacy',
