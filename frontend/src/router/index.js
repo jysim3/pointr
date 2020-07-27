@@ -6,6 +6,7 @@ import EventSign from '@/views/EventSign-DEPRECATE.vue';
 import UserProfile from '@/views/UserProfile.vue';
 import RequestForm from '@/views/RequestForm.vue'
 import MissingPage from '@/views/MissingPage.vue'
+import PrivacyPolicy from '@/views/PrivacyPolicy.vue'
 
 Vue.use(VueRouter);
 import eventRoutes from './event'
@@ -17,6 +18,14 @@ const routes = [
   ...authRoutes,
   ...eventRoutes,
   ...societyRoutes,
+  {
+    path: '/privacy',
+    name: 'privacy',
+    component: PrivacyPolicy,
+    meta: {
+        title: 'Privacy Policy - Pointr'
+    }
+  },
   {
     path: '/',
     name: 'home',
