@@ -4,6 +4,10 @@ import jwt from 'jsonwebtoken'
 describe('Registering and login', () => {
     before(() => {
         cy.exec(`npm run reset`)
+        cy.exec( `echo delete from attend where "zID"='z5161631'; | psql pointrDB`)
+        cy.exec( `echo delete from staff where "zID"='z5161631'; | psql pointrDB`)
+        cy.exec( `echo delete from users where "zID"='z5161631'; | psql pointrDB`)
+            
     })
 
     beforeEach(() => {

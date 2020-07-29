@@ -2,7 +2,6 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import store from '@/store/index';
 import Home from '@/views/Home.vue';
-import EventSign from '@/views/EventSign-DEPRECATE.vue';
 import UserProfile from '@/views/UserProfile.vue';
 import RequestForm from '@/views/RequestForm.vue'
 import MissingPage from '@/views/MissingPage.vue'
@@ -50,15 +49,6 @@ const routes = [
     props: true,
     meta: {
         title: 'Contact - Pointr'
-    }
-  },
-  {
-    path: '/sign/:eventID?',
-    name: 'eventSign',
-    component: EventSign,
-    props: true,
-    meta: {
-      requiresAuth: true
     }
   },
   {

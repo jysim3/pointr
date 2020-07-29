@@ -47,7 +47,7 @@
                     <li>to tailor content to you</li>
                     <li>to improve the services and products we provide to you</li>
                     <li>to conduct research and statistical analysis on an anonymised basis</li>
-                    <li>tolprotect and enforce our legal rights and interests, including defending any claim</li>
+                    <li>to protect and enforce our legal rights and interests</li>
                     <li>for any other purpose authorised by you or Privacy Law</li>
                 </ul>
             </p>

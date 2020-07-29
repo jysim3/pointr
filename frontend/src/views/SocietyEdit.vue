@@ -81,8 +81,7 @@ export default {
                 params: {
                     societyID: this.socID,
                 },
-            }).then(response => {
-                    console.log(response.data.data)
+            }).then(() => {
                     this.$router.push({
                         name: "society",
                         params: { socID: this.socID }
