@@ -18,8 +18,6 @@
                 <li> Your first and last name (including title) </li>
                 <li> Your student number </li>
                 <li> Your contact details (including email address, mobile phone number, and address) </li>
-                <li> Your age or date or birth</li>
-                <li>Information about your university degree (including your faculty, attendance pattern, whether you're a local or international student, and the year you started University). </li>
             </ul>
             </p>
             <p>
