@@ -40,6 +40,9 @@ You acknowledge that Pointr does not guarantee that any of the information displ
 <li>
 You acknowledge that Pointr acts only as an intermediary between the Customer and the University Student Body and is not liable if the University Student Body provides incorrect information.
 </li>
+<li>
+You agree to take responsibility for the security of access to your account by using a strong password to prevent unauthorised access to the account, and by not sharing login details with any other person.
+</li>
 </ol>
 <h3>Our content and access</h3>
 <ol>
