@@ -1,7 +1,7 @@
 // import SocietyJoin from '@/views/SocietyJoin.vue';
 import Society from '@/views/SocietyPage.vue';
 import SelectSociety from '@/views/SelectSociety.vue';
-import SocietyEdit from '@/views/SocietyEdit'
+import SocietyEdit from '@/views/SocietyEdit.vue'
 export default [
   {
     path: '/society/:socID/edit',

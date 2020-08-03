@@ -1,104 +1,126 @@
 
 <template>
-  <div class="nav">
-    <div class="box-container">
-      <div class="logo">
-        <router-link to="/">
-          <img class="logo" src="../assets/logo.png" alt="pointr logo" />
-        </router-link>
-      </div>
-      <NavBarSearch />
-      <div class="routes-container">
-        <NavBarLinks />
-        <NavBarProfile v-if="this.isAuthenticated" />
-        <router-link v-else to="/signin" class="btn btn-primary btn--nav">Sign in</router-link>
-        <!-- <router-link v-else to="/signup" class="btn btn-primary btn--nav">Sign up</router-link> -->
-      </div>
+  <nav class="navbar navbar-expand-lg navbar-dark ">
+    <router-link
+      class="navbar-brand  mx-0"
+      to="/"
+    >
+      <img
+        class="logo"
+        src="../assets/logo.png"
+        alt="pointr logo"
+      >
+    </router-link>
+    <div class="flex-grow-1 nav-link d-md-block d-none">
+      <NavBarSearch class="" />
     </div>
-  </div>
+    <button
+      class="navbar-toggler"
+      type="button"
+      @click="show = !show"
+    >
+      <span
+        class="navbar-toggler-icon"
+      />
+    </button>
+    <div
+      v-show="show"
+      class="collapse navbar-collapse flex-grow-0 show"
+    >
+      <ul class="navbar-nav">
+        <li 
+          v-for="(routes, i) in navBarLinks"
+          :key="i"
+          class="nav-item active"
+        >
+          <router-link
+            :to="routes.to"
+            class="nav-link"
+          >
+            {{ routes.text }}
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <NavBarProfile v-if="isAuthenticated" />
+          <router-link
+            v-else
+            to="/signin"
+            class="btn btn-primary m-0"
+          >
+            Sign in
+          </router-link>
+        </li>
+      </ul>
+    </div>
+  </nav>
 </template>
 <script>
 import NavBarProfile from "@/components/NavBarProfile.vue";
-import NavBarLinks from "@/components/NavBarLinks.vue";
 import NavBarSearch from "@/components/NavBarSearch.vue";
 import { mapGetters } from "vuex";
 
 export default {
   name: "NavBar",
   components: {
-    NavBarProfile, NavBarLinks, NavBarSearch
+    NavBarProfile, 
+    NavBarSearch
   },
   data() {
     return {
+      defaultLinks: [
+        {
+          to: "/event",
+          text: "Events",
+          icon: "calendar_today"
+        },
+        {
+          to: "/request",
+          text: "Contact",
+          icon: "email"
+        }
+      ],
+      userDashboardLinks: [
+        {
+          to: "/event",
+          text: "Events",
+          icon: "calendar_today"
+        },
+        {
+          text: "Societies",
+          to: "/society",
+          icon: "pages"
+        },
+        {
+          text: "Create",
+          to: "/create",
+          icon: "add"
+        },
+      ],
       displayMore: false,
+      show:false
     };
   },
+  
   computed: {
     ...mapGetters("user", ["name", "zID"]),
     isAuthenticated() { return this.$store.getters.isAuthenticated},
     isLoading() { return this.$store.getters['user/isLoading']},
     authBtnIcon: () => (this.isAuthenticated ? "exit_to_app" : "lock"),
+    navBarLinks() { return !this.$store.getters.isAuthenticated ? this.defaultLinks : this.userDashboardLinks }
   }
 };
 </script>
 <style scoped>
-.nav {
-  width: 100%;
+.navbar {
   box-shadow: 0 1rem 2rem -1rem rgba(0, 0, 0, 0.2);
   background: #252525;
   z-index: 1;
-  position: relative;
-  /* margin-bottom: 2rem; */
-  padding: 0.4rem 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
-
-.box-container {
-  margin: 0 2rem;
-  width: 100%;
-  display: flex;
-  justify-content: stretch;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.box-container > div {
-  flex: 1 1 auto;
-}
-
-.routes-container {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
 .logo {
   height: 4rem;
   cursor: pointer;
 }
-
-@media only screen and (max-width: 900px) {
-  .searchBar {
-    display: none;
-  }
-  .routes-icon {
-    font-size: 2rem;
-  }
-  .routes-icon {
-    display: inherit;
-  }
-  .routes-text {
-    display: none;
-  }
-}
-@media only screen and (max-width: 700px) {
-  .box-container {
-    flex-direction: column;
-  }
-  .routes-container {
-    justify-content: center;
-  }
+.nav-item{
+  text-align: center;
 }
 </style>

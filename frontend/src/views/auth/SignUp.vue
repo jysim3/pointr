@@ -1,24 +1,62 @@
 <template>
-<div>
-  <div id="form-container--signup" class="form-container">
-    <form @submit.prevent="submitSignUpForm" class="form">
-      <h2>Join Pointr</h2>
-      <div class="additional-link">
-        <p>Have an account?</p>
-        <router-link id="need-account-link" to="/signin">Sign in here</router-link>
-      </div>
-      <FormError v-if="formErrorMessage" :msg="formErrorMessage" />
+  <div class="container">
+    <Form>
+      <template #header>
+        <h2>Join Pointr</h2>
+        <div class="additional-link">
+          <p>Have an account?</p>
+          <router-link
+            id="need-account-link"
+            to="/signin"
+          >
+            Sign in here
+          </router-link>
+        </div>
+        <FormError
+          v-if="formErrorMessage"
+          :msg="formErrorMessage"
+        />
+      </template>
+      <InputZID v-model="zID" />
+      <Input
+        v-model="userInfo.firstName"
+        name="firstName"
+        type="text"
+        label="First Name"
+      />
+      <Input
+        v-model="userInfo.lastName"
+        name="lastName"
+        type="text"
+        label="Last Name"
+      />
 
-      <InputZID v-model="zID"  />
+      <InputPassword v-model="password" />
 
-      <Input name="firstName" v-model="userInfo.firstName" type="text" label="First Name"/>
-      <Input name="lastName" v-model="userInfo.lastName" type="text" label="Last Name"/>
-      <!-- <Input v-model="userInfo.preferredName" type="text" label="Preferred Name"/> -->
+      <Input
+        v-model="userInfo.discord"
+        name="discord"
+        type="text"
+        label="Discord Username (optional)"
+      />
+      <Input 
+        v-model="userInfo.isArcMember"
+        label="Are you an arc member?"
+        type="checkbox"
+      />
 
-      <InputPassword v-model="password"  />
-
-      <Input name="discord" v-model="userInfo.discord" type="text" label="Discord Username (optional)"/>
-      <!-- TODO: fix :class on repeatPassword input
+      <template #footer>
+        <button
+          type="submit"
+          :class="['btn', formErrorMessage ? 'btn-warning' : 'btn-primary']"
+        >
+          Sign Up
+        </button>
+      </template>
+    </Form>
+  </div>
+  <!-- <Input v-model="userInfo.preferredName" type="text" label="Preferred Name"/> -->
+  <!-- TODO: fix :class on repeatPassword input
       <label class="label">Year began study</label>
       <input
         v-model.number="userInfo.commencmentYear"
@@ -42,22 +80,12 @@
         name="degree-type"
         v-model="userInfo.studentType" /> -->
 
-      <!-- Arc member input -->
-      <Input 
-        label="Are you an arc member?"
-        v-model="userInfo.isArcMember"
-        type="checkbox"
-        />
-
-      <!-- TODO: gender input? -->
-      <button type="submit" :class="['btn', formErrorMessage ? 'btn-warning' : 'btn-primary']">Sign Up</button>
-    </form>
-  </div>
-</div>
+  <!-- Arc member input -->
 </template>
 
 <script>
 import FormError from "@/components/FormError.vue";
+import Form from "@/components/Form.vue";
 import InputZID from "@/components/input/InputZID.vue";
 import Input from "@/components/input/Input.vue";
 import InputPassword from "@/components/input/InputNewPassword.vue";
@@ -66,6 +94,7 @@ export default {
   name: "SignUp",
   components: {
     FormError,
+    Form,
     InputZID,
     InputPassword,
     Input
@@ -123,22 +152,18 @@ export default {
         isArc: this.userInfo.isArcMember
       }
       this.$store.dispatch('auth/register',data)
-      .then(() => {
+        .then(() => {
           // In the case of a successful response, want to store token and redirect to home
-        this.$router.push({ name: "sendActivationEmail" , params: {givenzID: this.zID}});
-      }).catch(r => {
-        console.log(r.response)
-        this.formErrorMessage = Object.values(r.response.data.message)[0]
-        console.log(r.response) //eslint-disable-line
-      })
+          this.$router.push({ name: "sendActivationEmail" , params: {givenzID: this.zID}});
+        }).catch(r => {
+          console.log(r.response)
+          this.formErrorMessage = Object.values(r.response.data.message)[0]
+          console.log(r.response) //eslint-disable-line
+        })
     }
   }
 };
 </script>
 
 <style scoped>
-.additional-link * {
-  text-align: center;
-
-}
 </style>

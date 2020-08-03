@@ -1,13 +1,23 @@
 <template>
-  <p v-if="msg.success === false" class="form-error-msg">{{ msg.message }}</p>
-  <p v-else-if="msg.success === true" class="form-success-msg">{{ msg.message }}</p>
+  <p
+    v-if="msg.success === false"
+    class="form-error-msg"
+  >
+    {{ msg.message }}
+  </p>
+  <p
+    v-else-if="msg.success === true"
+    class="form-success-msg"
+  >
+    {{ msg.message }}
+  </p>
 </template>
 
 <script>
 export default {
   name: "FormError",
   props: {
-      msg: Object
+    msg: Object
   }
 };
 </script>

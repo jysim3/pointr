@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+import moment from 'moment'
 
 describe('Event', () => {
     before(() => {
@@ -43,7 +44,7 @@ describe('Event', () => {
         )
         cy.visit('/')
         cy.contains('Browse events')
-        cy.get('.event-cards').last().click()
+        cy.get('.card').last().click()
         cy.url().should('contain','/event')
         cy.contains('Sign attendance').should('be.visible')
         cy.get('.btn').contains(`Sign as (${this.userData.zID})`).click()
@@ -77,12 +78,13 @@ describe('Event', () => {
         cy.visit('/society/'+this.userData.socID)
         cy.get('tr.link').click()
         let eventID = ''
+
         cy.location('pathname').then(v => {
             eventID = v.split('/')[2]
             for (let i = 0; i < 30; i++) {
                 cy.exec(
                 'echo insert into attend ("eventID", "zID", time, "additionalInfo") values ' +
-                `('${eventID}','z${(i+'').padStart(7,"0")}', now(), '{}');| psql pointrDB`
+                `('${eventID}','z${(i+'').padStart(7,"0")}', TIMESTAMP '2020-08-15T00:${i+Math.floor(Math.random()*30)}', '{}');| psql pointrDB`
                 , {log: false})
             }
         })

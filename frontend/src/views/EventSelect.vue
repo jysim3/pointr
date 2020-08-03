@@ -1,16 +1,16 @@
 <template>
-        <div class="event-select">
-            <h1> Upcoming Events </h1>
-            <EventUpcoming type='large'/>
-        </div>
+  <div class="event-select">
+    <h1> Upcoming Events </h1>
+    <EventUpcoming type="large" />
+  </div>
 </template>
 
 <script>
 import EventUpcoming from '@/components/EventUpcoming'
 export default {
-    components: {
-        EventUpcoming 
-    }
+  components: {
+    EventUpcoming 
+  }
 
 }
 </script>

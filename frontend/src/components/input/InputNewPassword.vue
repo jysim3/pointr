@@ -1,20 +1,24 @@
 <template>
-  <div>
-    <Input label="Password" type="password" 
-    required
-    :value="value"
-    @input="$emit('input',$event)"
-    :valid="isPasswordValid" 
-    name="password"
-    errorMessage="Password must be between 8 to 256 characters"
+  <div class="form-group d-flex flex-wrap w-100">
+    <Input
+      label="Password"
+      type="password" 
+      required
+      :value="value"
+      :valid="isPasswordValid"
+      name="password" 
+      error-message="Password must be between 8 to 256 characters"
+      @input="$emit('input',$event)"
     />
-    <Input label="Repeat Password" type="password" 
-    required
-    v-model="repeatPassword"
-    @input="checkPassword"
-    :valid="passwordEqual" 
-    name="repeatPassword"
-    errorMessage="Your password and confirmation password do not match."
+    <Input
+      v-model="repeatPassword"
+      label="Repeat Password" 
+      type="password"
+      required
+      :valid="passwordEqual"
+      name="repeatPassword" 
+      error-message="Your password and confirmation password do not match."
+      @input="checkPassword"
     />
   </div>
 </template>
@@ -41,11 +45,6 @@ export default {
       repeatPassword: ""
     }
   },
-  methods: {
-    checkPassword() {
-      
-    }   
-  },
   computed: {
     passwordEqual() {
       return this.repeatPassword.length === 0 || this.repeatPassword === this.value
@@ -65,6 +64,11 @@ export default {
 
       return true;
     }
+  },
+  methods: {
+    checkPassword() {
+      
+    }   
   }
 };
 </script>

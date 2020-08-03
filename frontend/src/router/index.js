@@ -23,7 +23,7 @@ const routes = [
     name: 'terms',
     component: TnC,
     meta: {
-        title: 'Terms - Pointr'
+      title: 'Terms - Pointr'
     }
   },
   {
@@ -31,7 +31,7 @@ const routes = [
     name: 'privacy',
     component: PrivacyPolicy,
     meta: {
-        title: 'Privacy Policy - Pointr'
+      title: 'Privacy Policy - Pointr'
     }
   },
   {
@@ -39,7 +39,7 @@ const routes = [
     name: 'home',
     component: Home,
     meta: {
-        title: 'Home - Pointr'
+      title: 'Home - Pointr'
     }
   },
   {
@@ -48,7 +48,7 @@ const routes = [
     component: RequestForm,
     props: true,
     meta: {
-        title: 'Contact - Pointr'
+      title: 'Contact - Pointr'
     }
   },
   {

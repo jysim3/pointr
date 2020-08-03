@@ -1,76 +1,168 @@
 <template>
-    <div id="" class="container attendance-container">
-        <!-- <h2 id="attendance-header">Attendance<span v-if="!hasAttendees"> ({{ attendees.length }})</span></h2> -->
-        <h2 id="attendance-header">Attendance ({{ attendees.length }})</h2>
-        <div class="d-flex attendance-container-data">
-          <div class="box">
-            <div class="fieldGroup" v-for="(field, index) in allFields" :key="index">
-            <input 
-              v-model="checkedFields"
-              :value="field"
-              type="checkbox"
-              />
-            <label class="label">{{field}}</label>
+  <div
+    class="container "
+  >
+    <div class="row">
+      <!-- <h2 id="attendance-header">Attendance<span v-if="!hasAttendees"> ({{ attendees.length }})</span></h2> -->
+      <div class="col">
+        <h2 id="attendance-header">
+          Attendance ({{ attendees.length }})
+        </h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3 col-12">
+        <div class="box d-flex flex-column align-items-center">
+          <div>
+            <div
+              v-for="(field, index) in allFields"
+              :key="index"
+              class="d-flex flex-nowrap"
+            >
+              <input 
+                v-model="checkedFields"
+                :value="field"
+                type="checkbox"
+              >
+              <label class="pl-1 label">{{ field }}</label>
             </div>
+          </div>
           <button
             class="btn btn-primary"
             @click="downloadCsv"
-          >Download csv</button>
-          </div>
-          <table v-if="attendees.length != 0">
-              <tr>
-                  <th></th>
-                  <th v-for="(n, i) in fields" :key="i">{{n}}</th>
-              </tr>
-              <tr v-for="(attendee, index) in attendeesData" :key="index">
-                  <!-- class="link" -->
-                  <td></td>
-                  <td v-for="(n, i) in fields" :key="i">
-                      <a
-                          @click="deleteAttendee(attendee.zID)"
-                          v-if="n === 'Actions'"
-                          class="material-icons warning "
-                      >delete</a>
-                      <i
-                          v-else-if="n === 'isArcMember'"
-                          class="material-icons"
-                      >{{ attendee[n] ? 'check' : 'close'}}</i>
-                      <span v-else>{{ attendee[n] }}</span>
-                  </td>
-              </tr>
-          </table>
-        <h3 v-else id="no-attendees-msg">All attendees will appear here.</h3>
+          >
+            Download csv
+          </button>
         </div>
+      </div>
+      <div class="col-9">
+        <canvas
+          ref="graph"
+          width="400"
+          height="400"
+        />
+        <table v-if="attendees.length != 0">
+          <tr>
+            <th />
+            <th
+              v-for="(n, i) in fields"
+              :key="i"
+            >
+              {{ n }}
+            </th>
+          </tr>
+          <tr
+            v-for="(attendee, index) in attendeesData"
+            :key="index"
+          >
+            <!-- class="link" -->
+            <td />
+            <td
+              v-for="(n, i) in fields"
+              :key="i"
+            >
+              <a
+                v-if="n === 'Actions'"
+                class="material-icons warning "
+                @click="deleteAttendee(attendee.zID)"
+              >delete</a>
+              <i
+                v-else-if="n === 'isArcMember'"
+                class="material-icons"
+              >{{ attendee[n] ? 'check' : 'close' }}</i>
+              <span v-else>{{ attendee[n] }}</span>
+            </td>
+          </tr>
+        </table>
+        <h3
+          v-else
+          id="no-attendees-msg"
+        >
+          All attendees will appear here.
+        </h3>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
 import axios from 'axios'
 import { saveAs } from 'file-saver'
+import Chart from 'chart.js'
+import moment from 'moment'
 
 export default {
   name: "EventAttendance",
   components: {
   },
-  computed: {
-    attendeesData() {
-      return this.attendees.map(a => ({
-          "Name": `${a.firstname} ${a.lastname}`,
-          "zID": a.zID,
-          "Attend time": a.time,
-          "isArcMember": a.isArc
-        }))
+  props: {
+    eventID: {
+      required: true,
+      type: String,
     },
-    fields() {
-      return this.allFields.filter(e => this.checkedFields.includes(e)).concat(['Actions'])
-    }
+    eventName: {
+      required: true,
+      type: String
+    },
+    eventEnd: {
+    },
+    eventStart: {
+    },
   },
   data() {
     return {
       allFields: ['Name','zID','Attend time','isArcMember'],
       checkedFields: ['Name','zID','Attend time','isArcMember'],
       attendees: [],
+      chart: null    }
+  },
+  computed: {
+    attendeesData() {
+      return this.attendees.map(a => ({
+        "Name": `${a.firstname} ${a.lastname}`,
+        "zID": a.zID,
+        "Attend time": a.time,
+        "isArcMember": a.isArc
+      }))
+    },
+    fields() {
+      return this.allFields.filter(e => this.checkedFields.includes(e)).concat(['Actions'])
     }
+  },
+
+  mounted() {
+    this.refreshAttendees()
+    this.chart = new Chart(this.$refs['graph'], { // eslint-disable-line
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: '# of sign ins',
+          data: [],
+          borderColor: 'rgba(255, 99, 132, 1)',
+          fill: false,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            ticks: {
+              autoSkip:false
+            }
+          }],
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    })
+    // setInterval(() => {
+    //   this.refreshAttendees()
+      
+    // }, 5000);
   },
   methods: {
     deleteAttendee(zID) {
@@ -97,81 +189,64 @@ export default {
       + data.join("\n")
       saveAs(encodeURI(csvContent), `${this.eventName}.csv`)
     },
+    updateGraph() {
+      const round = (m, interval) => {
+        return m.minute(Math.floor(m.minute() / interval)*interval) .second(0)
+      }
+      let start = moment(this.eventStart) 
+      let end = moment(this.eventEnd) 
+      let interval = 60
+      const eventDuration = end.diff(start,"hours")
+      if (eventDuration <= 1) {
+        interval = 5
+      } else if (eventDuration < 2){
+        interval = 10
+      } else if (eventDuration < 8){
+        interval = 30
+      }
+
+      start = round(start, interval)
+      end = round(end,interval)
+      const times = this.attendees.map(a => moment(a.time)).sort().map(a => round(a,interval))
+      const data = times.reduce((a, curr) => {
+        if (curr in a) {
+          a[curr] += 1
+        } else {
+          a[curr] = 1
+        }
+        return a
+      }, {})
+      let labels =[]
+      const graphData = []
+      for (let i = start; i <= end; i=i.add(interval, "m")){
+        labels.push(i.format("LT"))
+        if (i in data) {
+          graphData.push(data[i])
+        }else{
+          graphData.push(0)
+        }
+
+
+      }
+      this.chart.data.labels=  labels
+      this.chart.data.datasets[0].data = Object.values(graphData)
+      this.chart.update()
+
+    },
     refreshAttendees() {
       axios.get(`/api/event/attend`,{
-          params: {
-              eventID: this.eventID
-          }
+        params: {
+          eventID: this.eventID
+        }
       })
-      .then(r => {
-        this.attendees = r.data.data
-      })
-      .catch(() => {})
+        .then(r => {
+          this.attendees = r.data.data
+          this.$nextTick(() => this.updateGraph())
+        })
+        .catch(() => {})
+
     }
     
-  },
-
-  mounted() {
-    this.refreshAttendees()
-    setInterval(() => {
-      this.refreshAttendees()
-      
-    }, 5000);
-  },
-  props: {
-    eventID: {
-      required: true,
-      type: String,
-    },
-    eventName: {
-      required: true,
-      type: String
-    }
   }
 };
 </script>
-
-<style scoped>
-.attendee:first-of-type {
-    border-top-right-radius: var(--border-radius);
-    border-top-left-radius: var(--border-radius);
-}
-
-.attendee:last-of-type {
-    border-bottom-right-radius: var(--border-radius);
-    border-bottom-left-radius: var(--border-radius);
-}
-
-.attendance-container {
-    font-size: 1rem;
-}
-
-#attendance-header {
-    text-align: center;
-}
-
-#no-attendees-msg {
-    text-align: center;
-    font-weight: 400;
-    margin: 1rem 0;
-}
-.attendance-container-data {
-  align-items: flex-start;
-}
-.box {
-  padding: 1rem ;
-  margin-right: 1rem;
-  display: flex;
-  justify-content: flex-start;
-}
-.fieldGroup {
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: row;
-  align-items: baseline; 
-
-}
-.fieldGroup .label {
-  padding-left: 1rem;
-}
-</style>

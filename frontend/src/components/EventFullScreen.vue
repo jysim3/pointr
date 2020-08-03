@@ -1,42 +1,59 @@
 
 <template>
-    <div class="fullscreen" ref="fullscreen-div">
-      <div class="left">
-        <a @click="$emit('exitFullScreen')" class="material-icons">chevron_left</a>
-        <div class="left-after"> </div>
-        <div>
-            <img class="logo" src="../assets/logo.png" alt="pointr logo" />
-            <button @click="share" class="btn btn-primary">Share full screen picture</button>
-            </div>
-        <div></div>
+  <div
+    ref="fullscreen-div"
+    class="fullscreen"
+  >
+    <div class="left">
+      <a
+        class="material-icons"
+        @click="$emit('exit-full-screen')"
+      >chevron_left</a>
+      <div class="left-after" />
+      <div>
+        <img
+          class="logo"
+          src="../assets/logo.png"
+          alt="pointr logo"
+        >
+        <button
+          class="btn btn-primary"
+          @click="share"
+        >
+          Share full screen picture
+        </button>
       </div>
-      <div class="right">
-
+      <div />
+    </div>
+    <div class="right" />
+    <div class="right-content">
+      <h3> Welcome </h3>
+      <h3>to</h3>
+      <h1>{{ name }}</h1>
+      by<h3 class="societies">
+        {{ this.eventSoc }}
+      </h3>
+      <hr>
+      <h3> Mark your attendance </h3>
+      <h3>@</h3>
+      <h3 class="primary">
+        pointr.live
+      </h3>
+      <div class="options">
+        <h3>Option 1:</h3>
+        <div class="box"> 
+          <h3> Scan the QR code to sign in </h3>
+          <EventQRCode :event-i-d="this.eventID" />
+        </div>
       </div>
-      <div class="right-content">
-        <h3> Welcome </h3>
-        <h3>to</h3>
-        <h1>{{name}}</h1>
-        by<h3 class="societies">{{ this.eventSoc }}</h3>
-        <hr/>
-        <h3> Mark your attendance </h3>
-        <h3>@</h3>
-        <h3 class="primary">pointr.live</h3>
-        <div class="options">
-            <h3>Option 1:</h3>
-            <div class="box"> 
-                <h3> Scan the QR code to sign in </h3>
-                <EventQRCode :eventID="this.eventID" />
-            </div>
+      <div class="options">
+        <h3>Option 2:</h3>
+        <div class="box"> 
+          <h3>Head to <span class="primary">pointr.live/event/{{ this.eventID }}</span> to sign in</h3>
         </div>
-        <div class="options">
-            <h3>Option 2:</h3>
-            <div class="box"> 
-                <h3>Head to <span class="primary">pointr.live/event/{{this.eventID}}</span> to sign in</h3>
-            </div>
-        </div>
+      </div>
     </div>
-    </div>
+  </div>
 </template>
 
 <script>
@@ -44,41 +61,41 @@ import EventQRCode from "@/components/event/EventQRCode.vue";
 import html2canvas from 'html2canvas'
 import { saveAs } from 'file-saver'
 export default {
-    props: {
-        eventID: {
-            required: true,
-            type: String
-        },
-        name: {
-            required: true,
-            type: String
-        },
-        eventSoc: {
-            required: true,
-            type: String
-        }
+  components: {
+    EventQRCode,
+  },
+  props: {
+    eventID: {
+      required: true,
+      type: String
     },
-    components: {
-        EventQRCode,
+    name: {
+      required: true,
+      type: String
     },
-    methods: {
-        share() {
-            html2canvas(this.$refs['fullscreen-div'], {
-                backgroundColor: '#f7f7f7',
-                width: 1579,
-                height: 1047,
-                windowWidth: 1579,
-                windowHeight: 1047,
-                
-            })
-            .then(v => {
-                v.toBlob(b => {
-                    saveAs(b, `${this.name}.png`)
-                })
-            })
-
-        }
+    eventSoc: {
+      required: true,
+      type: String
     }
+  },
+  methods: {
+    share() {
+      html2canvas(this.$refs['fullscreen-div'], {
+        backgroundColor: '#f7f7f7',
+        width: 1579,
+        height: 1047,
+        windowWidth: 1579,
+        windowHeight: 1047,
+                
+      })
+        .then(v => {
+          v.toBlob(b => {
+            saveAs(b, `${this.name}.png`)
+          })
+        })
+
+    }
+  }
 }
 </script>
 

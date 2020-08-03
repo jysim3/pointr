@@ -1,16 +1,35 @@
 <template>
   <div>
-    <div class="form-container" id="form-container--signin">
-      <form @submit.prevent="submitForgetPassword" class="form">
+    <div
+      id="form-container--signin"
+      class="form-container"
+    >
+      <form
+        class="form"
+        @submit.prevent="submitForgetPassword"
+      >
         <h2>Reset your password</h2>
         <FormMessage :msg="error" />
         <!-- TODO: style -->
-        <InputZID v-model="zID" :zID="zID" />
-        <button type="submit" class="btn btn-primary">Reset Password</button>
+        <InputZID
+          v-model="zID"
+          :z-i-d="zID"
+        />
+        <button
+          type="submit"
+          class="btn btn-primary"
+        >
+          Reset Password
+        </button>
 
         <div id="signup-route">
           <p>Don't have an account?</p>
-          <router-link id="need-account-link" to="/signup">Sign up</router-link>
+          <router-link
+            id="need-account-link"
+            to="/signup"
+          >
+            Sign up
+          </router-link>
         </div>
       </form>
     </div>

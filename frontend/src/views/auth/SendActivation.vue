@@ -1,15 +1,30 @@
 <template>
-  
   <div class="card-container">
     <div class="card">
-      <h1>Hi {{ this.givenzID }}!</h1>
+      <h1>Hi {{ givenzID }}!</h1>
       <div>
-        <p class="msg" >Check your zID email to activate your account!</p>
-        <p class="msg" >Due to UNSW spam filter, your email might take 1-2 minutes to arrive.</p>
+        <p class="msg">
+          Check your zID email to activate your account!
+        </p>
+        <p class="msg">
+          Due to UNSW spam filter, your email might take 1-2 minutes to arrive.
+        </p>
       </div>
-      <Input v-model="zID" :disabled="givenzID !== undefined" type="text" />
-      <button v-if="status === ''" @click="resendActivation" class="btn btn-primary"> Resend Activation Email </button>
-      <h3 v-else-if="status === 'sent'">Success!</h3>
+      <Input
+        v-model="zID"
+        :disabled="givenzID !== undefined"
+        type="text"
+      />
+      <button
+        v-if="status === ''"
+        class="btn btn-primary"
+        @click="resendActivation"
+      >
+        Resend Activation Email
+      </button>
+      <h3 v-else-if="status === 'sent'">
+        Success!
+      </h3>
     </div>
   </div>
 </template>
@@ -25,13 +40,14 @@ export default {
   props: {
     givenzID: {
       type:String,
+      default: ''
     },
   },
   data() {
     return {
       // name: "",
-        zID: this.givenzID || '',
-        status: '',
+      zID: this.givenzID || '',
+      status: '',
     };
   },
   methods: {
@@ -41,9 +57,9 @@ export default {
           zID: this.zID
         }
       })
-      .then(() => {
-        this.status = 'sent'
-      }).catch(v => console.log(v))
+        .then(() => {
+          this.status = 'sent'
+        }).catch(v => console.log(v))
     }
   }
 }

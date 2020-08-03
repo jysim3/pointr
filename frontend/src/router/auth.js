@@ -11,7 +11,7 @@ export default [
     name: 'signIn',
     component: SignIn,
     meta: {
-        title: 'Sign In - Pointr'
+      title: 'Sign In - Pointr'
     }
   },
   {
@@ -19,7 +19,7 @@ export default [
     name: 'signUp',
     component: SignUp,
     meta: {
-        title: 'Sign Up - Pointr'
+      title: 'Sign Up - Pointr'
     }
   },
   {
@@ -29,7 +29,7 @@ export default [
     props: true
   },
   {
-    path: '/activate/:activateToken?',
+    path: '/activate/:activateToken',
     name: 'activate',
     component: AccountActivation,
     props: true

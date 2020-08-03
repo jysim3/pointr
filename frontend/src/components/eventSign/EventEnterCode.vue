@@ -1,24 +1,46 @@
 <template>
-  <div>
-    <div id="form-container--entercode" class="form-container">
-      <form class="form" @submit.prevent="submitEventCodeForm">
+  <div class="container">
+    <Form
+      @submit="submitEventCodeForm"
+    >
+      <template #header>
         <h2>Enter event code</h2>
-        <FormError v-show="formErrorMessage" :msg="formErrorMessage" />
-        <label class="label" for>Event code</label>
-        <!-- TODO: sanitise input, using quotes does not work -->
-        <input class="input" v-model="eventID" type="text" required />
-        <button :to="`/sign/${eventID}`" class="btn btn-primary" type="submit">Next</button>
-      </form>
-    </div>
+        <FormError
+          v-show="formErrorMessage"
+          :msg="formErrorMessage"
+        />
+      </template>
+      <!-- TODO: sanitise input, using quotes does not work -->
+      <InputModule
+        v-model="eventID"
+        required
+        name="eventID"
+        label="Event code"
+        type="text"
+      />
+      <template #footer>
+        <button
+          :to="`/sign/${eventID}`"
+          class="btn btn-primary"
+          type="submit"
+        >
+          Next
+        </button>
+      </template>
+    </Form>
   </div>
 </template>
 
 <script>
 import FormError from "@/components/FormError.vue";
+import InputModule from "@/components/input/Input.vue";
+import Form from "@/components/Form.vue";
 
 export default {
   name: "EventSignEnterCode",
   components: {
+    Form,
+    InputModule,
     FormError,
   },
   data() {
@@ -28,15 +50,9 @@ export default {
       allEventID: []
     };
   },
-  created() {
-    // fetchAPI("/api/event/getAllEventID")
-    // .then(r => {
-    //   this.allEventID = r.data
-    // })
-  },
   methods: {
     submitEventCodeForm() {
-      this.$router.push({ name: "eventSign", params: { eventID: this.eventID } });
+      this.$router.push({ name: "event", params: { eventID: this.eventID } });
     }
   }
 };

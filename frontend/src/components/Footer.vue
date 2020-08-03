@@ -1,9 +1,7 @@
 <template>
-    
-    <div class="container-fluid footer">
-
-        <p> Contact us @ pointr.help@gmail.com </p>
-    </div>
+  <div class="container-fluid footer">
+    <p> Contact us @ pointr.help@gmail.com </p>
+  </div>
 </template>
 <style scoped>
 .footer  {

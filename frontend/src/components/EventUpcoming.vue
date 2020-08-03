@@ -1,11 +1,10 @@
 <template>
-  
-        <EventList
-          :eventData="eventData"
-          listStyle="table"
-          eventViewTitle=""
-          :loading="eventDataLoading"
-        />
+  <EventList
+    :event-data="eventData"
+    list-style="table"
+    event-view-title=""
+    :loading="eventDataLoading"
+  />
 </template>
 
 <script>
@@ -16,10 +15,10 @@ export default {
     EventList
   },
   props: {
-      type: {
-          type: String,
-          default: 'normal'
-      }
+    type: {
+      type: String,
+      default: 'normal'
+    }
   },
   data () {
     return {
@@ -28,12 +27,12 @@ export default {
     }
   },
   mounted() {
-      this.eventDataLoading = true
-      axios.get('/api/event/upcoming?',{
-          params: {
-              number: this.type === 'large' ? 100 : 5
-          }
-      })
+    this.eventDataLoading = true
+    axios.get('/api/event/upcoming?',{
+      params: {
+        number: this.type === 'large' ? 100 : 5
+      }
+    })
       .then(v => {
         this.eventData = v.data.data
         this.eventDataLoading = false

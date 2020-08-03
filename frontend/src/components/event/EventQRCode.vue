@@ -1,6 +1,6 @@
 <template>
-  <div id="qr-container">
-    <canvas id="qr-canvas"></canvas>
+  <div>
+    <canvas id="qr-canvas" />
   </div>
 </template>
 
@@ -26,14 +26,3 @@ export default {
   }
 };
 </script>
-
-<style>
-#qr-container {
-  display: inline-block;
-}
-
-#qr-canvas {
-  border-radius: var(--border-radius);
-}
-
-</style>

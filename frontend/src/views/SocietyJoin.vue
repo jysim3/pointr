@@ -1,20 +1,48 @@
 <template>
-  <div class="form-container" id="join-society-form-container">
-    <form @submit.prevent="submitJoinSocietyForm" class="form">
+  <div
+    id="join-society-form-container"
+    class="form-container"
+  >
+    <form
+      class="form"
+      @submit.prevent="submitJoinSocietyForm"
+    >
       <h2>Join a society</h2>
-      <FormError v-if="error" :msg="error" />
-      <label for="society" class="label">Choose a society</label>
+      <FormError
+        v-if="error"
+        :msg="error"
+      />
+      <label
+        for="society"
+        class="label"
+      >Choose a society</label>
       <!-- TODO: This would need to become searchable in the future.  -->
       <!-- TODO: what if there are no availableSocieties -->
-      <select v-model="selectedSociety" class="input--select" name="society-select">
+      <select
+        v-model="selectedSociety"
+        class="input--select"
+        name="society-select"
+      >
         <option
           v-for="(society, index) in availableSocieties"
           :key="index"
           :value="society"
-        >{{ society.societyName }}</option>
+        >
+          {{ society.societyName }}
+        </option>
       </select>
-      <button type="submit" class="btn btn-primary">Join</button>
-      <h3 id="msg--success" v-show="success">Success!</h3>
+      <button
+        type="submit"
+        class="btn btn-primary"
+      >
+        Join
+      </button>
+      <h3
+        v-show="success"
+        id="msg--success"
+      >
+        Success!
+      </h3>
     </form>
   </div>
 </template>

@@ -5,18 +5,20 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
+    "lint": "vue-cli-service lint --ext .js,.vue",
     "test": "cypress open",
     "reset": "echo DELETE FROM users where \"zID\"='z5161631'; | psql pointrDB"
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "chart.js": "^2.9.3",
     "core-js": "^3.6.5",
     "express": "^4.17.1",
     "file-saver": "^2.0.2",
     "helmet": "^4.0.0",
     "html2canvas": "^1.0.0-rc.5",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.27.0",
     "qrcode": "^1.4.4",
     "vue": "^2.6.11",
     "vue-router": "^3.3.4",
@@ -30,7 +32,7 @@
     "babel-eslint": "^10.1.0",
     "cypress": "^4.11.0",
     "eslint": "^6.8.0",
-    "eslint-plugin-vue": "^6.2.2",
+    "eslint-plugin-vue": "^7.0.0-beta.1",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {

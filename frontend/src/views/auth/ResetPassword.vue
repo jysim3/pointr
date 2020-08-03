@@ -1,16 +1,30 @@
 <template>
   <div class="card-container">
-    <div class="form-container" id="form-container--signin">
-        <form @submit.prevent="submitReset" class="form">
+    <div
+      id="form-container--signin"
+      class="form-container"
+    >
+      <form
+        class="form"
+        @submit.prevent="submitReset"
+      >
         <h1>Reset Password</h1>
-        <p class="msg" v-if="status === 'success'">
+        <p
+          v-if="status === 'success'"
+          class="msg"
+        >
           Thanks for activating your account, you may now close this window to sign in
         </p>
         <div v-else>
-          <InputNewPassword v-model="password"  />
-            <button type="submit" class="btn btn-primary">Reset Password</button>
+          <InputNewPassword v-model="password" />
+          <button
+            type="submit"
+            class="btn btn-primary"
+          >
+            Reset Password
+          </button>
         </div>
-        </form>
+      </form>
     </div>
   </div>
 </template>
@@ -22,7 +36,7 @@ import axios from 'axios'
 export default {
   name: "ResetPassword",
   components: {
-      InputNewPassword
+    InputNewPassword
   },
   props: {
     forgotToken: {
@@ -42,23 +56,23 @@ export default {
     };
   },
   methods: {
-      async submitReset() {
-          const data = {
-            password: this.password
-          }
-          axios({
-            url: `/api/auth/reset`,
-            method: "POST",
-            data: data,
-            headers: {
-              Authorization: this.forgotToken
-            }
-          }).then(() => {
-            this.status = 'success'
-          }).catch(e => {
-            console.log(e.response)
-          })
+    async submitReset() {
+      const data = {
+        password: this.password
       }
+      axios({
+        url: `/api/auth/reset`,
+        method: "POST",
+        data: data,
+        headers: {
+          Authorization: this.forgotToken
+        }
+      }).then(() => {
+        this.status = 'success'
+      }).catch(e => {
+        console.log(e.response)
+      })
+    }
   }
 };
 </script>

@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import user from './modules/user';
 import auth from './modules/auth';
-import jwt from "jsonwebtoken";
+import jwt  from "jsonwebtoken";
 
 Vue.use(Vuex);
 
@@ -28,16 +28,14 @@ const store = new Vuex.Store({
         .then(() => dispatch('user/getUserInfo'))
     },
     logout({commit, dispatch}) {
-      return new Promise(async (resolve,reject) => {
-        try {
-          await dispatch('auth/logout')
-          commit('user/clearUserInfo')
-          resolve()
-        } catch (error) {
-          console.log(error); //eslint-disable-line
-          console.log(error.response); //eslint-disable-line
-          reject()
-        }
+      return new Promise((resolve,reject) => {
+        dispatch('auth/logout')
+          .then(() => commit('user/clearUserInfo'))
+          .then(() => resolve())
+          .catch(error => {
+            console.log(error)
+            reject()
+          })
       })
     }
   },

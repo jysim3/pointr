@@ -1,23 +1,27 @@
 <template>
-        <table style="width:100%">
-          <tr>
-            <th v-for="(n, i) in fields" :key="i">{{n}}</th>
-          </tr>
-          <tr 
-          v-for="(event, index) in data" 
-          :key="index" 
-          @click="clickRow(event)"
-          :class="event._link ? 'link ' : ''"
-          >
-                <td 
-                v-for="(n, i) in fields"
-                :key="i" >
-                    {{ event[n] }}
-                </td>
-                
-          </tr>
-        </table> 
-    
+  <table style="width:100%">
+    <tr>
+      <th
+        v-for="(n, i) in fields"
+        :key="i"
+      >
+        {{ n }}
+      </th>
+    </tr>
+    <tr 
+      v-for="(event, index) in data" 
+      :key="index" 
+      :class="event._link ? 'link ' : ''"
+      @click="clickRow(event)"
+    >
+      <td 
+        v-for="(n, i) in fields"
+        :key="i"
+      >
+        {{ event[n] }}
+      </td>
+    </tr>
+  </table>
 </template>
 <script>
 /*
@@ -31,26 +35,26 @@ data = {
   }
 */
 export default {
-    name: "Table",
-    props: {
-        fields: {
-            required: true,
-            type: Array
-        },
-        data: {
-            required: true,
-            type: Array
-        },
-        actions: {
-          required: false,
-          type: Array
-        }
+  name: "Table",
+  props: {
+    fields: {
+      required: true,
+      type: Array
     },
-    methods: {
-        clickRow(row) {
-            this.$router.push(row._link)
-        }
+    data: {
+      required: true,
+      type: Array
+    },
+    actions: {
+      default: () => [],
+      type: Array
     }
+  },
+  methods: {
+    clickRow(row) {
+      this.$router.push(row._link)
+    }
+  }
 }
 </script>
 <style scoped>

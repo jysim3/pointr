@@ -1,5 +1,7 @@
 <template>
-  <p class="form-error-msg">{{ msg }}</p>
+  <p class="form-error-msg">
+    {{ msg }}
+  </p>
 </template>
 
 <script>

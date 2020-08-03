@@ -1,10 +1,12 @@
 <template>
-  <Input label="zID" type="text" 
-  :value="value"
-  @input="$emit('input', $event)"
-  :valid="isZIDValid" 
-  errorMessage="Invalid zID"
-  name="zID"
+  <Input
+    label="zID"
+    type="text" 
+    :value="value"
+    :valid="isZIDValid"
+    error-message="Invalid zID" 
+    name="zID"
+    @input="$emit('input', $event)"
   />
 </template>
 

@@ -1,12 +1,11 @@
 <template>
-    <div class="loader-wrap">
-      <div class="loader"></div>
-
-    </div>
+  <div class="loader-wrap">
+    <div class="loader" />
+  </div>
 </template>
 <script>
 export default {
-    name: 'loader'
+  name: 'Loader'
 }
 </script>
 <style scoped>

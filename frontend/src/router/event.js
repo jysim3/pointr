@@ -34,7 +34,7 @@ export default  [
     }
   },
   {
-    path: '/event/:eventID?',
+    path: '/event/:eventID',
     name: 'event',
     component: Event,
     props: true,

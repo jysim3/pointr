@@ -1,30 +1,58 @@
 <template>
   <div>
     <EventEnterCode />
-    <div id="dashboard-wrapper">
-      <Loader v-if="upcomingEvents.isLoading" />
-      <DashboardEventView
-        v-else
-        :eventViewTitle="upcomingEvents.title"
-        :eventData="upcomingEvents.data"
-      />
-      <Loader v-if="allEvents.isLoading" />
-      <DashboardEventView v-else :eventViewTitle="allEvents.title" :eventData="allEvents.data" />
+    <div class="container">
+      <CardContainer
+        :title="upcomingEvents.title"
+        :loading="upcomingEvents.isLoading"
+      > 
+        <Card
+          v-for="(event, index) in upcomingEvents.data"
+          :key="index"
+          :data="event"
+        />
+        <template #options> 
+          <router-link
+            :to="{name:'eventSelect'}"
+            class="link"
+          >
+            View more
+          </router-link>
+        </template>
+      </CardContainer>
+      <CardContainer
+        :title="allEvents.title"
+        :loading="allEvents.isLoading"
+      > 
+        <Card
+          v-for="(event, index) in allEvents.data"
+          :key="index"
+          :data="event"
+        />
+        <template #options> 
+          <router-link
+            :to="{name:'eventSelect'}"
+            class="link"
+          >
+            View more
+          </router-link>
+        </template>
+      </CardContainer>
     </div>
   </div>
 </template>
 
 <script>
-import Loader from "@/components/Loader.vue";
-import DashboardEventView from "@/components/EventList.vue";
+import Card from "@/components/EventCard.vue";
+import CardContainer from "@/components/CardContainer.vue";
 import EventEnterCode from "@/components/eventSign/EventEnterCode.vue";
 import axios from 'axios';
 export default {
   name: "DashboardUser",
   components: {
-    DashboardEventView,
-    Loader,
-    EventEnterCode
+    EventEnterCode,
+    Card,
+    CardContainer
   },
   data() {
     return {
@@ -41,22 +69,27 @@ export default {
     };
   },
   mounted() {
-    axios({
-      url:'/api/user/events/upcoming'
-    }).then(r => {
-      this.upcomingEvents.data = r.data.data
-    })
-    .finally(() => {
-      this.upcomingEvents.isLoading = false
-    })
-    axios({
-      url:'/api/event/upcoming'
-    }).then(r => {
-      this.allEvents.data = r.data.data
-    })
-    .finally(() => {
-      this.allEvents.isLoading = false
-    })
+    this.upcomingEvents.isLoading = true
+    this.allEvents.isLoading = true
+    const urls = ['/api/user/events/upcoming', '/api/event/upcoming']
+    Promise.all(urls.map(u => axios(u))).
+      then(response => {
+        const [upcomingEvents, allEvents] = response.map(r => 
+          r.data.data.map(v => ({
+            title: v.name,
+            subtitle: v.societyName,
+            tags: [
+              v.startTime, v.location === null ? '' : `@ ${v.location}`
+            ],
+            _link: `/event/${v.id}`
+          }))
+        )
+        this.upcomingEvents.data = upcomingEvents
+        this.allEvents.data = allEvents
+      }).finally(() => {
+        this.upcomingEvents.isLoading = false
+        this.allEvents.isLoading = false
+      })
   }
 };
 </script>

@@ -1,30 +1,84 @@
 <template>
   <div>
-    <transition name="fade" mode="out-in">
-    <EventFullScreen :eventSoc="this.eventSoc" 
-    :name="this.eventData.name" @exitFullScreen="toggleFullScreen(false)" v-if="fullscreen" :eventID="this.eventID" />
+    <transition
+      name="fade"
+      mode="out-in"
+    >
+      <EventFullScreen
+        v-if="fullscreen" 
+        :event-soc="eventSoc"
+        :name="eventData.name"
+        :event-i-d="eventID"
+        @exit-full-screen="toggleFullScreen(false)"
+      />
     </transition>
-    <div v-show="!fullscreen" id="event-host-view-wrapper">
-          <EventCodeDisplay :eventID="eventID" />
-          <h1 id="welcome-header">Welcome to {{ this.eventData.name }}</h1>
-          by<h3 class="societies">{{ this.eventSoc }}</h3>
-          <!-- TODO: add more event information here -->
-          <div class="d-flex fullscreen-btn">
-            <button @click="toggleFullScreen(true)" class="btn btn-primary"> Full screen <i class="material-icons">fullscreen</i></button>
-            <router-link :to="{name:'edit',params: {eventID: this.eventID}}" class="btn btn-primary"> Edit event <i class="material-icons">edit</i></router-link>
-          </div>
-          <p class="description">{{ this.eventData.description }}</p>
-          <h2 id="mark-attendance-header">Sign your attendance</h2>
-      <div id="qr-and-form-container">
-        <div style="display:flex;flex-direction:column;">
-        <EventQRCode :eventID="this.eventID" />
+    <div
+      v-show="!fullscreen"
+      id="event-host-view-wrapper"
+    >
+      <div class="d-flex flex-column align-items-center">
+        <div class="box d-flex p-3 px-5 flex-column">
+          <h4 class="header">
+            Event code
+          </h4>
+          <h2 class="code primary">
+            {{ eventID }}
+          </h2>
         </div>
-        <EventAdminAttendance :eventID="this.eventID" />
+        <h1 id="welcome-header">
+          Welcome to {{ eventData.name }}
+        </h1>
+        by<h3 class="societies">
+          {{ eventSoc }}
+        </h3>
+        <div>
+          <button
+            class="btn btn-primary"
+            @click="toggleFullScreen(true)"
+          >
+            Full screen <i class="material-icons">fullscreen</i>
+          </button>
+          <router-link
+            :to="{name:'edit',params: {eventID: eventID}}"
+            class="btn btn-primary"
+          >
+            Edit event <i class="material-icons">edit</i>
+          </router-link>
+        </div>
       </div>
-      <div id="event-attendance-container">
-        <EventAttendance :eventName="this.eventData.name" class="attendee" :eventID="eventID" />
-        <FormError v-show="error" :msg="error" />
-        <!-- TODO: only show last 10 people who have joined? Click 'view all' to show all participants? -->
+      <p class="description">
+        {{ eventData.description }}
+      </p>
+
+      <!---- EVENT BODY ----->
+
+      <h2
+        class="my-4"
+      >
+        Sign your attendance
+      </h2>
+      <div class="d-flex justify-content-center">
+        <EventQRCode
+          class="mx-4"
+          :event-i-d="eventID"
+        />
+        <EventAdminAttendance
+          :event-i-d="eventID"
+        />
+      </div>
+      <div>
+        <EventAttendance
+          :event-duration="eventDuration"
+          :event-start="eventData.start"
+          :event-end="eventData.end"
+          :event-name="eventData.name" 
+          :event-i-d="eventID"
+        />
+        <FormError
+          v-show="error"
+          :msg="error"
+        />
+      <!-- TODO: only show last 10 people who have joined? Click 'view all' to show all participants? -->
       </div>
     </div>
   </div>
@@ -33,24 +87,29 @@
 <script>
 import EventAttendance from "@/components/event/EventAttendance.vue";
 import EventQRCode from "@/components/event/EventQRCode.vue";
-import EventCodeDisplay from "@/components/event/EventCodeDisplay.vue";
 import EventAdminAttendance from "@/components/event/EventAdminAttendance.vue";
 import EventFullScreen from "@/components/EventFullScreen.vue";
 import FormError from "@/components/FormError.vue";
+import moment from 'moment'
 
 export default {
   name: "EventHost",
-  props: {
-    eventID: String,
-    eventData: Object
-  },
   components: {
     EventQRCode,
     EventAttendance,
-    EventCodeDisplay,
     EventAdminAttendance,
     EventFullScreen,
     FormError
+  },
+  props: {
+    eventID: {
+      type: String,
+      required: true
+    },
+    eventData: {
+      type: Object,
+      required: true
+    }
   },
   data() {
     return {
@@ -58,14 +117,11 @@ export default {
       fullscreen: false
     }
   },
-  methods: {
-    toggleFullScreen(fullScreen) {
-      this.$store.commit('navBar', !fullScreen)
-      this.fullscreen = fullScreen
-    }
-
-  },
   computed: {
+    eventDuration() {
+
+      return moment(this.eventData.end).diff(moment(this.eventData.start),'hours')
+    },
     eventSoc () {
       return this.eventData.society.map(s => s.name).join(' | ')
     },
@@ -76,6 +132,13 @@ export default {
       const participantsCopy = this.participants.slice();
       return participantsCopy.reverse();
     }
+  },
+  methods: {
+    toggleFullScreen(fullScreen) {
+      this.$store.commit('navBar', !fullScreen)
+      this.fullscreen = fullScreen
+    }
+
   },
 };
 </script>
@@ -128,12 +191,6 @@ export default {
   margin-right: 2rem;
 }
 
-#event-attendance-container {
-  margin-top: 3rem;
-  display: flex;
-  justify-content: center;
-  font-size: 1.5rem;
-}
 .fullscreen-btn {
   margin-top: 1rem;
   justify-content: center;

@@ -1,136 +1,109 @@
 <template>
-<div class="routes-more-wrapper" 
-              @focusout="toggleMore(false)"
->
-          <i
-            @click="toggleMore(false)"
-            class="material-icons routes-display-more"
-            v-if="displayMore"
-          >expand_less</i>
-          <i
-            @click="toggleMore(true)"
-            class="material-icons routes-display-more"
-            v-else
-          >expand_more</i>
-
-          <transition name="slide-fade">
-            <div
-              ref="routes-more"
-              class="routes-more"
-              v-show="displayMore"
-              tabindex="0"
-            >
-              <router-link :to="'/user/' + this.zID" @click="toggleMore(false)" class="routes-more-profile">
-                <img
-                  src="@/assets/defaultUser.jpg"
-                />
-                <div class="routes-more-profile-text">
-                  <div class="routes-more-profile-text-title">{{ name }}</div>
-                  <span>{{ zID }}</span>
-                </div>
-              </router-link>
-              <hr />
-              <router-link @click="toggleMore(false)" :to="'/user/' + this.zID" class="routes-more-link">Profile</router-link>
-              <router-link @click="toggleMore(false)" :to="{name:'changePassword'}" class="routes-more-link">Change Password</router-link>
-              <router-link @click="toggleMore(false)" :to="'/request'" class="routes-more-link">Contact</router-link>
-              <div @click="signOut" class="routes-more-link">Log out</div>
+  <li
+    class="nav-item dropdown" 
+    @focusout="show = false"
+  >
+    <a
+      class="nav-link dropdown-toggle"
+      href="#"
+      role="button"
+      @click="show = !show"
+    />
+    <transition
+      name="fade"
+      mode="out-in"
+    >
+      <div
+        v-show="show"
+        class="dropdown-menu dropdown-menu-right show"
+        aria-labelledby="navbarDropdownMenuLink"
+        @click="show = false"
+      >
+        <router-link
+          :to="'/user/' + zID"
+          class="dropdown-item d-flex"
+        >
+          <img
+            src="@/assets/defaultUser.jpg"
+          >
+          <div class="routes-more-profile-text">
+            <div class="routes-more-profile-text-title">
+              {{ name }}
             </div>
-          </transition>
-    
-    </div>
+            <span>{{ zID }}</span>
+          </div>
+        </router-link>
+        <div class="dropdown-divider" />
+
+        <router-link
+          :to="'/user/' + zID"
+          class="dropdown-item"
+        >
+          Profile
+        </router-link>
+        <router-link
+          :to="{name:'changePassword'}"
+          class="dropdown-item"
+        >
+          Change Password
+        </router-link>
+        <router-link
+          :to="'/request'"
+          class="dropdown-item"
+        >
+          Contact
+        </router-link>
+        <a
+          class="dropdown-item"
+          href="#"
+          @click="signOut"
+        >
+          Log out
+        </a>
+      </div>
+    </transition>
+  </li>
 </template>
 <script>
 export default {
-    name: "NavBarProfile",
-    data(){ return{ 
-        "displayMore": false
-    }},
-    computed: {
-        zID () {  return this.$store.getters['user/zID'] },
-        name () { return this.$store.getters['user/name'] }
+  name: "NavBarProfile",
+  data(){ return{ 
+    show: false
+  }},
+  computed: {
+    zID () {  return this.$store.getters['user/zID'] },
+    name () { return this.$store.getters['user/name'] }
+  },
+  methods: {
+    signOut() { 
+      this.$store.dispatch('logout')
+        .then(() => {
+          this.$router.go('/')
+        })
     },
-    methods: {
-        signOut() { 
-          this.$store.dispatch('logout')
-          .then(() => {
-            this.$router.go('/')
-          })
-        },
-        toggleMore(b){
-          this.displayMore = b
-          this.$nextTick(() => {
-            if (this.displayMore) {
-              this.$refs["routes-more"].focus();
-            }
-          })
-        },
-    }
+    toggleMore(b){
+      this.displayMore = b
+      this.$nextTick(() => {
+        if (this.displayMore) {
+          this.$refs["routes-more"].focus();
+        }
+      })
+    },
+  }
     
 }
 </script>
 <style scoped>
-.routes-display-more {
-  cursor: pointer;
-  color: #82BF4B;
+.dropdown-toggle:after {
+  color: var(--c-primary)
 }
-.routes-more-wrapper {
-  position: relative;
+.dropdown-item.active, .dropdown-item:active {
+    color: #fff;
+    text-decoration: none;
+    background-color: var(--c-primary)
 }
-.routes-more:focus {
-  outline: none;
-}
-.routes-more {
-  width: 200px;
-  position: absolute;
-  top: 2rem;
-  right: 0;
-  background-color: white;
-  padding: 1rem;
-  border-radius: 5px;
-}
-
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: all 0.3s;
-}
-.slide-fade-enter,
-.slide-fade-leave-to {
-  transform: translateY(-30px);
-  opacity: 0;
-}
-
-.routes-more-profile {
-  display: flex;
-  align-items: center;
-  box-shadow: none;
-}
-.routes-more-profile-text {
-  margin-left: 1rem;
-  display: flex;
-  flex-direction: column;
-}
-.routes-more-profile-text-title {
-  font-weight: bold;
-  display: block;
-
-  color: black;
-}
-.routes-more-profile > img {
+.dropdown-item > img {
   width: 50px;
   border-radius: 25px;
-}
-.routes-more > hr {
-  margin-top: 1rem;
-}
-.routes-more-link {
-  padding-left: 1rem;
-  padding-top: 1rem;
-  cursor: pointer;
-  display: block;
-  color: black;
-}
-.routes-more-link:hover {
-  color: black;
-  font-weight: bold;
 }
 </style>

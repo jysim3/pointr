@@ -1,64 +1,68 @@
 
 <template>
-    <div class="imgDiv">
-        <input type="file" style="display:none" 
-        ref="fileInput" 
-        @change="onFileSelected"
-        accept="image/png, image/jpeg"/>
-        <img 
-        :src="src"
-        @error="imgAlt"
-        />
-        <div class="edit"
-        v-if="updateURL"
-        @click="changePhoto"
-        > 
-            
-            <i class="material-icons"> edit </i>
-        </div>
+  <div class="imgDiv">
+    <input
+      ref="fileInput"
+      type="file" 
+      style="display:none" 
+      accept="image/png, image/jpeg"
+      @change="onFileSelected"
+    >
+    <img 
+      :src="src"
+      @error="imgAlt"
+    >
+    <div
+      v-if="updateURL"
+      class="edit"
+      @click="changePhoto"
+    >
+      <i class="material-icons"> edit </i>
     </div>
-  
+  </div>
 </template>
 
 <script>
 import axios from 'axios'
 export default {
-    props: {
-        src: {
-            type: String,
-            required: true
-        },
-        updateURL: {
-            type: String,
-        },
-        updateFieldName: {
-            type: String,
-            default: 'logo'
-        }
+  props: {
+    src: {
+      type: String,
+      required: true
     },
-    data() {
-        return {
-        }
-
+    updateURL: {
+      type: String,
+      default: ''
     },
-    methods: {
-        imgAlt(event) {
-            event.target.src = require("@/assets/defaultUser.jpg")
-        },
-        changePhoto(){
-            this.$refs['fileInput'].click()
-        },
-        onFileSelected(event) {
-            const selectedFile = event.target.files[0]
-            const fd = new FormData()
-            fd.append(this.updateFieldName, selectedFile, selectedFile.name)
-            axios.patch(this.updateURL,fd, )
-            .then(() => {
-                this.$emit('update')
-            })
-
-        }
+    updateFieldName: {
+      type: String,
+      default: 'logo'
     }
+  },
+  emits: ['update'],
+  data() {
+    return {
+    }
+
+  },
+  methods: {
+    imgAlt(event) {
+      event.target.src = require("@/assets/defaultUser.jpg")
+    },
+    changePhoto(){
+      this.$refs['fileInput'].click()
+    },
+    onFileSelected(event) {
+      const selectedFile = event.target.files[0]
+      const fd = new FormData()
+      fd.append(this.updateFieldName, selectedFile, selectedFile.name)
+      axios.patch(this.updateURL,fd, )
+        .then(() => {
+          this.$emit('update')
+        })
+
+    }
+  }
 
 }
 </script>

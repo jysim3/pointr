@@ -1,15 +1,31 @@
 <template>
-  <div>
+  <div id="landing-page">
     <div class="landing-background">
       <div class="container wrapper">
         <!-- <img src="../assets/logo.png" /> -->
         <div>
-          <h1 class="heading">Welcome to Pointr!</h1>
-          <h3 class="sub-heading">The attendance tracking system for UNSW Arc Societies.</h3>
+          <h1 class="heading">
+            Welcome to Pointr!
+          </h1>
+          <h3 class="sub-heading">
+            The attendance tracking system for UNSW Arc Societies.
+          </h3>
           <p>Mark your members' attendance in seconds and visualize them in informative graphs </p>
           <div class="btn-container">
-            <router-link tag="button" to="/create" class="btn btn-primary">Create an event</router-link>
-            <router-link tag="button" to="/sign" class="btn btn-secondary">Mark my attendance</router-link>
+            <router-link
+              tag="button"
+              to="/create"
+              class="btn btn-primary"
+            >
+              Create an event
+            </router-link>
+            <router-link
+              tag="button"
+              to="/sign"
+              class="btn btn-secondary"
+            >
+              Mark my attendance
+            </router-link>
           </div>
         </div>
         <EventUpcoming />
@@ -18,35 +34,45 @@
     <div class="user-tutorial container-fluid">
       <div class="container">
         <div class="user-tutorial-left"> 
-          <img src="@/assets/userTutorial.png"/>
+          <img src="@/assets/userTutorial.png">
         </div>
         <div class="user-tutorial-right"> 
           <h1> How it works </h1>
           <p> Sign in to any events by just scanning the QR code! It’s that simple! </p>
           <div>
-            <router-link to="/signin" class="btn btn-primary" > Try it now </router-link>
-            <router-link to="/event" class="btn btn-secondary" >View events</router-link>
+            <router-link
+              to="/signin"
+              class="btn btn-primary"
+            >
+              Try it now
+            </router-link>
+            <router-link
+              to="/event"
+              class="btn btn-secondary"
+            >
+              View events
+            </router-link>
           </div>
         </div>
       </div>
     </div>
     <div class="admin-tutorial container-fluid">
-        <h1> How it works </h1>
-        <hr style="width: 10rem;"/>
-        <div class="admin-tutorial-steps">
-          <div>
-            <img src="@/assets/adminTutorial1.png" />
-            <p>1. Create an event through your society page</p>
-          </div>
-          <div>
-            <img src="@/assets/adminTutorial2.png" />
-            <p>2. Share the QR code to your members </p>
-          </div>
-          <div>
-            <img src="@/assets/adminTutorial3.png" />
-            <p>3. Download the attendance list according to your needs!</p>
-          </div>
+      <h1> How it works </h1>
+      <hr style="width: 10rem;">
+      <div class="admin-tutorial-steps">
+        <div>
+          <img src="@/assets/adminTutorial1.png">
+          <p>1. Create an event through your society page</p>
         </div>
+        <div>
+          <img src="@/assets/adminTutorial2.png">
+          <p>2. Share the QR code to your members </p>
+        </div>
+        <div>
+          <img src="@/assets/adminTutorial3.png">
+          <p>3. Download the attendance list according to your needs!</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -62,6 +88,9 @@ export default {
 </script>
 
 <style scoped>
+#landing-page {
+  margin-top: -3rem;
+}
 .wrapper {
   display: flex;
   justify-content: space-between;

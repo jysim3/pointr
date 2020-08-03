@@ -3,10 +3,16 @@
     <div id="app">
       <Loader v-show="isLoading" />
       <div v-show="!isLoading">
-      <NavBar v-show="navBar" />
-      <transition name="fade" mode="out-in">
-        <router-view />
-      </transition>
+        <NavBar
+          v-show="navBar"
+          class="mb-5"
+        />
+        <transition
+          name="fade"
+          mode="out-in"
+        >
+          <router-view />
+        </transition>
       </div>
     </div>
     <Footer v-show="navBar" />
@@ -19,7 +25,7 @@ import NavBar from "@/components/NavBar.vue";
 import Loader from "@/components/Loader.vue";
 
 export default {
-  name: "app",
+  name: "App",
   components: {
     NavBar, Loader,
     Footer

@@ -1,14 +1,12 @@
 <template>
-
-    <div>
-        <!-- TODO: LET USER EDIT THIS INFO -->
-        <Loader v-if="loading" />
-        <div v-else>
-            <div class="wrapper header">
-              <div class="profile" >
-
-                <div class="profile-info">
-                    <!-- <div class="profile-info-group">
+  <div>
+    <!-- TODO: LET USER EDIT THIS INFO -->
+    <Loader v-if="loading" />
+    <div v-else>
+      <div class="wrapper header">
+        <div class="profile">
+          <div class="profile-info">
+            <!-- <div class="profile-info-group">
                         <span class="profile-info-numbers">50</span>
                         <span class="profile-info-subtitle">followers</span>
                     </div>
@@ -16,36 +14,54 @@
                         <span class="profile-info-numbers">10</span>
                         <span class="profile-info-subtitle">events went</span>
                     </div> -->
-                </div>
-                <!-- TODO: Let user modify -->
-                <ProfilePhoto class="profile-photo" v-if="userData" :src="userImage" />
-                <!-- <div class="profile-buttons">
+          </div>
+          <!-- TODO: Let user modify -->
+          <ProfilePhoto
+            v-if="userData"
+            class="profile-photo"
+            :src="userImage"
+          />
+          <!-- <div class="profile-buttons">
                     <i class="material-icons profile-info-button">favorite</i>
                     </div> -->
-                </div>
-            </div>
+        </div>
+      </div>
             
 
 
 
 
 
-            <div class="main wrapper">
-                <div class="main-name">
-                    <h2 class="main-name-title" v-once>{{userData.firstname}} {{userData.lastname}}</h2>
-                    <span class="main-name-subtitle" v-once>{{userData.zID}}</span>
-                </div>
-
-                  <p class="main-description">{{userData.description}}</p>
-                <div class="main-stats" v-for="(s,i) in stats" :key="i">
-                    <i class="material-icons">{{s.icon}}</i>
-                    <span >{{s.text}}</span>
-                </div>
-
-                <!--- TODO: more features for admins-->
-            </div>
+      <div class="main wrapper">
+        <div class="main-name">
+          <h2
+            v-once
+            class="main-name-title"
+          >
+            {{ userData.firstname }} {{ userData.lastname }}
+          </h2>
+          <span
+            v-once
+            class="main-name-subtitle"
+          >{{ userData.zID }}</span>
         </div>
+
+        <p class="main-description">
+          {{ userData.description }}
+        </p>
+        <div
+          v-for="(s,i) in stats"
+          :key="i"
+          class="main-stats"
+        >
+          <i class="material-icons">{{ s.icon }}</i>
+          <span>{{ s.text }}</span>
+        </div>
+
+        <!--- TODO: more features for admins-->
+      </div>
     </div>
+  </div>
 </template>
 
 
@@ -56,14 +72,14 @@ import axios from 'axios'
 
 export default {
   name: 'User',
+  components: {
+    Loader,
+    ProfilePhoto
+  },
   props: {
     zID: {
       type: String
     }
-  },
-  components: {
-      Loader,
-      ProfilePhoto
   },
   data() {
     return {
@@ -72,6 +88,25 @@ export default {
       loading: false,
       statsData: [
       ]
+    }
+  },
+  computed: {
+    userImage() {
+      if (this.userData.image) {
+        return this.apiURL + this.userData.image
+      }
+      return ""
+    },
+    stats () {
+      const stat = this.statsData
+      if (this.userData.societies > 0) {
+        stat.push(
+          {
+            icon: 'home',
+            text: 'Admin for ' + this.userData.societies.staff.map(v => v.societyName).join(', ')
+          })
+      }
+      return stat
     }
   },
   watch: {
@@ -83,25 +118,6 @@ export default {
   created() {
     this.updateUserData()
   },
-  computed: {
-    userImage() {
-      if (this.userData.image) {
-        return this.apiURL + this.userData.image
-      }
-      return ""
-    },
-    stats () {
-        const stat = this.statsData
-        if (this.userData.societies > 0) {
-            stat.push(
-            {
-                icon: 'home',
-                text: 'Admin for ' + this.userData.societies.staff.map(v => v.societyName).join(', ')
-            })
-        }
-          return stat
-    }
-  },
   methods: {
     updateUserData() {
       if (!this.zID) {
@@ -109,20 +125,20 @@ export default {
       }
       this.loading = true
       axios.get(`/api/user?zID=${this.zID}`)
-      .then(v => {
-        const data = v.data.data
-        this.userData.firstname = data.firstname
-        this.userData.lastname = data.lastname
-        this.userData.image = data.image
-        this.userData.societies = data.societies
-        this.userData.description = data.description
-        // this.userData.events = data.events
+        .then(v => {
+          const data = v.data.data
+          this.userData.firstname = data.firstname
+          this.userData.lastname = data.lastname
+          this.userData.image = data.image
+          this.userData.societies = data.societies
+          this.userData.description = data.description
+          // this.userData.events = data.events
 
-        this.loading = false
-      })
-      .catch(e => {
+          this.loading = false
+        })
+        .catch(e => {
         console.log(e) // eslint-disable-line
-      })
+        })
     }
   }
 }

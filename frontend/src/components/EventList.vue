@@ -1,35 +1,69 @@
 <template>
-  <div >
+  <div>
     <div v-if="loading">
       <Loader />     
     </div>
-    <div v-else-if="eventData">
-
-
-      <div class="event-view" v-if="listStyle === 'cards'">
-
-        <div class="event-view-title">
-          <h3 class="event-view-title-text" v-once>{{ eventViewTitle }}</h3>
-          <a class="event-view-more link" @click="viewAllData = !viewAllData"
-            >View {{viewAllData ? 'less' : 'more'}}</a>
+    <div
+      v-else-if="eventData"
+      class="container mt-5"
+    >
+      <div v-if="listStyle === 'cards'">
+        <div class="d-flex justify-content-between py-2">
+          <h3
+            v-once
+          >
+            {{ eventViewTitle }}
+          </h3>
+          <router-link
+            :to="{name:'eventSelect'}"
+            class="link"
+          >
+            View more
+          </router-link>
         </div>
 
-        <FormError v-if="eventData.length === 0" msg="Seems like there is no events at the moment"/> 
-        <div v-else class="event-cards " :class="viewAllData ? 'viewAllCards' : ''">
-          <EventCard v-for="(event, index) in formattedCardData" :key="index" :data="event"></EventCard>
+        <FormError
+          v-if="eventData.length === 0"
+          msg="Seems like there is no events at the moment"
+        /> 
+        <div
+          v-else
+          class="d-flex flex-wrap"
+          :class="viewAllData ? 'viewAllCards' : ''"
+        >
+          <EventCard
+            v-for="(event, index) in formattedCardData"
+            :key="index"
+            :data="event"
+          />
         </div>
-
       </div>
-      <div class="event-table" v-else-if="listStyle === 'table'">
-        <div v-if="eventViewTitle" class="event-view-title">
-          <h3 class="event-view-title-text" v-once>{{ eventViewTitle }}</h3>
+      <div
+        v-else-if="listStyle === 'table'"
+        class="event-table"
+      >
+        <div
+          v-if="eventViewTitle"
+          class="event-view-title"
+        >
+          <h3
+            v-once
+            class="event-view-title-text"
+          >
+            {{ eventViewTitle }}
+          </h3>
         </div>
-        <FormError v-if="eventData.length === 0" msg="Seems like there is no events at the moment"/> 
-        <Table v-else :data="formattedEventData" :fields="fields"/>
+        <FormError
+          v-if="eventData.length === 0"
+          msg="Seems like there is no events at the moment"
+        /> 
+        <Table
+          v-else
+          :data="formattedEventData"
+          :fields="fields"
+        />
       </div>
-
     </div>
-       
   </div>
 </template>
 
@@ -46,9 +80,11 @@ export default {
   },
   props: {
     eventViewTitle: {
+      default: '',
       type: String,
     },
     eventData: {
+      default: () => [],
       type: Array,
     },
     loading: {
@@ -69,18 +105,6 @@ export default {
     })
   },
   computed: {
-    showEventData() {
-      if (!this.eventData) {
-        return []
-      }
-      if (this.viewAllData) {
-        return this.eventData
-      } else {
-        return this.eventData.filter((v,i) => {
-          return i < 3
-        })
-      }
-    },
     formattedCardData() {
       return this.eventData.map(v => ({
         title: v.name,
@@ -109,17 +133,6 @@ export default {
   width: 80%;
   margin: auto;
   padding-top: 4rem;
-}
-.event-cards {
-
-  margin: 0 1rem ;
-  /* box-shadow: inset 0 0 2rem 0 rgba(59,59,95,.3);
-  border-radius: 5px; */
-  padding: 1rem 1rem 1.25rem 1rem;
-  /* background: #e3f2fd; */
-  overflow-x: scroll;
-  display: flex;
-  flex-wrap: nowrap;
 }
 @media only screen and (max-width: 900px) {
   .event-cards {

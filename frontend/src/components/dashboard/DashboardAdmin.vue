@@ -1,21 +1,32 @@
 <template>
   <div id="dashboard-wrapper">
-    <div >
-      <div id="upcoming-events-filter" >
+    <div>
+      <div id="upcoming-events-filter">
         <h2>Upcoming events for </h2>
-        <select class="input--select select--admin"  v-model="selectedSociety" name="society-select">
-          <option value="all" >All</option>
+        <select
+          v-model="selectedSociety"
+          class="input--select select--admin"
+          name="society-select"
+        >
+          <option value="all">
+            All
+          </option>
           <option
             v-for="(society, index) in joinedSocieties"
             :key="index"
             :value="society.societyID"
-          >{{ society.societyName }}</option>
+          >
+            {{ society.societyName }}
+          </option>
         </select>
       </div>
       <Loader v-if="!allEvents" />
-      <DashboardEventView v-if="selectedSociety !== ''" eventViewTitle="" :event-data="selectedSocietyEvents" />
+      <DashboardEventView
+        v-if="selectedSociety !== ''"
+        event-view-title=""
+        :event-data="selectedSocietyEvents"
+      />
     </div>
-
   </div>
 </template>
 

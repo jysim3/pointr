@@ -6,7 +6,7 @@ import axios from 'axios';
 // this is to prevent a lot of requests to the backend.
 
 const getDefaultState = () => {
-    return {
+  return {
     attended: [],
     status: null,
     commencementyear: null,
@@ -84,32 +84,32 @@ const mutations = {
 const actions = {
   getUserInfo({ commit, rootGetters }) {
     return new Promise((resolve,reject) => {
-        const requests = [
-          {
-            url: '/api/user',
-            params: {
-              zID: rootGetters.zID
-            },
-            method: 'GET'
+      const requests = [
+        {
+          url: '/api/user',
+          params: {
+            zID: rootGetters.zID
           },
-          {
-            url: '/api/user/events/upcoming',
-            method: 'GET'
-          },
-          {
-            url:  'api/user/societies',
-            method: 'GET'
-          }
-        ];
-        Promise.all(requests.map(r => axios(r)))
+          method: 'GET'
+        },
+        {
+          url: '/api/user/events/upcoming',
+          method: 'GET'
+        },
+        {
+          url:  'api/user/societies',
+          method: 'GET'
+        }
+      ];
+      Promise.all(requests.map(r => axios(r)))
         .then(([ infoResponse, eventResponse, societyResponse]) => {
-        commit('userInfo', infoResponse.data.data)
-        commit('societyInfo', societyResponse.data.data)
-        commit('eventInfo', eventResponse.data.data)
-        resolve([ infoResponse, eventResponse, societyResponse])
-      }).catch ((error) => {
-        reject(error)
-      })
+          commit('userInfo', infoResponse.data.data)
+          commit('societyInfo', societyResponse.data.data)
+          commit('eventInfo', eventResponse.data.data)
+          resolve([ infoResponse, eventResponse, societyResponse])
+        }).catch ((error) => {
+          reject(error)
+        })
 
     })
   },

@@ -1,18 +1,22 @@
 <template>
   <div class="event-code-display-container">
     <div class="event-code-display">
-      <h4 class="header">Event code</h4>
-      <h2 class="code">{{ this.eventID }}</h2>
+      <h4 class="header">
+        Event code
+      </h4>
+      <h2 class="code">
+        {{ eventID }}
+      </h2>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-    name: "EventCodeDispaly",
-    props: {
-        eventID: String
-    }
+  name: "EventCodeDispaly",
+  props: {
+    eventID: String
+  }
 };
 </script>
 
