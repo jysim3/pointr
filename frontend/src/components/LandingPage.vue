@@ -70,7 +70,7 @@
         </div>
         <div>
           <img src="@/assets/adminTutorial3.png">
-          <p>3. Download the attendance list according to your needs!</p>
+          <p>3. View your attendees in beautifully generated graph</p>
         </div>
       </div>
     </div>
