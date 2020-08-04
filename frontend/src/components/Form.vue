@@ -18,8 +18,10 @@
       <div class="d-flex flex-column align-items-center text-center">
         <slot name="header" />
       </div>
-      <div class="form-body col-md-8 col-12 d-flex flex-column align-items-center">
-        <slot class="" />
+      <div class="row w-100 justify-content-center">
+        <div class="form-body col-md-8 col-12 d-flex flex-column align-items-center">
+          <slot class="" />
+        </div>
       </div>
       <div class="form-footer d-flex flex-column align-items-center">
         <slot name="footer">
