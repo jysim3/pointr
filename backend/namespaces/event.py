@@ -1,7 +1,7 @@
 from flask import request, jsonify, send_file
 from flask_restx import Namespace, Resource, abort
 from util.validation_services import toQuery, toModel, validateArgs, validateBody
-from schemata.event_schemata import EventCreationSchema, EventPatchSchema
+from schemata.event_schemata import EventCreationSchema, EventPatchSchema, EventAttendCodeSchema
 from util import auth_services
 from schemata.models import authModel, offsetModel
 from schemata.event_schemata import EventIDSchema, EventNumberSchema, EventJSONSchema, EventJSONAttendanceSchema
@@ -122,6 +122,17 @@ class AdditionalInfo(Resource):
         return jsonify({'status': 'success'})
         
 
+@api.route('/attend/code')
+class AttendCode(Resource):
+    @api.doc(description='''
+        Returns an attend code for the admin to display
+    ''')
+    @api.expect(authModel)
+    @validateArgs(EventIDSchema, 'event')
+    @checkAuthorization(level=1)
+    def get(self, token_data, event):
+
+        return jsonify({'status': 'success', 'data': event.getAttendCode()})
 """
 FIXME: CHUCK ALL THIS INTO ARGS STRING, CHECK ARGS STRING, WORK ON VALIDATEARGSWITH
 """
@@ -133,14 +144,18 @@ class AttendRoute(Resource):
     ''')
     @api.expect(authModel)
     @validateArgs(EventIDSchema, 'event')
+    @validateArgs(EventAttendCodeSchema, 'code')
     @checkAuthorization(level=1)
-    def post(self, token_data, event):
+    def post(self, token_data, event, code):
         user = Users.findUser(token_data['zID'])
         status = event.addAttendance(user)
         if status:
             abort(403, status)
-
         return jsonify({"status": "success"})
+
+
+
+
 
     @api.doc(description='''
         The token bearer is no longer recorded as having attended the given eventID.

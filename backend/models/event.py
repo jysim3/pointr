@@ -4,6 +4,7 @@ from models.society import host
 from datetime import datetime, timezone, timedelta
 import dateutil
 from dateutil import parser
+from hashlib import sha1
 
 class Attendance(db.Model):
     __tablename__ = 'attend'
@@ -121,6 +122,23 @@ class Event(db.Model):
         back_populates="hosting"
     )
 
+    # FIXME: Create real secret key
+    def getAttendCodes(self):
+        seconds = datetime.now().timestamp() // 5 
+        secret_key = 'asdf'
+        codes = [sha1(f"{seconds-i}{id}{secret_key}".encode("UTF-8")).hexdigest()[:5]
+            for i in range(3)]
+        return codes
+    def getAttendCode(self):
+        seconds = datetime.now().timestamp() // 5 
+        secret_key = 'asdf'
+        code = sha1(f"{seconds}{id}{secret_key}".encode("UTF-8")).hexdigest()[:5]
+        nextRefresh = (seconds+1) * 5
+        return {
+            'nextRefresh': nextRefresh,
+            'code': code,
+            'refreshInterval': 5000
+        }
     def getPreview(self):
         return {
             'id': self.id,
