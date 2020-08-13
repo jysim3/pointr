@@ -24,6 +24,9 @@
           <h2 class="code primary">
             {{ eventID }}
           </h2>
+          <h2 class="code primary">
+            {{ eventCode }}
+          </h2>
         </div>
         <h1 id="welcome-header">
           Welcome to {{ eventData.name }}
@@ -91,6 +94,7 @@ import EventAdminAttendance from "@/components/event/EventAdminAttendance.vue";
 import EventFullScreen from "@/components/EventFullScreen.vue";
 import FormError from "@/components/FormError.vue";
 import moment from 'moment'
+import axios from 'axios'
 
 export default {
   name: "EventHost",
@@ -113,13 +117,24 @@ export default {
   },
   data() {
     return {
+      eventCode: "",
       error: "",
       fullscreen: false
     }
   },
+  mounted() {
+    axios.get('/api/event/attend/code', {
+      params: { eventID: this.eventID }
+    }).then(r => {
+      const data = r.data.data
+      this.eventCode = data.code
+      this.refreshInterval = data.refreshInterval
+      setTimeout(() => this.startRefreshCode(),moment(data.nextRefresh*1000)-moment())
+      
+    })
+  },
   computed: {
     eventDuration() {
-
       return moment(this.eventData.end).diff(moment(this.eventData.start),'hours')
     },
     eventSoc () {
@@ -137,6 +152,17 @@ export default {
     toggleFullScreen(fullScreen) {
       this.$store.commit('navBar', !fullScreen)
       this.fullscreen = fullScreen
+    },
+    startRefreshCode() {
+      setInterval(() => {
+        axios.get('/api/event/attend/code', {
+          params: { eventID: this.eventID }
+        }).then(r => {
+          const data = r.data.data
+          this.eventCode = data.code
+        })
+      }, this.refreshInterval);
+
     }
 
   },

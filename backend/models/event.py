@@ -4,6 +4,7 @@ from models.society import host
 from datetime import datetime, timezone, timedelta
 import dateutil
 from dateutil import parser
+from hashlib import sha1
 
 class Attendance(db.Model):
     __tablename__ = 'attend'
@@ -121,6 +122,20 @@ class Event(db.Model):
         back_populates="hosting"
     )
 
+    def getAttendCodes(self):
+        seconds = datetime.now().timestamp() // 5 
+        codes = [sha1(f"{seconds-i}{id}{'asdf'}".encode("UTF-8")).hexdigest()[:5]
+            for i in range(3)]
+        return codes
+    def getAttendCode(self):
+        seconds = datetime.now().timestamp() // 5 
+        code = sha1(f"{seconds}{id}{'asdf'}".encode("UTF-8")).hexdigest()[:5]
+        nextRefresh = (seconds+1) * 5
+        return {
+            'nextRefresh': nextRefresh,
+            'code': code,
+            'refreshInterval': 5000
+        }
     def getPreview(self):
         return {
             'id': self.id,

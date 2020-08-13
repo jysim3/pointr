@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, ValidationError, validates, validate, post_load, EXCLUDE
+from marshmallow import Schema, fields, ValidationError, validates, validate, post_load, EXCLUDE, validates_schema
 from models.event import CompositeEvent, Event
 from flask import abort
 from schemata import common_schemata
@@ -83,5 +83,20 @@ class EventIDSchema(Schema):
             abort(400, {'eventID': ['That Event ID does not exist']})
         return event
 
+class EventAttendCodeSchema(Schema):
+    __schema_name__ = "Event Attend Code"
+    code = fields.Str(required=True, validate=validate.Length(equal=5))
+    eventID = fields.Str(required=True)
+
+    @validates_schema
+    def validate_code(self, data, **kwargs):
+        event = Event.getEvent(data['eventID'])
+        print(event.getAttendCodes())
+        if not data['code'] in event.getAttendCodes():
+            abort(400, "Attend code invalid or expired")
+
+    class Meta:
+        unknown = EXCLUDE
+    
 class EventNumberSchema(Schema):
     number = fields.Int()
