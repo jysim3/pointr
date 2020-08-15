@@ -90,7 +90,8 @@ class Event(db.Model):
     start = db.Column(db.DateTime(timezone=True), nullable=False)
     end = db.Column(db.DateTime(timezone=True), nullable=False)
 
-    photos = db.Column(db.ARRAY(db.Text), nullable=True)
+    photo = db.Column(db.Text, nullable=True)
+
     description = db.Column(db.Text, nullable=True)
     preview = db.Column(db.Text, nullable=True)
     location = db.Column(db.Text, nullable=True)
@@ -269,6 +270,12 @@ class Event(db.Model):
                             return
 
         return "This event doesn't have this question set yet"
+
+    def updatePhoto(self, path):
+        self.photo = path
+
+        db.session.add(self)
+        db.session.commit()
 
     def updateAdditionalInfo(self, oldPayload, newPayload):
         # TODO: Finish this route

@@ -25,12 +25,22 @@ class EventRoute(Resource):
         <h3>Authorization Details:</h3>
         Requires the token bearer to be an admin of one of the specified societies
     ''')
-    #@api.expect(toModel(api, EventCreationSchema))
-    #@auth_services.check_authorization(level=2, allowSocStaff=True)
+    @api.expect(toModel(api, EventCreationSchema))
+    @auth_services.checkAuthorization(level=1)
     @validateArgs(SocietyIDSchema, 'society')
     @validateBody(EventCreationSchema, 'event')
     @api.expect(toModel(api, EventCreationSchema))
     def post(self, event, society):
+
+        photo = request.files['photo']
+
+        if photo:
+            status = uploadImages(photo)
+            if not isinstance(status, tuple):
+                abort(400, status)
+
+            event.updatePhoto(status[0])
+
         society.hosting.append(event)
         db.session.add(event)
         db.session.add(society)
