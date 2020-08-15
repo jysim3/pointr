@@ -31,7 +31,7 @@
         >
           <img
             class="rounded"
-            src="https://scontent.fsyd9-1.fna.fbcdn.net/v/t1.0-9/s960x960/106941582_4054164364653593_2603835058121570065_o.jpg?_nc_cat=107&_nc_sid=340051&_nc_ohc=KKbbWZuZNjUAX_IrLoX&_nc_ht=scontent.fsyd9-1.fna&_nc_tp=7&oh=51bdc56aa46636ab50ef8950f2d1caf5&oe=5F5DC714"
+            src="@/assets/unsw.jpg"
           >
         </div>
         <div class="col-12 col-md-3 mb-5">
