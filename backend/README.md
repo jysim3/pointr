@@ -42,3 +42,10 @@ Note: `postgres` is the default postgresql account
 python3 run.py
 ```
 
+## To migrate the database
+```
+. ./login.sh [POINTR_EMAIL_PASSWORD] [POINTR_SERVER_SECRET] [SQLPassword]
+flask db init
+flask db migrate
+flask db upgrade
+```
