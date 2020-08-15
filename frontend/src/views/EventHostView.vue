@@ -1,87 +1,87 @@
 <template>
   <div>
-    <transition
-      name="fade"
-      mode="out-in"
-    >
-      <EventFullScreen
-        v-if="fullscreen" 
-        :event-soc="eventSoc"
-        :name="eventData.name"
-        :event-i-d="eventID"
-        @exit-full-screen="toggleFullScreen(false)"
-      />
-    </transition>
-    <div
-      v-show="!fullscreen"
-      id="event-host-view-wrapper"
-    >
-      <div class="d-flex flex-column align-items-center">
-        <div class="box d-flex p-3 px-5 flex-column">
-          <h4 class="header">
-            Event code
-          </h4>
-          <h2 class="code primary">
-            {{ eventID }}
-          </h2>
-          <h2 class="code primary">
-            {{ eventCode }}
-          </h2>
+    <div class="container">
+      <div class="row mb-5 align-content-stretch">
+        <div class="col-2">
+          <div class="event-date d-flex flex-column justify-content-center align-content-center text-center rounded p-1 h-100">
+            <span>24</span>
+            <span>Aug</span>
+          </div>
         </div>
-        <h1 id="welcome-header">
-          Welcome to {{ eventData.name }}
-        </h1>
-        by<h3 class="societies">
-          {{ eventSoc }}
-        </h3>
-        <div>
-          <button
-            class="btn btn-primary"
-            @click="toggleFullScreen(true)"
-          >
-            Full screen <i class="material-icons">fullscreen</i>
-          </button>
+        <div class="col-8 event-title">
+          <h2 class="">Welcome to pointr</h2>
+          <h4 class="event-subtitle">by Pointr Soc</h4>
+        </div>
+        <div class="col-2 d-flex align-content-center">
           <router-link
             :to="{name:'edit',params: {eventID: eventID}}"
-            class="btn btn-primary"
+            class="m-0 d-flex"
           >
-            Edit event <i class="material-icons">edit</i>
+            <i class="material-icons">edit</i>
           </router-link>
         </div>
       </div>
-      <p class="description">
-        {{ eventData.description }}
-      </p>
+      <div class="row mb-5">
+        <div
+          class="col-9 event-photo position-relative"
+        >
+          <img
+            class="rounded"
+            src="https://scontent.fsyd9-1.fna.fbcdn.net/v/t1.0-9/s960x960/106941582_4054164364653593_2603835058121570065_o.jpg?_nc_cat=107&_nc_sid=340051&_nc_ohc=KKbbWZuZNjUAX_IrLoX&_nc_ht=scontent.fsyd9-1.fna&_nc_tp=7&oh=51bdc56aa46636ab50ef8950f2d1caf5&oe=5F5DC714"
+          >
+        </div>
+        <div class="col-3 d-flex flex-column event-sign text-center ">
+          <div class="d-flex flex-column align-content-center flex-grow-1 mb-3">
+            <h4>Sign in using QR Code</h4>
+            <EventQRCode
+              :event-i-d="eventID"
+            />
+          </div>
+          <div class="d-flex flex-column align-content-center ">
+            <h4>Sign in manually</h4>
+            <EventCode :event-i-d="eventID" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-8">
+          <h1>Details</h1>
+          <div class="col mb-4">
+            <div class="mb-2">
+              <i class="material-icons mr-2">group</i>
+              <!-- TODO: correct attendees -->
+              <span>140 attendees</span>
+            </div>
+            <div class="mb-2">
+              <i class="material-icons mr-2">place</i>
+              <span>{{ eventData.location }}</span>
+            </div>
+            <div class="mb-2">
+              <i class="material-icons mr-2">public</i>
+              <span>Public</span>
+            </div>
+          </div>
+          <p class="description">
+            {{ eventData.description }}
+          </p>
+        </div>
+      </div>
 
       <!---- EVENT BODY ----->
 
-      <h2
-        class="my-4"
-      >
-        Sign your attendance
-      </h2>
-      <div class="d-flex justify-content-center">
-        <EventQRCode
-          class="mx-4"
-          :event-i-d="eventID"
-        />
-        <EventAdminAttendance
-          :event-i-d="eventID"
-        />
-      </div>
-      <div>
+      <div class="row">
         <EventAttendance
           :event-duration="eventDuration"
           :event-start="eventData.start"
           :event-end="eventData.end"
-          :event-name="eventData.name" 
+          :event-name="eventData.name"
           :event-i-d="eventID"
         />
         <FormError
           v-show="error"
           :msg="error"
         />
-      <!-- TODO: only show last 10 people who have joined? Click 'view all' to show all participants? -->
+        <!-- TODO: only show last 10 people who have joined? Click 'view all' to show all participants? -->
       </div>
     </div>
   </div>
@@ -90,19 +90,16 @@
 <script>
 import EventAttendance from "@/components/event/EventAttendance.vue";
 import EventQRCode from "@/components/event/EventQRCode.vue";
-import EventAdminAttendance from "@/components/event/EventAdminAttendance.vue";
-import EventFullScreen from "@/components/EventFullScreen.vue";
+import EventCode from "@/components/EventCode.vue";
 import FormError from "@/components/FormError.vue";
-import moment from 'moment'
-import axios from 'axios'
+import moment from "moment";
 
 export default {
   name: "EventHost",
   components: {
     EventQRCode,
+    EventCode,
     EventAttendance,
-    EventAdminAttendance,
-    EventFullScreen,
     FormError
   },
   props: {
@@ -120,25 +117,17 @@ export default {
       eventCode: "",
       error: "",
       fullscreen: false
-    }
-  },
-  mounted() {
-    axios.get('/api/event/attend/code', {
-      params: { eventID: this.eventID }
-    }).then(r => {
-      const data = r.data.data
-      this.eventCode = data.code
-      this.refreshInterval = data.refreshInterval
-      setTimeout(() => this.startRefreshCode(),moment(data.nextRefresh*1000)-moment())
-      
-    })
+    };
   },
   computed: {
     eventDuration() {
-      return moment(this.eventData.end).diff(moment(this.eventData.start),'hours')
+      return moment(this.eventData.end).diff(
+        moment(this.eventData.start),
+        "hours"
+      );
     },
-    eventSoc () {
-      return this.eventData.society.map(s => s.name).join(' | ')
+    eventSoc() {
+      return this.eventData.society.map(s => s.name).join(" | ");
     },
     eventURL() {
       return `${window.location.host}/event/${this.eventID}`;
@@ -150,75 +139,31 @@ export default {
   },
   methods: {
     toggleFullScreen(fullScreen) {
-      this.$store.commit('navBar', !fullScreen)
-      this.fullscreen = fullScreen
-    },
-    startRefreshCode() {
-      setInterval(() => {
-        axios.get('/api/event/attend/code', {
-          params: { eventID: this.eventID }
-        }).then(r => {
-          const data = r.data.data
-          this.eventCode = data.code
-        })
-      }, this.refreshInterval);
-
+      this.$store.commit("navBar", !fullScreen);
+      this.fullscreen = fullScreen;
     }
-
-  },
+  }
 };
 </script>
 
 <style scoped>
-/* TODO: refactor this CSS */
-#event-host-view-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  text-align: center;
+.event-subtitle {
+  color: #989898;
 }
-.societies {
-  color:rgb(143, 106, 0);
-  margin-top: 1rem;
+.event-title {
+  color: black;
 }
-#welcome-header {
-  margin: 2rem 0;
+.event-date {
+  background-color: #252525;
+  color: white;
 }
-.description {
-  margin-top: 2rem;
-  text-align: center;
+.event-photo {
+  overflow: hidden;
+  height: 450px;
 }
-
-#mark-attendance-header {
-  text-align: center;
-  margin: 3rem 0 2rem 0;
-  font-weight: 400;
-}
-
-#event-url {
-  text-transform: none;
-  font-family: monospace;
-}
-
-#event-form {
-  box-shadow: none;
-}
-
-#qr-container {
-  display: inline-block;
-}
-
-#qr-and-form-container {
-  display: flex;
-  justify-content: center;
-}
-
-#qr-container {
-  margin-right: 2rem;
-}
-
-.fullscreen-btn {
-  margin-top: 1rem;
-  justify-content: center;
+.event-photo > img{
+    min-height: 100%;
+    width: 100%;
+    object-fit: fill;
 }
 </style>

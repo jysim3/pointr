@@ -1,6 +1,6 @@
 <template>
   <div
-    class="container "
+    class="container-fluid "
   >
     <div class="row">
       <!-- <h2 id="attendance-header">Attendance<span v-if="!hasAttendees"> ({{ attendees.length }})</span></h2> -->

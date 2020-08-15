@@ -73,6 +73,16 @@
         type="time"
       />
 
+      <InputModule
+        v-model="visibility"
+        name="visibility"
+        required
+        label="Visibility (beta, not in used)"
+        type="radio"
+        :options="visibilityOptions"
+      />
+
+
       <template #footer>
         <div>
           <button
@@ -124,12 +134,21 @@ export default {
       description: "",
       startTime: "",
       endTime: "",
+      visibility: "",
       availableSocieties: this.$store.getters[
         "user/societies"
       ].admins.map(s => ({
         value: s.id,
         label: s.name
-      }))
+      })),
+      visibilityOptions: [{
+        value: 'public',
+        label: 'Public'
+      },
+      {
+        value: 'private',
+        label: 'Private'
+      }]
     };
   },
   mounted(){
@@ -171,6 +190,7 @@ export default {
           this.startDate = data.start.substr(0,10)
           this.endTime = data.end.split(' ')[1].split(':').slice(0,2).join(':')
           this.endDate = data.start.substr(0,10)
+          // this.visibility = data.visibility
           console.log(data)
           this.isAdmin = this.$store.getters["user/isSocietyAdmin"](
             data.society
@@ -187,6 +207,7 @@ export default {
         description: this.description,
         location: this.location,
         status: 0,
+        // visibility: this.visibility,
         tags: [0],
         hasQR: true,
         hasAccessCode: false,
