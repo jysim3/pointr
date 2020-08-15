@@ -5,6 +5,7 @@ import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from util.general import tick
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 
 app = Flask(__name__)
@@ -36,7 +37,7 @@ if (os.path.exists(app.config['UPLOAD_FOLDER']) == False):
 	
 app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{os.environ.get('SQLPassword')}@localhost/{database_name}"
 db = SQLAlchemy(app)
-
+migrate = Migrate(app, db)
 
 from namespaces.auth import api as auth
 from namespaces.event import api as event

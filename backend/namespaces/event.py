@@ -16,6 +16,7 @@ from app import db
 from models.event import Event, Attendance
 from models.user import Users
 from datetime import datetime
+from util.files import uploadImages
 
 @api.route('')
 class EventRoute(Resource):
@@ -25,12 +26,23 @@ class EventRoute(Resource):
         <h3>Authorization Details:</h3>
         Requires the token bearer to be an admin of one of the specified societies
     ''')
-    #@api.expect(toModel(api, EventCreationSchema))
-    #@auth_services.check_authorization(level=2, allowSocStaff=True)
+    @api.expect(toModel(api, EventCreationSchema))
+    @auth_services.checkAuthorization(level=1)
     @validateArgs(SocietyIDSchema, 'society')
     @validateBody(EventCreationSchema, 'event')
-    @api.expect(toModel(api, EventCreationSchema))
-    def post(self, event, society):
+    def post(self, token_data, event, society):
+
+        # FIXME (Steven, 15/08/2020): This bit wouldn't work with a file upload
+        # Need to change the request body from json request to forms
+        if 'photo' in request.files:
+            photo = request.files['photo']
+
+            status = uploadImages(photo)
+            if not isinstance(status, tuple):
+                abort(400, status)
+
+            event.updatePhoto(status[0])
+
         society.hosting.append(event)
         db.session.add(event)
         db.session.add(society)
@@ -79,6 +91,8 @@ class EventRoute(Resource):
 
         db.session.add(event)
         db.session.commit()
+
+        # TODO (Steven 15/08/2020): Allow changing the photo associated with the photo
 
         return jsonify({"status": "success", "data": event.getEventJSON()})
 

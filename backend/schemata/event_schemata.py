@@ -26,6 +26,8 @@ class EventCreationSchema(Schema):
     hasAccessCode = fields.Boolean(required=True)
     hasAdminSignin = fields.Boolean(required=True)
 
+    additionalInfo = fields.List(fields.Str())
+
     @post_load
     def makeEvent(self, data, **kwargs):
         data['id'] = ''.join(random.choices(ascii_uppercase + digits, k=5))

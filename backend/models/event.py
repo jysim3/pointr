@@ -90,7 +90,8 @@ class Event(db.Model):
     start = db.Column(db.DateTime(timezone=True), nullable=False)
     end = db.Column(db.DateTime(timezone=True), nullable=False)
 
-    photos = db.Column(db.ARRAY(db.Text), nullable=True)
+    photo = db.Column(db.Text, nullable=True)
+
     description = db.Column(db.Text, nullable=True)
     preview = db.Column(db.Text, nullable=True)
     location = db.Column(db.Text, nullable=True)
@@ -143,7 +144,7 @@ class Event(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'logo': self.photos[0] if self.photos else None,
+            'photo': self.photo,
             'preview': self.preview,
             'startTime': self.start,
             'location': self.location
@@ -158,7 +159,7 @@ class Event(db.Model):
             'name': self.name,
             'start': str(parser.parse(str(self.start)).astimezone(timezone.utc)),
             'end': str(parser.parse(str(self.end)).astimezone(timezone.utc)),
-            'photos': self.photos,
+            'photo': self.photo,
             'description': self.description,
             'preview': self.preview,
             'location': self.location,
@@ -269,6 +270,12 @@ class Event(db.Model):
                             return
 
         return "This event doesn't have this question set yet"
+
+    def updatePhoto(self, path):
+        self.photo = path
+
+        db.session.add(self)
+        db.session.commit()
 
     def updateAdditionalInfo(self, oldPayload, newPayload):
         # TODO: Finish this route
