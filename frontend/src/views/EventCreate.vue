@@ -153,6 +153,20 @@ export default {
   },
   mounted(){
     this.getEventInfo()
+    console.log(this.$store.getters.tokenInfo  )
+    if (this.$store.getters.tokenInfo && 
+    this.$store.getters.tokenInfo['permission'] === 5){
+      axios({
+        url:'api/society/all'
+      }).then(r => {
+        this.availableSocieties = r.data.data.map(s => ({
+          value: s.id,
+          label: s.name
+        }))
+      }).catch(() => {
+        this.error = "Seems like there is no society at the moment"
+      })
+    }
   },
   methods: {
     updateDate() {
