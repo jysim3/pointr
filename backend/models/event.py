@@ -122,27 +122,17 @@ class Event(db.Model):
         back_populates="hosting"
     )
 
-<<<<<<< HEAD
     # FIXME: Create real secret key
     def getAttendCodes(self):
         seconds = datetime.now().timestamp() // 5 
         secret_key = 'asdf'
         codes = [sha1(f"{seconds-i}{id}{secret_key}".encode("UTF-8")).hexdigest()[:5]
-=======
-    def getAttendCodes(self):
-        seconds = datetime.now().timestamp() // 5 
-        codes = [sha1(f"{seconds-i}{id}{'asdf'}".encode("UTF-8")).hexdigest()[:5]
->>>>>>> 1be083d65ecdad7409b70cff9fd9d0d61b6a667f
             for i in range(3)]
         return codes
     def getAttendCode(self):
         seconds = datetime.now().timestamp() // 5 
-<<<<<<< HEAD
         secret_key = 'asdf'
         code = sha1(f"{seconds}{id}{secret_key}".encode("UTF-8")).hexdigest()[:5]
-=======
-        code = sha1(f"{seconds}{id}{'asdf'}".encode("UTF-8")).hexdigest()[:5]
->>>>>>> 1be083d65ecdad7409b70cff9fd9d0d61b6a667f
         nextRefresh = (seconds+1) * 5
         return {
             'nextRefresh': nextRefresh,
