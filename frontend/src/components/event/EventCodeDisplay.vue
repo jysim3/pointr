@@ -41,9 +41,4 @@ export default {
 .event-code-display .header {
   color: var(--c-secondary-dark);
 }
-
-.event-code-display .code {
-  color: var(--c-primary);
-  font-size: 2.4rem;
-}
 </style>

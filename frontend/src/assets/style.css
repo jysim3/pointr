@@ -59,7 +59,6 @@ h6 {
 h1 {
   font-size: 3rem;
   letter-spacing: 0.05rem;
-  text-align: center;
   color: black;
 }
 
@@ -71,11 +70,10 @@ h3 {
   font-size: 1.5rem;
   text-transform: none;
 }
-
 h4 {
-  font-size: 1rem;
+  font-size: 1.3rem;
+  text-transform: none;
 }
-
 a {
   text-decoration: none;
   cursor: pointer;

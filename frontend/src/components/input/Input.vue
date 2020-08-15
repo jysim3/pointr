@@ -33,11 +33,12 @@
     />
     <div 
       v-else-if="type === 'radio'"
+      class="d-flex flex-column w-100"
     >
       <div 
         v-for="(item, index) in options" 
         :key="index"
-        class="radio-input-container"
+        class="d-flex"
       >
         <input
           :value="item.value"
@@ -45,7 +46,7 @@
           :required="required"
           :disabled="disabled"
           :name="name"
-          class="input"
+          class="input w-auto mr-2"
           @input="sendInput"
         >
         <label class="label">{{ item.label }}</label>
@@ -114,6 +115,7 @@ export default {
   },
   methods: {
     sendInput(event) {
+      console.log(event)
       if (this.type === 'checkbox') {
         this.$emit('input', event.target.checked)
       } else {

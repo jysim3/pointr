@@ -21,8 +21,13 @@ export default {
     const url = window.location.href;
     
     QRCode.toCanvas(canvas, url);
-    canvas.style.height = '15rem'
-    canvas.style.width = '15rem'
   }
 };
 </script>
+<style scoped>
+canvas {
+  height: 100% !important;
+  width: 100% !important;
+  object-fit: contain;
+}
+</style>
