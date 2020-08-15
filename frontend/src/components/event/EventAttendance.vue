@@ -7,6 +7,10 @@
       <div class="col">
         <h2 id="attendance-header">
           Attendance ({{ attendees.length }})
+          <a
+            class="material-icons"
+            @click="refreshAttendees"
+          >refresh</a>
         </h2>
       </div>
     </div>
@@ -159,10 +163,6 @@ export default {
         }
       }
     })
-    // setInterval(() => {
-    //   this.refreshAttendees()
-      
-    // }, 5000);
   },
   methods: {
     deleteAttendee(zID) {
@@ -204,7 +204,6 @@ export default {
       } else if (eventDuration < 8){
         interval = 30
       }
-
       start = round(start, interval)
       end = round(end,interval)
       const times = this.attendees.map(a => moment(a.time)).sort().map(a => round(a,interval))
@@ -225,8 +224,6 @@ export default {
         }else{
           graphData.push(0)
         }
-
-
       }
       this.chart.data.labels=  labels
       this.chart.data.datasets[0].data = Object.values(graphData)

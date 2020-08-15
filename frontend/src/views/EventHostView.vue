@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="container">
-      <div class="row mb-5 align-content-stretch">
-        <div class="col-2">
+      <div class="row mb-5 align-content-stretch justify-content-center">
+        <div class="col-4 col-md-2">
           <div class="event-date d-flex flex-column justify-content-center align-content-center text-center rounded p-1 h-100">
             <span>24</span>
             <span>Aug</span>
           </div>
         </div>
-        <div class="col-8 event-title">
+        <div class="col-6 col-md-8 event-title">
           <h2 class="">
             {{ eventData.name }}
           </h2>
@@ -16,7 +16,7 @@
             by {{ eventData.society[0].name }}
           </h4>
         </div>
-        <div class="col-2 d-flex align-content-center">
+        <div class="col-2 col-md-2 d-flex align-content-center">
           <router-link
             :to="{name:'edit',params: {eventID: eventID}}"
             class="m-0 d-flex"
@@ -25,16 +25,16 @@
           </router-link>
         </div>
       </div>
-      <div class="row mb-5">
+      <div class="row">
         <div
-          class="col-9 event-photo position-relative"
+          class="col-12 col-md-9 event-photo position-relative mb-5"
         >
           <img
             class="rounded"
             src="https://scontent.fsyd9-1.fna.fbcdn.net/v/t1.0-9/s960x960/106941582_4054164364653593_2603835058121570065_o.jpg?_nc_cat=107&_nc_sid=340051&_nc_ohc=KKbbWZuZNjUAX_IrLoX&_nc_ht=scontent.fsyd9-1.fna&_nc_tp=7&oh=51bdc56aa46636ab50ef8950f2d1caf5&oe=5F5DC714"
           >
         </div>
-        <div class="col-3">
+        <div class="col-12 col-md-3 mb-5">
           <EventCode :event-i-d="eventID" />
         </div>
       </div>
@@ -136,11 +136,16 @@ export default {
 }
 .event-photo {
   overflow: hidden;
-  height: 450px;
 }
 .event-photo > img{
     min-height: 100%;
     width: 100%;
     object-fit: fill;
+}
+@media only screen and (max-width: 600px) {
+  .event-photo > img{
+    min-height: auto;
+    height: auto;
+  }
 }
 </style>
