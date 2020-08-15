@@ -94,7 +94,7 @@ class EventAttendCodeSchema(Schema):
     def validate_code(self, data, **kwargs):
         event = Event.getEvent(data['eventID'])
         print(event.getAttendCodes())
-        if not data['code'] in event.getAttendCodes():
+        if not data['code'].lower() in event.getAttendCodes():
             abort(400, "Attend code invalid or expired")
 
     class Meta:
