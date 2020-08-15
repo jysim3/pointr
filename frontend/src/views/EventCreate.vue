@@ -77,7 +77,7 @@
         v-model="visibility"
         name="visibility"
         required
-        label="Visibility (beta, not in used)"
+        label="Visibility (beta, not in use)"
         type="radio"
         :options="visibilityOptions"
       />
