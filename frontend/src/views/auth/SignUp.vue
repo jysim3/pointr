@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Form>
+    <Form @submit="submitSignUpForm">
       <template #header>
         <h2>Join Pointr</h2>
         <div class="additional-link">

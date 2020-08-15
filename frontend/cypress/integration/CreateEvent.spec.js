@@ -38,19 +38,6 @@ describe('Event', () => {
         cy.route('/api/*').as('api')
         // localStorage.setItem('')
     })
-    it('Attend Event', function() {
-        cy.exec(
-     "echo DELETE FROM attend where \"zID\"='z5161631'; | psql pointrDB"
-        )
-        cy.visit('/')
-        cy.contains('Browse events')
-        cy.get('.card').last().click()
-        cy.url().should('contain','/event')
-        cy.contains('Sign attendance').should('be.visible')
-        cy.get('.btn').contains(`Sign as (${this.userData.zID})`).click()
-        cy.contains('Success')
-        cy.wait(1000)
-    })
     it('Create Event', function() {
         cy.visit('/')
         cy.contains('Create').click()
@@ -67,12 +54,13 @@ describe('Event', () => {
 
         cy.contains('End Date').next().should('have.value','2020-08-15')
         cy.contains('End Date').next().type('2020-08-16')
+        cy.contains('Public').click()
 
         cy.route('http://localhost:5000/api/event').as('createEventApi')
 
         cy.contains('Create Event').click()
         cy.location('pathname').should('contain','/event/')
-        cy.contains('Welcome to hello')
+        cy.contains('hello')
     })
     it('Check event attendance', function() {
         cy.visit('/society/'+this.userData.socID)
@@ -88,6 +76,7 @@ describe('Event', () => {
                 , {log: false})
             }
         })
+        cy.contains("refresh").click()
         for (let i = 0; i < 30; i++) {
             cy.contains((i+'').padStart(7,"0"))
         }
@@ -102,4 +91,30 @@ describe('Event', () => {
         cy.contains('Download csv').click()
     })
     
+    it('Attend Event', function() {
+        let eventID = ''
+
+        cy.location('pathname').then(v => {
+            eventID = v.split('/')[2]
+        })
+        cy.contains('PIN: ').invoke('text').then(text => {
+            return  text.split(" ")[2]
+        }).then(pin => {
+            console.log(pin)
+
+            cy.request('POST','http://localhost:5000/api/auth/login', {
+                "zID": 'z0000000',
+                "password": '00000000'
+            }).its('body').then(data => {
+                expect(data).to.include.keys('data')
+                expect(data.data).to.have.key('token')
+                localStorage.setItem('token', data.data['token'])
+            })
+            cy.visit(`/event/${eventID}?code=${pin}`)
+            cy.contains("Sign as").click()
+            cy.should('contain','Success!')
+            
+        })
+
+    })
 })

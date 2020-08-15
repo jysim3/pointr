@@ -40,16 +40,20 @@
         :key="index"
         class="d-flex"
       >
-        <input
-          :value="item.value"
-          type="radio"
-          :required="required"
-          :disabled="disabled"
+        <label
+          class="label" 
           :name="name"
-          class="input w-auto mr-2"
-          @input="sendInput"
         >
-        <label class="label">{{ item.label }}</label>
+          <input
+            :value="item.value"
+            type="radio"
+            :required="required"
+            :disabled="disabled"
+            :name="name"
+            class="input w-auto mr-2"
+            @input="sendInput"
+          >
+          {{ item.label }}</label>
       </div>
     </div>
     <input
@@ -115,7 +119,6 @@ export default {
   },
   methods: {
     sendInput(event) {
-      console.log(event)
       if (this.type === 'checkbox') {
         this.$emit('input', event.target.checked)
       } else {
