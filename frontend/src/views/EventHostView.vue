@@ -9,8 +9,12 @@
           </div>
         </div>
         <div class="col-8 event-title">
-          <h2 class="">Welcome to pointr</h2>
-          <h4 class="event-subtitle">by Pointr Soc</h4>
+          <h2 class="">
+            {{ eventData.name }}
+          </h2>
+          <h4 class="event-subtitle">
+            by {{ eventData.society[0].name }}
+          </h4>
         </div>
         <div class="col-2 d-flex align-content-center">
           <router-link
@@ -30,17 +34,8 @@
             src="https://scontent.fsyd9-1.fna.fbcdn.net/v/t1.0-9/s960x960/106941582_4054164364653593_2603835058121570065_o.jpg?_nc_cat=107&_nc_sid=340051&_nc_ohc=KKbbWZuZNjUAX_IrLoX&_nc_ht=scontent.fsyd9-1.fna&_nc_tp=7&oh=51bdc56aa46636ab50ef8950f2d1caf5&oe=5F5DC714"
           >
         </div>
-        <div class="col-3 d-flex flex-column event-sign text-center ">
-          <div class="d-flex flex-column align-content-center flex-grow-1 mb-3">
-            <h4>Sign in using QR Code</h4>
-            <EventQRCode
-              :event-i-d="eventID"
-            />
-          </div>
-          <div class="d-flex flex-column align-content-center ">
-            <h4>Sign in manually</h4>
-            <EventCode :event-i-d="eventID" />
-          </div>
+        <div class="col-3">
+          <EventCode :event-i-d="eventID" />
         </div>
       </div>
       <div class="row">
@@ -50,7 +45,7 @@
             <div class="mb-2">
               <i class="material-icons mr-2">group</i>
               <!-- TODO: correct attendees -->
-              <span>140 attendees</span>
+              <span>140 attendees (beta not working)</span>
             </div>
             <div class="mb-2">
               <i class="material-icons mr-2">place</i>
@@ -89,7 +84,6 @@
 
 <script>
 import EventAttendance from "@/components/event/EventAttendance.vue";
-import EventQRCode from "@/components/event/EventQRCode.vue";
 import EventCode from "@/components/EventCode.vue";
 import FormError from "@/components/FormError.vue";
 import moment from "moment";
@@ -97,7 +91,6 @@ import moment from "moment";
 export default {
   name: "EventHost",
   components: {
-    EventQRCode,
     EventCode,
     EventAttendance,
     FormError
@@ -114,9 +107,7 @@ export default {
   },
   data() {
     return {
-      eventCode: "",
       error: "",
-      fullscreen: false
     };
   },
   computed: {
@@ -126,22 +117,8 @@ export default {
         "hours"
       );
     },
-    eventSoc() {
-      return this.eventData.society.map(s => s.name).join(" | ");
-    },
-    eventURL() {
-      return `${window.location.host}/event/${this.eventID}`;
-    },
-    reversedParticipants() {
-      const participantsCopy = this.participants.slice();
-      return participantsCopy.reverse();
-    }
   },
   methods: {
-    toggleFullScreen(fullScreen) {
-      this.$store.commit("navBar", !fullScreen);
-      this.fullscreen = fullScreen;
-    }
   }
 };
 </script>

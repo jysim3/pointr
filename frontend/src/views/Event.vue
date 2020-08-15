@@ -7,6 +7,7 @@
     />
     <EventSign 
       v-else
+      :given-code="code"
       :event-i-d="eventID" 
       :event-data="eventData"
     />
@@ -23,6 +24,9 @@ export default {
     EventSign, 
   },
   props: {
+    code: {
+      type: String,
+    },
     eventID: {
       type: String,
       required: true

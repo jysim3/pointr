@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <canvas id="qr-canvas" />
-  </div>
+  <canvas ref="qr-canvas" />
 </template>
 
 <script>
@@ -10,18 +8,20 @@ import QRCode from "qrcode";
 export default {
   name: "EventQRCode",
   props: {
-    eventID: {
+    url: {
       type: String,
       required: true
     }
   },
+  watch: {
+    url(n) {
+      QRCode.toCanvas(this.$refs['qr-canvas'], n);
+    }
+  },
   mounted() {
-    // Generating and adding QRCode to canvas
-    const canvas = document.getElementById("qr-canvas")
-    const url = window.location.href;
-    
-    QRCode.toCanvas(canvas, url);
+    QRCode.toCanvas(this.$refs['qr-canvas'], this.url);
   }
+
 };
 </script>
 <style scoped>

@@ -15,6 +15,12 @@
         :full="true"
         :data="cardData"
       />
+      <Input
+        v-model="code"
+        label="PIN"
+        name="code"
+        type="text"
+      />
       <template #footer>
         <button
           v-if="!eventSignSuccess"
@@ -42,7 +48,7 @@
           </router-link>
         </div>
       </template>
-    </form>
+    </Form>
   </div>
 </template>
 <script>
@@ -50,10 +56,12 @@ import axios from 'axios'
 import EventCard from "@/components/EventCard.vue";
 import Form from "@/components/Form.vue"
 import FormError from "@/components/FormError.vue"
+import Input from "@/components/input/Input.vue"
 
 export default {
   name: "EventSignEnterAttendance",
   components: {
+    Input,
     EventCard,
     Form,
     FormError,
@@ -66,6 +74,10 @@ export default {
     eventData: {
       type: Object,
       required: true
+    },
+    givenCode: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -73,7 +85,8 @@ export default {
       loading: false,
       eventSignSuccess: false,
       eventAlreadySigned: false,
-      error: ""
+      error: "",
+      code: this.givenCode,
     };
   },
   computed: {
@@ -90,18 +103,29 @@ export default {
   },
   methods: {
     submitEventSignAttendance() {
+      this.error = ""
       axios({
         url: "/api/event/attend", 
         method: "POST", 
         params: {
-          eventID: this.eventID
+          eventID: this.eventID,
+          code: this.code
         }
       }).then(() => {
         this.eventSignSuccess = true;
       })
-        .catch(() => {
+        .catch(e => {
+          console.log(!e.response.data.message.code)
+          if (e.response && e.response.data && e.response.data.message){
+            if  (e.response.data.message.code) {
+              this.error = "Your PIN is invalid, please try again."
+            } else if (e.response.data.message === "Already Attended") {
+              this.eventSignSuccess = true;
+            }
+            return
+          }
           this.error = "Sorry you are not able to sign in for now. Try again later"
-        }); //eslint-disable-line
+        }); 
     }
   }
 };

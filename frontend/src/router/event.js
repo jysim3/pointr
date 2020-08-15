@@ -27,7 +27,6 @@ export default  [
     path: '/event',
     name: 'eventSelect',
     component: EventSelect,
-    props: true,
     meta: {
       requiresAuth: true,
       title: 'Event Select - Pointr'
@@ -37,7 +36,7 @@ export default  [
     path: '/event/:eventID',
     name: 'event',
     component: Event,
-    props: true,
+    props: route => ({ eventID: route.params.eventID, code: route.query.code }),
     meta: {
       requiresAuth: true,
       title: 'Event Page - Pointr'
