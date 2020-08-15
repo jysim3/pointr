@@ -16,6 +16,7 @@ from app import db
 from models.event import Event, Attendance
 from models.user import Users
 from datetime import datetime
+from util.files import uploadImages
 
 @api.route('')
 class EventRoute(Resource):
@@ -29,12 +30,13 @@ class EventRoute(Resource):
     @auth_services.checkAuthorization(level=1)
     @validateArgs(SocietyIDSchema, 'society')
     @validateBody(EventCreationSchema, 'event')
-    @api.expect(toModel(api, EventCreationSchema))
-    def post(self, event, society):
+    def post(self, token_data, event, society):
 
-        photo = request.files['photo']
+        # FIXME (Steven, 15/08/2020): This bit wouldn't work with a file upload
+        # Need to change the request body from json request to forms
+        if 'photo' in request.files:
+            photo = request.files['photo']
 
-        if photo:
             status = uploadImages(photo)
             if not isinstance(status, tuple):
                 abort(400, status)
@@ -89,6 +91,8 @@ class EventRoute(Resource):
 
         db.session.add(event)
         db.session.commit()
+
+        # TODO (Steven 15/08/2020): Allow changing the photo associated with the photo
 
         return jsonify({"status": "success", "data": event.getEventJSON()})
 

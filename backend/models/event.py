@@ -144,7 +144,7 @@ class Event(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'logo': self.photos[0] if self.photos else None,
+            'photo': self.photo,
             'preview': self.preview,
             'startTime': self.start,
             'location': self.location
@@ -159,7 +159,7 @@ class Event(db.Model):
             'name': self.name,
             'start': str(parser.parse(str(self.start)).astimezone(timezone.utc)),
             'end': str(parser.parse(str(self.end)).astimezone(timezone.utc)),
-            'photos': self.photos,
+            'photo': self.photo,
             'description': self.description,
             'preview': self.preview,
             'location': self.location,
