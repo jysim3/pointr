@@ -4,8 +4,8 @@
       <div class="row mb-5 align-content-stretch justify-content-center">
         <div class="col-4 col-md-2">
           <div class="event-date d-flex flex-column justify-content-center align-content-center text-center rounded p-1 h-100">
-            <span>{{ eventDate }}</span>
-            <span>{{ eventMonth }}</span>
+            <span>{{ eventData.start.format('D') }}</span>
+            <span>{{ eventData.start.format('MMM') }}</span>
           </div>
         </div>
         <div class="col-6 col-md-8 event-title">
@@ -66,6 +66,10 @@
               <span>140 attendees (beta not working)</span>
             </div>
             <div class="mb-2">
+              <i class="material-icons mr-2">access_time</i>
+              <span>{{ eventData.start.format('lll') }} - {{ eventData.end.format('lll') }}</span>
+            </div>
+            <div class="mb-2">
               <i class="material-icons mr-2">place</i>
               <span>{{ eventData.location }}</span>
             </div>
@@ -104,7 +108,6 @@
 import EventAttendance from "@/components/event/EventAttendance.vue";
 import EventCode from "@/components/EventCode.vue";
 import FormError from "@/components/FormError.vue";
-import moment from "moment";
 
 export default {
   name: "EventHost",
@@ -131,17 +134,8 @@ export default {
   },
   computed: {
     eventDuration() {
-      return moment(this.eventData.end).diff(
-        moment(this.eventData.start),
-        "hours"
-      );
+      return this.eventData.end.diff(this.eventData.start, "hours");
     },
-    eventDate() {
-      return moment(this.eventData.start).format('D')
-    },
-    eventMonth() {
-      return moment(this.eventData.start).format('MMM')
-    }
   },
   methods: {
   }

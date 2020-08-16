@@ -17,6 +17,7 @@
 import EventSign from "@/components/eventSign/EventSign.vue";
 import EventHostView from "@/views/EventHostView.vue"
 import axios from 'axios'
+import moment from 'moment'
 export default {
   name: "Event",
   components: {
@@ -77,6 +78,8 @@ export default {
         .then(response => {
           const data = response.data.data
           Object.assign(this.eventData, data)
+          this.eventData.start = moment(this.eventData.start)
+          this.eventData.end = moment(this.eventData.end)
           this.isAdmin = this.$store.getters['user/isSocietyAdmin'](data.society.map(s => s.id))
         })
         .catch(c => {
