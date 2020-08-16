@@ -11,10 +11,16 @@
         <div class="col-6 col-md-8 event-title">
           <h2 class="">
             {{ eventData.name }}
-          
           </h2>
           <h4 class="event-subtitle">
-            by {{ eventData.society[0].name }}
+            by 
+            <router-link
+              v-for="soc in eventData.society"
+              :key="soc.id"
+              :to="{name:'society', params: {socID: soc.id}}"
+            >
+              {{ soc.name }}
+            </router-link>
             <h4 class="event-tags mb-4">
               <span
                 v-for="t in eventData.tags"
