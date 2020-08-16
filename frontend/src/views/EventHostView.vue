@@ -4,8 +4,8 @@
       <div class="row mb-5 align-content-stretch justify-content-center">
         <div class="col-4 col-md-2">
           <div class="event-date d-flex flex-column justify-content-center align-content-center text-center rounded p-1 h-100">
-            <span>24</span>
-            <span>Aug</span>
+            <span>{{ eventDate }}</span>
+            <span>{{ eventMonth }}</span>
           </div>
         </div>
         <div class="col-6 col-md-8 event-title">
@@ -136,6 +136,12 @@ export default {
         "hours"
       );
     },
+    eventDate() {
+      return moment(this.eventData.start).format('D')
+    },
+    eventMonth() {
+      return moment(this.eventData.start).format('MMM')
+    }
   },
   methods: {
   }
