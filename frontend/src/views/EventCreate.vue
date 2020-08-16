@@ -72,6 +72,15 @@
         label="End Time"
         type="time"
       />
+      <div
+        class="form-group d-flex flex-wrap w-100"
+      >
+        <label class="label">Tags</label>
+        <Tagify 
+          :on-change="onTagsChange"
+          :settings="{whitelist: availableTags, dropdown: { enabled: 0 }, enforceWhitelist: true }"
+        />
+      </div>
 
       <InputModule
         v-model="visibility"
@@ -110,12 +119,14 @@
 import axios from "axios";
 import InputModule from "@/components/input/Input.vue";
 import Form from "@/components/Form";
+import Tagify from '@yaireo/tagify/dist/tagify.vue'
 
 export default {
   name: "EventCreate",
   components: {
     InputModule,
-    Form
+    Form,
+    Tagify
   },
   props: {
     eventID: {
@@ -135,6 +146,8 @@ export default {
       startTime: "",
       endTime: "",
       visibility: "",
+      tags: [],
+      availableTags: this.$store.getters.eventTags,
       availableSocieties: this.$store.getters[
         "user/societies"
       ].admins.map(s => ({
@@ -153,7 +166,6 @@ export default {
   },
   mounted(){
     this.getEventInfo()
-    console.log(this.$store.getters.tokenInfo  )
     if (this.$store.getters.tokenInfo && 
     this.$store.getters.tokenInfo['permission'] === 5){
       axios({
@@ -169,6 +181,9 @@ export default {
     }
   },
   methods: {
+    onTagsChange(e) {
+      this.tags = JSON.parse(e.target.value).map(t => t.id)
+    },
     updateDate() {
       if (this.endDate === '' || new Date(this.endDate) < new Date(this.startDate)) {
         this.endDate = this.startDate
@@ -222,7 +237,7 @@ export default {
         location: this.location,
         status: 0,
         // visibility: this.visibility,
-        tags: [0],
+        tags: this.tags,
         hasQR: true,
         hasAccessCode: false,
         hasAdminSignin: true,
@@ -251,8 +266,22 @@ export default {
 };
 </script>
 
-<style scoped>
+<style >
 textarea {
     max-width: 20rem;
+}
+
+.tagify {
+  width: 100%;
+  padding: 0;
+  border: 2px solid #dbdbdb;
+  transition: all 0.2s;
+  border-radius: var(--border-radius);
+}
+/* TODO: Make box shadows variables */
+.tagify:focus {
+  border: 2px solid var(--c-secondary-dark);
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+  outline: 0;
 }
 </style>

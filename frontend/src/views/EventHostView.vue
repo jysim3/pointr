@@ -11,9 +11,21 @@
         <div class="col-6 col-md-8 event-title">
           <h2 class="">
             {{ eventData.name }}
+          
           </h2>
           <h4 class="event-subtitle">
             by {{ eventData.society[0].name }}
+            <h4 class="event-tags mb-4">
+              <span
+                v-for="t in eventData.tags"
+                :key="t"
+                class="badge badge-primary mr-1 font-weight-normal"
+              > 
+                {{
+                  availableTags[t].value
+                }}
+              </span>
+            </h4>
           </h4>
         </div>
         <div class="col-2 col-md-2 d-flex align-content-center">
@@ -39,7 +51,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-8">
+        <div class="col-12 col-md-8">
           <h1>Details</h1>
           <div class="col mb-4">
             <div class="mb-2">
@@ -56,7 +68,7 @@
               <span>Public</span>
             </div>
           </div>
-          <p class="description">
+          <p>
             {{ eventData.description }}
           </p>
         </div>
@@ -108,6 +120,7 @@ export default {
   data() {
     return {
       error: "",
+      availableTags: this.$store.getters.eventTags,
     };
   },
   computed: {

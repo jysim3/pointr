@@ -39,6 +39,7 @@ export default {
 
 <style>
 @import "./assets/style.css";
+@import "~@yaireo/tagify/dist/tagify.css";
 #app {
   min-height: calc(100vh - 50px);
 }
