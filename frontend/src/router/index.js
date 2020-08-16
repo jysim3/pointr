@@ -61,9 +61,12 @@ const routes = [
       requiresAuth: true,
     }
   },
+  { 
+    path: '*',
+    redirect: '/404'
+  },
   {
-    path: '/404',
-    alias: '*',
+    path: '*',
     name: '404',
     component: MissingPage,
   }
