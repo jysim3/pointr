@@ -51,6 +51,18 @@ describe('Registering and login', () => {
 
     expect(localStorage.getItem('token')).to.be.null
   })
+  it('login requires activation', function() {
+      cy.visit('/signin')
+    cy.get('input[name=zID]').type(this.userData.zID)
+    cy.get('input[name=zID]').should('have.value', this.userData.zID)
+
+    cy.get('input[name=password]').type(this.userData.password)
+    cy.get('input[name=password]').should('have.value', this.userData.password)
+
+    cy.get('.btn').contains('Sign In').click()
+
+    cy.url().should('contain','sendActivationEmail')
+  })
   it('activating', function() {
     var token = jwt.sign({
         'zID':'z5161631',
