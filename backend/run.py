@@ -1,30 +1,44 @@
-import os
-import sys
-
-# NOTE: No longer required
-if len(sys.argv) < 4:
-    print("Usage: python3 run.py [POINTR_EMAIL_PASSWORD] [POINTR_SECRET_KEY] [SQLPassword] [env=development] [init=False]")
-    exit(1)
-
-os.environ['POINTR_EMAIL_PASSWORD'] = sys.argv[1]
-os.environ['POINTR_SERVER_SECRET'] = sys.argv[2]
-os.environ['SQLPassword'] = sys.argv[3] 
-
-
+import os, sys
 from app import db, app
+from databaseUtil.fillDB import addSoc, addEvent, addUser
+from time import sleep
 
+docs = '''
+Usage: python run.py <options>
+
+args:
+    dev: run in a dev environment
+    init: initialise environment with mock data
+'''
+
+def initEnvironments():
+    if not "POINTR_EMAIL_PASSWORD" in os.environ:
+        os.environ['POINTR_EMAIL_PASSWORD'] =  input("POINTR_EMAIL_PASSWORD = ")
+        print("Note: run ./login.sh to have a store env permanently")
+    if not "POINTR_SERVER_SECRET" in os.environ:
+        os.environ['POINTR_SERVER_SECRET'] =  input("POINTR_SERVER_SECRET = ")
+        print("Note: run ./login.sh to have a store env permanently")
+    if not "SQLPassword" in os.environ:
+        os.environ['SQLPassword'] =  input("SQLPassword = ")
+        print("Note: run ./login.sh to have a store env permanently")
+def initDB():
+    print("Initialising database.",end='', flush=True)
+    for i in range(3):
+        sleep(1)
+        print(".",end='', flush=True)
+    addSoc()
+    addEvent()
+    addUser()
+    print("Database Initialised")
 if __name__ == "__main__":
-    db.create_all()
+    if "dev" in sys.argv:
+        initEnvironments()
 
-    from fillDB import addSoc, addEvent, addUser
-    if len(sys.argv) >= 5:
-        os.environ['FLASK_ENV'] = sys.argv[4] 
-        print(sys.argv[4])
-    if len(sys.argv) >= 6 and sys.argv[5].lower() == 'true':
-        addSoc()
-        addEvent()
-        addUser()
-        print("Database Initialised")
-        exit(0)
+        db.create_all()
+        if "init" in sys.argv:
+            initDB()
+        print("Running app...")
 
-    app.run(debug=True)
+        app.run(debug=True)
+    else:
+        print(docs)

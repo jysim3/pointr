@@ -6,12 +6,16 @@ import random
 from models.event import db
 from string import ascii_uppercase, digits
 from hashlib import sha256
+import os, sys
 
 socs = []
 
+__location__ = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
 def addSoc():
     # Data Sanitation
-    with open("mockDataNoDup.csv", "r") as file:
+    with open(os.path.join(__location__, "mockDataNoDup.csv"), "r") as file:
         for i in file:
             i = i.strip()
             i = i.split(',')
@@ -25,7 +29,7 @@ def addSoc():
 
 def addEvent():
     #removeDuplicates("MOCK_DATA.csv", "mockEventsNoDup.csv")
-    with open("mockEventsNoDup.csv", "r") as file:
+    with open(os.path.join(__location__, "mockEventsNoDup.csv"), "r") as file:
         for i in file:
             i = i.strip()
             i = i.split(',')
@@ -41,7 +45,7 @@ def addEvent():
     print("Added 300 random events")
 
 def addUser():
-    with open("mockUsersNoDup.csv", "r") as file:
+    with open(os.path.join(__location__, "mockUsersNoDup.csv"), "r") as file:
         for index, i in enumerate(file):
             i = i.strip()
             i = i.split(',')
