@@ -1,7 +1,7 @@
 import json
 import unittest
 import uuid
-from app import app, db
+from app import app
 from datetime import datetime, timezone
 import os
 from models.user import Users
@@ -43,6 +43,12 @@ class PointrTest(unittest.TestCase):
         app.config['SQLALCHEMY_ECHO'] = False
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         os.environ['POINTR_SERVER_SECRET'] = SERVER_TEST_SECRET
+
+        database_name = "testPointrDB"
+        app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{os.environ.get('SQLPassword')}@localhost/{database_name}"
+        db = SQLAlchemy(app)
+        migrate = Migrate(app, db)
+
         db.session.commit()
         db.drop_all()
         db.create_all()
