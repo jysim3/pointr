@@ -1,6 +1,6 @@
 <template>
-  <div class="card-container">
-    <div class="card">
+  <div class="container">
+    <div class="box">
       <h1>Hi {{ givenzID }}!</h1>
       <div>
         <p class="msg">

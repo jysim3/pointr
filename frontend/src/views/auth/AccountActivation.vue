@@ -1,6 +1,6 @@
 <template>
-  <div class="card-container">
-    <div class="card">
+  <div class="container">
+    <div class="box">
       <h1>Hi {{ zID }}!</h1>
       <p
         v-if="isActivatedStatus === 200"

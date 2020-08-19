@@ -26,7 +26,7 @@ export default [
     path: '/sendActivationEmail',
     name: 'sendActivationEmail',
     component: SendActivation,
-    props: true
+    props: route => ({ givenzID: route.query.givenzID})
   },
   {
     path: '/activate/:activateToken',

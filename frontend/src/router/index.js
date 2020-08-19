@@ -66,7 +66,7 @@ const routes = [
     redirect: '/404'
   },
   {
-    path: '*',
+    path: '/404',
     name: '404',
     component: MissingPage,
   }
