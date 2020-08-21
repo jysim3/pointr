@@ -1,6 +1,4 @@
 import os, sys
-from app import db, app
-from databaseUtil.fillDB import addSoc, addEvent, addUser
 from time import sleep
 
 docs = '''
@@ -22,6 +20,7 @@ def initEnvironments():
         os.environ['SQLPassword'] =  input("SQLPassword = ")
         print("Note: run ./login.sh to have a store env permanently")
 def initDB():
+    from databaseUtil.fillDB import addSoc, addEvent, addUser
     print("Initialising database.",end='', flush=True)
     for i in range(3):
         sleep(1)
@@ -35,7 +34,8 @@ if __name__ == "__main__":
     print("Having issues due to updated db? run ./updateDB.sh")
     if "dev" in sys.argv:
         initEnvironments()
-
+        print(os.environ)
+        from app import db, app
         db.create_all()
         if "init" in sys.argv:
             initDB()
