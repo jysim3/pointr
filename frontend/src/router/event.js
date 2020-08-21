@@ -27,6 +27,7 @@ export default  [
     path: '/event',
     name: 'eventSelect',
     component: EventSelect,
+    props:  route => ({queryTags: route.query.tags -1 + 1}),
     meta: {
       requiresAuth: true,
       title: 'Event Select - Pointr'

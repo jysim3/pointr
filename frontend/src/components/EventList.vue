@@ -5,7 +5,7 @@
     </div>
     <div
       v-else-if="eventData"
-      class="container mt-5"
+      class="container-fluid mt-5"
     >
       <div v-if="listStyle === 'cards'">
         <div class="d-flex justify-content-between py-2">
@@ -14,12 +14,14 @@
           >
             {{ eventViewTitle }}
           </h3>
-          <router-link
-            :to="{name:'eventSelect'}"
-            class="link"
-          >
-            View more
-          </router-link>
+          <slot name="action">
+            <router-link
+              :to="{name:'eventSelect'}"
+              class="link"
+            >
+              View more
+            </router-link>
+          </slot>
         </div>
 
         <FormError
