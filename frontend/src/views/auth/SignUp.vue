@@ -32,13 +32,13 @@
       />
 
       <InputPassword v-model="password" />
-
+      <!-- 
       <Input
         v-model="userInfo.discord"
         name="discord"
         type="text"
         label="Discord Username (optional)"
-      />
+      /> -->
       <Input 
         v-model="userInfo.isArcMember"
         label="Are you an arc member?"
@@ -46,6 +46,17 @@
       />
 
       <template #footer>
+        <div class="d-flex flex-column align-items-center">
+          <span>By signing up, you agree to our</span>
+          <span>
+            <router-link :to="{name:'privacy'}">
+              privacy policy
+            </router-link>
+            and
+            <router-link :to="{name:'terms'}" >
+              terms and condition</router-link>
+          </span>
+        </div>
         <button
           type="submit"
           :class="['btn', formErrorMessage ? 'btn-warning' : 'btn-primary']"

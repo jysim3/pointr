@@ -5,6 +5,9 @@
     >
       <template #header>
         <h2>Sign in to Pointr</h2>
+        <div class="additional-link">
+          <p>Note: Pointr credentials are <b>different</b> from your zPass</p>
+        </div>
         <FormError
           v-if="error"
           :msg="error"
