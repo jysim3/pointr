@@ -63,7 +63,7 @@
             <div class="mb-2">
               <i class="material-icons mr-2">group</i>
               <!-- TODO: correct attendees -->
-              <span>140 attendees (beta not working)</span>
+              <span>{{ eventData.nAttendees }} attendees</span>
             </div>
             <div class="mb-2">
               <i class="material-icons mr-2">access_time</i>
