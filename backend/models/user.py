@@ -144,7 +144,7 @@ class Users(db.Model):
         """
         events = self.attended
 
-        events.sort(key=lambda event: event.end, reversed=True)
+        events.sort(key=lambda event: event.end, reverse=True)
         return events[:show]
 
     def getPastJSONs(self, show=5):
@@ -154,7 +154,7 @@ class Users(db.Model):
         """
         events = self.attended
 
-        events.sort(key=lambda event: event.end, reversed=True)
+        events.sort(key=lambda event: event.end, reverse=True)
         return events[:show]
 
     def getSocs(self, json=False):
