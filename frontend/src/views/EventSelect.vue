@@ -1,21 +1,26 @@
 <template>
   <div class="container">
     <h1> Upcoming Events </h1>
-    <div v-for="d in tags" :key="d.id">
-      <EventList 
-        :event-view-title="`${d.value} Events`"
-        :event-data="eventByTag(d.id)" >
-        <template #action>
-          <span/>
-        </template>
-      </EventList>
+    <div v-if="status === 'success'">
+      <div v-for="d in tags" :key="d.id">
+        <EventList 
+          :event-view-title="`${d.value} Events`"
+          :event-data="eventByTag(d.id)" 
+        >
+          <template #action>
+            <span/>
+          </template>
+        </EventList>
+      </div>
     </div>
+    <Loader v-else-if="status === 'loading'" />
   </div>
 </template>
 
 <script>
 import axios from 'axios'
 import EventList from '@/components/EventList.vue'
+import Loader from '@/components/Loader.vue'
 export default {
   props: {
     queryTags: {
@@ -24,15 +29,18 @@ export default {
     }
   },
   components: {
-    EventList
+    EventList, Loader
   },
   data() {
     return {
-      tags: this.$store.getters.eventTags.filter(e => !this.queryTags || e.id === this.queryTags),
-      eventData: []
+      tags: this.$store.getters.eventTags
+        .filter(e => !this.queryTags || e.id === this.queryTags),
+      eventData: [],
+      status: '',
     }
   },
   mounted() {
+    this.status = 'loading'
     axios.get('/api/event/upcoming?',{
       params: {
         number: 100
@@ -47,7 +55,7 @@ export default {
           });
           return tagEvents
         }, {})
-        this.$store.commit('loading')
+        this.status = 'success'
       })
       .catch(e => {
         console.log(e) // eslint-disable-line
