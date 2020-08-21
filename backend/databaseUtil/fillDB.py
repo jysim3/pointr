@@ -37,7 +37,9 @@ def addEvent():
             start=i[2], end=i[3], hasQR=True if i[4] == 'true' else False, 
             hasAccessCode=True if i[5] == 'true' else False,
             hasAdminSignin=True if i[6] == 'true' else False, 
-            status=random.randint(0,2))
+            status=random.randint(0,2),
+            tags=[random.randint(0,3)]
+            )
             result.hosting.append(socs[random.randint(0, 74)])
             db.session.add(result)
 
