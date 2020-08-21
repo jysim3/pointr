@@ -57,6 +57,14 @@
           <i class="material-icons">{{ s.icon }}</i>
           <span>{{ s.text }}</span>
         </div>
+        <EventList
+          event-view-title="Attended events"
+          :event-data="eventData"
+        >
+          <template #action>
+            <span/>
+          </template>
+        </EventList>
 
         <!--- TODO: more features for admins-->
       </div>
@@ -68,13 +76,15 @@
 <script>
 import ProfilePhoto from "@/components/ProfilePhoto"
 import Loader from "@/components/Loader.vue";
+import EventList from "@/components/EventList.vue";
 import axios from 'axios'
 
 export default {
   name: 'User',
   components: {
     Loader,
-    ProfilePhoto
+    ProfilePhoto,
+    EventList
   },
   props: {
     zID: {
@@ -84,6 +94,7 @@ export default {
   data() {
     return {
       userData: {},
+      eventData: {},
       apiURL: require('@/util').apiURL,
       loading: false,
       statsData: [
@@ -124,6 +135,11 @@ export default {
         return
       }
       this.loading = true
+      axios.get(`/api/user/events/past?zID=${this.zID}`)
+        .then(v => {
+          const data = v.data.data
+          this.eventData = data
+        })
       axios.get(`/api/user?zID=${this.zID}`)
         .then(v => {
           const data = v.data.data

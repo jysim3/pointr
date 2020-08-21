@@ -129,6 +129,7 @@ class Event(db.Model):
         secret_key = 'asdf'
         codes = [sha1(f"{seconds-i}{id}{secret_key}".encode("UTF-8")).hexdigest()[:5]
             for i in range(2)]
+        print(codes)
         return codes
     def getAttendCode(self):
         seconds = datetime.now().timestamp() // 10

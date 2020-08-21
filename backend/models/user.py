@@ -142,7 +142,7 @@ class Users(db.Model):
         Returns all the events that this user has attended
         default to 5 events
         """
-        events = self.attended
+        events = [i.event for i in self.attended]
 
         events.sort(key=lambda event: event.end, reverse=True)
         return events[:show]
@@ -152,10 +152,9 @@ class Users(db.Model):
         Same as getUpcoming() except that we return event preview jsons instead
         of event objects
         """
-        events = self.attended
+        events = self.getPast(show=show)
 
-        events.sort(key=lambda event: event.end, reverse=True)
-        return events[:show]
+        return [i.getPreview() for i in events]
 
     def getSocs(self, json=False):
         """
