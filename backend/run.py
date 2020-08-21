@@ -31,6 +31,8 @@ def initDB():
     addUser()
     print("Database Initialised")
 if __name__ == "__main__":
+    print("Running...")
+    print("Having issues due to updated db? run ./updateDB.sh")
     if "dev" in sys.argv:
         initEnvironments()
 
