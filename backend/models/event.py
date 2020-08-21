@@ -147,7 +147,10 @@ class Event(db.Model):
             'photo': self.photo,
             'preview': self.preview,
             'startTime': self.start,
-            'location': self.location
+            'location': self.location,
+            'tags': self.tags,
+            'society': [i.getPreview() for i in self.hosting],
+            'nAttendees': len(self.attendees)
         }
 
     def getEventJSON(self):
