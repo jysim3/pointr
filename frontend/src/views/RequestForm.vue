@@ -77,6 +77,7 @@ export default {
       requestSelection: this.request,
       availableRequest: [
         { label: "Add my society", value: "addSoc" },
+        { label: "Name change", value: "nameChange" },
         { label: "I'm not an admin to my society", value: "addAdmin" },
         { label: "There's a bug to our site", value: "bug" },
         { label: "I want to add/change something", value: "changeRequest/feature" },

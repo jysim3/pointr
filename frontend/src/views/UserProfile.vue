@@ -49,7 +49,13 @@
         </div>
 
         <p class="main-description">
-          {{ userData.description }}
+          To modify your name, please contact us 
+          <router-link 
+            :to="{name:'request', params:{'request':'nameChange'}}"
+          >
+            here
+          </router-link>
+            
         </p>
         <div
           v-for="(s,i) in stats"
