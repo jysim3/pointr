@@ -63,7 +63,7 @@ const actions = {
           if (decodedToken['permission'] === 0) {
             router.push({
               name: 'sendActivationEmail', 
-              params: {givenzID: decodedToken['zID']}
+              query: {givenzID: decodedToken['zID']}
             })
             reject(r)
             return r
