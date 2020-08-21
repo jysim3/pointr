@@ -20,7 +20,7 @@ export default {
   props: {
     queryTags: {
       type: Number,
-      default: -1
+      default: NaN
     }
   },
   components: {
@@ -28,7 +28,7 @@ export default {
   },
   data() {
     return {
-      tags: this.$store.getters.eventTags.filter(e => this.queryTags === -1 || e.id === this.queryTags),
+      tags: this.$store.getters.eventTags.filter(e => !this.queryTags || e.id === this.queryTags),
       eventData: []
     }
   },
