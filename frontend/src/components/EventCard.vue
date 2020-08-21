@@ -70,4 +70,10 @@ export default {
     overflow: hidden;  /* prevents extra lines from being visible */
 
 }
+.subtitle {
+  overflow: hidden;
+  max-height: 2.5rem;
+  /* text-overflow: ellipsis; */
+  /* white-space: nowrap; */
+}
 </style>

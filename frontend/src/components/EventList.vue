@@ -110,9 +110,10 @@ export default {
     formattedCardData() {
       return this.eventData.map(v => ({
         title: v.name,
-        subtitle: v.societyName,
+        subtitle: v.society[0].name,
         tags: [
-          v.startTime, v.location === null ? '' : v.location
+          v.startTime, 
+          v.location === null ? '' : v.location
         ],
         _link: `/event/${v.id}`
       }))
