@@ -19,7 +19,9 @@
           <ProfilePhoto
             v-if="userData"
             class="profile-photo"
-            :src="userImage"
+            :src="userData.photo"
+            :update-u-r-l="`/api/user/photo?zID=${zID}`"
+            update-field-name="photo"
           />
           <!-- <div class="profile-buttons">
                     <i class="material-icons profile-info-button">favorite</i>
@@ -94,7 +96,7 @@ export default {
   data() {
     return {
       userData: {},
-      eventData: {},
+      eventData: [],
       apiURL: require('@/util').apiURL,
       loading: false,
       statsData: [
@@ -135,19 +137,15 @@ export default {
         return
       }
       this.loading = true
-      axios.get(`/api/user/events/past?zID=${this.zID}`)
-        .then(v => {
-          const data = v.data.data
-          this.eventData = data
-        })
       axios.get(`/api/user?zID=${this.zID}`)
         .then(v => {
           const data = v.data.data
           this.userData.firstname = data.firstname
           this.userData.lastname = data.lastname
-          this.userData.image = data.image
+          this.userData.photo = data.photo
           this.userData.societies = data.societies
           this.userData.description = data.description
+          this.eventData = data.attended
           // this.userData.events = data.events
 
           this.loading = false
