@@ -191,7 +191,7 @@ class AttendRoute(Resource):
     ''')
     @api.expect(authModel, toModel(api, EventIDSchema))
     @validateArgs(EventIDSchema, 'event')
-    @checkAuthorization(allowSocAdmin=True)
+    @checkAuthorization(allowSocAdmin=True, allowSuperAdmin=True)
     def get(self, token_data, event):
         return jsonify({'status': 'success', 'data': event.getAttendanceJSON()})
 
