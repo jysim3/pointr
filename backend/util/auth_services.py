@@ -85,6 +85,8 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
             # Combine args and data
             # args data takes precedence
             data.update(args_data)
+            if 'societyID' in data:
+                data['societyID'] = data['societyID'].hex
 
             try:
                 # Decode token
@@ -117,8 +119,10 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
                 if token_data['permission'] == 5:
                     return func(token_data=token_data, *args, **kwargs)
             
-            if 'socID' in data:
-                society = Societies.query.filter_by(id=data['socID']).first()
+            if allowSocMember or allowSocAdmin:
+                if not 'societyID' in data:
+                    abort(500, "Server error! Please contact us to resolve the issue")
+                society = Societies.findSociety(data['societyID'])
                 if not society: abort(403, "SocietyID doesn't exist")
 
                 if allowSocMember:
