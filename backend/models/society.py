@@ -134,7 +134,7 @@ class Societies(db.Model):
         currentTime = datetime.now(timezone('utc'))
         events = []
         for i in self.hosting:
-            if i.start > currentTime and i.privacy <= privacy:
+            if i.start > currentTime and ((not i.privacy) or i.privacy <= privacy):
                 events.append(i)
         return sorted(events, key=lambda event: event.start)
 

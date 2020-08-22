@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields, ValidationError, validates, validate, EXCLUDE
 from schemata import common_schemata
 from models.user import Users
+from models import User, Event, Society
 from marshmallow import post_load
 from hashlib import sha256
 from pprint import pprint
@@ -76,5 +77,16 @@ class AuthSchema(Schema):
     societyID = common_schemata.societyID
     zID = common_schemata.zid
     
+    @post_load
+    def getData(self, data, **kwargs):
+        print(data)
+        ret = {}
+        if 'societyID' in data:
+            ret['society'] = Society.findSociety(data['societyID'].hex)
+        if 'eventID' in data:
+            ret['event'] = Event.getEvent(data['eventID'])
+        if 'zID' in data:
+            ret['user'] = User.findUser(data['zID'])
+        return ret
     class Meta:
         unknown = EXCLUDE
