@@ -229,7 +229,7 @@ class Admin(Resource):
     @validateBody(SocietyIDSchema, 'society')
     @validateBody(SocietyRankSchema, 'rank')
     @validateBody(ZIDSchema, 'user')
-    @checkAuthorization(allowSocAdmin=True)
+    @checkAuthorization(allowSocAdmin=True, allowSuperAdmin=True)
     def post(self, society, rank, user, token_data):
         if not society:
             abort(403, "Invalid Parameters, no such society")
