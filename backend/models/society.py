@@ -127,14 +127,14 @@ class Societies(db.Model):
         """
         return [i.id for i in self.hosting]
 
-    def getUpcomingEvents(self):
+    def getUpcomingEvents(self, privacy=0):
         """
         Returns a list of objects of type events that this society has upcoming
         """
         currentTime = datetime.now(timezone('utc'))
         events = []
         for i in self.hosting:
-            if i.start > currentTime:
+            if i.start > currentTime and i.privacy <= privacy:
                 events.append(i)
         return sorted(events, key=lambda event: event.start)
 

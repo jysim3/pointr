@@ -10,13 +10,15 @@ const store = new Vuex.Store({
   state: {
     status: 'success',
     navBar: true,
-    eventTags: ['Study', 'Party', 'Food', 'Online/Virtual']
+    eventTags: ['Study', 'Party', 'Food', 'Online/Virtual'],
+    privacy: ['Public', 'Unlisted', 'Private']
   },
   mutations: {
     loading: (state, status) => status ? state.status = 'loading' : state.status = 'success',
     navBar: (state, navBar) => state.navBar = navBar
   },
   getters: {
+    privacy: state => state.privacy,
     eventTags: state => state.eventTags.map((v,i)=>({value:v,id:i})),
     isAuthenticated: (state, getters) => getters['auth/isAuthenticated'],
     tokenInfo: (state) => !!state.auth.token && jwt.decode(state.auth.token),

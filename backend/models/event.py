@@ -102,6 +102,7 @@ class Event(db.Model):
     hasAdminSignin = db.Column(db.Boolean, nullable=False)
 
     additionalInfo = db.Column(db.JSON, nullable=True)
+    privacy = db.Column(db.Integer, nullable=True)
 
     tags = db.Column(db.ARRAY(db.Integer), nullable=True)
 
@@ -150,6 +151,7 @@ class Event(db.Model):
             'startTime': self.start,
             'location': self.location,
             'tags': self.tags,
+            'privacy': self.privacy,
             'society': [i.getPreview() for i in self.hosting],
             'nAttendees': len(self.attendees)
         }
@@ -170,6 +172,7 @@ class Event(db.Model):
             'hasQR': self.hasQR,
             'hasAccessCode': self.hasAccessCode,
             'hasAdminSignin': self.hasAdminSignin,
+            'privacy': self.privacy,
             'tags': self.tags,
             'status': self.status,
             'society': [i.getPreview() for i in self.hosting],
