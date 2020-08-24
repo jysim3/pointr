@@ -34,7 +34,6 @@ if __name__ == "__main__":
     print("Having issues due to updated db? run ./updateDB.sh")
     if "dev" in sys.argv:
         initEnvironments()
-        print(os.environ)
         from app import db, app
         db.create_all()
         if "init" in sys.argv:
