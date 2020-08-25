@@ -19,7 +19,7 @@ const store = new Vuex.Store({
   },
   getters: {
     privacy: state => state.privacy,
-    eventTags: state => state.eventTags.map((v,i)=>({value:v,id:i})),
+    eventTags: state => state.eventTags,
     isAuthenticated: (state, getters) => getters['auth/isAuthenticated'],
     tokenInfo: (state) => !!state.auth.token && jwt.decode(state.auth.token),
     isLoading: state => state.status === 'loading',

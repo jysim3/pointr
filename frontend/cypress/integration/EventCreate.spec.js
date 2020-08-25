@@ -63,59 +63,7 @@ describe('Event', () => {
         cy.location('pathname').should('contain','/event/')
         cy.contains('hello')
     })
-    it('Check event attendance', function() {
-        cy.visit('/society/'+this.userData.socID)
-        cy.get('tr.link').click()
-        let eventID = ''
-
-        cy.location('pathname').then(v => {
-            eventID = v.split('/')[2]
-            for (let i = 0; i < 30; i++) {
-                cy.exec(
-                'echo insert into attend ("eventID", "zID", time, "additionalInfo") values ' +
-                `('${eventID}','z${(i+'').padStart(7,"0")}', TIMESTAMP '2020-08-15T00:${i+Math.floor(Math.random()*30)}', '{}');| psql pointrDB`
-                , {log: false})
-            }
-        })
-        cy.contains("refresh").click()
-        for (let i = 0; i < 30; i++) {
-            cy.contains((i+'').padStart(7,"0"))
-        }
-    })
-    it('Delete Attendance', function() {
-        cy.contains('z0000000').parent().parent().contains('delete').click()
-        cy.should('not.contain','z0000000')
-    })
-    it('Download csv functions', function() {
-        cy.get('input[type=checkbox]').first().click()
-        cy.get('table').should('not.contain','Name')
-        cy.contains('Download csv').click()
-    })
-    
-    it('Attend Event', function() {
-        let eventID = ''
-
-        cy.location('pathname').then(v => {
-            eventID = v.split('/')[2]
-        })
-        cy.contains('PIN: ').invoke('text').then(text => {
-            return  text.split(" ")[2]
-        }).then(pin => {
-            console.log(pin)
-
-            cy.request('POST','http://localhost:5000/api/auth/login', {
-                "zID": 'z0000000',
-                "password": '00000000'
-            }).its('body').then(data => {
-                expect(data).to.include.keys('data')
-                expect(data.data).to.have.key('token')
-                localStorage.setItem('token', data.data['token'])
-            })
-            cy.visit(`/event/${eventID}?code=${pin}`)
-            cy.contains("Sign as").click()
-            cy.should('contain','Success!')
-            
-        })
-
+    it('Edit events', function() {
+        cy.contains('edit').click()
     })
 })

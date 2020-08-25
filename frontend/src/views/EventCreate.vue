@@ -77,7 +77,7 @@
       >
         <label class="label">Tags</label>
         <Tagify 
-          :on-change="onTagsChange"
+          v-model="tags"
           :settings="{whitelist: availableTags, dropdown: { enabled: 0 }, enforceWhitelist: true }"
         />
       </div>
@@ -119,7 +119,7 @@
 import axios from "axios";
 import InputModule from "@/components/input/Input.vue";
 import Form from "@/components/Form";
-import Tagify from '@yaireo/tagify/dist/tagify.vue'
+import Tagify from '@/components/input/tagify'
 
 export default {
   name: "EventCreate",
@@ -147,7 +147,7 @@ export default {
       endTime: "",
       privacy: "",
       tags: [],
-      availableTags: this.$store.getters.eventTags,
+      availableTags: this.$store.getters.eventTags.map((v,i)=>({value:v,id:i})),
       availableSocieties: this.$store.getters[
         "user/societies"
       ].admins.map(s => ({
@@ -175,7 +175,7 @@ export default {
   },
   methods: {
     onTagsChange(e) {
-      this.tags = JSON.parse(e.target.value).map(t => t.id)
+      this.tags = e
     },
     updateDate() {
       if (this.endDate === '' || new Date(this.endDate) < new Date(this.startDate)) {
@@ -212,7 +212,10 @@ export default {
           this.startDate = data.start.substr(0,10)
           this.endTime = data.end.split(' ')[1].split(':').slice(0,2).join(':')
           this.endDate = data.start.substr(0,10)
-          this.tags = data.tags
+          this.tags = data.tags.map(t => ({ 
+            id: t, 
+            value: this.$store.getters.eventTags[t]
+          }))
           this.privacy = data.privacy
           console.log(data)
           this.isAdmin = this.$store.getters["user/isSocietyAdmin"](
@@ -231,7 +234,7 @@ export default {
         location: this.location,
         status: 0,
         privacy: this.privacy,
-        tags: this.tags,
+        tags: this.tags.map(t => t.id),
         hasQR: true,
         hasAccessCode: false,
         hasAdminSignin: true,
