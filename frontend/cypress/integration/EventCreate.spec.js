@@ -65,5 +65,6 @@ describe('Event', () => {
     })
     it('Edit events', function() {
         cy.contains('edit').click()
+        cy.contains('Edit event')
     })
 })
