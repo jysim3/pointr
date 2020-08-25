@@ -102,7 +102,7 @@ class Event(db.Model):
     hasAdminSignin = db.Column(db.Boolean, nullable=False)
 
     additionalInfo = db.Column(db.JSON, nullable=True)
-    privacy = db.Column(db.Integer, nullable=True)
+    privacy = db.Column(db.Integer, nullable=False)
 
     tags = db.Column(db.ARRAY(db.Integer), nullable=True)
 

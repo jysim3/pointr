@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime
 from pytz import timezone
+from constants import PUBLIC, PRIVATE, UNLISTED
 
 host = db.Table('hosted',
     db.Column('eventID', db.Text, db.ForeignKey('events.id'), primary_key=True),
@@ -127,7 +128,7 @@ class Societies(db.Model):
         """
         return [i.id for i in self.hosting]
 
-    def getUpcomingEvents(self, privacy=0):
+    def getUpcomingEvents(self, privacy=PUBLIC):
         """
         Returns a list of objects of type events that this society has upcoming
         """

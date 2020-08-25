@@ -83,12 +83,12 @@
       </div>
 
       <InputModule
-        v-model="visibility"
-        name="visibility"
+        v-model="privacy"
+        name="privacy"
         required
-        label="Visibility (beta, not in use)"
+        label="Privacy"
         type="radio"
-        :options="visibilityOptions"
+        :options="privacyOptions"
       />
 
 
@@ -145,7 +145,7 @@ export default {
       description: "",
       startTime: "",
       endTime: "",
-      visibility: "",
+      privacy: "",
       tags: [],
       availableTags: this.$store.getters.eventTags,
       availableSocieties: this.$store.getters[
@@ -154,15 +154,8 @@ export default {
         value: s.id,
         label: s.name
       })),
-      visibilityOptions: [{
-        value: 'public',
-        label: 'Public'
-      },
-      {
-        value: 'private',
-        label: 'Private'
-      }]
-    };
+      privacyOptions: this.$store.getters.privacy.map((v,i)=>({label:v,value:i})),
+    }
   },
   mounted(){
     this.getEventInfo()
@@ -220,7 +213,7 @@ export default {
           this.endTime = data.end.split(' ')[1].split(':').slice(0,2).join(':')
           this.endDate = data.start.substr(0,10)
           this.tags = data.tags
-          //this.visibility = data.visibility
+          this.privacy = data.privacy
           console.log(data)
           this.isAdmin = this.$store.getters["user/isSocietyAdmin"](
             data.society
@@ -237,7 +230,7 @@ export default {
         description: this.description,
         location: this.location,
         status: 0,
-        // visibility: this.visibility,
+        privacy: this.privacy,
         tags: this.tags,
         hasQR: true,
         hasAccessCode: false,

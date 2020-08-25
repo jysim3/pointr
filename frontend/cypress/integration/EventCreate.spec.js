@@ -54,6 +54,7 @@ describe('Event', () => {
 
         cy.contains('End Date').next().should('have.value','2020-08-15')
         cy.contains('End Date').next().type('2020-08-16')
+        cy.contains('Tags').next().type('Party')
         cy.contains('Public').click()
 
         cy.route('http://localhost:5000/api/event').as('createEventApi')
