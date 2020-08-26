@@ -1,11 +1,13 @@
 import json
 import unittest
 import uuid
-from app import app
+from app import app, db
 from datetime import datetime, timezone
 import os
 from models.user import Users
 from hashlib import sha256
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
 URL_BASE = '/api'
 
@@ -147,7 +149,7 @@ class PointrTest(unittest.TestCase):
         data['name'] = name
         return data
 
-    def loginValidUser(loginDetails):
+    def loginValidUser(self, loginDetails):
         c = self.c
         response = fetch(c, 'POST', '/auth/login', data=loginDetails)
         payload = json.loads(response.data)
