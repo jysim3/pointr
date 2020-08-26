@@ -107,3 +107,6 @@ class EventAttendCodeSchema(Schema):
     
 class EventNumberSchema(Schema):
     number = fields.Int()
+
+class EventPhotoSchema(Schema):
+    photo = fields.Raw(required=True)
