@@ -28,7 +28,7 @@
                 class="badge badge-primary mr-1 font-weight-normal"
               > 
                 {{
-                  availableTags[t].value
+                  availableTags[t]
                 }}
               </span>
             </h4>

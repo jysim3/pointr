@@ -38,6 +38,14 @@ describe('Society', () => {
         cy.route('/api/*').as('api')
     })
     it('Society Page', function() {
-        cy.visit('/event/AAAAF')
+        cy.get("@userData").then(v => {
+            cy.visit(`/society/${v.socID}`)
+            cy.contains('Admin Tools').click()
+            cy.contains('Edit').click()
+            const k = Date.now()
+            cy.get('textarea').type(k)
+            cy.contains('Submit').click()
+            cy.contains(k)
+        })
     })
 })

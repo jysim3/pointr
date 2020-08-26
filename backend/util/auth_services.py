@@ -65,7 +65,13 @@ def generateForgotToken(zID):
     ) 
     return token.decode("utf-8")
 
-def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowSuperAdmin=False, allowSocAdmin=False, allowSocMember=False):
+def checkAuthorization(activationRequired=True, 
+                       level=0, 
+                       allowSelf=False,
+                       allowSuperAdmin=False,
+                       allowSocAdmin=False,
+                       allowSocMember=False,
+                       allowAll=True):
     def decorator(func):
         def wrapper(*args, **kwargs):
 
@@ -73,7 +79,7 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
             data = {}
 
 
-            token = TokenSchema().load({"token": request.headers.get('Authorization')})
+            token_data = TokenSchema().load({"token": request.headers.get('Authorization')})
             try:
                 # Combine args and data
                 # args data takes precedence
@@ -91,27 +97,11 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
                 abort(400, err.messages)
 
 
-            try:
-                # Decode token
-                token_data = jwt.decode(
-                    token['token'],
-                    jwt_secret,
-                    algorithms='HS256'
-                )
-            except jwt.InvalidSignatureError:
-                abort(403, 'Invalid Credentials')
-            except jwt.ExpiredSignatureError:
-                abort(401, 'Expired Token')
-            except jwt.DecodeError:
-                abort(403, 'Invalid Credentials')
-
-            request_user = Users.query.filter_by(zID=token_data['zID']).first()
-            if not request_user:
-                abort(403, "Internal error: this user should not exist")
+            request_user = token_data['user']
+            if token_data['permission'] < level:
+                abort(403, "Not allowed, not enough permission")
             elif request_user.activated == False and activationRequired == True:
                 abort(401, "notActivated")
-            elif token_data['permission'] < level:
-                abort(403, "Not allowed, not enough permission")
             
             # Allow oneself to modify data if specified
             if allowSelf:

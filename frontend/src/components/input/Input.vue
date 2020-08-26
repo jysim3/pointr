@@ -49,6 +49,7 @@
             type="radio"
             :required="required"
             :disabled="disabled"
+            :checked="item.value === value"
             :name="name"
             class="input w-auto mr-2"
             @input="sendInput"

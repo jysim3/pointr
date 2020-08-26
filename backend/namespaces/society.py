@@ -1,10 +1,11 @@
 from flask_restx import Namespace, Resource
 from util.validation_services import toQuery, toModel, validateArgs, validateBody
 from util.auth_services import checkAuthorization
-from schemata.soc_schemata import *
+from schemata.soc_schemata import SocietyIDSchema, SocietyCreationSchema, SocietyPatchSchema, SocietyTagSchema, SocietyRankSchema, SocietyLogoSchema
 from schemata.user_schemata import ZIDSchema
+from schemata.auth_schemata import TokenSchema
 from schemata.models import authModel
-from constants import constants
+from constants import PUBLIC, PRIVATE, UNLISTED
 
 api = Namespace('society', description='Society Attendance Services')
 
@@ -193,7 +194,11 @@ class Upcoming(Resource):
     @validateArgs(SocietyIDSchema, 'society')
     @api.expect(authModel)
     def get(self, society):
-        events = society.getUpcomingEvents()
+        token_data = TokenSchema().load({"token": request.headers.get('Authorization')})
+        if society in token_data['user'].getSocs()['admins']:
+            events = society.getUpcomingEvents(PRIVATE)
+        else:
+            events = society.getUpcomingEvents(PUBLIC)
         events = [i.getPreview() for i in events]
         return jsonify({"status": "success", "data": events})
 

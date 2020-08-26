@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, ValidationError, validates, validate, EXCLUDE, post_load, pre_load
 from schemata import common_schemata
-from constants import constants as c
-from constants.constants import SOCIETY_TYPE
+import constants as c
+from constants import SOCIETY_TYPE
 from uuid import uuid4
 from models.society import Societies
 from flask import abort
