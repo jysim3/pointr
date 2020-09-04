@@ -65,7 +65,13 @@ def generateForgotToken(zID):
     ) 
     return token.decode("utf-8")
 
-def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowSuperAdmin=False, allowSocAdmin=False, allowSocMember=False):
+def checkAuthorization(activationRequired=True, 
+                       level=0, 
+                       allowSelf=False,
+                       allowSuperAdmin=False,
+                       allowSocAdmin=False,
+                       allowSocMember=False,
+                       allowAll=True):
     def decorator(func):
         def wrapper(*args, **kwargs):
 
@@ -73,87 +79,59 @@ def checkAuthorization(activationRequired=True, level=0, allowSelf=False, allowS
             data = {}
 
 
-            token = TokenSchema().load({"token": request.headers.get('Authorization')})
+            token_data = TokenSchema().load({"token": request.headers.get('Authorization')})
             try:
+                # Combine args and data
+                # args data takes precedence
+                request_data = {}
+                if request.get_json(): 
+                    request_data.update(request.get_json())
                 if request.args:
-                    args_data = AuthSchema().load(request.args)
-                if request.get_json():
-                    data = AuthSchema().load(request.get_json())
+                    request_data.update(request.args)
+                if request_data:
+                    data = AuthSchema().load(request_data)
+                user = data['user'] if 'user' in data else None
+                event = data['event'] if 'event' in data else None
+                society = data['society'] if 'society' in data else None
             except ValidationError as err:
                 abort(400, err.messages)
 
-            # Combine args and data
-            # args data takes precedence
-            data.update(args_data)
 
-            try:
-                # Decode token
-                token_data = jwt.decode(
-                    token['token'],
-                    jwt_secret,
-                    algorithms='HS256'
-                )
-            except jwt.InvalidSignatureError:
-                abort(403, 'Invalid Credentials')
-            except jwt.ExpiredSignatureError:
-                abort(401, 'Expired Token')
-            except jwt.DecodeError:
-                abort(403, 'Invalid Credentials')
-
-            user = Users.query.filter_by(zID=token_data['zID']).first()
-            if not user:
-                abort(403, "Not a valid user")
-            elif user.activated == False and activationRequired == True:
-                abort(401, "notActivated")
-            elif token_data['permission'] < level:
+            request_user = token_data['user']
+            if token_data['permission'] < level:
                 abort(403, "Not allowed, not enough permission")
+            elif request_user.activated == False and activationRequired == True:
+                abort(401, "notActivated")
             
             # Allow oneself to modify data if specified
             if allowSelf:
-                if 'zID' in data and 'zID' == token_data['zID']:
+                if user and user.zID == request_user.zID:
                     return func(token_data=token_data, *args, **kwargs)
 
             if allowSuperAdmin:
-                if token_data['permission'] == 5:
+                if request_user.superadmin:
                     return func(token_data=token_data, *args, **kwargs)
             
-            if 'socID' in data:
-                society = Societies.query.filter_by(id=data['socID']).first()
-                if not society: abort(403, "SocietyID doesn't exist")
+            if allowSocMember or allowSocAdmin:
+                if 'eventID' in request_data:
+                    # We grant access if the token bearer can have control over eventID
+                    # I.e. if the user is an admin of the soc that's hosting this event
+                    # WE need this because socID and eventID dont always come
+                    if not event: abort(403, "EventID doesn't exist")
+
+                society = society if society else event.getHostSoc()[0]
+                if not society: abort(403, "Society doesn't exist")
 
                 if allowSocMember:
                     members = society.getMembersIDs()
-                    if token_data['zID'] not in members: abort(403, "You are not a member of this society")
+                    admins = society[0].getAdminsIDs()
+                    members.extend(admins)
+                    if request_user.zID not in members: abort(403, "You are not a member of this society")
                     return func(token_data=token_data, *args, **kwargs)
 
                 if allowSocAdmin:
                     admins = society.getAdminsIDs()
-                    if token_data['zID'] not in admins: abort(403, "You are not an admin of this society")
-
-                    return func(token_data=token_data, *args, **kwargs)
-
-            if 'eventID' in data:
-                # We grant access if the token bearer can have control over eventID
-                # I.e. if the user is an admin of the soc that's hosting this event
-                # WE need this because socID and eventID dont always come
-                event = Event.query.filter_by(id=data['eventID']).first()
-                if not event: abort(403, "EventID doesn't exist")
-
-                society = event.getHostSoc()
-                # FIXME: Error here is caused by the fact a single event
-                # could be hosted by multiple societies
-                if allowSocMember:
-                    # TODO: Fix this double get
-                    members = society[0].getMembersIDs()
-                    admins = society[0].getAdminsIDs()
-                    members.extend(admins)
-                    if token_data['zID'] not in members: abort(403, "You are not a member of this society")
-
-                    return func(token_data=token_data, *args, **kwargs)
-
-                if allowSocAdmin:
-                    admins = society[0].getAdminsIDs()
-                    if token_data['zID'] not in admins: abort(403, "You are not an admin of this society")
+                    if request_user.zID not in admins: abort(403, "You are not an admin of this society")
 
                     return func(token_data=token_data, *args, **kwargs)
 

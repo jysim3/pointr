@@ -1,6 +1,9 @@
+import jwt, os
+from flask_restx import abort
 from marshmallow import Schema, fields, ValidationError, validates, validate, EXCLUDE
 from schemata import common_schemata
 from models.user import Users
+from models import User, Event, Society
 from marshmallow import post_load
 from hashlib import sha256
 from pprint import pprint
@@ -70,11 +73,44 @@ class PasswordSchema(Schema):
 class TokenSchema(Schema):
     name = "Token"
     token = common_schemata.tokenRequired
+
+    @post_load
+    def getData(self, data, **kwargs):
+        jwt_secret = os.environ.get('POINTR_SERVER_SECRET')
+        try:
+            # Decode token
+            token_data = jwt.decode(
+                data['token'],
+                jwt_secret,
+                algorithms='HS256'
+            )
+        except jwt.InvalidSignatureError:
+            abort(403, 'Invalid Credentials')
+        except jwt.ExpiredSignatureError:
+            abort(401, 'Expired Token')
+        except jwt.DecodeError:
+            abort(403, 'Invalid Credentials')
+
+        request_user = Users.query.filter_by(zID=token_data['zID']).first()
+        if not request_user:
+            abort(403, "Internal error: this user should not exist")
+        return {**token_data, 'user': request_user}
+
     
 class AuthSchema(Schema):
     eventID = common_schemata.eventID
     societyID = common_schemata.societyID
     zID = common_schemata.zid
     
+    @post_load
+    def getData(self, data, **kwargs):
+        ret = {}
+        if 'societyID' in data:
+            ret['society'] = Society.findSociety(data['societyID'].hex)
+        if 'eventID' in data:
+            ret['event'] = Event.getEvent(data['eventID'])
+        if 'zID' in data:
+            ret['user'] = User.findUser(data['zID'])
+        return ret
     class Meta:
         unknown = EXCLUDE

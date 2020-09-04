@@ -4,7 +4,7 @@ from util.validation_services import toQuery, toModel, validateArgs, validateBod
 from schemata.event_schemata import EventCreationSchema, EventPatchSchema, EventAttendCodeSchema
 from util import auth_services
 from schemata.models import authModel, offsetModel
-from schemata.event_schemata import EventIDSchema, EventNumberSchema, EventJSONSchema, EventJSONAttendanceSchema
+from schemata.event_schemata import EventIDSchema, EventNumberSchema, EventJSONSchema, EventJSONAttendanceSchema, EventPhotoSchema
 from schemata.soc_schemata import SocietyIDSchema
 from schemata.user_schemata import ZIDSchema
 from pprint import pprint
@@ -12,11 +12,16 @@ from pprint import pprint
 api = Namespace('event', description='Reworked Event Management Services')
 
 from util.auth_services import checkAuthorization
+# from util.files import uploadImages
 from app import db
 from models.event import Event, Attendance
 from models.user import Users
 from datetime import datetime
 from util.files import uploadImages
+
+photoModel = api.parser()
+photoModel.add_argument('photo', required=True, help="WERKZEUG'S FILESTORAGE ISNT WORKING SO STR IS A PLACEHOLDER", type=str, location="files")
+photoModel.add_argument('eventID', required=True, help="The event's photo to be changed", type=str, location="args")
 
 @api.route('')
 class EventRoute(Resource):
@@ -95,6 +100,54 @@ class EventRoute(Resource):
         # TODO (Steven 15/08/2020): Allow changing the photo associated with the photo
 
         return jsonify({"status": "success", "data": event.getEventJSON()})
+
+@api.route("/photo")
+class EventPhoto(Resource):
+    @api.doc(description='''
+        Upload a photo to the specified event in the query string
+    ''')
+    @api.expect(photoModel)
+    @validateArgs(EventIDSchema, "event")
+    # @checkAuthorization(level=1, allowSocAdmin=True)
+    def post(self, event, *args, **kwargs):
+        photo = request.files['photo']
+        if not photo:
+            abort(400, "No photo provided")
+
+        status = uploadImages(photo)
+        if not isinstance(status, tuple):
+            abort(400, status)
+
+        event.updatePhoto(status[0])
+        return jsonify({'status': 'success'})
+
+    @api.doc(description='''
+        Update a photo to the specified event in the query string
+    ''')
+    @api.expect(photoModel)
+    @validateArgs(EventIDSchema, "event")
+    # @checkAuthorization(level=1, allowSocAdmin=True)
+    def patch(self, event, *args, **kwargs):
+        photo = request.files['photo']
+        if not photo:
+            abort(400, "No photo provided")
+
+        status = uploadImages(photo)
+        if not isinstance(status, tuple):
+            abort(400, status)
+
+        event.updatePhoto(status[0])
+        return jsonify({'status': 'success'})
+
+    @api.doc(description='''
+        Delete the photo attached to this particular event
+    ''')
+    @validateArgs(EventIDSchema, "event")
+    # @checkAuthorization(level=1, allowSocAdmin=True)
+    def delete(self, token_data, *args, **kwargs):
+        event.updatePhoto(None)
+
+        return jsonify({'status': 'success'})
 
 @api.route("/additional")
 class AdditionalInfo(Resource):

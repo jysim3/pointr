@@ -2,7 +2,8 @@ from marshmallow import Schema, fields, ValidationError, validates, validate, po
 from models.event import CompositeEvent, Event
 from flask import abort
 from schemata import common_schemata
-from constants import constants as c
+import constants as c
+from constants import PUBLIC
 import uuid
 import random
 from string import ascii_uppercase, digits
@@ -20,6 +21,9 @@ class EventCreationSchema(Schema):
     location = fields.Str(required=True)
 
     status = fields.Int(missing=c.EVENT_STATUS_DEFAULT, default=c.EVENT_STATUS_DEFAULT, validate=validate.Range(0, len(c.EVENT_STATUS)))
+    privacy = fields.Int(missing=PUBLIC, 
+                         default=PUBLIC, 
+                         validate=validate.Range(0, len(c.EVENT_STATUS)))
     tags = fields.List(fields.Int(validate=validate.Range(0, len(c.EVENT_TAGS))), required=True)
 
     hasQR = fields.Boolean(required=True)
@@ -62,6 +66,7 @@ class EventPatchSchema(Schema):
     location = fields.Str()
 
     status = fields.Int(validate=validate.Range(0, len(c.EVENT_STATUS)))
+    privacy = fields.Int(validate=validate.Range(0, len(c.EVENT_STATUS)))
     tags = fields.List(fields.Int(validate=validate.Range(0, len(c.EVENT_TAGS))))
 
     hasQR = fields.Boolean()
@@ -102,3 +107,6 @@ class EventAttendCodeSchema(Schema):
     
 class EventNumberSchema(Schema):
     number = fields.Int()
+
+class EventPhotoSchema(Schema):
+    photo = fields.Raw(required=True)

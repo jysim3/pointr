@@ -28,7 +28,7 @@
                 class="badge badge-primary mr-1 font-weight-normal"
               > 
                 {{
-                  availableTags[t].value
+                  availableTags[t]
                 }}
               </span>
             </h4>
@@ -75,7 +75,7 @@
             </div>
             <div class="mb-2">
               <i class="material-icons mr-2">public</i>
-              <span>Public</span>
+              <span>{{ privacy[eventData.privacy] }}</span>
             </div>
           </div>
           <p>
@@ -130,6 +130,7 @@ export default {
     return {
       error: "",
       availableTags: this.$store.getters.eventTags,
+      privacy: this.$store.getters.privacy,
     };
   },
   computed: {

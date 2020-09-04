@@ -43,8 +43,8 @@ describe('Registering and login', () => {
     cy.get('input[name=repeatPassword]').type(this.userData.password)
     cy.get('input[name=repeatPassword]').should('have.value', this.userData.password)
 
-    cy.get('input[name=discord]').type(this.userData.discord)
-    cy.get('input[name=discord]').should('have.value', this.userData.discord)
+    // cy.get('input[name=discord]').type(this.userData.discord)
+    // cy.get('input[name=discord]').should('have.value', this.userData.discord)
 
     cy.get('.btn').contains('Sign Up').click()
     cy.url().should('contain','sendActivationEmail')
