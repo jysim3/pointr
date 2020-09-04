@@ -16,7 +16,7 @@ activationTokenTimeout = 1000*60
 forgotTokenTimeout = 1000*60
 
 if (os.environ.get('POINTR_SERVER_SECRET') == None):
-    print("Missing environment secret key for email address. Set env variable POINT_EMAIL_PASSWORD to the password.")
+    print("Missing environment secret key for email address. Set env variable POINTR_SERVER_SECRET to the password.")
     sys.exit()
 jwt_secret = os.environ.get('POINTR_SERVER_SECRET')
 
