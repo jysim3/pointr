@@ -33,6 +33,7 @@ if __name__ == "__main__":
     print("Running...")
     print("Having issues due to updated db? run ./updateDB.sh")
     if "dev" in sys.argv:
+        os.environ["FLASK_ENV"] = "development"
         initEnvironments()
         from app import db, app
         db.create_all()

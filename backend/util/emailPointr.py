@@ -7,7 +7,10 @@ import smtplib
 
 site = 'https://pointr.live'
 server = smtplib.SMTP()
-server.connect('localhost')
+if app.config['ENV'] == 'production':
+    server.connect('localhost')
+else:
+    pass
 server.set_debuglevel(3)
 app.config.update(
     MAIL_USERNAME = "main@pointr.live"
