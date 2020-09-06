@@ -68,6 +68,7 @@ def generateForgotToken(zID):
 def checkAuthorization(activationRequired=True, 
                        level=0, 
                        allowSelf=False,
+                       onlyAllowSelf=False,
                        allowSuperAdmin=False,
                        allowSocAdmin=False,
                        allowSocMember=False,
@@ -104,9 +105,11 @@ def checkAuthorization(activationRequired=True,
                 abort(401, "notActivated")
             
             # Allow oneself to modify data if specified
-            if allowSelf:
+            if allowSelf or onlyAllowSelf:
                 if user and user.zID == request_user.zID:
                     return func(token_data=token_data, *args, **kwargs)
+                elif onlyAllowSelf:
+                    abort(403, "Not allowed")
 
             if allowSuperAdmin:
                 if request_user.superadmin:
