@@ -1,60 +1,72 @@
 import os
 from app import app
-from flask_mail import Mail, Message
 from threading import Thread
+from email.mime.multipart  import MIMEMultipart
+from email.mime.text  import MIMEText
+import smtplib
 
-if app.config['ENV'] == 'development':
-    site = 'http://localhost:8000'
-elif app.config['ENV'] == 'production':
-    site = 'https://pointr.live'
-# Utilising flask_mail
+site = 'https://pointr.live'
+server = smtplib.SMTP('localhost')
+server.set_debuglevel(3)
 app.config.update(
-    MAIL_SERVER = "smtp.gmail.com",
-    MAIL_PORT = 465,
-    MAIL_USE_SSL = True,
-    #MAIL_USERNAME = "shenthemaster@gmail.com",
-    MAIL_USERNAME = "pointr.help@gmail.com",
-    MAIL_PASSWORD = os.environ.get("POINTR_EMAIL_PASSWORD")
+    MAIL_USERNAME = "main@pointr.live"
 )
-mail = Mail(app)
 
-def sendAsyncMail(app, msg):
+
+def sendAsyncMail(app, msg, recipients):
     with app.app_context():
         try:
-            mail.send(msg)
+            from_email = app.config['MAIL_USERNAME']
+            server.sendmail(from_email, recipients, msg.as_string())
+            server.quit()
         except Exception as e:
             print(e)
             return str(e)
 
-def sendActivationEmail(stringToSend, emailToSend, firstname):
-    message = Message('Activate Your Pointr Account', sender=app.config['MAIL_USERNAME'],
-    recipients=[f"{emailToSend}@ad.unsw.edu.au"])
-    message.body = f"""\
-Hello {firstname},\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nActivate your account now: {site}/activate/{stringToSend}"""
+def createEmailBody(subject="",sender=app.config['MAIL_USERNAME'], recipients=[], html='', plain=''):
+    if subject == "" or recipients == [] or (html == "" and plain == ""):
+        raise ValueError()
+    message = MIMEMultipart('alternative')
+    message['Subject'] = subject
+    message['From'] = sender
+    message['To'] = ','.join(recipients)
+    message.attach( MIMEText( html, 'plain') ) 
+    message.attach( MIMEText( plain, 'html') ) # TODO: Add real html body: jysim3
+    return message
 
+
+
+def sendActivationEmail(stringToSend, emailToSend, firstname):
+    body = f"""\ Hello {firstname},\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nActivate your account now: {site}/activate/{stringToSend}"""
+    message = createEmailBody(
+            subject   = 'Activate Your Pointr Account',
+            recipients = [f"{emailToSend}@ad.unsw.edu.au"],
+            html      = body,
+            plain     = body
+            )
     # Async version
-    Thread(target=sendAsyncMail, args=(app, message)).start()
+    Thread(target=sendAsyncMail, args=(app, message, message['To'])).start()
     #mail.send(message)
     return "success"
 
 
 def sendForgotEmail(link, zID):
-    message = Message('Reset Your Pointr Password', sender=app.config['MAIL_USERNAME'],
-    recipients=[f"{zID}@ad.unsw.edu.au"])
-    message.body = f"""\
+    body = f"""\
 Hi,{zID}\nYou have requested to reset your password.\nFollow this link to reset your password: {site}/reset/{link}"""
+    message = createEmailBody(
+            subject   = 'Reset Your Pointr Password',
+            recipients = [f"{zID}@ad.unsw.edu.au"],
+            html      = body,
+            plain     = body
+            )
 
     # Async version
-    Thread(target=sendAsyncMail, args=(app, message)).start()
+    Thread(target=sendAsyncMail, args=(app, message, message['To'])).start()
     return "success"
 
 def sendEnquiry(sender, content):
     recipients=["stevenshen1999@hotmail.com", "steynharrison1@gmail.com", "junyang.0607@gmail.com", "hello@ivanvelickovic.com"]
-    #recipients=['stevenshen1999@hotmail.com']
-    message = Message('Enquire Email For Pointr', sender=app.config['MAIL_USERNAME'],
-    recipients=recipients)
-
-    message.body = f"""
+    body = f"""
         Hello there,
         {sender} has send an enquiry about pointr:
 
@@ -62,9 +74,16 @@ def sendEnquiry(sender, content):
 
         Regards
     """
+    message = createEmailBody(
+            subject   = 'Enquire Email For Pointr',
+            recipients= recipients,
+            html      = body,
+            plain     = body
+            )
+
 
     # Async version
-    Thread(target=sendAsyncMail, args=(app, message)).start()
+    Thread(target=sendAsyncMail, args=(app, message, recipients)).start()
     return "success"
 
 '''
@@ -76,6 +95,8 @@ def main():
 
         print(f"{receiverEmail} sent")
 
+'''
+def main():
+    sendActivationEmail('z5161631', 'z5161631', 'hello')
 if __name__ == "__main__":
     main()
-'''
