@@ -26,7 +26,7 @@ class User(Resource):
     ''')
     @validateArgs(ZIDSchemaNotReq, 'user')
     @checkAuthorization(onlyAllowSelf=True)
-    def get(self, user):
+    def get(self, token_data, user):
         return jsonify({'status': 'success', 'data': user.getJSON()})
 
     @api.doc(description='''
