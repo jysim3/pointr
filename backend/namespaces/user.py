@@ -24,9 +24,8 @@ class User(Resource):
         Get the information regarding the user (i.e. name, photo, etc. But no events/soc info)
         Everybody's profile is public
     ''')
-    # FIXME: Might change the publicity of profiles later on
     @validateArgs(ZIDSchemaNotReq, 'user')
-    #@checkAuthorization()
+    @checkAuthorization(onlyAllowSelf=True)
     def get(self, user):
         return jsonify({'status': 'success', 'data': user.getJSON()})
 
