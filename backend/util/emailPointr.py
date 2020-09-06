@@ -6,7 +6,8 @@ from email.mime.text  import MIMEText
 import smtplib
 
 site = 'https://pointr.live'
-server = smtplib.SMTP('localhost')
+server = smtplib.SMTP()
+server.connect('localhost')
 server.set_debuglevel(3)
 app.config.update(
     MAIL_USERNAME = "main@pointr.live"
