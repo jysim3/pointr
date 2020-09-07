@@ -8,7 +8,10 @@ from util.mail_template import get_login_mail_template
 
 site = 'https://pointr.live'
 server = smtplib.SMTP()
-server.connect('localhost')
+if app.config['ENV'] == 'production':
+    server.connect('localhost')
+else:
+    pass
 server.set_debuglevel(3)
 app.config.update(
     MAIL_USERNAME = "main@pointr.live"
