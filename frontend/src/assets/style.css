@@ -15,6 +15,8 @@
 *,
 html {
   margin: 0;
+  box-sizing: border-box;
+
 }
 
 :root {
@@ -244,6 +246,17 @@ input:invalid {
 
 input[type="date"], input[type="time"], textarea, option{
   font-family: var(--font-stack);
+}
+
+.custom-file {
+  height: calc(1.5em + .75rem + 4px);
+}
+.custom-file-input {
+  height: calc(1.5em + .75rem + 4px);
+}
+.custom-file-label {
+  border: 2px solid #dbdbdb;
+  height: calc(1.5em + .75rem + 4px);
 }
 
 /* Buttons */

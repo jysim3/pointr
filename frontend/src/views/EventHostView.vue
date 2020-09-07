@@ -49,7 +49,7 @@
         >
           <img
             class="rounded"
-            src="@/assets/unsw.jpg"
+            :src="eventData.photo"
           >
         </div>
         <div class="col-12 col-md-3 mb-5">

@@ -81,7 +81,13 @@
           :settings="{whitelist: availableTags, dropdown: { enabled: 0 }, enforceWhitelist: true }"
         />
       </div>
-
+      <div class="form-group">
+        <label> Cover photo </label>
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="inputGroupFile01" @change="onFileSelected" accept="image/png, image/jpeg">
+          <label class="custom-file-label">{{ this.file.name || 'Choose cover photo' }}</label>
+        </div>
+      </div>
       <InputModule
         v-model="privacy"
         name="privacy"
@@ -91,7 +97,7 @@
         :options="privacyOptions"
       />
 
-
+      <!-- TODO: Clean the photo code up  -->
       <template #footer>
         <div>
           <button
@@ -147,6 +153,7 @@ export default {
       endTime: "",
       privacy: "",
       tags: [],
+      file: {},
       availableTags: this.$store.getters.eventTags.map((v,i)=>({value:v,id:i})),
       availableSocieties: this.$store.getters[
         "user/societies"
@@ -174,6 +181,10 @@ export default {
     }
   },
   methods: {
+    onFileSelected(event) {
+      const selectedFile = event.target.files[0]
+      this.file = selectedFile
+    },
     onTagsChange(e) {
       this.tags = e
     },
@@ -181,7 +192,6 @@ export default {
       if (this.endDate === '' || new Date(this.endDate) < new Date(this.startDate)) {
         this.endDate = this.startDate
       }
-
     },
     deleteEvent() {
       if (this.deleteConfirmation === 0) {
@@ -248,11 +258,34 @@ export default {
           eventID: this.eventID
         },
         method: this.eventID ? 'PATCH' : 'POST'
-      }).then(response => {
-        console.log(response.data.data)
+      }).then(response => new Promise((resolve, reject) => {
+
+        if (response.status == 200) {
+          resolve(response.data)
+        } else {
+          reject(response)
+        }
+      })).then(response => new Promise((resolve, reject)=> {
+        const fd = new FormData;
+        fd.append("photo",this.file, this.file.name)
+        return axios.post("/api/event/photo", fd, {
+          params: {
+            eventID: response.data.id
+          }
+        }).then(photo => {
+          if (photo.status == 200) {
+            resolve(response)
+          } else {
+            reject(photo)
+          }
+        }).catch(e => {
+          reject(e)
+        })
+      })).then( response => {
+        console.log(response.data)
         this.$router.push({
           name: "event",
-          params: { eventID: response.data.data.id }
+          params: { eventID: response.data.id }
         });
       })
         .catch(error => {

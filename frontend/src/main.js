@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'development'){
 }
 axios.interceptors.response.use(undefined, function (err) {
   return new Promise(function () {
-    if (err.response.status === 401) {
+    if (err.response && err.response.status === 401) {
       store.dispatch('logout')
     }
     throw err
