@@ -8,10 +8,7 @@ from util.mail_template import get_login_mail_template
 
 site = 'https://pointr.live'
 server = smtplib.SMTP()
-if app.config['ENV'] == 'production':
-    server.connect('localhost')
-else:
-    pass
+server.connect('localhost')
 server.set_debuglevel(3)
 app.config.update(
     MAIL_USERNAME = "main@pointr.live"
@@ -35,19 +32,17 @@ def createEmailBody(subject="",sender=app.config['MAIL_USERNAME'], recipients=[]
     message['Subject'] = subject
     message['From'] = sender
     message['To'] = ','.join(recipients)
-    message.attach( MIMEText( html, 'plain') ) 
-    message.attach( MIMEText( plain, 'html') ) # TODO: Add real html body: jysim3
+    message.attach( MIMEText( html, 'html') ) # TODO: Add real html body: jysim3
     return message
 
 
 
 def sendActivationEmail(stringToSend, emailToSend, firstname):
-    body = f"""\ Hello {firstname},\nIt's good to have you with us. Thanks again for signing up with Pointr.\n\nActivate your account now: {site}/activate/{stringToSend}"""
+    body = f"""Hello {firstname},<br/><br/>It's good to have you with us. Thanks again for signing up with Pointr.<br/><br/>Activate your account now: """
     message = createEmailBody(
             subject   = 'Activate Your Pointr Account',
             recipients = [f"{emailToSend}@ad.unsw.edu.au"],
-            html      = get_login_mail_template(),
-            plain     = body
+            html      = get_login_mail_template(body, f"{site}/activate/{stringToSend}"),
             )
     # Async version
     Thread(target=sendAsyncMail, args=(app, message, message['To'])).start()
