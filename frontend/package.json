@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint --ext .js,.vue",
-    "test": "cypress open",
+    "test": "cypress run --headless",
+    "cypress": "cypress open",
     "reset": "echo DELETE FROM users where \"zID\"='z5161631'; | psql pointrDB"
   },
   "dependencies": {
@@ -32,6 +33,7 @@
     "@vue/cli-service": "^4.4.5",
     "babel-eslint": "^10.1.0",
     "cypress": "^4.11.0",
+    "cypress-file-upload": "^4.1.1",
     "eslint": "^6.8.0",
     "eslint-plugin-vue": "^7.0.0-beta.1",
     "vue-template-compiler": "^2.6.11"

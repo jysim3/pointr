@@ -104,7 +104,7 @@ describe('Event', () => {
             })
             cy.visit(`/event/${eventID}?code=${pin}`)
             cy.contains("Sign as").click()
-            cy.should('contain','Success!')
+            cy.get('body').should('contain','Success!')
             
         })
 

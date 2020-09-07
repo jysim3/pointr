@@ -24,6 +24,7 @@ describe('Event', () => {
     })
     beforeEach(()=> {
         cy.fixture('example.json').as('userData')
+        cy.fixture('coverphoto.jpg').as('photo')
         cy.get("@userData").then(v => {
             cy.request('POST','http://localhost:5000/api/auth/login', {
                 "zID": v.zID,
@@ -56,12 +57,24 @@ describe('Event', () => {
         cy.contains('End Date').next().type('2020-08-16')
         cy.contains('Tags').next().type('Party')
         cy.contains('Public').click()
+        cy.get('@photo').then(fileContent => {
+            cy.get('input[type="file"]').attachFile({
+                fileContent: fileContent.toString(),
+                fileName: 'testPicture.png',
+                mimeType: 'image/jpg'
+            });
+        });
 
         cy.route('http://localhost:5000/api/event').as('createEventApi')
 
         cy.contains('Create Event').click()
         cy.location('pathname').should('contain','/event/')
         cy.contains('hello')
+        cy.contains('Aug 15, 2020 12:23 AM - Aug 16, 2020 1:23 AM')
+        cy.contains('my mum')
+        cy.contains('Public')
+        cy.contains('I would like to say')
+        cy.get('.container').find('img').should('have.attr', 'src').should('include','/assets/images/')
     })
     it('Edit events', function() {
         cy.contains('edit').click()
