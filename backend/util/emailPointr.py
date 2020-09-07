@@ -4,6 +4,7 @@ from threading import Thread
 from email.mime.multipart  import MIMEMultipart
 from email.mime.text  import MIMEText
 import smtplib
+from util.mail_template import get_login_mail_template
 
 site = 'https://pointr.live'
 server = smtplib.SMTP()
@@ -45,7 +46,7 @@ def sendActivationEmail(stringToSend, emailToSend, firstname):
     message = createEmailBody(
             subject   = 'Activate Your Pointr Account',
             recipients = [f"{emailToSend}@ad.unsw.edu.au"],
-            html      = body,
+            html      = get_login_mail_template(),
             plain     = body
             )
     # Async version
