@@ -55,7 +55,7 @@ def sendActivationEmail(stringToSend, emailToSend, firstname):
 
 def sendForgotEmail(link, zID):
     body = f"""\
-Hi,{zID}<br/>You have requested to reset your password.<br/>Follow this link to reset your password:"""
+Hi {zID},<br/>You have requested to reset your password.<br/>Follow this link to reset your password:"""
     message = createEmailBody(
             subject   = 'Reset Your Pointr Password',
             recipients = [f"{zID}@ad.unsw.edu.au"],
