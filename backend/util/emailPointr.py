@@ -45,7 +45,7 @@ def sendActivationEmail(stringToSend, emailToSend, firstname):
     message = createEmailBody(
             subject   = 'Activate Your Pointr Account',
             recipients = [f"{emailToSend}@ad.unsw.edu.au"],
-            html      = get_login_mail_template(body, f"{site}/activate/{stringToSend}"),
+            html      = get_login_mail_template(body, f"{site}/activate/{stringToSend}", "Activate Account")
             )
     # Async version
     Thread(target=sendAsyncMail, args=(app, message, message['To'])).start()
@@ -55,12 +55,11 @@ def sendActivationEmail(stringToSend, emailToSend, firstname):
 
 def sendForgotEmail(link, zID):
     body = f"""\
-Hi,{zID}\nYou have requested to reset your password.\nFollow this link to reset your password: {site}/reset/{link}"""
+Hi,{zID}<br/>You have requested to reset your password.<br/>Follow this link to reset your password:"""
     message = createEmailBody(
             subject   = 'Reset Your Pointr Password',
             recipients = [f"{zID}@ad.unsw.edu.au"],
-            html      = body,
-            plain     = body
+            html      = get_login_mail_template(body, f"{site}/reset/{link}", "Reset Password")
             )
 
     # Async version
