@@ -1,4 +1,4 @@
-def get_login_mail_template(message, link=None):
+def get_login_mail_template(message, link=None, button="Activate Now"):
     return """
 <!doctype html>
 <html>
@@ -104,7 +104,7 @@ def get_login_mail_template(message, link=None):
           <div class="content" style="box-sizing: border-box; display: block; Margin: 0 auto; max-width: 580px; padding: 10px;">
 
             <!-- START CENTERED WHITE CONTAINER -->
-            <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">This is preheader text. Some clients will show this text as a preview.</span>
+            <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">""" + message + """</span>
             <table class="main" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #ffffff; border-radius: 3px;">
 
               <!-- START MAIN CONTENT AREA -->
@@ -121,7 +121,7 @@ def get_login_mail_template(message, link=None):
                                 <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
                                   <tbody>
                                     <tr>
-                                      <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: #3498db; border-radius: 5px; text-align: center;"> <a href=" """ + link + """ " target="_blank" style="display: inline-block; color: #ffffff; background-color: #82bf4b; border: solid 1px #82bf4b; border-radius: 5px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; margin: 0 auto; padding: 12px 25px; text-transform: capitalize; border-color: #3498db;">Activate Now</a> </td>
+                                      <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: #3498db; border-radius: 5px; text-align: center;"> <a href=" """ + link + """ " target="_blank" style="display: inline-block; color: #ffffff; background-color: #82bf4b; border: solid 1px #82bf4b; border-radius: 5px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; margin: 0 auto; padding: 12px 25px; text-transform: capitalize; border-color: #3498db;">""" + button + """</a> </td>
                                     </tr>
                                   </tbody>
                                 </table>
