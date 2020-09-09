@@ -47,7 +47,7 @@
               Try it now
             </router-link>
             <router-link
-              to="/event"
+              to="/signup"
               class="btn btn-secondary"
             >
               View events
