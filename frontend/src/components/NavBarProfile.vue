@@ -24,7 +24,7 @@
           class="dropdown-item d-flex"
         >
           <img
-            src="@/assets/defaultUser.jpg"
+            :src="photo"
           >
           <div class="routes-more-profile-text">
             <div class="routes-more-profile-text-title">
@@ -72,7 +72,8 @@ export default {
   }},
   computed: {
     zID () {  return this.$store.getters['user/zID'] },
-    name () { return this.$store.getters['user/name'] }
+    name () { return this.$store.getters['user/name'] },
+    photo () { return this.$store.getters['user/photo'] }
   },
   methods: {
     signOut() { 

@@ -77,7 +77,7 @@ export default {
         const [upcomingEvents, allEvents] = response.map(r => 
           r.data.data.map(v => ({
             title: v.name,
-            subtitle: v.society[0].name,
+            subtitle: v.society[0] && v.society[0].name,
             tags: [
               v.startTime, v.location === null ? '' : `@ ${v.location}`
             ],
