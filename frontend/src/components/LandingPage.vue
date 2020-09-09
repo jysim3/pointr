@@ -21,7 +21,7 @@
             </router-link>
             <router-link
               tag="button"
-              to="/sign"
+              to="/signup"
               class="btn btn-secondary"
             >
               Mark my attendance
