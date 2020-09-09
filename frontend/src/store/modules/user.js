@@ -32,6 +32,7 @@ const state = getDefaultState()
 const getters = {
   name: (state) => `${state.firstname} ${state.lastname}`,
   zID: (state) => state.zID,
+  photo: (state) => state.photo || require('@/assets/defaultUser.jpg'),
   status: state => state.status,
   societies: (state) => state.societies,
   isSocietyMember: (state) => socID => {

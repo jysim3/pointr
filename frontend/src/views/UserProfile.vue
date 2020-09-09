@@ -17,9 +17,8 @@
           </div>
           <!-- TODO: Let user modify -->
           <ProfilePhoto
-            v-if="userData"
             class="profile-photo"
-            :src="userData.photo"
+            :src="userImage"
             :update-u-r-l="`/api/user/photo?zID=${zID}`"
             update-field-name="photo"
           />
@@ -111,8 +110,8 @@ export default {
   },
   computed: {
     userImage() {
-      if (this.userData.image) {
-        return this.apiURL + this.userData.image
+      if (this.userData.photo) {
+        return this.apiURL + this.userData.photo
       }
       return ""
     },
