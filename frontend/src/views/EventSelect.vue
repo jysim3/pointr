@@ -1,16 +1,51 @@
 <template>
   <div class="container">
-    <h1> Upcoming Events </h1>
+    <div class="row">
+      <div class="col">
+        <h1> Upcoming Events </h1>
+      </div>
+      <div class="col d-flex flex-column">
+        <span> Sort by </span>
+        <div class="d-flex align-items-stretch">
+          <a 
+            :class="{
+              'btn': true,
+              'btn-primary': sort !== 'new',
+              'btn-secondary': sort === 'new'
+            }"
+            @click="setSort('new')">New</a>
+          <a 
+            :class="{
+              'btn': true,
+              'btn-primary': sort !== 'category',
+              'btn-secondary': sort === 'category'
+            }"
+            @click.prevent="setSort('category')">Category</a>
+        </div>
+      </div>
+    </div>
     <div v-if="status === 'success'">
-      <div v-for="d in tags" :key="d.id">
+      <div v-if="sort === 'new'">
         <EventList 
-          :event-view-title="`${d.value} Events`"
-          :event-data="eventByTag(d.id)" 
+          :event-view-title="`Browse Events`"
+          :event-data="eventData" 
         >
           <template #action>
             <span/>
           </template>
         </EventList>
+      </div>
+      <div v-if="sort === 'category'">
+        <div v-for="(d, index) in tags" :key="d.id">
+          <EventList 
+            :event-view-title="`${d} Events`"
+            :event-data="eventByTag(index)" 
+          >
+            <template #action>
+              <span/>
+            </template>
+          </EventList>
+        </div>
       </div>
     </div>
     <Loader v-else-if="status === 'loading'" />
@@ -22,6 +57,7 @@ import axios from 'axios'
 import EventList from '@/components/EventList.vue'
 import Loader from '@/components/Loader.vue'
 export default {
+  name: "EventSelect",
   props: {
     queryTags: {
       type: Number,
@@ -37,6 +73,7 @@ export default {
         .filter(e => !this.queryTags || e.id === this.queryTags),
       eventData: [],
       status: '',
+      sort: 'new',
     }
   },
   mounted() {
@@ -48,13 +85,6 @@ export default {
     })
       .then(v => {
         this.eventData = v.data.data
-        this.eventData = this.eventData.reduce((tagEvents, e)=> {
-          e.tags && e.tags.forEach(tag => {
-            tagEvents[tag] = tagEvents[tag] || []
-            tagEvents[tag].push(e)
-          });
-          return tagEvents
-        }, {})
         this.status = 'success'
       })
       .catch(e => {
@@ -62,8 +92,15 @@ export default {
       })
   },
   methods: {
-    eventByTag(tag){
-      return this.eventData[tag]
+    eventByTag(tag){ // eslint-disable-line
+      return this.eventData.filter(e => e.tags && e.tags.includes(tag))
+    },
+    setSort(type) {
+      if (type === "new") {
+        this.sort = "new"
+      } else if (type === "category") {
+        this.sort = "category"
+      }
     }
   }
 

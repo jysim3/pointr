@@ -10,6 +10,7 @@
         src="../assets/logo.png"
         alt="pointr logo"
       >
+      (beta)
     </router-link>
     <div class="flex-grow-1 nav-link d-md-block d-none">
       <NavBarSearch class="" />

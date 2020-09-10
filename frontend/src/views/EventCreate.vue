@@ -126,6 +126,7 @@ import axios from "axios";
 import InputModule from "@/components/input/Input.vue";
 import Form from "@/components/Form";
 import Tagify from '@/components/input/tagify'
+import moment from 'moment'
 
 export default {
   name: "EventCreate",
@@ -218,10 +219,12 @@ export default {
           this.location = data.location;
           this.society = data.society[0].id;
           this.description = data.description;
-          this.startTime = data.start.split(' ')[1].split(':').slice(0,2).join(':')
-          this.startDate = data.start.substr(0,10)
-          this.endTime = data.end.split(' ')[1].split(':').slice(0,2).join(':')
-          this.endDate = data.start.substr(0,10)
+          const start = moment(data.start)
+          this.startTime = start.format('HH:mm')
+          this.startDate = start.format('YYYY-MM-DD')
+          const end = moment(data.end)
+          this.endTime = end.format('HH:mm')
+          this.endDate = end.format('YYYY-MM-DD')
           this.tags = data.tags.map(t => ({ 
             id: t, 
             value: this.$store.getters.eventTags[t]
@@ -266,6 +269,9 @@ export default {
           reject(response)
         }
       })).then(response => new Promise((resolve, reject)=> {
+        if (!this.file || Object.keys(this.file).length === 0) {
+          resolve(response)
+        }
         const fd = new FormData;
         fd.append("photo",this.file, this.file.name)
         return axios.post("/api/event/photo", fd, {
@@ -282,7 +288,7 @@ export default {
           reject(e)
         })
       })).then( response => {
-        console.log(response.data)
+        console.log(response)
         this.$router.push({
           name: "event",
           params: { eventID: response.data.id }

@@ -1,20 +1,18 @@
 <template>
-  <div>
-    <div
-      id="form-container--signin"
-      class="form-container"
+  <div class="container">
+    <Form
+      @submit="submitForgetPassword"
     >
-      <form
-        class="form"
-        @submit.prevent="submitForgetPassword"
-      >
+
+      <template #header>
         <h2>Reset your password</h2>
         <FormMessage :msg="error" />
-        <!-- TODO: style -->
-        <InputZID
-          v-model="zID"
-          :z-i-d="zID"
-        />
+      </template>
+      <InputZID
+        v-model="zID"
+        :z-i-d="zID"
+      />
+      <template #footer>
         <button
           type="submit"
           class="btn btn-primary"
@@ -31,8 +29,8 @@
             Sign up
           </router-link>
         </div>
-      </form>
-    </div>
+      </template>
+    </form>
   </div>
 </template>
 
@@ -40,12 +38,14 @@
 import axios from 'axios'
 import FormMessage from "@/components/FormMessage.vue";
 import InputZID from "@/components/input/InputZID.vue";
+import Form from "@/components/Form.vue"
 
 export default {
   name: "ForgetPassword",
   components: {
     FormMessage,
     InputZID,
+    Form
   },
   data() {
     return {

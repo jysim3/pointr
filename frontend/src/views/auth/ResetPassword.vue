@@ -1,41 +1,43 @@
 <template>
-  <div class="card-container">
-    <div
-      id="form-container--signin"
-      class="form-container"
+  <div class="container">
+    <Form
+      @submit="submitReset"
     >
-      <form
-        class="form"
-        @submit.prevent="submitReset"
-      >
+      <template #header>
         <h1>Reset Password</h1>
-        <p
-          v-if="status === 'success'"
-          class="msg"
+      </template>
+      <p
+        v-if="status === 'success'"
+        class="msg"
+      >
+        Thanks for activating your account, you may now close this window to sign in
+      </p>
+      <div v-else>
+        <InputNewPassword v-model="password" />
+      </div>
+      <template #footer>
+        <span v-if="status ==='success'"/>
+        <button 
+          v-else 
+          type="submit"
+          class="btn btn-primary"
         >
-          Thanks for activating your account, you may now close this window to sign in
-        </p>
-        <div v-else>
-          <InputNewPassword v-model="password" />
-          <button
-            type="submit"
-            class="btn btn-primary"
-          >
-            Reset Password
-          </button>
-        </div>
-      </form>
-    </div>
+          Reset Password
+        </button>
+      </template>
+    </Form>
   </div>
 </template>
 
 <script>
 import InputNewPassword from "@/components/input/InputNewPassword.vue";
 import axios from 'axios'
+import Form from "@/components/Form.vue"
 
 export default {
   name: "ResetPassword",
   components: {
+    Form,
     InputNewPassword
   },
   props: {

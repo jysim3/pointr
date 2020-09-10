@@ -4,6 +4,10 @@
     class="card m-1"
     @click="clickedCard"
   >
+    <img class="card-img-top" 
+         :src="data.photo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjc2IiBoZWlnaHQ9IjE3NiIgc3R5bGU9ImZpbGw6I2RlZGVkZTsiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UsIHNhbnMtc2VyaWYiIGZpbGw9IiM1NTU1NTUiPng8L3RleHQ+PC9zdmc+'" 
+         @error="imgAlt"
+         alt="Events photo">
     <div class="card-body ">
       <h5
         :class="full ? '' : 'card-title-sml'"
@@ -45,7 +49,10 @@ export default {
       if (this.data._link) {
         this.$router.push(this.data._link);
       }
-    }
+    },
+    imgAlt(event) {
+      event.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjc2IiBoZWlnaHQ9IjE3NiIgc3R5bGU9ImZpbGw6I2RlZGVkZTsiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UsIHNhbnMtc2VyaWYiIGZpbGw9IiM1NTU1NTUiPng8L3RleHQ+PC9zdmc+"
+    },
   }
 };
 </script>
@@ -55,6 +62,9 @@ export default {
   border: 2px solid var(--c-secondary-dark);
   width: 250px;
   box-shadow: 0 0 1rem 0rem rgba(0, 0, 0, 0.2);
+}
+.card-img-top {
+  height: 180px;
 }
 .card-clickable:hover {
   transform: translateY(-10px)

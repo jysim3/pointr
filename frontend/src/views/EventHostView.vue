@@ -49,7 +49,8 @@
         >
           <img
             class="rounded"
-            :src="eventData.photo"
+            :src="eventData.photo || '@/assets/unsw.jpg'"
+            @error="$event.target.src=require('@/assets/unsw.jpg')"
           >
         </div>
         <div class="col-12 col-md-3 mb-5">
