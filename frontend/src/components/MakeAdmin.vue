@@ -14,12 +14,10 @@
         for
       >Enter zid:</label>
       <!-- TODO: sanitise input, using quotes does not work -->
-      <input
+      <InputZID
         v-model="zID"
-        class="input"
-        type="text"
-        required
-      >
+        :z-i-d="zID"
+      />
       <button
         class="btn btn-primary"
         type="submit"
@@ -33,12 +31,14 @@
 <script>
 import axios from 'axios';
 import FormMessage from "@/components/FormMessage.vue";
+import InputZID from "@/components/input/InputZID.vue";
 // import FormError from "@/components/FormError.vue";
 
 export default {
   name: "EventSignEnterCode",
   components: {
     //FormError,
+    InputZID,
     FormMessage
   },
   props:{
