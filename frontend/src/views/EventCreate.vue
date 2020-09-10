@@ -266,6 +266,9 @@ export default {
           reject(response)
         }
       })).then(response => new Promise((resolve, reject)=> {
+        if (!this.file || Object.keys(this.file).length === 0) {
+          resolve(response)
+        }
         const fd = new FormData;
         fd.append("photo",this.file, this.file.name)
         return axios.post("/api/event/photo", fd, {
@@ -282,7 +285,7 @@ export default {
           reject(e)
         })
       })).then( response => {
-        console.log(response.data)
+        console.log(response)
         this.$router.push({
           name: "event",
           params: { eventID: response.data.id }
