@@ -24,7 +24,7 @@ class EventCreationSchema(Schema):
     privacy = fields.Int(missing=PUBLIC, 
                          default=PUBLIC, 
                          validate=validate.Range(0, len(c.EVENT_STATUS)))
-    tags = fields.List(fields.Int(validate=validate.Range(0, len(c.EVENT_TAGS))), required=True)
+    tags = fields.Int(validate=validate.Range(0, len(c.EVENT_TAGS)), required=True)
 
     hasQR = fields.Boolean(required=True)
     hasAccessCode = fields.Boolean(required=True)
@@ -37,10 +37,12 @@ class EventCreationSchema(Schema):
         data['id'] = ''.join(random.choices(ascii_uppercase + digits, k=5))
         return Event(**data)
 
+    """
     @validates('tags')
     def validateLength(self, value):
         if len(value) < 1:
             raise ValidationError('Requires at least one tag')
+    """
 
 class EventJSONSchema(Schema):
     __schema_name__ = "Event JSON Form For Additional Information"
@@ -67,7 +69,7 @@ class EventPatchSchema(Schema):
 
     status = fields.Int(validate=validate.Range(0, len(c.EVENT_STATUS)))
     privacy = fields.Int(validate=validate.Range(0, len(c.EVENT_STATUS)))
-    tags = fields.List(fields.Int(validate=validate.Range(0, len(c.EVENT_TAGS))))
+    tags = fields.Int(validate=validate.Range(0, len(c.EVENT_TAGS)))
 
     hasQR = fields.Boolean()
     hasAccessCode = fields.Boolean()
