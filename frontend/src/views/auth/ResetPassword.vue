@@ -14,13 +14,17 @@
       </p>
       <div v-else>
         <InputNewPassword v-model="password" />
-        <button
+      </div>
+      <template #footer>
+        <span v-if="status ==='success'"/>
+        <button 
+          v-else 
           type="submit"
           class="btn btn-primary"
         >
           Reset Password
         </button>
-      </div>
+      </template>
     </Form>
   </div>
 </template>
