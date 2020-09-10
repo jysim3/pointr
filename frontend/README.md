@@ -12,20 +12,17 @@ npm install
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
 ### Run your tests
+Note: remember to insert jwt secret to cypress.json
 ```
 npm run test
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
+# Windows WSL
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+If you are using WSL, you can use this hacky way to run tests
+
+```
+powershell.exe ./node_modules/.bin/cypress install
+powershell.exe ./node_modules/.bin/cypress run
+```
