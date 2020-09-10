@@ -10,6 +10,7 @@ site = 'https://pointr.live'
 server = smtplib.SMTP()
 if app.config['ENV'] == 'production':
     server.connect('localhost')
+    server.ehlo()
 else:
     pass
 server.set_debuglevel(3)
@@ -23,8 +24,11 @@ def sendAsyncMail(app, msg, recipients):
         try:
             from_email = app.config['MAIL_USERNAME']
             server.sendmail(from_email, recipients, msg.as_string())
-            server.quit()
-        except Exception as e:
+        except SMTPException as e:
+            server.connect('localhost')
+            server.ehlo()
+            from_email = app.config['MAIL_USERNAME']
+            server.sendmail(from_email, recipients, msg.as_string())
             print(e)
             return str(e)
 
@@ -33,7 +37,7 @@ def createEmailBody(subject="",sender=app.config['MAIL_USERNAME'], recipients=[]
         raise ValueError()
     message = MIMEMultipart('alternative')
     message['Subject'] = subject
-    message['From'] = sender
+    message['From'] = f"Pointr <{sender}>"
     message['To'] = ','.join(recipients)
     message.attach( MIMEText( html, 'html') ) # TODO: Add real html body: jysim3
     return message
