@@ -14,6 +14,10 @@ describe('Society', () => {
             `('z5161631', '${v.socID}', 1); | psql pointrDB`
             )
             cy.exec(
+            "echo insert into staff (\"zID\", \"socID\", rank) values " +
+            `('z0000000', '${v.socID}', 1); | psql pointrDB`
+            )
+            cy.exec(
                 `echo delete from hosted where "socID"='${v.socID}'; | psql pointrDB`
             )
 
@@ -37,7 +41,7 @@ describe('Society', () => {
         cy.server()
         cy.route('/api/*').as('api')
     })
-    it('Society Page', function() {
+    it('Edit society page', function() {
         cy.get("@userData").then(v => {
             cy.visit(`/society/${v.socID}`)
             cy.contains('Admin Tools').click()
@@ -46,6 +50,32 @@ describe('Society', () => {
             cy.get('textarea').type(k)
             cy.contains('Submit').click()
             cy.contains(k)
+        })
+    })
+    it('Make admin', function() {
+        cy.get("@userData").then(v => {
+            cy.visit(`/society/${v.socID}`)
+            cy.contains('Admin Tools').click()
+            cy.get('input[name=zID]').type("z0000000")
+            cy.contains('Make admin').click()
+            cy.request('POST','http://localhost:5000/api/auth/login', {
+                "zID": 'z0000000',
+                "password": '00000000'
+            }).its('body').then(data => {
+                expect(data.data).to.have.key('token')
+                return data.data['token']
+            }).then(token => cy.request(
+            {
+                method: 'GET', 
+                url: 'http://localhost:5000/api/user/societies',
+                headers: {
+                    'Authorization': token
+                }
+            })).its('body').then(data => {
+                expect(data).to.include.keys('data')
+                expect(data.data).to.include.key('admins')
+                expect(data.data.admins[0].id).to.eq(v.socID)
+            })
         })
     })
 })

@@ -100,4 +100,33 @@ describe('Registering and login', () => {
     cy.location('pathname').should('eq','/event/asdf')
     cy.location('pathname').should('eq','/404')
   })
+  it('Reseting password', function() {
+    cy.visit('/forgotPassword')
+    cy.get('input[name=zID]').type(this.userData.zID)
+    cy.get('.btn').contains('Reset Password').click()
+    cy.get('body').should('contain','Success')
+    var token = jwt.sign({
+        'zID':'z5161631',
+        "permission": 0,
+        "activation": 0,
+        "type": "forgot"
+    }, Cypress.env('secret'));
+    cy.log(token)
+    cy.visit('/reset/' + token)
+    cy.get('input[name=password]').type('12345678')
+    cy.get('input[name=repeatPassword]').type('12345678')
+    cy.get('.btn').contains('Reset').click()
+    cy.request('POST','http://localhost:5000/api/auth/login', {
+        "zID": this.userData.zID,
+        "password": '12345678'
+    }).its('body').then(data => {
+        expect(data).to.include.keys('data')
+        expect(data.data).to.have.key('token')
+        localStorage.setItem('token', data.data['token'])
+    })
+    cy.visit('/reset/' + token)
+    cy.get('input[name=password]').type(this.userData.password)
+    cy.get('input[name=repeatPassword]').type(this.userData.password)
+    cy.get('.btn').contains('Reset').click()
+  })
 })
