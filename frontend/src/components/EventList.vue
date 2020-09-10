@@ -111,6 +111,7 @@ export default {
       return this.eventData.map(v => ({
         title: v.name,
         subtitle: v.society[0] && v.society[0].name,
+        photo: v.photo,
         tags: [
           v.startTime, 
           v.location === null ? '' : v.location
