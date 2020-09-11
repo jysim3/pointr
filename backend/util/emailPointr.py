@@ -24,7 +24,7 @@ def sendAsyncMail(app, msg, recipients):
         try:
             from_email = app.config['MAIL_USERNAME']
             server.sendmail(from_email, recipients, msg.as_string())
-        except SMTPException as e:
+        except smtplib.SMTPException as e:
             server.connect('localhost')
             server.ehlo()
             from_email = app.config['MAIL_USERNAME']

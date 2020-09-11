@@ -35,11 +35,13 @@ const actions = {
       commit('auth_request')
       axios({url: '/api/auth/register', data: user, method: 'POST' })
         .then(resp => {
-          // const token = resp.data.token
+          console.log(resp)
+          const token = resp.data.data.token
           // const user = resp.data.user
-          // localStorage.setItem('token', token)
+          localStorage.setItem('token', token)
           // axios.defaults.headers.common['Authorization'] = token
           // commit('auth_success', token, user)
+          commit('auth_success', token)
           resolve(resp)
         })
         .catch(err => {

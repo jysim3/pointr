@@ -37,7 +37,7 @@ class Register(Resource):
         db.session.commit()
         #z5214808
 
-        return jsonify({"status": "success"})
+        return jsonify({"status": "success", "data": {"token": token}})
 
 @api.route('/login')
 class Login(Resource):

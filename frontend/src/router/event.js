@@ -1,5 +1,6 @@
 import EventCreate from '@/views/EventCreate.vue';
 import Event from '@/views/Event.vue';
+import store from '@/store/index';
 import EventSelect from '@/views/EventSelect.vue';
 export default  [
   {
@@ -37,9 +38,12 @@ export default  [
     path: '/event/:eventID',
     name: 'event',
     component: Event,
-    props: route => ({ eventID: route.params.eventID, code: route.query.code }),
+    props: route => ({ 
+      eventID: route.params.eventID, 
+      code: route.query.code ,
+      newUser: !store.getters.isAuthenticated,
+    }),
     meta: {
-      requiresAuth: true,
       title: 'Event Page - Pointr'
     }
   },

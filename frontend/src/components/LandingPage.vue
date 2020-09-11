@@ -1,34 +1,44 @@
 <template>
-  <div id="landing-page">
-    <div class="landing-background">
-      <div class="container wrapper">
-        <!-- <img src="../assets/logo.png" /> -->
-        <div>
-          <h1 class="heading">
-            Welcome to Pointr!
-          </h1>
-          <h3 class="sub-heading">
-            The attendance tracking system for UNSW Arc Societies.
-          </h3>
-          <p>Mark your members' attendance in seconds and visualize them in informative graphs </p>
-          <div class="btn-container">
-            <router-link
-              tag="button"
-              to="/create"
-              class="btn btn-primary"
-            >
-              Create an event
-            </router-link>
-            <router-link
-              tag="button"
-              to="/signup"
-              class="btn btn-secondary"
-            >
-              Mark my attendance
-            </router-link>
+  <div>
+    <div class="bg-white landing">
+      <!-- <img src="../assets/logo.png" /> -->
+      <div class="container wrapper text-center text-lg-left">
+        <div class="row">
+          <div class="col-lg-8 col-12">
+            <h1 class="heading">
+              Welcome to 
+              <img
+                class="logo"
+                src="../assets/logo.png"
+                alt="pointr logo"
+              >
+            </h1>
+            <h3 class="sub-heading">
+              The attendance tracking system for UNSW Arc Societies.
+            </h3>
+            <p>Mark your members' attendance in seconds and visualize them in informative graphs </p>
+            <div class="btn-container">
+              <router-link
+                tag="button"
+                to="/create"
+                class="btn btn-primary"
+              >
+                Create an event
+              </router-link>
+              <router-link
+                tag="button"
+                to="/signup"
+                class="btn btn-secondary"
+              >
+                Mark my attendance
+              </router-link>
+            </div>
+          </div>
+          <div class="col w-100" />
+          <div class="col-lg-3 col-12">
+            <EventCode event-i-d="TEST1" />
           </div>
         </div>
-        <EventUpcoming />
       </div>
     </div>
     <div class="user-tutorial container-fluid">
@@ -79,31 +89,22 @@
 
 <script>
 import EventUpcoming from '@/components/EventUpcoming.vue'
+import EventCode from "@/components/EventCode.vue";
 export default {
   name: "LandingPage",
   components: {
-    EventUpcoming
+    EventCode,
+    EventUpcoming // eslint-disable-line
   }
 };
 </script>
 
 <style scoped>
-#landing-page {
+.landing {
   margin-top: -3rem;
 }
 .wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
   padding: 10rem 0;
-  /* background: rgba(0,0,0,0.3); */
-}
-.wrapper p{
-  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-  font-size: 1.3rem;
-  color: white;
 }
 .landing-background {
   background-image: url('~@/assets/unsw.jpg');
@@ -112,23 +113,7 @@ export default {
   background-size: cover;
 }
 .heading {
-  color: white;
-}
-.sub-heading {
-  margin: 1rem;
-  font-size: 1.3rem;
-  color: white;
-  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-}
-
-.btn {
-  font-size: 1rem;
-  margin: 1rem;
-}
-
-.btn-container {
-  display: flex;
-  justify-content: center;
+  color: black;
 }
 .user-tutorial {
   background-color: white;
