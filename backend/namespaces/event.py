@@ -32,6 +32,7 @@ class EventRoute(Resource):
         Requires the token bearer to be an admin of one of the specified societies
     ''')
     @api.expect(toModel(api, EventCreationSchema))
+    #@auth_services.checkAuthorization(level=1, allowSocAdmin=True)
     @auth_services.checkAuthorization(level=1)
     @validateArgs(SocietyIDSchema, 'society')
     @validateBody(EventCreationSchema, 'event')
@@ -196,10 +197,11 @@ class AttendCode(Resource):
     ''')
     @api.expect(authModel)
     @validateArgs(EventIDSchema, 'event')
-    @checkAuthorization(level=1)
+    @checkAuthorization(level=1, allowSocAdmin=True)
     def get(self, token_data, event):
 
         return jsonify({'status': 'success', 'data': event.getAttendCode()})
+
 """
 FIXME: CHUCK ALL THIS INTO ARGS STRING, CHECK ARGS STRING, WORK ON VALIDATEARGSWITH
 """
@@ -212,16 +214,13 @@ class AttendRoute(Resource):
     @api.expect(authModel)
     @validateArgs(EventIDSchema, 'event')
     @validateArgs(EventAttendCodeSchema, 'code')
-    @checkAuthorization(level=1)
-    def post(self, token_data, event, code):
+    @checkAuthorization(level=0, activationRequired=False)
+    def post(self, token_data, event, *args, **kwargs):
         user = Users.findUser(token_data['zID'])
         status = event.addAttendance(user)
         if status:
             abort(403, status)
         return jsonify({"status": "success"})
-
-
-
 
 
     @api.doc(description='''

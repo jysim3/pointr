@@ -207,7 +207,7 @@ class Event(db.Model):
         db.session.commit()
 
     def getAttendanceJSON(self):
-        results = [i.jsonifySelf() for i in self.attendees]
+        results = [i.jsonifySelf() for i in self.attendees if i.user.activated]
         return results
 
     def getAttended(self):
