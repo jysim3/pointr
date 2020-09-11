@@ -1,7 +1,7 @@
 from flask import request, jsonify, abort
 from flask_restx import Namespace, Resource, fields
 from util.validation_services import toQuery, toModel, validateArgs, validateBody
-from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema, ZIDDetailsSchema, PasswordSchema
+from schemata.auth_schemata import RegisterDetailsSchema, LoginDetailsSchema, TokenSchema, ZIDDetailsSchema, PasswordSchema, ChangePasswordSchema
 from schemata.user_schemata import ZIDSchema
 from schemata.models import authModel
 from util import auth_services
@@ -13,6 +13,7 @@ from models.user import Users
 from util.auth_services import generateLoginToken, generateActivationToken, generateForgotToken
 from util.emailPointr import sendActivationEmail, sendForgotEmail
 from util.auth_services import checkAuthorization
+from hashlib import sha256
 
 @api.route('/register')
 class Register(Resource):
@@ -88,6 +89,7 @@ class ReActivate(Resource):
             abort(403, "Already activated")
 
         token = generateActivationToken(user)
+        print(f"Token: {token}")
         if sendActivationEmail(token, user.zID, user.firstName) != "success":
             abort(500, "Internal Server Error, Email Service Not Working")
 
@@ -107,7 +109,7 @@ class Forgot(Resource):
             abort(400, "No such user")
 
         token = generateForgotToken(user.zID)
-        print(token)
+        print(f"Forgot Token: {token}")
         status = sendForgotEmail(token, user.zID)
         if status != "success":
             abort(500, "Internal Server Error, Email Service Not Working")
@@ -123,7 +125,7 @@ class Reset(Resource):
         Expects new password in body
     ''')
     @api.expect(toModel(api, PasswordSchema), authModel)
-    @checkAuthorization(level=0, activationRequired=False)
+    @checkAuthorization(level=0, activationRequired=False, type='forgot')
     @validateBody(PasswordSchema)
     def post(self, token_data, data):
         from hashlib import sha256
@@ -142,10 +144,20 @@ class changePassword(Resource):
         Takes in a password for the user 
         TODO should probably also take old password
     ''')
-    @api.expect(toModel(api, PasswordSchema), authModel)
+    @api.expect(toModel(api, ChangePasswordSchema), authModel)
     @checkAuthorization(level=1)
-    def post(self, token_data):
-        pass
+    @validateBody(ChangePasswordSchema)
+    def post(self, token_data, data):
+        from hashlib import sha256
+        user = Users.query.filter_by(zID=token_data['zID']).first()
+        if (not sha256(data['oldPassword'].encode()).hexdigest() == user.password):
+            abort(403, "Incorrect password")
+            
+        user.password = sha256(data['newPassword'].encode()).hexdigest()
+        db.session.add(user)
+        db.session.commit()
+        
+        return jsonify({'status': 'success'})
 
 @api.route('/validate')
 @api.param('token', description='User Token', type='String', required='True')

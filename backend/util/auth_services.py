@@ -66,7 +66,8 @@ def generateForgotToken(zID):
     return token.decode("utf-8")
 
 def checkAuthorization(activationRequired=True, 
-                       level=0, 
+                       level=0,
+                       type=None,
                        allowSelf=False,
                        onlyAllowSelf=False,
                        allowSuperAdmin=False,
@@ -96,7 +97,11 @@ def checkAuthorization(activationRequired=True,
                 society = data['society'] if 'society' in data else None
             except ValidationError as err:
                 abort(400, err.messages)
-
+            
+            # Check the type is as expected.
+            if type:
+                if not type == token_data['type']:
+                    abort(403, f'Incorrect type of token, expected {type}')
 
             request_user = token_data['user']
             if token_data['permission'] < level:
@@ -143,7 +148,3 @@ def checkAuthorization(activationRequired=True,
         return wrapper
     return decorator
  
-# Low   
-# eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1ODI2MDI1MzgsImlhdCI6MTU4MjU0MjUzOCwieklEIjoiejUyMTQ4MDgiLCJwZXJtaXNzaW9uIjoxfQ.eOIssA0CfC_aKM14qZBe9T-SHXBkwkAKLkG7VJxbBt4
-
-# High

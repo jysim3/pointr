@@ -69,6 +69,11 @@ class ZIDDetailsSchema(Schema):
 class PasswordSchema(Schema):
     __schema_name__ = "Password"
     password = common_schemata.passwordRequired
+    
+class ChangePasswordSchema(Schema):
+    __schema_name__ = "Change Password"
+    oldPassword = common_schemata.passwordRequired
+    newPassword = common_schemata.passwordRequired
 
 class TokenSchema(Schema):
     name = "Token"
