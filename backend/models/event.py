@@ -104,7 +104,7 @@ class Event(db.Model):
     additionalInfo = db.Column(db.JSON, nullable=True)
     privacy = db.Column(db.Integer, nullable=False)
 
-    tags = db.Column(db.Integer, nullable=True)
+    tags = db.Column(db.ARRAY(db.Integer), nullable=True)
 
     status = db.Column(db.Integer, nullable=False)
 
