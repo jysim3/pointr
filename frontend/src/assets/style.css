@@ -88,7 +88,7 @@ a.link {
   text-decoration: none;
   color: var(--c-secondary-dark);
   font-weight: 500;
-  color: black;
+  color: #007bff;
   cursor: pointer;
 }
 

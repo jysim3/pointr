@@ -67,7 +67,7 @@ export default {
       zID: "",
       password: "",
       nextRoute: this.$route.query.redirect || "/",
-      error: ""
+      error: "",
     };
   },
   computed: {

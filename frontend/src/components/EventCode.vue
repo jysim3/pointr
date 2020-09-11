@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column text-center ">
+  <div class="d-flex flex-column text-center event-code-container">
     <div class="d-flex flex-column align-content-center flex-grow-1 mb-3">
       <h4>Sign in using QR Code</h4>
       <EventQRCode
@@ -112,6 +112,9 @@ export default {
     width: 0;
   }
   
+}
+.event-code-container > div {
+  align-self: center;
 }
 
 .event-code {

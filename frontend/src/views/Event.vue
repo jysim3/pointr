@@ -10,6 +10,7 @@
       :given-code="code"
       :event-i-d="eventID" 
       :event-data="eventData"
+      :sign-form="newUser"
     />
   </div>
 </template>
@@ -30,6 +31,10 @@ export default {
     },
     eventID: {
       type: String,
+      required: true
+    },
+    newUser: {
+      type: Boolean,
       required: true
     }
   },
@@ -66,6 +71,7 @@ export default {
     
   mounted() {
     this.getEventInfo()
+    console.log(this.newUser)
   },
   methods: {
 
