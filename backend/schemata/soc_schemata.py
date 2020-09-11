@@ -20,7 +20,7 @@ class SocietyIDSchema(Schema):
         society = Societies.findSociety(data['societyID'])
 
         if not society:
-            abort(400, {'societyID': ['That Society ID does not exist']})
+            abort(404, {'societyID': ['That Society ID does not exist']})
         return society
 
 class SocietyCreationSchema(Schema):

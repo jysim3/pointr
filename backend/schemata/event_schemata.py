@@ -89,7 +89,7 @@ class EventIDSchema(Schema):
         event = Event.getEvent(data['eventID'])
 
         if not event:
-            abort(400, {'eventID': ['That Event ID does not exist']})
+            abort(404, {'eventID': ['That Event ID does not exist']})
         return event
 
 class EventAttendCodeSchema(Schema):
