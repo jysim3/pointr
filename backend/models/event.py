@@ -126,21 +126,21 @@ class Event(db.Model):
 
     # FIXME: Create real secret key
     def getAttendCodes(self):
-        seconds = datetime.now().timestamp() // 10 
+        seconds = datetime.now().timestamp() // 30 
         secret_key = 'asdf'
         codes = [sha1(f"{seconds-i}{id}{secret_key}".encode("UTF-8")).hexdigest()[:5]
             for i in range(2)]
         print(codes)
         return codes
     def getAttendCode(self):
-        seconds = datetime.now().timestamp() // 10
+        seconds = datetime.now().timestamp() // 30
         secret_key = 'asdf'
         code = sha1(f"{seconds}{id}{secret_key}".encode("UTF-8")).hexdigest()[:5]
-        nextRefresh = (seconds+1) * 10
+        nextRefresh = (seconds+1) * 30
         return {
             'nextRefresh': nextRefresh,
             'code': code,
-            'refreshInterval': 10000
+            'refreshInterval': 30 * 1000
         }
     def getPreview(self):
         return {
