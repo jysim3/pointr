@@ -22,6 +22,7 @@ const store = new Vuex.Store({
     eventTags: state => state.eventTags,
     isAuthenticated: (state, getters) => getters['auth/isAuthenticated'],
     tokenInfo: (state) => !!state.auth.token && jwt.decode(state.auth.token),
+    isActivated: (state, getters) => !!getters.tokenInfo && getters.tokenInfo.permission !== 0,
     isLoading: state => state.status === 'loading',
     navBar: state => state.navBar,
     zID: state => state.auth.token ? jwt.decode(state.auth.token)['zID'] : '',

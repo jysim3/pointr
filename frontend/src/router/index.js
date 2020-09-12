@@ -83,7 +83,7 @@ router.beforeResolve(async (to, from, next) => {
   // EXAMPLE: user with no account scans QR code on Event page
 
   store.dispatch('auth/validate')
-  if (store.getters.isAuthenticated) {
+  if (store.getters.isAuthenticated && store.getters.isActivated) {
     if (store.getters['user/status'] === null) {
       await store.dispatch('user/getUserInfo')
     }
@@ -93,6 +93,13 @@ router.beforeResolve(async (to, from, next) => {
       next({
         path: '/signin',
         query: {redirect: to.fullPath}, 
+      });
+      return 
+    }
+    if (!store.getters.isActivated) {
+      next({
+        path: '/sendActivationEmail',
+        query: {givenzID: store.getters.zID}, 
       });
       return 
     }

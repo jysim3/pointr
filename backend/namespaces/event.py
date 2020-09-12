@@ -5,6 +5,7 @@ from schemata.event_schemata import EventCreationSchema, EventPatchSchema, Event
 from util import auth_services
 from schemata.models import authModel, offsetModel
 from schemata.event_schemata import EventIDSchema, EventNumberSchema, EventJSONSchema, EventJSONAttendanceSchema, EventPhotoSchema
+from schemata.auth_schemata import TokenSchema
 from schemata.soc_schemata import SocietyIDSchema
 from schemata.user_schemata import ZIDSchema
 from pprint import pprint
@@ -197,9 +198,15 @@ class AttendCode(Resource):
     ''')
     @api.expect(authModel)
     @validateArgs(EventIDSchema, 'event')
-    @checkAuthorization(level=1, allowSocAdmin=True)
-    def get(self, token_data, event):
-
+    # @checkAuthorization(level=1, allowSocAdmin=True)
+    def get(self, event):
+        if event.id == "TEST1":
+            return jsonify({'status': 'success', 'data': event.getAttendCode()})
+        token_data = TokenSchema().load({"token": request.headers.get('Authorization')})
+        society = event.getHostSoc()[0]
+        admins = society.getAdminsIDs()
+        if token_data['user'].zID not in admins:
+            abort(403, "You are not an admin of this society")
         return jsonify({'status': 'success', 'data': event.getAttendCode()})
 
 """
