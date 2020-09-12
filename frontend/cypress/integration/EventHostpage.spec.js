@@ -30,6 +30,9 @@ describe('Event', () => {
                 "echo INSERT INTO EVENTS(id, name, start, \"end\",description, \"hasQR\",\"hasAccessCode\", \"hasAdminSignin\", status,  privacy) VALUES " +
                 "('AAAAF', 'Monitored well-modulated support', TIMESTAMP '2020-12-27 04:57:44+10', TIMESTAMP '2020-12-27 07:32:48+11', 'in tempor turpis nec euismod scelerisque quam turpis adipiscing lorem vitae mattis nibh', 't', 't', 't', 2,0); | psql pointrDB"
             )
+            cy.exec(
+                `echo delete from staff where "zID"='z0000000'; | psql pointrDB`
+            )
             
             cy.exec(
                 "echo INSERT INTO hosted(\"eventID\",\"socID\") VALUES " +

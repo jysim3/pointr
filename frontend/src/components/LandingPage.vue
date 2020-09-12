@@ -102,6 +102,9 @@ export default {
 <style scoped>
 .landing {
   margin-top: -3rem;
+  background-image: url('https://www.webdesigndev.com/wp-content/uploads/2015/02/Subtle-Light-Tile-Pattern-Vol2.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 .wrapper {
   padding: 10rem 0;

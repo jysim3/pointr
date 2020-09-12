@@ -87,6 +87,5 @@ describe('Event', () => {
         cy.contains('Aug 15, 2020 12:23 AM - Aug 16, 2020 1:23 AM')
         cy.contains('my mum')
         cy.contains('Public')
-        cy.contains('abcdef')
     })
 })

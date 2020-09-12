@@ -14,8 +14,7 @@ describe('Society', () => {
             `('z5161631', '${v.socID}', 1); | psql pointrDB`
             )
             cy.exec(
-            "echo insert into staff (\"zID\", \"socID\", rank) values " +
-            `('z0000000', '${v.socID}', 1); | psql pointrDB`
+                `echo delete from staff where "zID"='z0000000'; | psql pointrDB`
             )
             cy.exec(
                 `echo delete from hosted where "socID"='${v.socID}'; | psql pointrDB`
