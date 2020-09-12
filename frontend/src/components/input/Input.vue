@@ -139,4 +139,7 @@ input[type='checkbox'] {
 .input {
   width: 100%;
 }
+textarea.input{
+  min-width: 100%;
+}
 </style>
