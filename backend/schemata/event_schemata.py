@@ -42,11 +42,6 @@ class EventCreationSchema(Schema):
             abort(400, "Specified time not valid")
         return Event(**data)
 
-    @validates('tags')
-    def validateLength(self, value):
-        if len(value) < 1:
-            raise ValidationError('Requires at least one tag')
-
 class EventJSONSchema(Schema):
     __schema_name__ = "Event JSON Form For Additional Information"
 
