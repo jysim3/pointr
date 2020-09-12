@@ -63,6 +63,7 @@
         name="startDate"
         label="End Date"
         type="date"
+        :min="moment().format('YYYY-MM-DD')"
       />
 
       <InputModule
@@ -182,6 +183,7 @@ export default {
     }
   },
   methods: {
+    moment: moment,
     onFileSelected(event) {
       const selectedFile = event.target.files[0]
       this.file = selectedFile
