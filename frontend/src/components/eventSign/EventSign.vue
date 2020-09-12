@@ -193,7 +193,7 @@ export default {
         subtitle: this.eventData.description,
         photo: this.eventData.photo,
         tags: [
-          this.eventData.start, this.eventData.location
+          moment(this.eventData.start).format('lll'), this.eventData.location
         ],
         _link: undefined // `/event/${this.eventData.eventID}`
       }

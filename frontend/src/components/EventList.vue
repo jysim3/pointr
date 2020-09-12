@@ -74,6 +74,7 @@ import EventCard from "@/components/EventCard.vue";
 import FormError from "@/components/FormError.vue";
 import Table from "@/components/Table.vue";
 import Loader from "@/components/Loader.vue";
+import moment from "moment";
 
 export default {
   name: "EventList",
@@ -113,7 +114,7 @@ export default {
         subtitle: v.society[0] && v.society[0].name,
         photo: v.photo,
         tags: [
-          v.startTime, 
+          moment(v.startTime).format('lll'), 
           v.location === null ? '' : v.location
         ],
         _link: `/event/${v.id}`

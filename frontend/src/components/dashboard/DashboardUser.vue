@@ -47,6 +47,7 @@ import Card from "@/components/EventCard.vue";
 import CardContainer from "@/components/CardContainer.vue";
 import EventEnterCode from "@/components/eventSign/EventEnterCode.vue";
 import axios from 'axios';
+import moment from 'moment';
 export default {
   name: "DashboardUser",
   components: {
@@ -80,7 +81,7 @@ export default {
             photo: v.photo,
             subtitle: v.society[0] && v.society[0].name,
             tags: [
-              v.startTime, v.location === null ? '' : `@ ${v.location}`
+              moment(v.startTime).format('lll'), v.location === null ? '' : `@ ${v.location}`
             ],
             _link: `/event/${v.id}`
           }))
