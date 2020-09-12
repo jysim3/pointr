@@ -7,6 +7,8 @@ from constants import PUBLIC
 import uuid
 import random
 from string import ascii_uppercase, digits
+from datetime import datetime
+import pytz
 
 class EventCreationSchema(Schema):
     __schema_name__ = "Event Form"
@@ -35,6 +37,9 @@ class EventCreationSchema(Schema):
     @post_load
     def makeEvent(self, data, **kwargs):
         data['id'] = ''.join(random.choices(ascii_uppercase + digits, k=5))
+        #if data['start'] > data['end'] or min(data['end'], data['start']) < datetime.now(pytz.utc):
+        if data['start'] > data['end'] or data['end'] < datetime.now(pytz.utc):
+            abort(400, "Specified time not valid")
         return Event(**data)
 
     @validates('tags')
