@@ -17,7 +17,7 @@
       />
       <Input
         v-model="code"
-        label="PIN"
+        :label="pinLabel"
         name="code"
         type="text"
       />
@@ -128,6 +128,7 @@ import FormError from "@/components/FormError.vue"
 import InputZID from "@/components/input/InputZID.vue";
 import InputPassword from "@/components/input/InputNewPassword.vue";
 import Input from "@/components/input/Input.vue"
+import moment from "moment"
 
 export default {
   name: "EventSignEnterAttendance",
@@ -155,6 +156,10 @@ export default {
     signForm: {
       type: Boolean,
       required: true
+    },
+    expiryTime: {
+      type: String,
+      default: ""
     }
   },
   data() {
@@ -176,6 +181,9 @@ export default {
         degreeType: "",
         isArcMember: false
       },
+      pinLabel: "PIN",
+      expireTimeData: moment(this.expiryTime*1000),
+      intervalID: ""
     };
   },
   computed: {
@@ -191,6 +199,26 @@ export default {
       }
     },
     activated() { return  this.$store.getters.tokenInfo['permission'] !== 0}
+  },
+  mounted() {
+    if (this.expiryTime) {
+      if (this.expireTimeData.isAfter()){
+        this.pinLabel = `PIN (expires ${this.expireTimeData.diff(moment(), 'seconds')} seconds)`
+      } else {
+        this.pinLabel = `PIN (expired)`
+      }
+      this.intervalID = setInterval(() => {
+        if (this.expireTimeData.isAfter()){
+          this.pinLabel = `PIN (expires ${this.expireTimeData.diff(moment(), 'seconds')} seconds)`
+        } else {
+          this.pinLabel = `PIN (expired)`
+          clearInterval(this.intervalID)
+        }
+      }, 1000)
+    }
+  },
+  beforeUnmount() {
+    clearInterval(this.refreshID)
   },
   methods: {
     formSubmit(){

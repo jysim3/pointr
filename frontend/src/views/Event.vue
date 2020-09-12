@@ -11,6 +11,7 @@
       :event-i-d="eventID" 
       :event-data="eventData"
       :sign-form="newUser"
+      :expiry-time="expiryTime"
     />
   </div>
 </template>
@@ -36,6 +37,10 @@ export default {
     newUser: {
       type: Boolean,
       required: true
+    },
+    expiryTime: {
+      type: String,
+      required: false
     }
   },
   data() {

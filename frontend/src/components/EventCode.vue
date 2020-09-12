@@ -18,6 +18,7 @@
         <h3>
           PIN: {{ eventCode }}
         </h3>
+        <p> Note: The PIN will still work for after it "expires" </p>
         <div
           ref="event-code-bar"
           class="event-code-bar"
@@ -44,20 +45,24 @@ export default {
   data() {
     return {
       eventCode: "",
-      refreshID: ""
+      refreshID: "",
+      nextRefresh: ""
     }
   },
   computed: {
     signURL() {
-      return window.location.host + this.$router.resolve({ 
+      const k = window.location.host + this.$router.resolve({ 
         name: 'event',
         params: {
           eventID: this.eventID,
         },
         query: {
-          code: this.eventCode
+          code: this.eventCode,
+          expiryTime: this.nextRefresh + 90
         }
       }).href
+      console.log(k)
+      return k
     }
   },
   mounted() {
@@ -67,6 +72,7 @@ export default {
       const data = r.data.data
       this.eventCode = data.code
       this.refreshInterval = data.refreshInterval
+      this.nextRefresh = data.nextRefresh
       const timeUntilRefresh = moment(data.nextRefresh*1000)-moment()
 
       setTimeout(() => this.startRefreshCode(), timeUntilRefresh)
@@ -78,9 +84,12 @@ export default {
   methods: {
     getCode() {
       axios.get('/api/event/attend/code', {
-        params: { eventID: this.eventID }
+        params: { 
+          eventID: this.eventID,
+        }
       }).then(r => {
         const data = r.data.data
+        this.nextRefresh = data.nextRefresh
         this.eventCode = data.code
       })
     },

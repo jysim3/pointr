@@ -40,7 +40,8 @@ export default  [
     component: Event,
     props: route => ({ 
       eventID: route.params.eventID, 
-      code: route.query.code ,
+      code: route.query.code,
+      expiryTime: route.query.expiryTime,
       newUser: !store.getters.isAuthenticated,
     }),
     meta: {
