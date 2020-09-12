@@ -39,6 +39,7 @@ describe('Attend Event with new user', () => {
         // localStorage.setItem('')
     })
     it('New user is able to attend', function() {
+        cy.exec( `echo delete from attend where "zID"='z0000010'; | psql pointrDB`)
         cy.get("@userData").then(v => {
             return cy.request('POST','http://localhost:5000/api/auth/login', {
                 "zID": v.zID,
@@ -106,6 +107,64 @@ describe('Attend Event with new user', () => {
         cy.visit('/activate/' + token)
         cy.contains('Thanks for activating your account', {timeout: 10000})
         }).then(() => cy.get("@userData")).then(v => {
+            cy.request('POST','http://localhost:5000/api/auth/login', {
+                    "zID": v.zID,
+                    "password": v.password
+                }).its('body').then(data => {
+                    expect(data).to.include.keys('data');
+                    expect(data.data).to.have.key('token');
+                    return data.data['token'];
+                }).then(token => cy.request({
+                    url: 'http://localhost:5000/api/event/attend?eventID=AAAAF',
+                    headers: {
+                        'Authorization': token
+                    }
+                })).its('body').then(data => {
+                    expect(data).to.include.keys('data');
+                    expect(data.data).to.have.length(1)
+
+                    return data.data
+                })
+        })
+
+    })
+    it('Old user is able to attend with login', function() {
+        cy.exec( `echo delete from attend where "zID"='z0000010'; | psql pointrDB`)
+        cy.get("@userData").then(v => {
+            return cy.request('POST','http://localhost:5000/api/auth/login', {
+                "zID": v.zID,
+                "password": v.password
+            }).its('body').then(data => {
+                expect(data).to.include.keys('data');
+                expect(data.data).to.have.key('token');
+                return data.data['token'];
+            }).then(token => cy.request({
+                url: 'http://localhost:5000/api/event/attend/code?eventID=AAAAF',
+                headers: {
+                    'Authorization': token
+                }
+            })).its('body').then(data => {
+                expect(data).to.include.keys('data');
+                expect(data.data).to.include.keys('code');
+                return data.data['code'];
+            })
+        }).then(code => {
+            cy.visit('/event/AAAAF')
+            const details = {
+                code: code,
+                zID: 'z0000010',
+                password: 'asdfjkl;',
+            }
+            cy.contains('Log').click()
+            for (const name in details) {
+                cy.get(`input[name=${name}]`).type(details[name])
+                cy.get(`input[name=${name}]`).should('have.value', details[name])
+            }
+            cy.get('.btn').contains('Sign as').click()
+        })
+    })
+    it('checking attendance', function() {
+        cy.get("@userData").then(v => {
             cy.request('POST','http://localhost:5000/api/auth/login', {
                     "zID": v.zID,
                     "password": v.password
