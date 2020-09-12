@@ -18,7 +18,7 @@
         <h3>
           PIN: {{ eventCode }}
         </h3>
-        <p> Note: The PIN will still work for after it "expires" </p>
+        <p> Note: The PIN will remain active even after it refreshes</p>
         <div
           ref="event-code-bar"
           class="event-code-bar"
