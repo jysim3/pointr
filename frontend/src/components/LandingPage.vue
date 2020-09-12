@@ -36,6 +36,7 @@
           </div>
           <div class="col w-100" />
           <div class="col-lg-3 col-12">
+            <h3 class="text-center"> Try it attending the test event here! </h3>
             <EventCode event-i-d="TEST1" />
           </div>
         </div>
@@ -80,7 +81,7 @@
         </div>
         <div>
           <img src="@/assets/adminTutorial3.png">
-          <p>3. View your attendees in beautifully generated graph</p>
+          <p>3. View your attendees in a beautifully generated graph</p>
         </div>
       </div>
     </div>
