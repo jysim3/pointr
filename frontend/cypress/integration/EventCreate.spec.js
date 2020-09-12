@@ -80,7 +80,7 @@ describe('Event', () => {
         cy.contains('edit').click()
         cy.contains('Edit event')
         const k = Date.now()
-        cy.contains('Description').next().type(k)
+        cy.get('textarea').type(k)
         cy.contains('Edit Event').click()
         cy.contains(k)
         cy.contains('hello')
