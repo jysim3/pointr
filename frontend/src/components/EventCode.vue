@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     signURL() {
-      const k = window.location.host + this.$router.resolve({ 
+      return window.location.host + this.$router.resolve({ 
         name: 'event',
         params: {
           eventID: this.eventID,
@@ -61,8 +61,6 @@ export default {
           expiryTime: this.nextRefresh + 90
         }
       }).href
-      console.log(k)
-      return k
     }
   },
   mounted() {
