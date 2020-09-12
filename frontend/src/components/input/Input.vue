@@ -78,6 +78,7 @@
       :disabled="disabled"
       :required="required"
       @input="sendInput"
+      :min="min"
     >
   </div>
 </template>
@@ -116,6 +117,9 @@ export default {
     options: {
       type: Array,
       default: () => []
+    },
+    min: {
+      default: () => {}
     }
   },
   methods: {
