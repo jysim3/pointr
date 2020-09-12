@@ -49,12 +49,12 @@ describe('Event', () => {
         cy.contains('Description').next().type('I would like to say hi to everyone here so I created an event')
         cy.get('select').select(this.userData.socID)
 
-        cy.contains('Start Date').next().type('2020-08-15')
+        cy.contains('Start Date').next().type('2021-08-15')
         cy.contains('Start Time').next().type('00:23')
         cy.contains('End Time').next().type('01:23')
 
-        cy.contains('End Date').next().should('have.value','2020-08-15')
-        cy.contains('End Date').next().type('2020-08-16')
+        cy.contains('End Date').next().should('have.value','2021-08-15')
+        cy.contains('End Date').next().type('2021-08-16')
         cy.contains('Tags').next().type('Party')
         cy.contains('Public').click()
         cy.get('@photo').then(fileContent => {
@@ -70,7 +70,7 @@ describe('Event', () => {
         cy.contains('Create Event').click()
         cy.location('pathname').should('contain','/event/')
         cy.contains('hello')
-        cy.contains('Aug 15, 2020 12:23 AM - Aug 16, 2020 1:23 AM')
+        cy.contains('Aug 15, 2021 12:23 AM - Aug 16, 2021 1:23 AM')
         cy.contains('my mum')
         cy.contains('Public')
         cy.contains('I would like to say')
@@ -84,7 +84,7 @@ describe('Event', () => {
         cy.contains('Edit Event').click()
         cy.contains(k)
         cy.contains('hello')
-        cy.contains('Aug 15, 2020 12:23 AM - Aug 16, 2020 1:23 AM')
+        cy.contains('Aug 15, 2021 12:23 AM - Aug 16, 2021 1:23 AM')
         cy.contains('my mum')
         cy.contains('Public')
     })
