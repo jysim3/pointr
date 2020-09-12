@@ -57,7 +57,7 @@ export default {
   data() {
     return {
       upcomingEvents: {
-        title: "Upcoming events",
+        title: "Your societies' events",
         data: [],
         isLoading: false
       },

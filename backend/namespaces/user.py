@@ -25,7 +25,7 @@ class User(Resource):
         Everybody's profile is public
     ''')
     @validateArgs(ZIDSchemaNotReq, 'user')
-    @checkAuthorization(onlyAllowSelf=True)
+    @checkAuthorization(onlyAllowSelf=True, activationRequired=False)
     def get(self, token_data, user):
         return jsonify({'status': 'success', 'data': user.getJSON()})
 
