@@ -183,6 +183,7 @@ export default {
       return {
         title: this.eventData.name,
         subtitle: this.eventData.description,
+        photo: this.eventData.photo,
         tags: [
           this.eventData.start, this.eventData.location
         ],
