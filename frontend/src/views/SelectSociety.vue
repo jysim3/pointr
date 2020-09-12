@@ -49,6 +49,11 @@ export default {
     userSocietyData() {
       return this.societies
         .filter(k => this.$store.getters['user/isSocietyAdmin'](k.id))
+        .sort((a,b) => {
+          if (a.name > b.name) { return 1 }
+          if (a.name < b.name) { return -1 }
+          return 0
+        })
         .map(s => ({
           title: s.name,
           subtitle: s.description,
@@ -59,6 +64,11 @@ export default {
     allSocietyData() {
       return this.societies
         .filter(k => !this.$store.getters['user/isSocietyAdmin'](k.id))
+        .sort((a,b) => {
+          if (a.name > b.name) { return 1 }
+          if (a.name < b.name) { return -1 }
+          return 0
+        })
         .map(s => ({
           title: s.name,
           subtitle: s.description,
