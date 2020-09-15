@@ -1,0 +1,7 @@
+{
+    "baseUrl":  "http://front:8080",
+    "env": {
+        "secret": "secret"
+    },
+    "defaultCommandTimeout": 10000
+}
