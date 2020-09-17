@@ -13,19 +13,21 @@ Note: run `docker-compose up` in `./backend` for backend only
 
 * We have docker containers _named_ `db` (the database) and `api` the backend.
 
-* You can connect to either container using this:
+  * You can connect to either container using this:
 `docker exec -it <container_name> bash`
 
 
-* For example, to connect to database manually: 
+  * For example, to connect to database manually: 
 ```
 your-machine~$ docker exec -it db bash
 psql-container~$ psql -U postgres pointrDB 
 password: password
 ```
-* Check and change the credentials in docker-compose.yml
+  * Check and change the credentials in docker-compose.yml
 
 P.S. You can run __both__  the frontend and the backend if you run `docker-compose up` in the root directory
+
+* To restart you can run `docker-compose rm`
 
 
 ## Assumptions:
