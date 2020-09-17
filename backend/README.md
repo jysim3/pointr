@@ -1,5 +1,33 @@
 # Backend Documentation
 
+
+## EASIEST WAY TO START DEVELOPING BACKEND
+
+1. Install Docker [here](https://docs.docker.com/engine/install/)
+  * (For linux machine) Remember to follow through after the ["post-installation steps"](https://docs.docker.com/engine/install/linux-postinstall/)
+2. Run `docker-compose up` and see the magic
+
+Note: run `docker-compose up` in `./backend` for backend only
+
+### How to use docker cheatsheet:
+
+* We have docker containers _named_ `db` (the database) and `api` the backend.
+
+* You can connect to either container using this:
+`docker exec -it <container_name> bash`
+
+
+* For example, to connect to database manually: 
+```
+your-machine~$ docker exec -it db bash
+psql-container~$ psql -U postgres pointrDB 
+password: password
+```
+* Check and change the credentials in docker-compose.yml
+
+P.S. You can run __both__  the frontend and the backend if you run `docker-compose up` in the root directory
+
+
 ## Assumptions:
 * PostgreSQL Installed On Your Machine (`sudo apt-get install postgresql`)
 * Python3 >= 3.6 (`sudo apt-get install python3` for Debian-based distros)

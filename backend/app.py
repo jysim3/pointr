@@ -17,25 +17,26 @@ app.config['SQLALCHEMY_ECHO'] = False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # FIXME: Change this to production when we relaunch pointr
-app.config['ENV'] = 'test'
 
 database_name = "pointrDB"
 if (app.config['ENV'] in ['development', 'test']):
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{os.environ.get('SQLPassword')}@db/{database_name}"
     @app.route('/assets/images/<path:path>')
     def send_images(path):
             return send_from_directory('../assets/images/', path)
     app.config['UPLOAD_FOLDER'] = f"{os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))}/assets/images/"
 elif (app.config['ENV'] == 'production'):
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{os.environ.get('SQLPassword')}@localhost/{database_name}"
     app.config['UPLOAD_FOLDER'] = "/var/www/static/assets/images/"
+
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
 if (app.config['ENV'] == 'test'):
-	database_name = "testPointrDB"
+    database_name = "testPointrDB"
 
 if (os.path.exists(app.config['UPLOAD_FOLDER']) == False):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
-print(database_name)	
-app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{os.environ.get('SQLPassword')}@localhost/{database_name}"
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 

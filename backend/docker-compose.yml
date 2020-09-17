@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  api:
+    build: ./
+    container_name: api
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - 5000:5000
+    environment:
+      - POINTR_EMAIL_PASSWORD=aa
+      - POINTR_SERVER_SECRET=secret
+      - SQLPassword=password
+    depends_on:
+      - db
+  db:
+    image: postgres:12-alpine
+    container_name: db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=pointrDB
+
+volumes:
+  postgres_data:
+
