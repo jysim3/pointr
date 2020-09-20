@@ -25,3 +25,18 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 import 'cypress-file-upload';
+Cypress.Commands.add("login", ({zID, password, setStorage = true}) => {
+  return cy.request('POST',`${Cypress.env('api_server')}/api/auth/login`, {
+    "zID": zID,
+    "password": password
+  }).its('body').then(data => {
+    expect(data).to.include.keys('data')
+    expect(data.data).to.have.key('token')
+    return data.data['token']
+  }).then(function(token) {
+    if (setStorage) {
+      window.localStorage.setItem('token', token)
+    }
+    return token
+  })
+})

@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  front:
+    environment:
+      - NODE_ENV=test
+  test:
+    build: ./test
+    container_name: test
+    depends_on:
+      - front
+    networks:
+      - pointr
+    volumes:
+      - ./test:/e2e
+      - /e2e/node_modules
+    environment:
+      - cypress_api_server=http://api:5000
+        #networks:
+        #pointr:
+        #external: true
+

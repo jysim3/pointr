@@ -3,44 +3,29 @@ import moment from 'moment'
 
 describe('Event', () => {
     before(() => {
-
         cy.fixture('example.json').then(v => {
-
-            const description = 'Description Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat'
-            cy.exec(
-            "echo INSERT INTO SOCIETIES(id, description, name, type) VALUES " +
-            `('${v.socID}', '${description}', 'Test Soc', 0); | psql pointrDB`
-            )
-
-            cy.exec(
-            "echo insert into staff (\"zID\", \"socID\", rank) values " +
-            `('z5161631', '${v.socID}', 1); | psql pointrDB`
-            )
-            cy.exec(
-                `echo delete from hosted where "socID"='${v.socID}'; | psql pointrDB`
-            )
-
-        })
-    })
-    beforeEach(()=> {
-        cy.fixture('example.json').as('userData')
-        cy.fixture('coverphoto.jpg').as('photo')
-        cy.get("@userData").then(v => {
-            cy.request('POST','http://localhost:5000/api/auth/login', {
-                "zID": v.zID,
-                "password": v.password
-            }).its('body').then(data => {
-                expect(data).to.include.keys('data')
-                expect(data.data).to.have.key('token')
-                localStorage.setItem('token', data.data['token'])
+            cy.task('db:soc', {
+              socID: v.socID,
+              description: "Description of the society"
+            })
+            cy.task('db:user', {
+              zID: "z5161631",
+              password: "asdfjkl;",
+              activated: true,
+              superadmin: true,
             })
         })
-        cy.server()
-        cy.route('/api/*').as('api')
-        // localStorage.setItem('')
+    })
+    beforeEach(function() {
+        cy.fixture('example.json').as('userData')
+        cy.fixture('coverphoto.jpg').as('photo')
+        cy.get("@userData").then(function(v) {
+          this.userData = v
+          cy.login({"zID": v.zID, "password": v.password})
+        })
     })
     it('Create Event', function() {
-        cy.visit('/')
+        cy.visit("/")
         cy.contains('Create').click()
         cy.url().should('contain','/create')
 
@@ -64,9 +49,6 @@ describe('Event', () => {
                 mimeType: 'image/jpg'
             });
         });
-
-        cy.route('http://localhost:5000/api/event').as('createEventApi')
-
         cy.contains('Create Event').click()
         cy.location('pathname').should('contain','/event/')
         cy.contains('hello')

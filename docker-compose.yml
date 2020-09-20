@@ -14,18 +14,22 @@ services:
       - SQLPassword=password
     depends_on:
       - db
+    networks:
+      - pointr
   front:
     build: ./frontend
     container_name: front
     ports:
       - 8080:8080
     volumes:
-      - ./frontend:/app/ 
+      - ./frontend:/app/
       - /app/node_modules
     environment:
       - NODE_ENV=development
     depends_on:
       - api
+    networks:
+      - pointr
   db:
     image: postgres:12-alpine
     container_name: db
@@ -35,6 +39,11 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=pointrDB
+    networks:
+      - pointr
 
+networks:
+  pointr:
+    driver: bridge
 volumes:
   postgres_data:

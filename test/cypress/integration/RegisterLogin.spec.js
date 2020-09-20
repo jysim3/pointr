@@ -3,11 +3,9 @@
 import jwt from 'jsonwebtoken'
 describe('Registering and login', () => {
     before(() => {
-        cy.exec(`npm run reset`)
-        cy.exec( `echo delete from attend where "zID"='z5161631'; | psql pointrDB`)
-        cy.exec( `echo delete from staff where "zID"='z5161631'; | psql pointrDB`)
-        cy.exec( `echo delete from users where "zID"='z5161631'; | psql pointrDB`)
-            
+        cy.task('db', `delete from attend where "zID"='z5161631'; `)
+        cy.task('db', `delete from staff where "zID"='z5161631'; `)
+        cy.task('db', `delete from users where "zID"='z5161631'; `)
     })
 
     beforeEach(() => {
@@ -116,7 +114,7 @@ describe('Registering and login', () => {
     cy.get('input[name=password]').type('12345678')
     cy.get('input[name=repeatPassword]').type('12345678')
     cy.get('.btn').contains('Reset').click()
-    cy.request('POST','http://localhost:5000/api/auth/login', {
+    cy.request('POST',`${Cypress.env('api_server')}/api/auth/login`, {
         "zID": this.userData.zID,
         "password": '12345678'
     }).its('body').then(data => {

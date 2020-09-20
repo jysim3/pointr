@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === 'development'){
 } else if (process.env.NODE_ENV === 'production') {
   axios.defaults.baseURL = 'https://pointr.live';
 } else {
-  axios.defaults.baseURL = 'http://test.pointr.live';
+  axios.defaults.baseURL = 'http://api:5000'
 }
 axios.interceptors.response.use(undefined, function (err) {
   return new Promise(function () {

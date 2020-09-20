@@ -15,7 +15,20 @@
 /**
  * @type {Cypress.PluginConfig}
  */
+const db = require('./db.js')
+
 module.exports = (on, config) => {
+  require('cypress-terminal-report/src/installLogsPrinter')(on);
+  on('task', {
+    'db': db.db,
+    'db:user': db.createUser,
+    'db:event': db.createEvent,
+    'db:soc': db.createSoc,
+    'log': e => {
+      console.log(e)
+      return null
+    }
+  })
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 }
