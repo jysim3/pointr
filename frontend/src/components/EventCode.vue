@@ -74,6 +74,8 @@ export default {
       const timeUntilRefresh = moment(data.nextRefresh*1000)-moment()
 
       setTimeout(() => this.startRefreshCode(), timeUntilRefresh)
+    }).catch(e => {
+      console.log("no event exists: ", e)
     })
   },
   beforeUnmount() {
