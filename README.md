@@ -16,3 +16,19 @@ UNSW Colleges have a point system called room points. The more you do for the co
 * Ability for user to attend an event - either by typing an ID and name into event creators laptop or by scanning a QR code.
 * Ability for owner to see all people to attend an event and remove or add points to their attendance or remove them altogether.
 * Ability for user to see a receipt of all events attended and current point score.
+
+## How to run
+
+### Dev environment
+
+1. Install Docker [here](https://docs.docker.com/engine/install/)
+  * (For linux machine) Remember to follow through after the ["post-installation steps"](https://docs.docker.com/engine/install/linux-postinstall/)
+2. Run `docker-compose up` and see the magic
+
+### Test environment
+
+1. Install Docker 
+2. Run additional docker file for test:
+```
+$ docker-compose -f .\docker-compose.yml -f .\docker-compose.test.yml up
+```
