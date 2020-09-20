@@ -24,6 +24,10 @@ def sendAsyncMail(app, msg, recipients):
         try:
             from_email = app.config['MAIL_USERNAME']
             server.sendmail(from_email, recipients, msg.as_string())
+        except smtplib.SMTPServerDisconnected as e:
+            if app.config['ENV'] != 'development':
+                raise e
+            print('Sending email does not work in dev...')
         except smtplib.SMTPException as e:
             server.connect('localhost')
             server.ehlo()
