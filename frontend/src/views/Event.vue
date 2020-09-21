@@ -18,8 +18,7 @@
 <script>
 import EventSign from "@/components/eventSign/EventSign.vue";
 import EventHostView from "@/views/EventHostView.vue"
-import axios from 'axios'
-import moment from 'moment'
+import { getEvent } from '@/api/event';
 export default {
   name: "Event",
   components: {
@@ -85,17 +84,13 @@ export default {
         return
       }
       this.$store.commit('loading',true)
-      axios.get(`/api/event?eventID=${this.eventID}`)
-        .then(response => {
-          const data = response.data.data
+      getEvent(this.eventID)
+        .then(data => {
           Object.assign(this.eventData, data)
-          this.eventData.start = moment(this.eventData.start)
-          this.eventData.end = moment(this.eventData.end)
           this.isAdmin = this.$store.getters['user/isSocietyAdmin'](data.society.map(s => s.id))
         })
-        .catch(c => {
-          console.log(c)
-          this.$router.push({name:'404'})
+        .catch(e => {
+          console.log(e)
         })
         .finally(() => this.$store.commit('loading',false))
     }
