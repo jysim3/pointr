@@ -16,7 +16,7 @@
     "axios": "^0.19.2",
     "chart.js": "^2.9.3",
     "core-js": "^3.6.5",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "file-saver": "^2.0.2",
     "helmet": "^4.0.0",
     "html2canvas": "^1.0.0-rc.5",
